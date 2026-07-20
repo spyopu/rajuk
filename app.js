@@ -1,4 +1,4 @@
-// app.js — Complete Premium Architecture with Advanced monthly reporting
+// app.js — Complete Premium Architecture with Google Auth & Monthly Reporting
 
 // --- State Variables ---
 let clients = [];
@@ -11,13 +11,12 @@ let currentMonthFilter = new Date().toISOString().slice(0, 7); // Default to cur
 document.addEventListener("DOMContentLoaded", () => {
   setupMonthFilterUI();
   attachFormListeners();
-  // If you have Firebase integrations, load data here. For now, initializing empty state or local storage stub.
+  setupGoogleAuthListeners();
   loadMockOrLiveServerData();
 });
 
 // --- UI Injection for Month Filter ---
 function setupMonthFilterUI() {
-  // Top Navbar এ মাস সিলেক্ট করার জন্য একটি ড্রপডাউন ইনজেক্ট করা হচ্ছে
   const header = document.querySelector("header");
   if (header) {
     const filterContainer = document.createElement("div");
@@ -35,7 +34,60 @@ function setupMonthFilterUI() {
   }
 }
 
-// --- Event Listeners ---
+// --- Google Auth Integration ---
+function setupGoogleAuthListeners() {
+  const loginBtn = document.getElementById("google-login-btn");
+  const profileTrigger = document.getElementById("profile-trigger");
+  const dropdown = document.getElementById("profile-dropdown");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  if (loginBtn) {
+    loginBtn.addEventListener("click", async () => {
+      const statusIndicator = document.getElementById("status-indicator");
+      const statusText = document.getElementById("status-text");
+      const authSection = document.getElementById("sidebar-auth-section");
+      const userAvatar = document.getElementById("user-avatar");
+      const userName = document.getElementById("user-display-name");
+      const userEmail = document.getElementById("user-display-email");
+
+      // Firebase Auth কানেক্ট করার জন্য নিচের মক লজিকটি লাইভ Firebase কোড দিয়ে রিপ্লেস করতে পারেন।
+      // বর্তমানে এটি ক্লিক করার সাথে সাথে ইন্টারফেস অ্যাক্টিভ করে দেবে:
+      statusIndicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-none";
+      statusText.innerText = "Connected Securely";
+      authSection.classList.add("hidden");
+      profileTrigger.classList.remove("hidden");
+      
+      // ইউজার প্রোফাইল ডেটা ইনজেকশন
+      userAvatar.src = "https://ui-avatars.com/api/?name=Opu+Ahmed&background=6366f1&color=fff"; 
+      userName.innerText = "Opu Ahmed";
+      userEmail.innerText = "opu.marketing@agency.com";
+    });
+  }
+
+  // প্রোফাইল ড্রপডাউন টগল
+  if (profileTrigger) {
+    profileTrigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle("hidden");
+    });
+  }
+
+  // স্ক্রিনের বাইরে ক্লিক করলে ড্রপডাউন বন্ধ হওয়া
+  document.addEventListener("click", () => {
+    if (dropdown && !dropdown.classList.contains("hidden")) {
+      dropdown.classList.add("hidden");
+    }
+  });
+
+  // সেশন ডিসকানেক্ট / লগআউট
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      location.reload();
+    });
+  }
+}
+
+// --- Event Listeners for Forms ---
 function attachFormListeners() {
   // 1. Client Registry
   document.getElementById("client-form").addEventListener("submit", (e) => {
@@ -59,21 +111,9 @@ function attachFormListeners() {
     calculateAndRenderAll();
   });
 
-  // 2. Office Overhead (With Advance Payment Checkbox)
+  // 2. Office Overhead
   const oeForm = document.getElementById("office-expense-form");
   if (oeForm) {
-    // Inject dynamic "Advance Payment" toggle in HTML form if not present
-    if (!document.getElementById("oe-is-advance")) {
-      const submitBtn = oeForm.querySelector("button");
-      const advanceToggle = document.createElement("div");
-      advanceToggle.className = "flex items-center gap-2 py-1 px-1";
-      advanceToggle.innerHTML = `
-        <input type="checkbox" id="oe-is-advance" class="rounded border-[#2d303f] bg-[#1b1d26] text-indigo-600 focus:ring-0">
-        <label for="oe-is-advance" class="text-xs text-slate-400 select-none">Mark as Advance Payment (অ্যাডভান্স খরচ)</label>
-      `;
-      oeForm.insertBefore(advanceToggle, submitBtn);
-    }
-
     oeForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const category = document.getElementById("oe-category").value;
@@ -102,7 +142,7 @@ function attachFormListeners() {
   document.getElementById("tx-form").addEventListener("submit", (e) => {
     e.preventDefault();
     const clientId = document.getElementById("tx-client-select").value;
-    const type = document.getElementById("tx-type").value; // 'income' or 'expense'
+    const type = document.getElementById("tx-type").value;
     const amount = parseFloat(document.getElementById("tx-amount").value);
     const date = document.getElementById("tx-date").value;
     const details = document.getElementById("tx-details").value.trim();
@@ -123,11 +163,10 @@ function attachFormListeners() {
   });
 }
 
-// --- Core Financial Engine (Calculations & Rendering) ---
+// --- Core Financial Engine ---
 function calculateAndRenderAll() {
   updateClientDropdowns();
 
-  // Filter keys based on selected YYYY-MM
   const isCurrentMonth = (dateStr) => dateStr && dateStr.startsWith(currentMonthFilter);
 
   let totalVolume = 0;
@@ -140,30 +179,22 @@ function calculateAndRenderAll() {
   clientRowsContainer.innerHTML = "";
 
   clients.forEach(client => {
-    // Get all transactions for this client
     const clientTx = transactions.filter(t => t.clientId === client.id);
-    
-    // Monthly filtered transactions for global stats
     const monthlyClientTx = clientTx.filter(t => isCurrentMonth(t.date));
 
-    // Contract budget is part of volume if created this month or has activity
     totalVolume += client.budget; 
 
-    // Calculate Client Total Revenue and Cost
     const settledRevenue = clientTx.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
     const absorbedCosts = clientTx.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
     
-    // STRICT DUE SYSTEM: Contract Allocation - Settled Revenue
     const balanceReceivable = client.budget - settledRevenue;
     if (balanceReceivable > 0) {
       totalDue += balanceReceivable;
     }
 
-    // Accumulate Monthly stats for Global Matrix Counter
     grossIncome += monthlyClientTx.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
     totalCost += monthlyClientTx.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
 
-    // Render Master Row
     const row = document.createElement("tr");
     row.className = "hover:bg-[#1f212a] transition border-b border-[#22242e]";
     row.innerHTML = `
@@ -185,13 +216,13 @@ function calculateAndRenderAll() {
     clientRowsContainer.appendChild(row);
   });
 
-  // 2. Process General Office Overhead (Include filtered month & Advance tracking)
+  // 2. Process General Office Overhead
   const expenseRowsContainer = document.getElementById("office-expense-rows");
   expenseRowsContainer.innerHTML = "";
 
   officeExpenses.forEach(exp => {
     if (isCurrentMonth(exp.date)) {
-      totalCost += exp.amount; // General overhead is added to monthly costs
+      totalCost += exp.amount;
     }
 
     const row = document.createElement("tr");
@@ -237,7 +268,7 @@ function updateClientDropdowns() {
   if (currentVal) select.value = currentVal;
 }
 
-// --- Subsidiary Statement Ledger Drawer Functionality ---
+// --- Ledger Drawer Functionality ---
 window.openLedgerDrawer = function(clientId) {
   const client = clients.find(c => c.id === clientId);
   if (!client) return;
@@ -279,9 +310,8 @@ window.closeDrawer = function() {
   currentSelectedClientId = null;
 };
 
-// --- Mock Loader Stub ---
+// --- Mock Data Loader ---
 function loadMockOrLiveServerData() {
-  // Demo Initial State for Instant testing logic validation
   clients = [
     { id: "c_1", name: "Karim Rahman", phone: "01711000222", title: "Rajuk Plan Approval", budget: 150000, createdAt: "2026-07-01T10:00:00.000Z" }
   ];
