@@ -286,7 +286,7 @@ if (clientForm) {
     databasePathRef.child('clients').push(newClient);
     clientForm.reset();
     alert('Project file deployed to cloud database successfully!');
-    setClientFilter('all'); // auto show all table items
+    setClientFilter('new'); // নতুন এন্ট্রি দিলে সরাসরি New ক্যাটাগরিতে রিডাইরেক্ট করবে
     switchTab('dashboard-view');
   });
 }
@@ -322,7 +322,7 @@ if (txForm) {
         selectedText.className = 'text-slate-500';
       }
 
-      setClientFilter('all');
+      setClientFilter('old'); // ট্রানজেকশন পোস্টিং হলে সরাসরি Old (সব ক্লায়েন্ট) ক্যাটাগরিতে শো করবে
       uiUpdatePipeline();
       alert('Voucher posted successfully!');
       switchTab('dashboard-view');
@@ -434,7 +434,7 @@ function renderDropdown() {
   }
 }
 
-// Master Ledger Table (Conditional Engine for Filter tabs)
+// Master Ledger Table (Conditional Filter Engine)
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -457,24 +457,23 @@ function renderMasterTable() {
     return;
   }
 
-  // Step 1: Filter using Search query
+  // Step 1: Filter using Sidebar Search input text
   let filteredData = farmData.filter(c => {
     return c.name.toLowerCase().includes(query) || 
            c.phone.includes(query) || 
            c.project.toLowerCase().includes(query);
   });
 
-  // Step 2: Advanced logical conditioning for New/Old targets
+  // Step 2: Advanced logical conditioning based on user definition
+  // New Client = যাদের কোনো হিস্ট্রি/লেনদেন রেকর্ড নাই
   if (activeClientFilter === 'new') {
     filteredData = filteredData.filter(c => {
-      const hasIncome = c.history.some(t => t.type === 'income');
-      return !hasIncome; // New client = No transaction income yet
+      return !c.history || c.history.length === 0;
     });
-  } else if (activeClientFilter === 'old') {
-    filteredData = filteredData.filter(c => {
-      const hasIncome = c.history.some(t => t.type === 'income');
-      return hasIncome; // Old client = Already has transaction income
-    });
+  } 
+  // Old Client = সব ক্লায়েন্ট (All/Sob data) একসাথে রেন্ডার করবে
+  else if (activeClientFilter === 'old' || activeClientFilter === 'all') {
+    // No sub filtering required, displays everything matching search engine query
   }
 
   tableBody.innerHTML = filteredData.length === 0 ? 
