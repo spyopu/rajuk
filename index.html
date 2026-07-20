@@ -54,11 +54,24 @@
             </div>
           </div>
 
-          <!-- Navigation Links -->
-          <div class="space-y-1">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 px-1">Navigation</label>
-            <button onclick="switchTab('dashboard-view')" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-indigo-600/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20 transition">
-              <span>📊</span> Mega Dashboard
+          <!-- Vertical Tabs Menu (সাইডবারের বামপাশে নিয়ে আসা হয়েছে) -->
+          <div class="space-y-1.5">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Mega Dashboard Menu</label>
+            
+            <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20">
+              <span>📊</span> Dashboard Overview
+            </button>
+            
+            <button id="btn-client-view" onclick="switchTab('client-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent">
+              <span>💼</span> Client Registry
+            </button>
+            
+            <button id="btn-journal-view" onclick="switchTab('journal-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent">
+              <span>💸</span> Journal Posting
+            </button>
+            
+            <button id="btn-office-view" onclick="switchTab('office-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent">
+              <span>🏢</span> Office Overhead
             </button>
           </div>
         </div>
@@ -101,31 +114,13 @@
         </div>
       </header>
 
-      <!-- Main Content Container with Mega Dashboard Header -->
+      <!-- Main Content Container -->
       <main class="flex-1 p-6 md:p-8 overflow-y-auto max-w-7xl w-full mx-auto space-y-6">
         
-        <!-- MEGA DASHBOARD HEADER & TAB LIST (ট্যাবগুলো এখন একদম মেগা ড্যাশবোর্ডের নিচে) -->
-        <div class="space-y-4">
-          <div>
-            <h2 class="text-xl font-extrabold tracking-tight text-white">Mega Dashboard</h2>
-            <p class="text-xs text-slate-400 mt-0.5">Manage your agency accounts, client workflows, and company operational overhead profiles.</p>
-          </div>
-
-          <!-- Tab List -->
-          <div class="bg-[#16171d] border border-[#22242e] p-1.5 rounded-xl flex items-center gap-1.5 overflow-x-auto">
-            <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition bg-indigo-600 text-white shadow-md">
-              📊 Dashboard Overview
-            </button>
-            <button id="btn-client-view" onclick="switchTab('client-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
-              💼 Client Registry
-            </button>
-            <button id="btn-journal-view" onclick="switchTab('journal-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
-              💸 Journal Posting
-            </button>
-            <button id="btn-office-view" onclick="switchTab('office-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
-              🏢 Office Overhead
-            </button>
-          </div>
+        <!-- MEGA DASHBOARD HEADER -->
+        <div>
+          <h2 class="text-xl font-extrabold tracking-tight text-white">Mega Dashboard</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Manage your agency accounts, client workflows, and company operational overhead profiles.</p>
         </div>
 
         <!-- DYNAMIC TAB 1: DASHBOARD OVERVIEW -->
@@ -273,7 +268,7 @@
                 <input type="number" id="oe-amount" placeholder="Overhead Amount (৳)" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none">
                 <input type="text" id="oe-details" placeholder="Overhead Remarks/Details" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none">
                 <input type="date" id="oe-date" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-slate-300 outline-none">
-                <button type="submit" class="w-full bg-[#241a21] hover:bg-rose-900 border border-rose-900/40 text-rose-400 hover:text-white font-semibold rounded-lg py-2.5 text-xs transition">Log General Overhead</button>
+                <button type="submit" class="w-full bg-[#241a21] hover:bg-rose-950 border border-rose-900/40 text-rose-400 hover:text-white font-semibold rounded-lg py-2.5 text-xs transition">Log General Overhead</button>
               </form>
             </div>
 
