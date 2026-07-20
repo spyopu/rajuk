@@ -36,52 +36,62 @@ const ledgerDrawer = document.getElementById('ledger-drawer');
 const searchInput = document.getElementById('search-input');
 
 // Initialize Today's Date Values Input fields
-document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
-document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
+if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
+if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
 
 // Initialize Blank Dashboard
 uiUpdatePipeline();
 
 // User Menu Events Handlers
-profileTrigger.addEventListener('click', (e) => {
-  e.stopPropagation();
-  profileDropdown.classList.toggle('hidden');
-});
+if (profileTrigger) {
+  profileTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (profileDropdown) profileDropdown.classList.toggle('hidden');
+  });
+}
 
 document.addEventListener('click', () => {
-  profileDropdown.classList.add('hidden');
+  if (profileDropdown) profileDropdown.classList.add('hidden');
 });
 
-loginBtn.addEventListener('click', () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch(err => alert("Login failed: " + err.message));
-});
+if (loginBtn) {
+  loginBtn.addEventListener('click', () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(err => alert("Login failed: " + err.message));
+  });
+}
 
-logoutBtn.addEventListener('click', () => {
-  auth.signOut().then(() => window.location.reload());
-});
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', () => {
+    auth.signOut().then(() => window.location.reload());
+  });
+}
 
 // Firebase Auth Authentication State Realtime Observers
 auth.onAuthStateChanged(user => {
   if (user) {
-    sidebarAuthSection.classList.add('hidden');
-    profileTrigger.classList.remove('hidden');
+    if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
+    if (profileTrigger) profileTrigger.classList.remove('hidden');
     
-    document.getElementById('status-indicator').className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse";
-    document.getElementById('status-text').innerText = "Firebase Realtime Cloud (100% Secured)";
+    const indicator = document.getElementById('status-indicator');
+    const text = document.getElementById('status-text');
+    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse";
+    if (text) text.innerText = "Firebase Realtime Cloud (100% Secured)";
     
-    document.getElementById('user-display-name').innerText = user.displayName;
-    document.getElementById('user-display-email').innerText = user.email;
-    document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
+    if (document.getElementById('user-display-name')) document.getElementById('user-display-name').innerText = user.displayName;
+    if (document.getElementById('user-display-email')) document.getElementById('user-display-email').innerText = user.email;
+    if (document.getElementById('user-avatar')) document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
 
     databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
     subscribeToCloudStreams();
   } else {
-    sidebarAuthSection.remove('hidden');
-    profileTrigger.classList.add('hidden');
+    if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
+    if (profileTrigger) profileTrigger.classList.add('hidden');
     
-    document.getElementById('status-indicator').className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
-    document.getElementById('status-text').innerText = "Offline / Guest Mode";
+    const indicator = document.getElementById('status-indicator');
+    const text = document.getElementById('status-text');
+    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
+    if (text) text.innerText = "Offline / Guest Mode";
     
     farmData = [];
     officeExpenses = [];
@@ -141,77 +151,85 @@ function calculateGlobalMetrics() {
   let grandTotalExpense = prjExpense + totalOfficeExpense;
   let netIncome = income - grandTotalExpense;
 
-  document.getElementById('global-budget').innerText = '৳' + budget.toLocaleString('en-IN');
-  document.getElementById('global-income').innerText = '৳' + income.toLocaleString('en-IN');
-  document.getElementById('global-expense').innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
-  document.getElementById('global-due').innerText = '৳' + due.toLocaleString('en-IN');
-  document.getElementById('global-net').innerText = '৳' + netIncome.toLocaleString('en-IN');
+  if (document.getElementById('global-budget')) document.getElementById('global-budget').innerText = '৳' + budget.toLocaleString('en-IN');
+  if (document.getElementById('global-income')) document.getElementById('global-income').innerText = '৳' + income.toLocaleString('en-IN');
+  if (document.getElementById('global-expense')) document.getElementById('global-expense').innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
+  if (document.getElementById('global-due')) document.getElementById('global-due').innerText = '৳' + due.toLocaleString('en-IN');
+  if (document.getElementById('global-net')) document.getElementById('global-net').innerText = '৳' + netIncome.toLocaleString('en-IN');
 }
 
 // Submit Data Handlers
-clientForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if(!databasePathRef) return alert('Please login first to sync project files!');
-  const newClient = {
-    name: document.getElementById('client-name').value,
-    phone: document.getElementById('client-phone').value,
-    project: document.getElementById('project-title').value,
-    budget: parseFloat(document.getElementById('project-budget').value),
-    history: []
-  };
-  databasePathRef.child('clients').push(newClient);
-  clientForm.reset();
-});
+if (clientForm) {
+  clientForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!databasePathRef) return alert('Please login first to sync project files!');
+    const newClient = {
+      name: document.getElementById('client-name').value,
+      phone: document.getElementById('client-phone').value,
+      project: document.getElementById('project-title').value,
+      budget: parseFloat(document.getElementById('project-budget').value),
+      history: []
+    };
+    databasePathRef.child('clients').push(newClient);
+    clientForm.reset();
+  });
+}
 
-txForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if(!databasePathRef) return alert('Please login first to post entries!');
-  const id = clientSelect.value;
-  if(!id) return alert('No project file selected!');
-  
-  const client = farmData.find(c => c.id === id);
-  if(client) {
-    const updatedHistory = client.history || [];
-    updatedHistory.push({
-      id: 't_' + Date.now(),
-      type: document.getElementById('tx-type').value,
-      amount: parseFloat(document.getElementById('tx-amount').value),
-      details: document.getElementById('tx-details').value,
-      date: document.getElementById('tx-date').value
-    });
-    updatedHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
+if (txForm) {
+  txForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!databasePathRef) return alert('Please login first to post entries!');
+    const id = clientSelect.value;
+    if(!id) return alert('No project file selected!');
     
-    databasePathRef.child('clients').child(id).update({ history: updatedHistory });
-    document.getElementById('tx-amount').value = '';
-    document.getElementById('tx-details').value = '';
-  }
-});
+    const client = farmData.find(c => c.id === id);
+    if(client) {
+      const updatedHistory = client.history || [];
+      updatedHistory.push({
+        id: 't_' + Date.now(),
+        type: document.getElementById('tx-type').value,
+        amount: parseFloat(document.getElementById('tx-amount').value),
+        details: document.getElementById('tx-details').value,
+        date: document.getElementById('tx-date').value
+      });
+      updatedHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
+      
+      databasePathRef.child('clients').child(id).update({ history: updatedHistory });
+      document.getElementById('tx-amount').value = '';
+      document.getElementById('tx-details').value = '';
+    }
+  });
+}
 
-officeExpenseForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if(!databasePathRef) return alert('Please login first to record expenses!');
-  const newExpense = {
-    category: document.getElementById('oe-category').value,
-    amount: parseFloat(document.getElementById('oe-amount').value),
-    details: document.getElementById('oe-details').value,
-    date: document.getElementById('oe-date').value
-  };
-  databasePathRef.child('office_expenses').push(newExpense);
-  document.getElementById('oe-amount').value = '';
-  document.getElementById('oe-details').value = '';
-});
+if (officeExpenseForm) {
+  officeExpenseForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!databasePathRef) return alert('Please login first to record expenses!');
+    const newExpense = {
+      category: document.getElementById('oe-category').value,
+      amount: parseFloat(document.getElementById('oe-amount').value),
+      details: document.getElementById('oe-details').value,
+      date: document.getElementById('oe-date').value
+    };
+    databasePathRef.child('office_expenses').push(newExpense);
+    document.getElementById('oe-amount').value = '';
+    document.getElementById('oe-details').value = '';
+  });
+}
 
 function renderDropdown() {
+  if (!clientSelect) return;
   clientSelect.innerHTML = farmData.length === 0 ? '<option value="">No Active Projects Available</option>' : 
     farmData.map(c => `<option value="${c.id}">${c.project} (${c.name})</option>`).join('');
 }
 
 // Table UI Builders
 function renderMasterTable() {
-  const query = searchInput.value.toLowerCase().trim();
+  if (!tableBody) return;
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
   
   if (!auth.currentUser) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Dashboard is blank. Please sign in with Google from the sidebar to view database files.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Dashboard is blank. Please sign in with Google from the top menu to view database files.</td></tr>`;
     return;
   }
 
@@ -261,6 +279,7 @@ function renderMasterTable() {
 }
 
 function renderOfficeExpenses() {
+  if (!officeExpenseRows) return;
   if (officeExpenses.length === 0) {
     officeExpenseRows.innerHTML = `<tr><td class="p-3 text-center text-slate-500">${auth.currentUser ? 'No general office expenses logged yet.' : 'Please login to track expenses.'}</td></tr>`;
     return;
@@ -283,24 +302,27 @@ function renderOfficeExpenses() {
 // Open Slider Account Ledgers
 window.openDrawer = function(id) {
   openLedgerId = id;
-  ledgerDrawer.classList.remove('hidden');
-  refreshDrawer(id);
-  ledgerDrawer.scrollIntoView({ behavior: 'smooth' });
+  if (ledgerDrawer) {
+    ledgerDrawer.classList.remove('hidden');
+    refreshDrawer(id);
+    ledgerDrawer.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 
 window.closeDrawer = function() {
   openLedgerId = null;
-  ledgerDrawer.classList.add('hidden');
+  if (ledgerDrawer) ledgerDrawer.classList.add('hidden');
 }
 
 function refreshDrawer(id) {
   const client = farmData.find(c => c.id === id);
   if(!client) return closeDrawer();
 
-  document.getElementById('drawer-title').innerText = `🏢 File: ${client.project} (${client.name})`;
-  document.getElementById('drawer-sub').innerText = `Contact: ${client.phone} | Budget: ৳${client.budget.toLocaleString('en-IN')}`;
+  if (document.getElementById('drawer-title')) document.getElementById('drawer-title').innerText = `🏢 File: ${client.project} (${client.name})`;
+  if (document.getElementById('drawer-sub')) document.getElementById('drawer-sub').innerText = `Contact: ${client.phone} | Budget: ৳${client.budget.toLocaleString('en-IN')}`;
 
   const dBody = document.getElementById('drawer-table-body');
+  if (!dBody) return;
   dBody.innerHTML = (!client.history || client.history.length === 0) ? 
     `<tr><td colspan="4" class="p-4 text-center text-slate-400 font-medium">No ledger accounts registered for this project.</td></tr>` : '';
 
