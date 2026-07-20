@@ -63,7 +63,7 @@
       <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 shadow-2xs">
         <div class="text-xs font-bold text-slate-500 flex items-center gap-2">
           <span class="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          系统 স্ট্যাটাস: <span class="text-slate-800 font-extrabold text-xs">ফায়ারবেস রিয়েলটাইম ক্লাউড (১০০% সুরক্ষিত)</span>
+          স্ট্যাটাস: <span class="text-slate-800 font-extrabold text-xs">ফায়ারবেস রিয়েলটাইম ক্লাউড (১০০% সুরক্ষিত)</span>
         </div>
         <div class="flex items-center gap-3">
           <div class="text-right">
@@ -127,8 +127,8 @@
               </h3>
               <form id="office-expense-form" class="space-y-3">
                 <select id="oe-category" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-white outline-none focus:ring-2 focus:ring-red-500">
-                  <option value="Staff Salary">कर्मचारियों के वेतन (Staff Salary)</option>
-                  <option value="Office Rent">कार्यालय का किराया (Office Rent)</option>
+                  <option value="Staff Salary">Staff Salary</option>
+                  <option value="Office Rent">Office Rent</option>
                   <option value="Utility Bill">ইউটিলিটি/কারেন্ট বিল</option>
                   <option value="Conveyance">যাতায়াত/সাইট ভিজিট খরচ</option>
                   <option value="Others">অন্যান্য সাধারণ খরচ</option>
@@ -178,7 +178,7 @@
 
             <!-- Recent Expenses Table Container -->
             <div class="mt-6 pt-4 border-t border-slate-100">
-              <h4 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">📜 সাম্প্রতিক সাধারণ অফিস খরচ</h4>
+              <h4 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">📜 সাম্প্রতিক সাধারণ office খরচ</h4>
               <div class="max-h-32 overflow-y-auto border border-slate-100 rounded-xl bg-slate-50/50">
                 <table class="w-full text-left text-[11px] text-slate-600">
                   <tbody id="office-expense-rows"></tbody>
@@ -190,12 +190,12 @@
 
         <!-- Central Table -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-          <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">🏢 কেন্দ্রীয় ক্লায়েন্ট ডাটাবেজ এবং প্রজেক্ট লেজার</h3>
-            <!-- 🔍 লাইভ সার্চ বক্স -->
-            <div class="w-full sm:w-64 relative">
+          <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <!-- 🔍 সার্চ বক্স এখন বামে চলে এসেছে -->
+            <div class="w-full sm:w-64 relative order-2 sm:order-1">
               <input type="text" id="search-input" oninput="renderMasterTable()" placeholder="🔍 নাম, ফোন বা প্রজেক্ট দিয়ে খুঁজুন..." class="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-xs bg-white outline-none focus:ring-2 focus:ring-slate-900 transition">
             </div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 order-1 sm:order-2 sm:ml-auto">🏢 কেন্দ্রীয় ক্লায়েন্ট ডাটাবেজ এবং প্রজেক্ট লেজার</h3>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
@@ -245,9 +245,6 @@
   </div>
 
   <script>
-    // ==========================================
-    // 🔗 ফায়ারবেস ক্রেডেনশিয়ালস (Realtime Database Mode)
-    // ==========================================
     const firebaseConfig = {
       apiKey: "AIzaSyD8kXy2rL9ptiPN4xEMg5h3o4RY_sPH79w",
       authDomain: "rajuk-bed98.firebaseapp.com",
@@ -258,18 +255,15 @@
       appId: "1:367893646589:web:6c91f066dfb5143e204294"
     };
 
-    // Initialize Firebase Engine
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const rtdb = firebase.database();
 
-    // Application Global Memory State
     let farmData = [];
     let officeExpenses = [];
     let databasePathRef = null;
     let openLedgerId = null;
 
-    // Elements Dom Reference Mapping
     const loginScreen = document.getElementById('login-screen');
     const erpLayout = document.getElementById('erp-layout');
     const loginBtn = document.getElementById('google-login-btn');
@@ -287,7 +281,6 @@
     document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
     document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
 
-    // Google Sign-In Mechanism
     loginBtn.addEventListener('click', () => {
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider).catch(err => alert("লগইন ব্যর্থ হয়েছে: " + err.message));
@@ -297,30 +290,24 @@
       auth.signOut().then(() => window.location.reload());
     });
 
-    // Authentication Core Observer
     auth.onAuthStateChanged(user => {
       if (user) {
         loginScreen.classList.add('hidden');
         erpLayout.classList.remove('hidden');
         
-        // Show Profile Info
         document.getElementById('user-display-name').innerText = user.displayName;
         document.getElementById('user-display-email').innerText = user.email;
         document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
 
-        // Realtime Database Path setup for unique isolated data cluster
         databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
-        
-        // Listen to cloud streams
         subscribeToCloudStreams();
       } else {
-        loginScreen.classList.remove('hidden');
+        loginScreen.remove('hidden');
         erpLayout.classList.add('hidden');
       }
     });
 
     function subscribeToCloudStreams() {
-      // 1. Stream Clients Record Node
       databasePathRef.child('clients').on('value', snapshot => {
         farmData = [];
         snapshot.forEach(childSnapshot => {
@@ -334,7 +321,6 @@
         uiUpdatePipeline();
       });
 
-      // 2. Stream General Office Expense Node
       databasePathRef.child('office_expenses').on('value', snapshot => {
         officeExpenses = [];
         snapshot.forEach(childSnapshot => {
@@ -432,13 +418,11 @@
     function renderMasterTable() {
       const query = searchInput.value.toLowerCase().trim();
       
-      // প্রাইভেসি লজিক: সার্চ ইনপুট ফাঁকা থাকলে কোনো ক্লায়েন্ট লিস্ট স্ক্রিনে দেখাবে না
       if (query === '') {
         tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 font-medium bg-white">অনুগ্রহ করে প্রাইভেসির জন্য নাম বা ফোন নম্বর লিখে খুঁজুন।</td></tr>`;
         return;
       }
       
-      // সার্চ কোয়েরি অনুযায়ী ফিল্টার করা হচ্ছে
       const filteredData = farmData.filter(c => {
         return c.name.toLowerCase().includes(query) || 
                c.phone.includes(query) || 
@@ -452,7 +436,7 @@
         let cIncome = 0, cExpense = 0;
         c.history.forEach(t => {
           if(t.type === 'income') cIncome += t.amount;
-          if(t.type === 'expense') cExpense += t.amount;
+          if(t.type === 'expense') prjExpense += t.amount;
         });
         let cDue = c.budget - cIncome;
 
@@ -481,7 +465,7 @@
 
     function renderOfficeExpenses() {
       officeExpenseRows.innerHTML = officeExpenses.length === 0 ? 
-        `<tr><td class="p-3 text-center text-slate-400">কোনো সাধারণ অফিস খরচ এন্ট্রি করা হয়নি।</td></tr>` : '';
+        `<tr><td class="p-3 text-center text-slate-400">কোনো সাধারণ office খরচ এন্ট্রি করা হয়নি।</td></tr>` : '';
 
       officeExpenses.forEach(oe => {
         const tr = document.createElement('tr');
