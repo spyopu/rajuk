@@ -13,9 +13,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const rtdb = firebase.database();
 
-// Global Security Passcode (এখানে আপনার পছন্দের পাসকোড দিন)
-const SECURITY_PASSCODE = "1234";
-
 // State Memory Management Variables
 let farmData = [];
 let officeExpenses = [];
@@ -56,6 +53,7 @@ if (monthFilter) {
 if (searchInput) {
   searchInput.addEventListener('input', () => {
     switchTab('dashboard-view');
+    // Force set filter to 'all' if user starts typing in sidebar search box
     if(activeClientFilter === 'none') {
       setClientFilter('all');
     } else {
@@ -137,28 +135,7 @@ if (logoutBtn) {
 
 // Firebase Auth Authentication State Realtime Observers
 auth.onAuthStateChanged(user => {
-  // পাসকোড ইনপুটের আগে অ্যাপের কন্টেন্ট হাইড রাখতে বডি কন্টেইনার টার্গেট করা
-  const appContainer = document.getElementById('tab-dashboard-view') || document.body;
-  
   if (user) {
-    // পাসকোড দেওয়ার আগে ব্যাকগ্রাউন্ড সম্পূর্ণ ইনভিজিবল রাখা
-    appContainer.style.opacity = "0";
-    appContainer.style.pointerEvents = "none";
-
-    // অ্যাপে প্রবেশ করার সময় পাসকোড সিকিউরিটি চেক
-    const accessCode = prompt("Enter Security Passcode to Access System:");
-    
-    if (accessCode !== SECURITY_PASSCODE) {
-      alert("Invalid Passcode! Access Denied.");
-      auth.signOut();
-      window.location.reload();
-      return;
-    }
-
-    // পাসকোড সঠিক হলে ড্যাশবোর্ড স্ক্রিন দৃশ্যমান করা
-    appContainer.style.opacity = "1";
-    appContainer.style.pointerEvents = "auto";
-
     if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
     if (profileTrigger) profileTrigger.classList.remove('hidden');
     
@@ -174,10 +151,6 @@ auth.onAuthStateChanged(user => {
     databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
     subscribeToCloudStreams();
   } else {
-    // লগআউট মোডে থাকলে বা গুগল লগইন স্ক্রিনে অ্যাপ দৃশ্যমান রাখা
-    appContainer.style.opacity = "1";
-    appContainer.style.pointerEvents = "auto";
-
     if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
     if (profileTrigger) profileTrigger.classList.add('hidden');
     
@@ -313,7 +286,7 @@ if (clientForm) {
     databasePathRef.child('clients').push(newClient);
     clientForm.reset();
     alert('Project file deployed to cloud database successfully!');
-    setClientFilter('new'); // নতুন এন্ট্রি দিলে সরাসরি New ক্যাটাগরিতে শো করবে
+    setClientFilter('all'); // auto show all table items
     switchTab('dashboard-view');
   });
 }
@@ -349,7 +322,7 @@ if (txForm) {
         selectedText.className = 'text-slate-500';
       }
 
-      setClientFilter('old'); // ট্রানজেকশন পোস্টিং হলে সরাসরি Old (সব ক্লায়েন্ট) ক্যাটাগরিতে নিয়ে যাবে
+      setClientFilter('all');
       uiUpdatePipeline();
       alert('Voucher posted successfully!');
       switchTab('dashboard-view');
@@ -461,7 +434,7 @@ function renderDropdown() {
   }
 }
 
-// Master Ledger Table (সঠিক ফিল্টারিং কন্ডিশন লজিক)
+// Master Ledger Table (Conditional Engine for Filter tabs)
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -473,6 +446,7 @@ function renderMasterTable() {
     return;
   }
 
+  // Keep hidden if no button tab is explicitly requested
   if (activeClientFilter === 'none') {
     if(container) container.classList.add('hidden');
     return;
@@ -483,24 +457,24 @@ function renderMasterTable() {
     return;
   }
 
-  // Step 1: সার্চ বার ইনপুট ফিল্টারিং
+  // Step 1: Filter using Search query
   let filteredData = farmData.filter(c => {
     return c.name.toLowerCase().includes(query) || 
            c.phone.includes(query) || 
            c.project.toLowerCase().includes(query);
   });
 
-  // Step 2: রিকোয়ারমেন্ট লজিক: পেমেন্ট বা Income আসলেই সে Old Client, নাহলে New Client
-  // New Client = যাদের এখনও কোনো পেমেন্ট (Income) আসে নাই
+  // Step 2: Advanced logical conditioning for New/Old targets
   if (activeClientFilter === 'new') {
     filteredData = filteredData.filter(c => {
-      const hasIncome = c.history && c.history.some(t => t.type === 'income');
-      return !hasIncome; 
+      const hasIncome = c.history.some(t => t.type === 'income');
+      return !hasIncome; // New client = No transaction income yet
     });
-  } 
-  // Old Client = সব ক্লায়েন্ট একসাথে দেখাবে (পুরো ডাটাবেজ)
-  else if (activeClientFilter === 'old' || activeClientFilter === 'all') {
-    // Displays everything
+  } else if (activeClientFilter === 'old') {
+    filteredData = filteredData.filter(c => {
+      const hasIncome = c.history.some(t => t.type === 'income');
+      return hasIncome; // Old client = Already has transaction income
+    });
   }
 
   tableBody.innerHTML = filteredData.length === 0 ? 
@@ -508,12 +482,10 @@ function renderMasterTable() {
 
   filteredData.forEach(c => {
     let localIncome = 0, localExpense = 0;
-    if (c.history) {
-      c.history.forEach(t => {
-        if(t.type === 'income') localIncome += t.amount;
-        if(t.type === 'expense') localExpense += t.amount;
-      });
-    }
+    c.history.forEach(t => {
+      if(t.type === 'income') localIncome += t.amount;
+      if(t.type === 'expense') localExpense += t.amount;
+    });
     let cDue = c.budget - localIncome;
 
     const tr = document.createElement('tr');
@@ -622,30 +594,18 @@ function refreshDrawer(id) {
   });
 }
 
-// Node Deletion Scripts with Passcode Protection
+// Node Deletion Scripts
 window.deleteClient = function(id) {
   if(!databasePathRef) return;
   if(confirm('Are you sure you want to permanently delete this file and all its records?')) {
-    const deleteCode = prompt("Enter Passcode to Confirm Deletion:");
-    if (deleteCode === SECURITY_PASSCODE) {
-      databasePathRef.child('clients').child(id).remove();
-      if(openLedgerId === id) closeDrawer();
-      alert('Project record deleted successfully.');
-    } else {
-      alert("Incorrect Passcode! Action cancelled.");
-    }
+    databasePathRef.child('clients').child(id).remove();
+    if(openLedgerId === id) closeDrawer();
   }
 }
 
 window.deleteOfficeExpense = function(id) {
   if(!databasePathRef) return;
   if(confirm('Delete this general office expense node?')) {
-    const deleteCode = prompt("Enter Passcode to Confirm Deletion:");
-    if (deleteCode === SECURITY_PASSCODE) {
-      databasePathRef.child('office_expenses').child(id).remove();
-      alert('Expense record deleted successfully.');
-    } else {
-      alert("Incorrect Passcode! Action cancelled.");
-    }
+    databasePathRef.child('office_expenses').child(id).remove();
   }
 }
