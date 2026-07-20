@@ -85,6 +85,7 @@ auth.onAuthStateChanged(user => {
     databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
     subscribeToCloudStreams();
   } else {
+    // ভুল ১-এর ফিক্স: এখানে classList.remove হবে
     if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
     if (profileTrigger) profileTrigger.classList.add('hidden');
     
@@ -233,12 +234,9 @@ function renderMasterTable() {
     return;
   }
 
-  if (query === '') {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">Please enter a client name or phone number in the sidebar menu to look up data.</td></tr>`;
-    return;
-  }
-  
+  // ভুল ২-এর ফিক্স: এখানে সার্চ কোয়েরি খালি থাকলে সরাসরি সব ডাটা রেন্ডার হবে, ব্ল্যাংক দেখাবে না
   const filteredData = farmData.filter(c => {
+    if (query === '') return true; 
     return c.name.toLowerCase().includes(query) || 
            c.phone.includes(query) || 
            c.project.toLowerCase().includes(query);
