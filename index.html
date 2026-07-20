@@ -54,7 +54,7 @@
             </div>
           </div>
 
-          <!-- Navigation Links (Acts as Shortcut to Tab 1) -->
+          <!-- Navigation Links -->
           <div class="space-y-1">
             <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 px-1">Navigation</label>
             <button onclick="switchTab('dashboard-view')" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-indigo-600/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20 transition">
@@ -101,27 +101,35 @@
         </div>
       </header>
 
-      <!-- PREMIUM NAVIGATION TAB LIST -->
-      <div class="bg-[#14151b] border-b border-[#22242e] px-6 md:px-8 py-2 flex items-center gap-2 overflow-x-auto">
-        <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition bg-indigo-600 text-white shadow-md">
-          📊 Dashboard Overview
-        </button>
-        <button id="btn-client-view" onclick="switchTab('client-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
-          💼 Client Registry
-        </button>
-        <button id="btn-journal-view" onclick="switchTab('journal-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
-          💸 Journal Posting
-        </button>
-        <button id="btn-office-view" onclick="switchTab('office-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
-          🏢 Office Overhead
-        </button>
-      </div>
-
-      <!-- Dashboard Main Analytics Grid -->
-      <main class="flex-1 p-6 md:p-8 overflow-y-auto space-y-8 max-w-7xl w-full mx-auto">
+      <!-- Main Content Container with Mega Dashboard Header -->
+      <main class="flex-1 p-6 md:p-8 overflow-y-auto max-w-7xl w-full mx-auto space-y-6">
         
+        <!-- MEGA DASHBOARD HEADER & TAB LIST (ট্যাবগুলো এখন একদম মেগা ড্যাশবোর্ডের নিচে) -->
+        <div class="space-y-4">
+          <div>
+            <h2 class="text-xl font-extrabold tracking-tight text-white">Mega Dashboard</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Manage your agency accounts, client workflows, and company operational overhead profiles.</p>
+          </div>
+
+          <!-- Tab List -->
+          <div class="bg-[#16171d] border border-[#22242e] p-1.5 rounded-xl flex items-center gap-1.5 overflow-x-auto">
+            <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition bg-indigo-600 text-white shadow-md">
+              📊 Dashboard Overview
+            </button>
+            <button id="btn-client-view" onclick="switchTab('client-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
+              💼 Client Registry
+            </button>
+            <button id="btn-journal-view" onclick="switchTab('journal-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
+              💸 Journal Posting
+            </button>
+            <button id="btn-office-view" onclick="switchTab('office-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
+              🏢 Office Overhead
+            </button>
+          </div>
+        </div>
+
         <!-- DYNAMIC TAB 1: DASHBOARD OVERVIEW -->
-        <div id="tab-dashboard-view" class="tab-content space-y-8">
+        <div id="tab-dashboard-view" class="tab-content space-y-6">
           <!-- Dynamic Month Selector -->
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#16171d] p-4 rounded-xl border border-[#22242e]">
             <div>
@@ -162,7 +170,7 @@
             </div>
           </div>
           
-          <!-- Master Table Document (Stays in dashboard overview for direct search feedback) -->
+          <!-- Master Table Document -->
           <div class="bg-[#16171d] border border-[#22242e] rounded-xl overflow-hidden shadow-sm">
             <div class="px-6 py-4 border-b border-[#22242e] bg-[#191b22] flex justify-between items-center">
               <h3 class="text-xs font-bold uppercase tracking-wider text-white">Master Subsidiary Ledger Accounts</h3>
@@ -290,7 +298,7 @@
           </div>
         </div>
 
-        <!-- Detailed Drawer Sheet UI (Slide view analysis container) -->
+        <!-- Detailed Drawer Sheet UI -->
         <div id="ledger-drawer" class="bg-[#16171d] border border-indigo-500/40 rounded-xl p-6 hidden shadow-2xl transition-all duration-300">
           <div class="flex justify-between items-start border-b border-[#22242e] pb-4">
             <div>
