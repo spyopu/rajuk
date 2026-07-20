@@ -134,28 +134,72 @@ function uiUpdatePipeline() {
   if(openLedgerId) refreshDrawer(openLedgerId);
 }
 
-// Calculate Dashboard Total Amounts
+// Calculate Dashboard Total Amounts (Monthly Filter Added)
 function calculateGlobalMetrics() {
   let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
+  
+  // চলতি মাসের প্রথম দিন এবং শেষ দিন বের করার লজিক
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth(); // 0 = Jan, 1 = Feb, etc.
+  
+  const startOfMonth = new Date(currentYear, currentMonth, 1);
+  const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
+
   farmData.forEach(c => {
-    budget += c.budget;
+    budget += c.budget; // মোট ভলিউম আগের মতোই সব সময়ের থাকবে
     let cIncome = 0;
+    
     c.history.forEach(t => {
-      if(t.type === 'income') cIncome += t.amount;
-      if(t.type === 'expense') prjExpense += t.amount;
+      const tDate = new Date(t.date);
+      
+      // শুধুমাত্র চলতি মাসের ট্রানজেকশনগুলো ফিল্টার করা হচ্ছে
+      const isCurrentMonth = (tDate >= startOfMonth && tDate <= endOfMonth);
+
+      if (t.type === 'income') {
+        cIncome += t.amount; // ক্লায়েন্টের ডিউ বের করার জন্য সর্বমোট ইনকাম লাগবে
+        if (isCurrentMonth) income += t.amount; // টপ কার্ডে শুধু চলতি মাসের ইনকাম যাবে
+      }
+      if (t.type === 'expense' && isCurrentMonth) {
+        prjExpense += t.amount; // টপ কার্ডে শুধু চলতি মাসের প্রজেক্ট খরচ যাবে
+      }
     });
-    income += cIncome;
-    due += (c.budget - cIncome);
+    due += (c.budget - cIncome); // আউটস্ট্যান্ডিং বা ডিউ হিসাব আগের মতোই মোট থাকবে
   });
-  officeExpenses.forEach(oe => totalOfficeExpense += oe.amount);
+
+  // অফিস ওভারহেড থেকে শুধু চলতি মাসের খরচ নেওয়া হচ্ছে
+  officeExpenses.forEach(oe => {
+    const oeDate = new Date(oe.date);
+    if (oeDate >= startOfMonth && oeDate <= endOfMonth) {
+      totalOfficeExpense += oe.amount;
+    }
+  });
+
   let grandTotalExpense = prjExpense + totalOfficeExpense;
   let netIncome = income - grandTotalExpense;
 
+  // UI আপডেট এবং লেবেল পরিবর্তন (মাসিক বোঝানোর জন্য)
   if (document.getElementById('global-budget')) document.getElementById('global-budget').innerText = '৳' + budget.toLocaleString('en-IN');
-  if (document.getElementById('global-income')) document.getElementById('global-income').innerText = '৳' + income.toLocaleString('en-IN');
-  if (document.getElementById('global-expense')) document.getElementById('global-expense').innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
+  
+  const incomeCard = document.getElementById('global-income');
+  if (incomeCard) {
+    incomeCard.innerText = '৳' + income.toLocaleString('en-IN');
+    incomeCard.previousElementSibling.innerText = "Gross Income (This Month)";
+  }
+  
+  const expenseCard = document.getElementById('global-expense');
+  if (expenseCard) {
+    expenseCard.innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
+    expenseCard.previousElementSibling.innerText = "Total Cost (This Month)";
+  }
+  
   if (document.getElementById('global-due')) document.getElementById('global-due').innerText = '৳' + due.toLocaleString('en-IN');
-  if (document.getElementById('global-net')) document.getElementById('global-net').innerText = '৳' + netIncome.toLocaleString('en-IN');
+  
+  const netCard = document.getElementById('global-net');
+  if (netCard) {
+    netCard.innerText = '৳' + netIncome.toLocaleString('en-IN');
+    netCard.previousElementSibling.innerText = "Net Balance (This Month)";
+  }
 }
 
 // Submit Data Handlers
@@ -197,6 +241,7 @@ if (txForm) {
       databasePathRef.child('clients').child(id).update({ history: updatedHistory });
       document.getElementById('tx-amount').value = '';
       document.getElementById('tx-details').value = '';
+      uiUpdatePipeline();
     }
   });
 }
@@ -214,6 +259,7 @@ if (officeExpenseForm) {
     databasePathRef.child('office_expenses').push(newExpense);
     document.getElementById('oe-amount').value = '';
     document.getElementById('oe-details').value = '';
+    uiUpdatePipeline();
   });
 }
 
@@ -223,7 +269,7 @@ function renderDropdown() {
     farmData.map(c => `<option value="${c.id}">${c.project} (${c.name})</option>`).join('');
 }
 
-// Table UI Builders
+// Master Table UI Builders (Default Hidden & Search Powered)
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -233,8 +279,13 @@ function renderMasterTable() {
     return;
   }
 
+  // রিকোয়ারমেন্ট ১: সার্চ বক্স ফাকা থাকলে টেবিল একদম খালি থাকবে এবং মেসেজ দেখাবে
+  if (query === '') {
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">🔍 Type client name, phone or project key on sidebar search ledger to pull accounts data.</td></tr>`;
+    return;
+  }
+
   const filteredData = farmData.filter(c => {
-    if (query === '') return true; 
     return c.name.toLowerCase().includes(query) || 
            c.phone.includes(query) || 
            c.project.toLowerCase().includes(query);
