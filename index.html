@@ -8,10 +8,10 @@
   <!-- Stable Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Inter & Geist Mono Font for High-End Look -->
+  <!-- Hind Siliguri Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- == FIREBASE SDK v8 LIBRARIES == -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -19,8 +19,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .font-mono { font-family: 'Geist Mono', monospace; }
+    body { font-family: 'Hind Siliguri', sans-serif; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #111216; }
     ::-webkit-scrollbar-thumb { background: #2f313a; border-radius: 99px; }
@@ -48,30 +47,30 @@
         <div class="space-y-5">
           <!-- Search Engine Input -->
           <div>
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 px-1">Search Ledger</label>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 px-1">ক্লায়েন্ট খুঁজুন</label>
             <div class="relative">
-              <input type="text" id="search-input" placeholder="Type name, phone..." class="w-full border border-[#2d303f] rounded-lg px-3 py-2 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all">
+              <input type="text" id="search-input" placeholder="নাম বা মোবাইল লিখুন..." class="w-full border border-[#2d303f] rounded-lg px-3 py-2 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all">
             </div>
           </div>
 
-          <!-- Vertical Tabs Menu (সাইডবারের বামপাশে নিয়ে আসা হয়েছে) -->
+          <!-- Vertical Tabs Menu (সাইডবারের বামপাশে) -->
           <div class="space-y-1.5">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Mega Dashboard Menu</label>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">মেগা ড্যাশবোর্ড মেনু</label>
             
             <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20">
-              <span>📊</span> Dashboard Overview
+              <span>📊</span> হিসাবের ওভারভিউ
             </button>
             
             <button id="btn-client-view" onclick="switchTab('client-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent">
-              <span>💼</span> Client Registry
+              <span>💼</span> নতুন ক্লায়েন্ট এন্ট্রি
             </button>
             
             <button id="btn-journal-view" onclick="switchTab('journal-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent">
-              <span>💸</span> Journal Posting
+              <span>💸</span> জমা/খরচ পোস্টিং
             </button>
             
             <button id="btn-office-view" onclick="switchTab('office-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent">
-              <span>🏢</span> Office Overhead
+              <span>🏢</span> অফিসের অন্যান্য খরচ
             </button>
           </div>
         </div>
@@ -83,16 +82,16 @@
       
       <!-- Top Navigation Bar -->
       <header class="h-16 bg-[#16171d] border-b border-[#22242e] flex items-center justify-between px-6 md:px-8 shrink-0 shadow-sm">
-        <div class="text-[11px] font-medium text-slate-400 flex items-center gap-2">
+        <div class="text-[12px] font-medium text-slate-400 flex items-center gap-2">
           <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
-          <span id="status-text" class="text-slate-300 font-mono">Guest Mode</span>
+          <span id="status-text" class="text-slate-300">Guest Mode</span>
         </div>
         
         <!-- Identity & Profile Section -->
         <div class="flex items-center gap-4">
           <div id="sidebar-auth-section">
             <button id="google-login-btn" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold rounded-lg px-4 py-2 text-xs transition shadow-lg shadow-indigo-600/10 flex items-center justify-center gap-2">
-              Connect Identity
+              গুরল দিয়ে লগইন করুন
             </button>
           </div>
 
@@ -100,14 +99,14 @@
             <div id="profile-trigger" class="flex items-center gap-2.5 cursor-pointer p-1.5 px-3 rounded-lg hover:bg-[#1f212a] border border-transparent hover:border-[#2d303f] transition select-none hidden">
               <div class="text-right hidden sm:block">
                 <p id="user-display-name" class="text-xs font-bold text-white">User Account</p>
-                <p id="user-display-email" class="text-[10px] text-indigo-400 font-mono">...</p>
+                <p id="user-display-email" class="text-[11px] text-indigo-400">...</p>
               </div>
               <img id="user-avatar" class="h-8 w-8 rounded-lg border border-[#2d303f]" src="" alt="avatar">
             </div>
 
             <div id="profile-dropdown" class="absolute right-0 mt-2 w-44 bg-[#191b22] border border-[#2d303f] rounded-xl shadow-xl p-1 hidden z-50">
               <button id="logout-btn" class="w-full text-left flex items-center px-2 py-2 text-xs text-rose-400 hover:bg-rose-950/20 rounded-lg font-semibold transition">
-                Disconnect Session
+                লগআউট করুন
               </button>
             </div>
           </div>
@@ -120,7 +119,7 @@
         <!-- MEGA DASHBOARD HEADER -->
         <div>
           <h2 class="text-xl font-extrabold tracking-tight text-white">Mega Dashboard</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Manage your agency accounts, client workflows, and company operational overhead profiles.</p>
+          <p class="text-xs text-slate-400 mt-0.5">আপনার এজেন্সি অ্যাকাউন্ট, ক্লায়েন্ট কাজের হিসাব এবং অফিসের খরচের মূল খাতা।</p>
         </div>
 
         <!-- DYNAMIC TAB 1: DASHBOARD OVERVIEW -->
@@ -128,60 +127,60 @@
           <!-- Dynamic Month Selector -->
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#16171d] p-4 rounded-xl border border-[#22242e]">
             <div>
-              <h2 class="text-sm font-bold text-white">Statement Period Control</h2>
-              <p class="text-[11px] text-slate-400">Select custom period to filter your income and cost matrix metrics.</p>
+              <h2 class="text-sm font-bold text-white">মাস বা সময় সিলেক্ট করুন</h2>
+              <p class="text-[12px] text-slate-400">নির্দিষ্ট মাসের মোট আয় ও ব্যয়ের হিসাব দেখতে ডানপাশ থেকে মাস সিলেক্ট করুন।</p>
             </div>
             <div class="flex items-center gap-2">
-              <label for="month-filter" class="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono">Target Month:</label>
-              <input type="month" id="month-filter" class="bg-[#1b1d26] border border-[#2d303f] text-indigo-400 font-bold font-mono text-xs rounded-lg px-3 py-2 outline-none focus:border-indigo-500 transition">
+              <label for="month-filter" class="text-[12px] font-bold uppercase tracking-wider text-slate-400">টার্গেট মাস:</label>
+              <input type="month" id="month-filter" class="bg-[#1b1d26] border border-[#2d303f] text-indigo-400 font-bold text-xs rounded-lg px-3 py-2 outline-none focus:border-indigo-500 transition">
             </div>
           </div>
 
           <!-- Metrics Matrix Counters -->
           <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
             <div class="bg-[#16171d] border border-[#252834] p-4 rounded-xl shadow-sm">
-              <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Volume</p>
-              <h3 id="global-budget" class="text-lg font-bold tracking-tight text-white mt-1.5 font-mono">৳0</h3>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">মোট চুক্তির বাজেট</p>
+              <h3 id="global-budget" class="text-lg font-bold tracking-tight text-white mt-1.5">৳0</h3>
             </div>
             <div class="bg-[#16171d] border border-emerald-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden">
               <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
-              <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Gross Income</p>
-              <h3 id="global-income" class="text-lg font-extrabold tracking-tight text-emerald-400 mt-1.5 font-mono">৳0</h3>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-400">মোট ক্যাশ ইন (জমা)</p>
+              <h3 id="global-income" class="text-lg font-extrabold tracking-tight text-emerald-400 mt-1.5">৳0</h3>
             </div>
             <div class="bg-[#16171d] border border-rose-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden">
               <div class="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
-              <p class="text-[10px] font-bold uppercase tracking-wider text-rose-400">Total Cost</p>
-              <h3 id="global-expense" class="text-lg font-extrabold tracking-tight text-rose-400 mt-1.5 font-mono">৳0</h3>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-rose-400">মোট খরচ (ব্যয়)</p>
+              <h3 id="global-expense" class="text-lg font-extrabold tracking-tight text-rose-400 mt-1.5">৳0</h3>
             </div>
             <div class="bg-[#16171d] border border-amber-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden">
               <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
-              <p class="text-[10px] font-bold uppercase tracking-wider text-amber-400">Outstanding Accounts</p>
-              <h3 id="global-due" class="text-lg font-extrabold tracking-tight text-amber-400 mt-1.5 font-mono">৳0</h3>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-amber-400">মোট বাকি/বকেয়া</p>
+              <h3 id="global-due" class="text-lg font-extrabold tracking-tight text-amber-400 mt-1.5">৳0</h3>
             </div>
             <div class="bg-[#1e202a] border border-indigo-500/30 p-4 rounded-xl col-span-2 lg:col-span-1 shadow-md relative overflow-hidden">
               <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
-              <p class="text-[10px] font-bold uppercase tracking-wider text-indigo-300">Net Balance</p>
-              <h3 id="global-net" class="text-xl font-black tracking-tight text-white mt-1.5 font-mono">৳0</h3>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-indigo-300">নেট ক্যাশ ব্যালেন্স</p>
+              <h3 id="global-net" class="text-xl font-black tracking-tight text-white mt-1.5">৳0</h3>
             </div>
           </div>
           
           <!-- Master Table Document -->
           <div class="bg-[#16171d] border border-[#22242e] rounded-xl overflow-hidden shadow-sm">
             <div class="px-6 py-4 border-b border-[#22242e] bg-[#191b22] flex justify-between items-center">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-white">Master Subsidiary Ledger Accounts</h3>
-              <span class="text-[10px] font-mono text-slate-500">Filtered by Sidebar Search</span>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-white">মূল হিসাবের খাতা (সব ক্লায়েন্ট লিস্ট)</h3>
+              <span class="text-[11px] text-slate-500">সার্চ ফিল্টার সচল</span>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr class="bg-[#1a1c24] text-slate-400 font-semibold uppercase tracking-wider border-b border-[#22242e]">
-                    <th class="px-6 py-4">Accounts Workspace</th>
-                    <th class="px-4 py-4">Contact Link</th>
-                    <th class="px-4 py-4 text-right">Contract Allocation</th>
-                    <th class="px-4 py-4 text-right">Settled Revenue</th>
-                    <th class="px-4 py-4 text-right">Absorbed Costs</th>
-                    <th class="px-4 py-4 text-right">Balance Receivables</th>
-                    <th class="px-6 py-4 text-center">Action</th>
+                    <th class="px-6 py-4">ক্লায়েন্ট ও প্রজেক্টের নাম</th>
+                    <th class="px-4 py-4">মোবাইল</th>
+                    <th class="px-4 py-4 text-right">চুক্তির বাজেট</th>
+                    <th class="px-4 py-4 text-right">মোট জমা (আদায়)</th>
+                    <th class="px-4 py-4 text-right">মোট খরচ</th>
+                    <th class="px-4 py-4 text-right">বাকি পাওনা</th>
+                    <th class="px-6 py-4 text-center">অ্যাকশন</th>
                   </tr>
                 </thead>
                 <tbody id="clients-table-body" class="divide-y divide-[#22242e] text-slate-300 font-medium"></tbody>
@@ -194,17 +193,17 @@
         <div id="tab-client-view" class="tab-content space-y-6 hidden">
           <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-6 shadow-sm max-w-xl">
             <div class="mb-4">
-              <h3 class="text-sm font-bold text-white flex items-center gap-2">💼 Open New Client Account File</h3>
-              <p class="text-xs text-slate-400 mt-0.5">Register project scope guidelines and overall client contract parameters.</p>
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">💼 নতুন ক্লায়েন্ট ফাইল তৈরি করুন</h3>
+              <p class="text-xs text-slate-400 mt-0.5">নতুন প্রজেক্ট বা কাজের চুক্তি যুক্ত করতে নিচের ফর্মটি পূরণ করুন।</p>
             </div>
             <form id="client-form" class="space-y-4">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input type="text" id="client-name" placeholder="Client Name" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
-                <input type="text" id="client-phone" placeholder="Contact Mobile" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
+                <input type="text" id="client-name" placeholder="ক্লায়েন্টের নাম" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
+                <input type="text" id="client-phone" placeholder="মোবাইল নম্বর" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
               </div>
-              <input type="text" id="project-title" placeholder="Project / Scope Title" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
-              <input type="number" id="project-budget" placeholder="Contract Budget (৳)" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
-              <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg py-2.5 text-xs transition shadow-lg shadow-indigo-600/10">Create New Project File</button>
+              <input type="text" id="project-title" placeholder="প্রজেক্ট / কাজের নাম" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
+              <input type="number" id="project-budget" placeholder="মোট চুক্তির টাকা (৳)" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
+              <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg py-2.5 text-xs transition shadow-lg shadow-indigo-600/10">নতুন প্রজেক্ট ফাইল সেভ করুন</button>
             </form>
           </div>
         </div>
@@ -213,37 +212,37 @@
         <div id="tab-journal-view" class="tab-content space-y-6 hidden">
           <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-6 shadow-sm max-w-3xl">
             <div class="mb-4">
-              <h3 class="text-sm font-bold text-white flex items-center gap-2">💸 Project Journal Voucher Entry</h3>
-              <p class="text-xs text-slate-400 mt-0.5">Log debit milestone updates or deduct operational expenses incurred on open project profiles.</p>
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">💸 প্রজেক্টের জমা/খরচ হিসাব এন্ট্রি</h3>
+              <p class="text-xs text-slate-400 mt-0.5">রানিং কোনো প্রজেক্টের কিস্তি বাবদ টাকা জমা হলে কিংবা ওই প্রজেক্টের জন্য কোনো খরচ হলে তা এখানে এন্ট্রি করুন।</p>
             </div>
             <form id="tx-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div class="sm:col-span-2">
-                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Target Project Profile</label>
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">প্রজেক্ট প্রোফাইল সিলেক্ট করুন</label>
                 <select id="tx-client-select" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white outline-none focus:border-indigo-500"></select>
               </div>
               <div>
-                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Entry Class</label>
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">হিসাবের ধরন</label>
                 <select id="tx-type" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white outline-none focus:border-indigo-500">
-                  <option value="income">📥 Debit (Installment Receipt)</option>
-                  <option value="expense">📤 Credit (Project Scope Cost)</option>
+                  <option value="income">📥 জমা (টাকা আদায়/রিসিভ)</option>
+                  <option value="expense">📤 খরচ (প্রজেক্টের নিজস্ব ব্যয়)</option>
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Transaction Value (৳)</label>
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">টাকার পরিমাণ (৳)</label>
                 <input type="number" id="tx-amount" placeholder="৳" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
               </div>
               <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div class="sm:col-span-1">
-                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Date</label>
+                  <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">তারিখ</label>
                   <input type="date" id="tx-date" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-slate-300 outline-none focus:border-indigo-500">
                 </div>
                 <div class="sm:col-span-2">
-                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Narration / Particulars</label>
-                  <input type="text" id="tx-details" placeholder="Narration notes..." required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
+                  <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">বিবরণ / নোট</label>
+                  <input type="text" id="tx-details" placeholder="কিসের টাকা বা কেন খরচ হলো..." required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
                 </div>
               </div>
               <div class="sm:col-span-2 text-right pt-2">
-                <button type="submit" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-lg px-6 py-2.5 text-xs transition shadow-lg shadow-emerald-600/10">Post Transaction Entry</button>
+                <button type="submit" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-lg px-6 py-2.5 text-xs transition shadow-lg shadow-emerald-600/10">হিসাবটি খাতায় তুলুন (পোস্ট করুন)</button>
               </div>
             </form>
           </div>
@@ -254,35 +253,35 @@
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-5 shadow-sm">
               <div class="mb-4">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">🏢 Record Office Overhead</h3>
-                <p class="text-[11px] text-slate-400 mt-0.5">Log standard structural operational expenses.</p>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">🏢 অফিসের সাধারণ খরচ এন্ট্রি</h3>
+                <p class="text-[12px] text-slate-400 mt-0.5">অফিসের নিয়মিত বা আনুষঙ্গিক খরচগুলো এখানে লিখে রাখুন।</p>
               </div>
               <form id="office-expense-form" class="space-y-3">
                 <select id="oe-category" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white focus:border-rose-500 outline-none">
-                  <option value="Staff Salary">Staff Salary</option>
-                  <option value="Office Rent">Office Rent</option>
-                  <option value="Utility Bill">Utility Bills</option>
-                  <option value="Conveyance">Conveyance / Logistics</option>
-                  <option value="Others">Miscellaneous Expense</option>
+                  <option value="Staff Salary">স্টাফ বেতন (Salary)</option>
+                  <option value="Office Rent">অফিস ভাড়া (Rent)</option>
+                  <option value="Utility Bill">ইউটিলিটি/কারেন্ট বিল</option>
+                  <option value="Conveyance">যাতায়াত / লজিস্টিকস</option>
+                  <option value="Others">অন্যান্য বিবিধ খরচ</option>
                 </select>
-                <input type="number" id="oe-amount" placeholder="Overhead Amount (৳)" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none">
-                <input type="text" id="oe-details" placeholder="Overhead Remarks/Details" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none">
+                <input type="number" id="oe-amount" placeholder="খরচের পরিমাণ (৳)" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none">
+                <input type="text" id="oe-details" placeholder="খরচের সুনির্দিষ্ট বিবরণ" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none">
                 <input type="date" id="oe-date" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-slate-300 outline-none">
-                <button type="submit" class="w-full bg-[#241a21] hover:bg-rose-950 border border-rose-900/40 text-rose-400 hover:text-white font-semibold rounded-lg py-2.5 text-xs transition">Log General Overhead</button>
+                <button type="submit" class="w-full bg-[#241a21] hover:bg-rose-950 border border-rose-900/40 text-rose-400 hover:text-white font-semibold rounded-lg py-2.5 text-xs transition">খরচটি সেভ করুন</button>
               </form>
             </div>
 
             <div class="lg:col-span-2 bg-[#16171d] border border-[#22242e] rounded-xl p-5 flex flex-col justify-between shadow-sm">
               <div>
-                <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3 px-0.5">Company Overhead Ledger Entries (Selected Month)</h4>
+                <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3 px-0.5">অফিসের খরচের খাতা (চলতি মাস)</h4>
                 <div class="max-h-96 overflow-y-auto border border-[#22242e] rounded-lg bg-[#121319]">
                   <table class="w-full text-left text-xs">
                     <thead>
                       <tr class="bg-[#191a22] border-b border-[#22242e] text-slate-400 font-semibold">
-                        <th class="p-3">Particulars & Category</th>
-                        <th class="p-3">Date</th>
-                        <th class="p-3 text-right">Amount</th>
-                        <th class="p-3 text-center">Action</th>
+                        <th class="p-3">খরচের খাত ও বিবরণ</th>
+                        <th class="p-3">তারিখ</th>
+                        <th class="p-3 text-right">টাকা</th>
+                        <th class="p-3 text-center">অ্যাকশন</th>
                       </tr>
                     </thead>
                     <tbody id="office-expense-rows" class="divide-y divide-[#22242e] text-slate-300"></tbody>
@@ -297,20 +296,20 @@
         <div id="ledger-drawer" class="bg-[#16171d] border border-indigo-500/40 rounded-xl p-6 hidden shadow-2xl transition-all duration-300">
           <div class="flex justify-between items-start border-b border-[#22242e] pb-4">
             <div>
-              <span class="text-[9px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-indigo-950/60 text-indigo-400 border border-indigo-900/50">Subsidiary Analysis Statement</span>
-              <h2 id="drawer-title" class="text-sm font-bold text-white mt-1.5">Statement Analysis</h2>
+              <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-indigo-950/60 text-indigo-400 border border-indigo-900/50">স্টেটমেন্ট রিপোর্ট</span>
+              <h2 id="drawer-title" class="text-sm font-bold text-white mt-1.5">লেনদেনের বিস্তারিত বিবরণ</h2>
               <p id="drawer-sub" class="text-xs text-slate-400 mt-0.5"></p>
             </div>
-            <button onclick="closeDrawer()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-[#1f212a] border border-[#2d303f] rounded-lg font-mono transition">✕ Close</button>
+            <button onclick="closeDrawer()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-[#1f212a] border border-[#2d303f] rounded-lg transition">✕ বন্ধ করুন</button>
           </div>
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="text-slate-400 font-semibold uppercase tracking-wider border-b border-[#22242e]">
-                  <th class="py-3 px-3">Valuation Date</th>
-                  <th class="py-3 px-3">Narrative Descriptions</th>
-                  <th class="py-3 px-3">Voucher Class</th>
-                  <th class="py-3 px-3 text-right">Financial Impact</th>
+                  <th class="py-3 px-3">তারিখ</th>
+                  <th class="py-3 px-3">বিবরণ</th>
+                  <th class="py-3 px-3">ধরণ</th>
+                  <th class="py-3 px-3 text-right">টাকার পরিমাণ</th>
                 </tr>
               </thead>
               <tbody id="drawer-table-body" class="divide-y divide-[#22242e] text-slate-300"></tbody>
