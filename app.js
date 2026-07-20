@@ -46,9 +46,35 @@ if (monthFilter) {
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
   monthFilter.value = `${year}-${month}`;
-  
-  // Realtime recalculation when user switches month
   monthFilter.addEventListener('change', uiUpdatePipeline);
+}
+
+// Bind search bar trigger dynamically
+if (searchInput) {
+  searchInput.addEventListener('input', () => {
+    // If user searches something, auto force switch back to dashboard tab to view list responses
+    switchTab('dashboard-view');
+    renderMasterTable();
+  });
+}
+
+// PREMIUM TAB SYSTEM CONTROLLER
+window.switchTab = function(tabId) {
+  // Hide all containers
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  // Unhide target container
+  document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+  // Clear focus and styling across button rows
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.className = "tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]";
+  });
+
+  // Assign distinct hot style profile to chosen control handle button
+  const activeBtn = document.getElementById(`btn-${tabId}`);
+  if(activeBtn) {
+    activeBtn.className = "tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition bg-indigo-600 text-white shadow-md shadow-indigo-600/10";
+  }
 }
 
 // Initialize Blank Dashboard
@@ -150,7 +176,6 @@ function uiUpdatePipeline() {
 function calculateGlobalMetrics() {
   let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
   
-  // Extract Target Month & Year from input filter
   let targetYear, targetMonth;
   if (monthFilter && monthFilter.value) {
     const parts = monthFilter.value.split('-'); 
@@ -162,13 +187,12 @@ function calculateGlobalMetrics() {
     targetMonth = now.getMonth();
   }
   
-  // Set accurate timestamp limits for selected month scope
   const startOfMonth = new Date(targetYear, targetMonth, 1);
   const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
   const monthLabel = startOfMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   farmData.forEach(c => {
-    budget += c.budget; // Global volume tracks total contract bindings
+    budget += c.budget; 
     let cIncome = 0;
     
     c.history.forEach(t => {
@@ -183,10 +207,9 @@ function calculateGlobalMetrics() {
         prjExpense += t.amount; 
       }
     });
-    due += (c.budget - cIncome); // Receivables check remaining balances over entire lifetime
+    due += (c.budget - cIncome); 
   });
 
-  // Collect and aggregate general company operational costs for selected month
   officeExpenses.forEach(oe => {
     const oeDate = new Date(oe.date);
     if (oeDate >= startOfMonth && oeDate <= endOfMonth) {
@@ -197,7 +220,6 @@ function calculateGlobalMetrics() {
   let grandTotalExpense = prjExpense + totalOfficeExpense;
   let netIncome = income - grandTotalExpense;
 
-  // Map updates out seamlessly into active DOM nodes
   if (document.getElementById('global-budget')) document.getElementById('global-budget').innerText = '৳' + budget.toLocaleString('en-IN');
   
   const incomeCard = document.getElementById('global-income');
@@ -235,6 +257,8 @@ if (clientForm) {
     };
     databasePathRef.child('clients').push(newClient);
     clientForm.reset();
+    alert('Project file deployed to cloud database successfully!');
+    switchTab('dashboard-view'); // Redirect automatically to check analytics
   });
 }
 
@@ -261,6 +285,8 @@ if (txForm) {
       document.getElementById('tx-amount').value = '';
       document.getElementById('tx-details').value = '';
       uiUpdatePipeline();
+      alert('Voucher posted successfully!');
+      switchTab('dashboard-view');
     }
   });
 }
@@ -279,6 +305,7 @@ if (officeExpenseForm) {
     document.getElementById('oe-amount').value = '';
     document.getElementById('oe-details').value = '';
     uiUpdatePipeline();
+    alert('General operational overhead logged!');
   });
 }
 
@@ -298,7 +325,6 @@ function renderMasterTable() {
     return;
   }
 
-  // রিকোয়ারমেন্ট ১: সার্চ ফাকা থাকলে টেবিল একদম খালি থাকবে এবং ডিরেকশন মেসেজ দেখাবে
   if (query === '') {
     tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">🔍 Type client name, phone or project key on sidebar search ledger to pull accounts data.</td></tr>`;
     return;
@@ -347,7 +373,6 @@ function renderMasterTable() {
 function renderOfficeExpenses() {
   if (!officeExpenseRows) return;
   
-  // Filter and show office overhead records belonging strictly to target chosen period
   let targetYear, targetMonth;
   if (monthFilter && monthFilter.value) {
     const parts = monthFilter.value.split('-');
@@ -367,7 +392,7 @@ function renderOfficeExpenses() {
   });
 
   if (localFilteredExpenses.length === 0) {
-    officeExpenseRows.innerHTML = `<tr><td class="p-3 text-center text-slate-500">${auth.currentUser ? 'No expenses logged for this month.' : 'Please login to track expenses.'}</td></tr>`;
+    officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-500">${auth.currentUser ? 'No expenses logged for this month.' : 'Please login to track expenses.'}</td></tr>`;
     return;
   }
 
@@ -376,10 +401,10 @@ function renderOfficeExpenses() {
     const tr = document.createElement('tr');
     tr.className = "border-b border-slate-800 last:border-none";
     tr.innerHTML = `
-      <td class="p-2 pl-3 font-semibold text-slate-200">${oe.details} <span class="text-[9px] bg-red-950 text-red-400 px-1.5 py-0.5 rounded border border-red-900/50 font-bold">${oe.category}</span></td>
-      <td class="p-2 text-slate-500 font-mono text-[10px]">${oe.date}</td>
-      <td class="p-2 text-right font-bold text-red-400">৳${oe.amount.toLocaleString('en-IN')}</td>
-      <td class="p-2 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-600 hover:text-red-500 font-bold transition">✕</button></td>
+      <td class="p-3 pl-3 font-semibold text-slate-200">${oe.details} <span class="text-[9px] bg-red-950 text-red-400 px-1.5 py-0.5 rounded border border-red-900/50 font-bold">${oe.category}</span></td>
+      <td class="p-3 text-slate-500 font-mono text-[10px]">${oe.date}</td>
+      <td class="p-3 text-right font-bold text-red-400">৳${oe.amount.toLocaleString('en-IN')}</td>
+      <td class="p-3 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-600 hover:text-red-500 font-bold transition">✕</button></td>
     `;
     officeExpenseRows.appendChild(tr);
   });
