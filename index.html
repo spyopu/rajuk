@@ -110,6 +110,18 @@
       <!-- Dashboard Main Analytics Grid -->
       <main class="flex-1 p-6 md:p-8 overflow-y-auto space-y-8 max-w-7xl w-full mx-auto">
         
+        <!-- Dynamic Month Selector -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#16171d] p-4 rounded-xl border border-[#22242e]">
+          <div>
+            <h2 class="text-sm font-bold text-white">Statement Period Control</h2>
+            <p class="text-[11px] text-slate-400">Select custom period to filter your income and cost matrix metrics.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <label for="month-filter" class="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono">Target Month:</label>
+            <input type="month" id="month-filter" class="bg-[#1b1d26] border border-[#2d303f] text-indigo-400 font-bold font-mono text-xs rounded-lg px-3 py-2 outline-none focus:border-indigo-500 transition">
+          </div>
+        </div>
+
         <!-- Metrics Matrix Counters -->
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <div class="bg-[#16171d] border border-[#252834] p-4 rounded-xl shadow-sm">
@@ -216,7 +228,7 @@
 
             <!-- Recent General Overhead Records Module List -->
             <div class="mt-6 pt-4 border-t border-[#22242e]">
-              <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-0.5">Recent General Overhead Records</h4>
+              <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-0.5">Recent General Overhead Records (Selected Month)</h4>
               <div class="max-h-24 overflow-y-auto border border-[#22242e] rounded-lg bg-[#121319]">
                 <table class="w-full text-left text-[11px]">
                   <tbody id="office-expense-rows" class="divide-y divide-[#22242e] text-slate-300"></tbody>
