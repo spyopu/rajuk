@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- == FIREBASE SDK v8 LIBRARIES (REQUIRED FOR LOGIN) == -->
+  <!-- == FIREBASE SDK v8 LIBRARIES == -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -32,9 +32,9 @@
   <!-- Main Layout Split -->
   <div id="erp-layout" class="min-h-screen flex flex-col md:flex-row">
     
-    <!-- Sidebar (Sophisticated Slate Dark) -->
+    <!-- Sidebar -->
     <aside class="w-full md:w-64 bg-[#16171d] flex flex-col border-r border-[#22242e] shrink-0 shadow-lg">
-      <!-- Brand Header with Indigo Touch -->
+      <!-- Brand Header -->
       <div class="h-16 px-6 border-b border-[#22242e] flex items-center gap-3 bg-[#191b22]">
         <div class="h-7 w-7 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-xs shadow-md shadow-indigo-500/20">R</div>
         <div>
@@ -50,16 +50,16 @@
           <div>
             <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 px-1">Search Ledger</label>
             <div class="relative">
-              <input type="text" id="search-input" oninput="renderMasterTable()" placeholder="Type name, phone..." class="w-full border border-[#2d303f] rounded-lg px-3 py-2 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all">
+              <input type="text" id="search-input" placeholder="Type name, phone..." class="w-full border border-[#2d303f] rounded-lg px-3 py-2 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all">
             </div>
           </div>
 
-          <!-- Navigation Link -->
+          <!-- Navigation Links (Acts as Shortcut to Tab 1) -->
           <div class="space-y-1">
             <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 px-1">Navigation</label>
-            <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-indigo-600/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20 transition">
+            <button onclick="switchTab('dashboard-view')" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-indigo-600/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20 transition">
               <span>📊</span> Mega Dashboard
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -77,16 +77,12 @@
         
         <!-- Identity & Profile Section -->
         <div class="flex items-center gap-4">
-          
-          <!-- Gmail Login Interface Panel -->
           <div id="sidebar-auth-section">
             <button id="google-login-btn" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold rounded-lg px-4 py-2 text-xs transition shadow-lg shadow-indigo-600/10 flex items-center justify-center gap-2">
-              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24"><path fill="currentColor" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114A5.99 5.99 0 0 1 8 12.526a5.99 5.99 0 0 1 5.991-5.99 5.87 5.87 0 0 1 4.092 1.643l3.078-3.078A9.94 9.94 0 0 0 13.99 2.5 9.99 9.99 0 0 0 4 12.526a9.99 9.99 0 0 0 9.99 10.027c5.694 0 9.563-3.998 9.563-9.728 0-.613-.053-1.22-.16-1.815l-11.143-.225Z"/></svg>
               Connect Identity
             </button>
           </div>
 
-          <!-- Profile Dropdown Component -->
           <div class="relative">
             <div id="profile-trigger" class="flex items-center gap-2.5 cursor-pointer p-1.5 px-3 rounded-lg hover:bg-[#1f212a] border border-transparent hover:border-[#2d303f] transition select-none hidden">
               <div class="text-right hidden sm:block">
@@ -96,82 +92,168 @@
               <img id="user-avatar" class="h-8 w-8 rounded-lg border border-[#2d303f]" src="" alt="avatar">
             </div>
 
-            <!-- Dropdown Box -->
             <div id="profile-dropdown" class="absolute right-0 mt-2 w-44 bg-[#191b22] border border-[#2d303f] rounded-xl shadow-xl p-1 hidden z-50">
               <button id="logout-btn" class="w-full text-left flex items-center px-2 py-2 text-xs text-rose-400 hover:bg-rose-950/20 rounded-lg font-semibold transition">
                 Disconnect Session
               </button>
             </div>
           </div>
-          
         </div>
       </header>
+
+      <!-- PREMIUM NAVIGATION TAB LIST -->
+      <div class="bg-[#14151b] border-b border-[#22242e] px-6 md:px-8 py-2 flex items-center gap-2 overflow-x-auto">
+        <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition bg-indigo-600 text-white shadow-md">
+          📊 Dashboard Overview
+        </button>
+        <button id="btn-client-view" onclick="switchTab('client-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
+          💼 Client Registry
+        </button>
+        <button id="btn-journal-view" onclick="switchTab('journal-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
+          💸 Journal Posting
+        </button>
+        <button id="btn-office-view" onclick="switchTab('office-view')" class="tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]">
+          🏢 Office Overhead
+        </button>
+      </div>
 
       <!-- Dashboard Main Analytics Grid -->
       <main class="flex-1 p-6 md:p-8 overflow-y-auto space-y-8 max-w-7xl w-full mx-auto">
         
-        <!-- Dynamic Month Selector -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#16171d] p-4 rounded-xl border border-[#22242e]">
-          <div>
-            <h2 class="text-sm font-bold text-white">Statement Period Control</h2>
-            <p class="text-[11px] text-slate-400">Select custom period to filter your income and cost matrix metrics.</p>
+        <!-- DYNAMIC TAB 1: DASHBOARD OVERVIEW -->
+        <div id="tab-dashboard-view" class="tab-content space-y-8">
+          <!-- Dynamic Month Selector -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#16171d] p-4 rounded-xl border border-[#22242e]">
+            <div>
+              <h2 class="text-sm font-bold text-white">Statement Period Control</h2>
+              <p class="text-[11px] text-slate-400">Select custom period to filter your income and cost matrix metrics.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <label for="month-filter" class="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono">Target Month:</label>
+              <input type="month" id="month-filter" class="bg-[#1b1d26] border border-[#2d303f] text-indigo-400 font-bold font-mono text-xs rounded-lg px-3 py-2 outline-none focus:border-indigo-500 transition">
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <label for="month-filter" class="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono">Target Month:</label>
-            <input type="month" id="month-filter" class="bg-[#1b1d26] border border-[#2d303f] text-indigo-400 font-bold font-mono text-xs rounded-lg px-3 py-2 outline-none focus:border-indigo-500 transition">
+
+          <!-- Metrics Matrix Counters -->
+          <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="bg-[#16171d] border border-[#252834] p-4 rounded-xl shadow-sm">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Volume</p>
+              <h3 id="global-budget" class="text-lg font-bold tracking-tight text-white mt-1.5 font-mono">৳0</h3>
+            </div>
+            <div class="bg-[#16171d] border border-emerald-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+              <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Gross Income</p>
+              <h3 id="global-income" class="text-lg font-extrabold tracking-tight text-emerald-400 mt-1.5 font-mono">৳0</h3>
+            </div>
+            <div class="bg-[#16171d] border border-rose-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
+              <p class="text-[10px] font-bold uppercase tracking-wider text-rose-400">Total Cost</p>
+              <h3 id="global-expense" class="text-lg font-extrabold tracking-tight text-rose-400 mt-1.5 font-mono">৳0</h3>
+            </div>
+            <div class="bg-[#16171d] border border-amber-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+              <p class="text-[10px] font-bold uppercase tracking-wider text-amber-400">Outstanding Accounts</p>
+              <h3 id="global-due" class="text-lg font-extrabold tracking-tight text-amber-400 mt-1.5 font-mono">৳0</h3>
+            </div>
+            <div class="bg-[#1e202a] border border-indigo-500/30 p-4 rounded-xl col-span-2 lg:col-span-1 shadow-md relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+              <p class="text-[10px] font-bold uppercase tracking-wider text-indigo-300">Net Balance</p>
+              <h3 id="global-net" class="text-xl font-black tracking-tight text-white mt-1.5 font-mono">৳0</h3>
+            </div>
+          </div>
+          
+          <!-- Master Table Document (Stays in dashboard overview for direct search feedback) -->
+          <div class="bg-[#16171d] border border-[#22242e] rounded-xl overflow-hidden shadow-sm">
+            <div class="px-6 py-4 border-b border-[#22242e] bg-[#191b22] flex justify-between items-center">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-white">Master Subsidiary Ledger Accounts</h3>
+              <span class="text-[10px] font-mono text-slate-500">Filtered by Sidebar Search</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-[#1a1c24] text-slate-400 font-semibold uppercase tracking-wider border-b border-[#22242e]">
+                    <th class="px-6 py-4">Accounts Workspace</th>
+                    <th class="px-4 py-4">Contact Link</th>
+                    <th class="px-4 py-4 text-right">Contract Allocation</th>
+                    <th class="px-4 py-4 text-right">Settled Revenue</th>
+                    <th class="px-4 py-4 text-right">Absorbed Costs</th>
+                    <th class="px-4 py-4 text-right">Balance Receivables</th>
+                    <th class="px-6 py-4 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="clients-table-body" class="divide-y divide-[#22242e] text-slate-300 font-medium"></tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <!-- Metrics Matrix Counters -->
-        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-          <div class="bg-[#16171d] border border-[#252834] p-4 rounded-xl shadow-sm">
-            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Volume</p>
-            <h3 id="global-budget" class="text-lg font-bold tracking-tight text-white mt-1.5 font-mono">৳0</h3>
-          </div>
-          <div class="bg-[#16171d] border border-emerald-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden group">
-            <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
-            <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Gross Income</p>
-            <h3 id="global-income" class="text-lg font-extrabold tracking-tight text-emerald-400 mt-1.5 font-mono">৳0</h3>
-          </div>
-          <div class="bg-[#16171d] border border-rose-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
-            <p class="text-[10px] font-bold uppercase tracking-wider text-rose-400">Total Cost</p>
-            <h3 id="global-expense" class="text-lg font-extrabold tracking-tight text-rose-400 mt-1.5 font-mono">৳0</h3>
-          </div>
-          <div class="bg-[#16171d] border border-amber-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
-            <p class="text-[10px] font-bold uppercase tracking-wider text-amber-400">Outstanding Accounts</p>
-            <h3 id="global-due" class="text-lg font-extrabold tracking-tight text-amber-400 mt-1.5 font-mono">৳0</h3>
-          </div>
-          <div class="bg-[#1e202a] border border-indigo-500/30 p-4 rounded-xl col-span-2 lg:col-span-1 shadow-md relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
-            <p class="text-[10px] font-bold uppercase tracking-wider text-indigo-300">Net Balance</p>
-            <h3 id="global-net" class="text-xl font-black tracking-tight text-white mt-1.5 font-mono">৳0</h3>
-          </div>
-        </div>
-
-        <!-- Input Processing Action Sections -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="space-y-6">
-            <!-- Client Registry Form Box -->
-            <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-5 shadow-sm">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-white mb-4 flex items-center gap-2">
-                <span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span> File Registry
-              </h3>
-              <form id="client-form" class="space-y-3">
+        <!-- DYNAMIC TAB 2: CLIENT REGISTRY -->
+        <div id="tab-client-view" class="tab-content space-y-6 hidden">
+          <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-6 shadow-sm max-w-xl">
+            <div class="mb-4">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">💼 Open New Client Account File</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Register project scope guidelines and overall client contract parameters.</p>
+            </div>
+            <form id="client-form" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input type="text" id="client-name" placeholder="Client Name" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
                 <input type="text" id="client-phone" placeholder="Contact Mobile" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
-                <input type="text" id="project-title" placeholder="Project / Scope Title" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
-                <input type="number" id="project-budget" placeholder="Contract Budget (৳)" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg py-2.5 text-xs transition shadow-lg shadow-indigo-600/10">Create New File</button>
-              </form>
-            </div>
+              </div>
+              <input type="text" id="project-title" placeholder="Project / Scope Title" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
+              <input type="number" id="project-budget" placeholder="Contract Budget (৳)" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
+              <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg py-2.5 text-xs transition shadow-lg shadow-indigo-600/10">Create New Project File</button>
+            </form>
+          </div>
+        </div>
 
-            <!-- General Office Overhead -->
+        <!-- DYNAMIC TAB 3: JOURNAL POSTING -->
+        <div id="tab-journal-view" class="tab-content space-y-6 hidden">
+          <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-6 shadow-sm max-w-3xl">
+            <div class="mb-4">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">💸 Project Journal Voucher Entry</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Log debit milestone updates or deduct operational expenses incurred on open project profiles.</p>
+            </div>
+            <form id="tx-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Target Project Profile</label>
+                <select id="tx-client-select" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white outline-none focus:border-indigo-500"></select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Entry Class</label>
+                <select id="tx-type" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white outline-none focus:border-indigo-500">
+                  <option value="income">📥 Debit (Installment Receipt)</option>
+                  <option value="expense">📤 Credit (Project Scope Cost)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Transaction Value (৳)</label>
+                <input type="number" id="tx-amount" placeholder="৳" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
+              </div>
+              <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="sm:col-span-1">
+                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Date</label>
+                  <input type="date" id="tx-date" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-slate-300 outline-none focus:border-indigo-500">
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Narration / Particulars</label>
+                  <input type="text" id="tx-details" placeholder="Narration notes..." required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
+                </div>
+              </div>
+              <div class="sm:col-span-2 text-right pt-2">
+                <button type="submit" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-lg px-6 py-2.5 text-xs transition shadow-lg shadow-emerald-600/10">Post Transaction Entry</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- DYNAMIC TAB 4: OFFICE OVERHEAD -->
+        <div id="tab-office-view" class="tab-content space-y-6 hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-5 shadow-sm">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-white mb-4 flex items-center gap-2">
-                <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span> Office Overhead
-              </h3>
+              <div class="mb-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">🏢 Record Office Overhead</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Log standard structural operational expenses.</p>
+              </div>
               <form id="office-expense-form" class="space-y-3">
                 <select id="oe-category" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white focus:border-rose-500 outline-none">
                   <option value="Staff Salary">Staff Salary</option>
@@ -186,82 +268,29 @@
                 <button type="submit" class="w-full bg-[#241a21] hover:bg-rose-900 border border-rose-900/40 text-rose-400 hover:text-white font-semibold rounded-lg py-2.5 text-xs transition">Log General Overhead</button>
               </form>
             </div>
-          </div>
 
-          <!-- Transaction Posting Ledger Control Nodes -->
-          <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-5 lg:col-span-2 flex flex-col justify-between shadow-sm">
-            <div>
-              <h3 class="text-xs font-bold uppercase tracking-wider text-white mb-4 flex items-center gap-2">
-                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Journal Voucher Entry
-              </h3>
-              <form id="tx-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="sm:col-span-2">
-                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Target Project Profile</label>
-                  <select id="tx-client-select" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white outline-none focus:border-indigo-500"></select>
+            <div class="lg:col-span-2 bg-[#16171d] border border-[#22242e] rounded-xl p-5 flex flex-col justify-between shadow-sm">
+              <div>
+                <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3 px-0.5">Company Overhead Ledger Entries (Selected Month)</h4>
+                <div class="max-h-96 overflow-y-auto border border-[#22242e] rounded-lg bg-[#121319]">
+                  <table class="w-full text-left text-xs">
+                    <thead>
+                      <tr class="bg-[#191a22] border-b border-[#22242e] text-slate-400 font-semibold">
+                        <th class="p-3">Particulars & Category</th>
+                        <th class="p-3">Date</th>
+                        <th class="p-3 text-right">Amount</th>
+                        <th class="p-3 text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="office-expense-rows" class="divide-y divide-[#22242e] text-slate-300"></tbody>
+                  </table>
                 </div>
-                <div>
-                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Entry Class</label>
-                  <select id="tx-type" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white outline-none focus:border-indigo-500">
-                    <option value="income">📥 Debit (Installment Receipt)</option>
-                    <option value="expense">📤 Credit (Project Scope Cost)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Transaction Value (৳)</label>
-                  <input type="number" id="tx-amount" placeholder="৳" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
-                </div>
-                <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div class="sm:col-span-1">
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Date</label>
-                    <input type="date" id="tx-date" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-slate-300 outline-none focus:border-indigo-500">
-                  </div>
-                  <div class="sm:col-span-2">
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Narration / Particulars</label>
-                    <input type="text" id="tx-details" placeholder="Narration notes..." required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
-                  </div>
-                </div>
-                <div class="sm:col-span-2 text-right pt-2">
-                  <button type="submit" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-lg px-6 py-2.5 text-xs transition shadow-lg shadow-emerald-600/10">Post Transaction</button>
-                </div>
-              </form>
-            </div>
-
-            <!-- Recent General Overhead Records Module List -->
-            <div class="mt-6 pt-4 border-t border-[#22242e]">
-              <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-0.5">Recent General Overhead Records (Selected Month)</h4>
-              <div class="max-h-24 overflow-y-auto border border-[#22242e] rounded-lg bg-[#121319]">
-                <table class="w-full text-left text-[11px]">
-                  <tbody id="office-expense-rows" class="divide-y divide-[#22242e] text-slate-300"></tbody>
-                </table>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Master Table Document -->
-        <div class="bg-[#16171d] border border-[#22242e] rounded-xl overflow-hidden shadow-sm">
-          <div class="px-6 py-4 border-b border-[#22242e] bg-[#191b22]">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-white">Master Subsidiary Ledger Accounts</h3>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr class="bg-[#1a1c24] text-slate-400 font-semibold uppercase tracking-wider border-b border-[#22242e]">
-                  <th class="px-6 py-4">Accounts Workspace</th>
-                  <th class="px-4 py-4">Contact Link</th>
-                  <th class="px-4 py-4 text-right">Contract Allocation</th>
-                  <th class="px-4 py-4 text-right">Settled Revenue</th>
-                  <th class="px-4 py-4 text-right">Absorbed Costs</th>
-                  <th class="px-4 py-4 text-right">Balance Receivables</th>
-                  <th class="px-6 py-4 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody id="clients-table-body" class="divide-y divide-[#22242e] text-slate-300 font-medium"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Detailed Drawer Sheet UI -->
+        <!-- Detailed Drawer Sheet UI (Slide view analysis container) -->
         <div id="ledger-drawer" class="bg-[#16171d] border border-indigo-500/40 rounded-xl p-6 hidden shadow-2xl transition-all duration-300">
           <div class="flex justify-between items-start border-b border-[#22242e] pb-4">
             <div>
@@ -290,7 +319,6 @@
     </div>
   </div>
 
-  <!-- Isolated Logic Connection File -->
   <script src="app.js"></script>
 </body>
 </html>
