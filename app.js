@@ -52,7 +52,6 @@ if (monthFilter) {
 // Bind search bar trigger dynamically
 if (searchInput) {
   searchInput.addEventListener('input', () => {
-    // If user searches something, auto force switch back to dashboard tab to view list responses
     switchTab('dashboard-view');
     renderMasterTable();
   });
@@ -60,17 +59,13 @@ if (searchInput) {
 
 // PREMIUM TAB SYSTEM CONTROLLER
 window.switchTab = function(tabId) {
-  // Hide all containers
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-  // Unhide target container
   document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
-  // Clear focus and styling across button rows
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.className = "tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]";
   });
 
-  // Assign distinct hot style profile to chosen control handle button
   const activeBtn = document.getElementById(`btn-${tabId}`);
   if(activeBtn) {
     activeBtn.className = "tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition bg-indigo-600 text-white shadow-md shadow-indigo-600/10";
@@ -258,7 +253,7 @@ if (clientForm) {
     databasePathRef.child('clients').push(newClient);
     clientForm.reset();
     alert('Project file deployed to cloud database successfully!');
-    switchTab('dashboard-view'); // Redirect automatically to check analytics
+    switchTab('dashboard-view');
   });
 }
 
@@ -266,7 +261,7 @@ if (txForm) {
   txForm.addEventListener('submit', (e) => {
     e.preventDefault();
     if(!databasePathRef) return alert('Please login first to post entries!');
-    const id = clientSelect.value;
+    const id = document.getElementById('tx-client-select').value;
     if(!id) return alert('No project file selected!');
     
     const client = farmData.find(c => c.id === id);
@@ -282,8 +277,18 @@ if (txForm) {
       updatedHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
       
       databasePathRef.child('clients').child(id).update({ history: updatedHistory });
+      
+      // Form fields and custom dropdown reset
       document.getElementById('tx-amount').value = '';
       document.getElementById('tx-details').value = '';
+      document.getElementById('tx-client-select').value = '';
+      
+      const selectedText = document.getElementById('dropdown-selected-text');
+      if (selectedText) {
+        selectedText.innerText = 'Select Project Profile...';
+        selectedText.className = 'text-slate-500';
+      }
+
       uiUpdatePipeline();
       alert('Voucher posted successfully!');
       switchTab('dashboard-view');
@@ -309,13 +314,99 @@ if (officeExpenseForm) {
   });
 }
 
+// ----------------------------------------------------
+// NEW CUSTOM SEARCHABLE DROPDOWN ENGINE FOR VOUCHERS
+// ----------------------------------------------------
 function renderDropdown() {
-  if (!clientSelect) return;
-  clientSelect.innerHTML = farmData.length === 0 ? '<option value="">No Active Projects Available</option>' : 
-    farmData.map(c => `<option value="${c.id}">${c.project} (${c.name})</option>`).join('');
+  const trigger = document.getElementById('dropdown-trigger');
+  const dropdownList = document.getElementById('custom-dropdown-list');
+  const dropdownSearchInput = document.getElementById('dropdown-search-input');
+  const itemsContainer = document.getElementById('dropdown-items-container');
+  const hiddenInput = document.getElementById('tx-client-select');
+  const selectedText = document.getElementById('dropdown-selected-text');
+
+  if (!trigger || !dropdownList || !itemsContainer) return;
+
+  // Toggle dropdown on trigger click
+  trigger.onclick = function(e) {
+    e.stopPropagation();
+    dropdownList.classList.toggle('hidden');
+    if (!dropdownList.classList.contains('hidden') && dropdownSearchInput) {
+      dropdownSearchInput.value = '';
+      filterDropdownItems('');
+      dropdownSearchInput.focus();
+    }
+  };
+
+  // Close dropdown on outside click
+  document.onclick = function() {
+    dropdownList.classList.add('hidden');
+  };
+
+  dropdownList.onclick = function(e) {
+    e.stopPropagation();
+  };
+
+  // Live filter item list inside dropdown
+  function filterDropdownItems(query) {
+    itemsContainer.innerHTML = '';
+    
+    const filtered = farmData.filter(c => 
+      c.project.toLowerCase().includes(query.toLowerCase()) || 
+      c.name.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (filtered.length === 0) {
+      itemsContainer.innerHTML = `<div class="p-2.5 text-xs text-slate-500 text-center">No projects found</div>`;
+      return;
+    }
+
+    filtered.forEach(c => {
+      const item = document.createElement('div');
+      item.className = "p-2.5 text-xs text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg cursor-pointer transition-all font-medium flex justify-between items-center";
+      item.innerHTML = `<span>${c.project} <span class="text-[10px] text-slate-500">TL: (${c.name})</span></span>`;
+      
+      item.onclick = function() {
+        hiddenInput.value = c.id;
+        selectedText.innerText = `${c.project} (${c.name})`;
+        selectedText.className = "text-white font-semibold";
+        dropdownList.classList.add('hidden');
+      };
+      
+      itemsContainer.appendChild(item);
+    });
+  }
+
+  if (dropdownSearchInput) {
+    dropdownSearchInput.oninput = function() {
+      filterDropdownItems(this.value);
+    };
+  }
+
+  // Manage setup default UI states
+  if (farmData.length === 0) {
+    selectedText.innerText = "No Active Projects Available";
+    selectedText.className = "text-slate-500";
+    hiddenInput.value = "";
+  } else {
+    if(!hiddenInput.value) {
+      selectedText.innerText = "Select Project Profile...";
+      selectedText.className = "text-slate-500";
+    } else {
+      const current = farmData.find(c => c.id === hiddenInput.value);
+      if(current) {
+        selectedText.innerText = `${current.project} (${current.name})`;
+        selectedText.className = "text-white font-semibold";
+      } else {
+        selectedText.innerText = "Select Project Profile...";
+        selectedText.className = "text-slate-500";
+        hiddenInput.value = "";
+      }
+    }
+  }
 }
 
-// Master Table UI Builders (Default Hidden & Search Powered)
+// Master Table UI Builders
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -325,8 +416,8 @@ function renderMasterTable() {
     return;
   }
 
-  if (query === '') {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">🔍 Type client name, phone or project key on sidebar search ledger to pull accounts data.</td></tr>`;
+  if (farmData.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No records found. Please add a client first.</td></tr>`;
     return;
   }
 
