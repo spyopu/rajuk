@@ -4,19 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RAJUK Consultancy Farm - Cloud ERP</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Stable Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Firebase Core SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
-<body class="bg-[#f3f4f6] text-slate-800 font-sans tracking-tight antialiased">
+<body class="bg-[#0b0f19] text-slate-200 font-sans tracking-tight antialiased selection:bg-emerald-500 selection:text-white">
 
   <!-- Login Overlay Dashboard Screen -->
   <div id="login-screen" class="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-50 px-4">
     <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl space-y-6">
-      <div class="h-16 w-16 rounded-2xl bg-linear-to-tr from-emerald-400 to-teal-600 flex items-center justify-center font-black text-white text-3xl mx-auto shadow-lg shadow-emerald-500/20">R</div>
+      <div class="h-16 w-16 rounded-2xl bg-gradient-to-tr from-emerald-400 to-teal-600 flex items-center justify-center font-black text-white text-3xl mx-auto shadow-lg shadow-emerald-500/20">R</div>
       <div>
         <h1 class="text-xl font-black text-white tracking-wide">RAJUK CONSULTANCY</h1>
         <p class="text-xs text-emerald-400 font-bold tracking-widest mt-1">SECURE CLOUD ENTERPRISE</p>
@@ -34,25 +36,30 @@
     
     <!-- Sidebar -->
     <aside class="w-full md:w-64 bg-slate-950 text-slate-300 flex flex-col border-r border-slate-900 shrink-0 shadow-xl">
-      <div class="p-6 border-b border-slate-900/50 bg-linear-to-b from-slate-900 to-slate-950 flex items-center gap-3">
-        <div class="h-9 w-9 rounded-xl bg-linear-to-tr from-emerald-400 to-teal-600 flex items-center justify-center font-black text-white text-lg shadow-md shadow-emerald-500/20">R</div>
+      <div class="p-6 border-b border-slate-900/50 bg-gradient-to-b from-slate-900 to-slate-950 flex items-center gap-3">
+        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-400 to-teal-600 flex items-center justify-center font-black text-white text-lg shadow-md shadow-emerald-500/20">R</div>
         <div>
           <h1 class="text-sm font-black text-white tracking-wide">RAJUK CONSULTANCY</h1>
           <p class="text-[10px] text-emerald-400 font-bold tracking-widest">MANAGEMENT SUITE</p>
         </div>
       </div>
       
-      <div class="p-4 flex-1 space-y-2">
-        <div class="px-3 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Menu Panel</div>
-        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-teal-600 text-white text-xs font-bold transition shadow-md">
-          📊 Mega Dashboard & Ledger
-        </a>
-      </div>
+      <!-- Sidebar Menu and Search Panel -->
+      <div class="p-4 flex-1 space-y-4">
+        <div>
+          <div class="px-3 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Menu Panel</div>
+          <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs font-bold transition shadow-md">
+            📊 Mega Dashboard & Ledger
+          </a>
+        </div>
 
-      <div class="p-4 border-t border-slate-900">
-        <button id="logout-btn" class="w-full bg-slate-900 hover:bg-red-950 hover:text-red-400 border border-slate-800 text-xs py-2.5 rounded-xl font-bold transition">
-          Logout
-        </button>
+        <!-- Search Client -->
+        <div class="px-2">
+          <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Search Client / Project</div>
+          <div class="relative">
+            <input type="text" id="search-input" oninput="renderMasterTable()" placeholder="🔍 Type name, phone or project..." class="w-full border border-slate-800 rounded-xl px-3 py-2 text-xs bg-slate-900 text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-emerald-500 transition">
+          </div>
+        </div>
       </div>
     </aside>
 
@@ -60,17 +67,31 @@
     <div class="flex-1 flex flex-col min-w-0">
       
       <!-- Top Bar -->
-      <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 shadow-2xs">
-        <div class="text-xs font-bold text-slate-500 flex items-center gap-2">
+      <header class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-8 shrink-0 shadow-sm relative">
+        <div class="text-xs font-bold text-slate-400 flex items-center gap-2">
           <span class="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          Status: <span class="text-slate-800 font-extrabold text-xs">Firebase Realtime Cloud (100% Secured)</span>
+          Status: <span class="text-slate-200 font-extrabold text-xs">Firebase Realtime Cloud (100% Secured)</span>
         </div>
-        <div class="flex items-center gap-3">
-          <div class="text-right">
-            <p id="user-display-name" class="text-xs font-black text-slate-800">Loading...</p>
-            <p id="user-display-email" class="text-[10px] text-emerald-600 font-bold">...</p>
+        
+        <!-- Profile Account Menu Clickable -->
+        <div class="relative">
+          <div id="profile-trigger" class="flex items-center gap-3 cursor-pointer hover:bg-slate-800/60 p-1.5 px-3 rounded-xl transition select-none">
+            <div class="text-right">
+              <p id="user-display-name" class="text-xs font-black text-slate-100">Loading...</p>
+              <p id="user-display-email" class="text-[10px] text-emerald-400 font-bold">...</p>
+            </div>
+            <img id="user-avatar" class="h-9 w-9 rounded-xl border border-slate-700 shadow-sm" src="" alt="avatar">
           </div>
-          <img id="user-avatar" class="h-9 w-9 rounded-xl border border-slate-200 shadow-sm" src="" alt="avatar">
+
+          <!-- Clickable Dropdown Menu -->
+          <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 hidden z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+            <div class="px-3 py-2 border-b border-slate-800/60 mb-1">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Account Action</p>
+            </div>
+            <button id="logout-btn" class="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-bold text-red-400 hover:bg-red-950/40 rounded-xl transition">
+              🚪 Sign Out Account
+            </button>
+          </div>
         </div>
       </header>
 
@@ -79,25 +100,25 @@
         
         <!-- Financial Summary Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-slate-900"></div>
+          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-slate-700"></div>
             <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Project Volume</p>
-            <h3 id="global-budget" class="text-lg font-black text-slate-800 mt-2">৳0</h3>
+            <h3 id="global-budget" class="text-lg font-black text-slate-100 mt-2">৳0</h3>
           </div>
-          <div class="bg-linear-to-br from-emerald-600 to-teal-700 p-5 rounded-2xl shadow-md text-white">
+          <div class="bg-gradient-to-br from-emerald-600 to-teal-700 p-5 rounded-2xl shadow-md text-white border border-emerald-500/10">
             <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-200">Total Revenue (Income)</p>
             <h3 id="global-income" class="text-xl font-black mt-2">৳0</h3>
           </div>
-          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden">
+          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
             <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Expense</p>
-            <h3 id="global-expense" class="text-lg font-black text-red-600 mt-2">৳0</h3>
+            <h3 id="global-expense" class="text-lg font-black text-red-400 mt-2">৳0</h3>
           </div>
-          <div class="bg-linear-to-br from-amber-500 to-orange-600 p-5 rounded-2xl shadow-md text-white">
+          <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-5 rounded-2xl shadow-md text-white border border-amber-500/10">
             <p class="text-[10px] font-bold uppercase tracking-wider text-amber-100">Outstanding (Due)</p>
             <h3 id="global-due" class="text-xl font-black mt-2">৳0</h3>
           </div>
-          <div class="bg-linear-to-br from-blue-600 to-indigo-700 p-5 rounded-2xl shadow-md text-white">
+          <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-5 rounded-2xl shadow-md text-white border border-blue-500/10">
             <p class="text-[10px] font-bold uppercase tracking-wider text-blue-100">Net Profit (Cash)</p>
             <h3 id="global-net" class="text-xl font-black mt-2">৳0</h3>
           </div>
@@ -107,80 +128,80 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="space-y-6">
             <!-- Client Creation -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs p-5">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-4 flex items-center gap-2">
+            <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-sm p-5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-4 flex items-center gap-2">
                 <span class="h-2 w-2 rounded-full bg-emerald-500"></span> New Client & Project File
               </h3>
               <form id="client-form" class="space-y-3">
-                <input type="text" id="client-name" placeholder="Client Name" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none transition">
-                <input type="text" id="client-phone" placeholder="Mobile Number" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none transition">
-                <input type="text" id="project-title" placeholder="Project Title (e.g., Uttara 6-Storied File)" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none transition">
-                <input type="number" id="project-budget" placeholder="Total Contract Budget (৳)" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none transition">
-                <button type="submit" class="w-full bg-slate-950 hover:bg-slate-900 text-white font-bold rounded-xl py-2.5 text-xs transition">Create Project File</button>
+                <input type="text" id="client-name" placeholder="Client Name" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                <input type="text" id="client-phone" placeholder="Mobile Number" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                <input type="text" id="project-title" placeholder="Project Title (e.g., Uttara 6-Storied File)" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                <input type="number" id="project-budget" placeholder="Total Contract Budget (৳)" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md shadow-emerald-600/10">Create Project File</button>
               </form>
             </div>
 
             <!-- General Office Expense Form -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs p-5">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-red-600 mb-4 flex items-center gap-2">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 bg-slate-900 border-slate-800">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-red-400 mb-4 flex items-center gap-2">
                 <span class="h-2 w-2 rounded-full bg-red-500"></span> 🏢 General Office Expense Posting
               </h3>
               <form id="office-expense-form" class="space-y-3">
-                <select id="oe-category" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-white outline-none focus:ring-2 focus:ring-red-500">
+                <select id="oe-category" class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white outline-none focus:ring-2 focus:ring-red-500">
                   <option value="Staff Salary">Staff Salary</option>
                   <option value="Office Rent">Office Rent</option>
                   <option value="Utility Bill">Utility / Electricity Bill</option>
                   <option value="Conveyance">Conveyance / Site Visit</option>
                   <option value="Others">Others General Expenses</option>
                 </select>
-                <input type="number" id="oe-amount" placeholder="Expense Amount (৳)" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-white outline-none focus:ring-2 focus:ring-red-500">
-                <input type="text" id="oe-details" placeholder="Expense Description" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-white outline-none focus:ring-2 focus:ring-red-500">
-                <input type="date" id="oe-date" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-white outline-none focus:ring-2 focus:ring-red-500">
-                <button type="submit" class="w-full bg-red-950/20 text-red-600 hover:bg-red-600 hover:text-white border border-red-200 font-bold rounded-xl py-2.5 text-xs transition">Post Office Expense</button>
+                <input type="number" id="oe-amount" placeholder="Expense Amount (৳)" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-red-500">
+                <input type="text" id="oe-details" placeholder="Expense Description" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-red-500">
+                <input type="date" id="oe-date" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white outline-none focus:ring-2 focus:ring-red-500">
+                <button type="submit" class="w-full bg-red-950/30 text-red-400 hover:bg-red-600 hover:text-white border border-red-900/50 font-bold rounded-xl py-2.5 text-xs transition">Post Office Expense</button>
               </form>
             </div>
           </div>
 
           <!-- Project Specific Posting -->
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs p-6 lg:col-span-2 flex flex-col justify-between">
+          <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-sm p-6 lg:col-span-2 flex flex-col justify-between">
             <div>
-              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-4 flex items-center gap-2">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-4 flex items-center gap-2">
                 <span class="h-2 w-2 rounded-full bg-blue-500"></span> 💸 Project Installment Received & Costs
               </h3>
               <form id="tx-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="sm:col-span-2">
                   <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Select Project File</label>
-                  <select id="tx-client-select" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 outline-none focus:ring-2 focus:ring-slate-900"></select>
+                  <select id="tx-client-select" class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white outline-none focus:ring-2 focus:ring-slate-700"></select>
                 </div>
                 <div>
                   <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Transaction Type</label>
-                  <select id="tx-type" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 outline-none focus:ring-2 focus:ring-slate-900">
+                  <select id="tx-type" class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white outline-none focus:ring-2 focus:ring-slate-700">
                     <option value="income">📥 Installment / Advance Receipt (Income)</option>
                     <option value="expense">📤 RAJUK Fees / Challan Cost (Expense)</option>
                   </select>
                 </div>
                 <div>
                   <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Amount (৳)</label>
-                  <input type="number" id="tx-amount" placeholder="৳" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 outline-none focus:ring-2 focus:ring-slate-900">
+                  <input type="number" id="tx-amount" placeholder="৳" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-slate-700">
                 </div>
                 <div class="sm:col-span-2">
                   <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Date & Remarks</label>
                   <div class="flex flex-col sm:flex-row gap-2">
-                    <input type="date" id="tx-date" required class="border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 outline-none focus:ring-2 focus:ring-slate-900 w-full sm:w-40">
-                    <input type="text" id="tx-details" placeholder="e.g., Payment for RAJUK challan fee" required class="flex-1 border border-slate-200 rounded-xl p-2.5 text-xs bg-slate-50 outline-none focus:ring-2 focus:ring-slate-900">
+                    <input type="date" id="tx-date" required class="border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white outline-none focus:ring-2 focus:ring-slate-700 w-full sm:w-40">
+                    <input type="text" id="tx-details" placeholder="e.g., Payment for RAJUK challan fee" required class="flex-1 border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-slate-700">
                   </div>
                 </div>
                 <div class="sm:col-span-2 text-right mt-2">
-                  <button type="submit" class="bg-slate-950 hover:bg-slate-900 text-white font-bold rounded-xl px-6 py-2.5 text-xs transition">Submit Ledger Entry</button>
+                  <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl px-6 py-2.5 text-xs transition">Submit Ledger Entry</button>
                 </div>
               </form>
             </div>
 
             <!-- Recent Expenses Table Container -->
-            <div class="mt-6 pt-4 border-t border-slate-100">
-              <h4 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">📜 Recent General Office Expenses</h4>
-              <div class="max-h-32 overflow-y-auto border border-slate-100 rounded-xl bg-slate-50/50">
-                <table class="w-full text-left text-[11px] text-slate-600">
+            <div class="mt-6 pt-4 border-t border-slate-800">
+              <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">📜 Recent General Office Expenses</h4>
+              <div class="max-h-32 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950/40">
+                <table class="w-full text-left text-[11px] text-slate-300">
                   <tbody id="office-expense-rows"></tbody>
                 </table>
               </div>
@@ -189,18 +210,14 @@
         </div>
 
         <!-- Central Table -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-          <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <!-- 🔍 Search Box Placed on Left -->
-            <div class="w-full sm:w-64 relative order-2 sm:order-1">
-              <input type="text" id="search-input" oninput="renderMasterTable()" placeholder="🔍 Search by Name, Phone or Project..." class="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-xs bg-white outline-none focus:ring-2 focus:ring-slate-900 transition">
-            </div>
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 order-1 sm:order-2 sm:ml-auto">🏢 Central Client Database & Project Ledger</h3>
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-slate-800 bg-slate-950/20 flex items-center justify-between">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🏢 Central Client Database & Project Ledger</h3>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
-                <tr class="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider border-b border-slate-200">
+                <tr class="bg-slate-950/60 text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-800">
                   <th class="p-4 pl-6">Client & Project</th>
                   <th class="p-4">Contact</th>
                   <th class="p-4 text-right">Contract Budget</th>
@@ -210,32 +227,32 @@
                   <th class="p-4 pr-6 text-center">Action</th>
                 </tr>
               </thead>
-              <tbody id="clients-table-body" class="divide-y divide-slate-100 text-slate-700 font-medium font-sans"></tbody>
+              <tbody id="clients-table-body" class="divide-y divide-slate-800 text-slate-300 font-medium"></tbody>
             </table>
           </div>
         </div>
 
         <!-- Ledger Drawer -->
-        <div id="ledger-drawer" class="bg-white rounded-2xl border-2 border-slate-900 shadow-xl p-6 hidden">
-          <div class="flex justify-between items-start border-b border-slate-100 pb-4">
+        <div id="ledger-drawer" class="bg-slate-900 rounded-2xl border-2 border-emerald-500 shadow-2xl p-6 hidden">
+          <div class="flex justify-between items-start border-b border-slate-800 pb-4">
             <div>
-              <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">Detailed Statement File</span>
-              <h2 id="drawer-title" class="text-base font-bold text-slate-900 mt-1">Customer Ledger Statement</h2>
+              <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-900">Detailed Statement File</span>
+              <h2 id="drawer-title" class="text-base font-bold text-slate-100 mt-1">Customer Ledger Statement</h2>
               <p id="drawer-sub" class="text-xs text-slate-400 font-medium"></p>
             </div>
-            <button onclick="closeDrawer()" class="h-6 w-6 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center font-bold">✕</button>
+            <button onclick="closeDrawer()" class="h-6 w-6 rounded-full hover:bg-slate-800 text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">✕</button>
           </div>
           <div class="mt-6">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
-                <tr class="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider border-b border-slate-200">
+                <tr class="bg-slate-950/60 text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-800">
                   <th class="p-3">Date</th>
                   <th class="p-3">Description</th>
                   <th class="p-3">Type</th>
                   <th class="p-3 text-right">Amount</th>
                 </tr>
               </thead>
-              <tbody id="drawer-table-body" class="divide-y divide-slate-100"></tbody>
+              <tbody id="drawer-table-body" class="divide-y divide-slate-800"></tbody>
             </table>
           </div>
         </div>
@@ -268,6 +285,8 @@
     const erpLayout = document.getElementById('erp-layout');
     const loginBtn = document.getElementById('google-login-btn');
     const logoutBtn = document.getElementById('logout-btn');
+    const profileTrigger = document.getElementById('profile-trigger');
+    const profileDropdown = document.getElementById('profile-dropdown');
 
     const clientForm = document.getElementById('client-form');
     const txForm = document.getElementById('tx-form');
@@ -280,6 +299,16 @@
 
     document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
     document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
+
+    // Profile Click Control (Toggle Menu)
+    profileTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      profileDropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', () => {
+      profileDropdown.classList.add('hidden');
+    });
 
     loginBtn.addEventListener('click', () => {
       const provider = new firebase.auth.GoogleAuthProvider();
@@ -419,7 +448,7 @@
       const query = searchInput.value.toLowerCase().trim();
       
       if (query === '') {
-        tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 font-medium bg-white">For privacy reasons, please enter a client name or phone number to look up data.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">Please enter a client name or phone number in the sidebar menu to look up data.</td></tr>`;
         return;
       }
       
@@ -430,7 +459,7 @@
       });
 
       tableBody.innerHTML = filteredData.length === 0 ? 
-        `<tr><td colspan="7" class="p-6 text-center text-slate-400 font-medium bg-white">No matching files found.</td></tr>` : '';
+        `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No matching files found.</td></tr>` : '';
 
       filteredData.forEach(c => {
         let cIncome = 0, cExpense = 0;
@@ -441,21 +470,21 @@
         let cDue = c.budget - cIncome;
 
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50/80 transition font-medium border-b border-slate-100 last:border-none text-slate-600";
+        tr.className = "hover:bg-slate-800/40 transition font-medium border-b border-slate-800 last:border-none text-slate-300";
         tr.innerHTML = `
           <td class="p-4 pl-6">
-            <div class="font-bold text-slate-900 text-sm">${c.project}</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">${c.name}</div>
+            <div class="font-bold text-slate-100 text-sm">${c.project}</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">${c.name}</div>
           </td>
-          <td class="p-4 font-mono text-xs">${c.phone}</td>
-          <td class="p-4 text-right font-bold text-slate-800">৳${c.budget.toLocaleString('en-IN')}</td>
-          <td class="p-4 text-right font-bold text-emerald-600">৳${cIncome.toLocaleString('en-IN')}</td>
-          <td class="p-4 text-right font-bold text-red-500">৳${cExpense.toLocaleString('en-IN')}</td>
-          <td class="p-4 text-right font-black ${cDue > 0 ? 'text-amber-600' : 'text-slate-400'}">৳${cDue.toLocaleString('en-IN')}</td>
+          <td class="p-4 font-mono text-xs text-slate-400">${c.phone}</td>
+          <td class="p-4 text-right font-bold text-slate-100">৳${c.budget.toLocaleString('en-IN')}</td>
+          <td class="p-4 text-right font-bold text-emerald-400">৳${cIncome.toLocaleString('en-IN')}</td>
+          <td class="p-4 text-right font-bold text-red-400">৳${cExpense.toLocaleString('en-IN')}</td>
+          <td class="p-4 text-right font-black ${cDue > 0 ? 'text-amber-500' : 'text-slate-500'}">৳${cDue.toLocaleString('en-IN')}</td>
           <td class="p-4 pr-6 text-center">
             <div class="flex justify-center items-center gap-2">
-              <button onclick="openDrawer('${c.id}')" class="bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 px-3 py-1.5 rounded-xl text-[11px] font-bold transition">Ledger</button>
-              <button onclick="deleteClient('${c.id}')" class="text-slate-300 hover:text-red-600 font-bold p-1">✕</button>
+              <button onclick="openDrawer('${c.id}')" class="bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-200 px-3 py-1.5 rounded-xl text-[11px] font-bold transition">Ledger</button>
+              <button onclick="deleteClient('${c.id}')" class="text-slate-600 hover:text-red-500 font-bold p-1 transition">✕</button>
             </div>
           </td>
         `;
@@ -465,16 +494,16 @@
 
     function renderOfficeExpenses() {
       officeExpenseRows.innerHTML = officeExpenses.length === 0 ? 
-        `<tr><td class="p-3 text-center text-slate-400">No general office expenses logged yet.</td></tr>` : '';
+        `<tr><td class="p-3 text-center text-slate-500">No general office expenses logged yet.</td></tr>` : '';
 
       officeExpenses.forEach(oe => {
         const tr = document.createElement('tr');
-        tr.className = "border-b border-slate-100 last:border-none";
+        tr.className = "border-b border-slate-800 last:border-none";
         tr.innerHTML = `
-          <td class="p-2 pl-3 font-semibold text-slate-800">${oe.details} <span class="text-[9px] bg-red-50 text-red-600 px-1 rounded font-bold">${oe.category}</span></td>
-          <td class="p-2 text-slate-400 font-mono text-[10px]">${oe.date}</td>
-          <td class="p-2 text-right font-bold text-red-600">৳${oe.amount.toLocaleString('en-IN')}</td>
-          <td class="p-2 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-300 hover:text-red-500 font-bold">✕</button></td>
+          <td class="p-2 pl-3 font-semibold text-slate-200">${oe.details} <span class="text-[9px] bg-red-950 text-red-400 px-1.5 py-0.5 rounded border border-red-900/50 font-bold">${oe.category}</span></td>
+          <td class="p-2 text-slate-500 font-mono text-[10px]">${oe.date}</td>
+          <td class="p-2 text-right font-bold text-red-400">৳${oe.amount.toLocaleString('en-IN')}</td>
+          <td class="p-2 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-600 hover:text-red-500 font-bold transition">✕</button></td>
         `;
         officeExpenseRows.appendChild(tr);
       });
@@ -501,17 +530,17 @@
 
       const dBody = document.getElementById('drawer-table-body');
       dBody.innerHTML = (!client.history || client.history.length === 0) ? 
-        `<tr><td colspan="4" class="p-4 text-center text-slate-400 font-medium">No ledger accounts registered for this project.</td></tr>` : '';
+        `<tr><td colspan="4" class="p-4 text-center text-slate-500 font-medium">No ledger accounts registered for this project.</td></tr>` : '';
 
       client.history.forEach(t => {
         const tr = document.createElement('tr');
-        tr.className = "border-b border-slate-100 last:border-none font-medium text-slate-700";
-        let typeText = t.type === 'income' ? '<span class="text-emerald-600 font-bold">📥 Debit</span>' : '<span class="text-red-500 font-bold">📤 Credit</span>';
-        let valColor = t.type === 'income' ? 'text-emerald-600' : 'text-red-500';
+        tr.className = "border-b border-slate-800 last:border-none font-medium text-slate-300";
+        let typeText = t.type === 'income' ? '<span class="text-emerald-400 font-bold">📥 Debit</span>' : '<span class="text-red-400 font-bold">📤 Credit</span>';
+        let valColor = t.type === 'income' ? 'text-emerald-400' : 'text-red-400';
 
         tr.innerHTML = `
-          <td class="p-3 text-slate-400 font-mono">${t.date}</td>
-          <td class="p-3 font-semibold text-slate-800">${t.details}</td>
+          <td class="p-3 text-slate-500 font-mono">${t.date}</td>
+          <td class="p-3 font-semibold text-slate-200">${t.details}</td>
           <td class="p-3">${typeText}</td>
           <td class="p-3 text-right font-black ${valColor}">৳${t.amount.toLocaleString('en-IN')}</td>
         `;
