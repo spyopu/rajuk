@@ -3,249 +3,268 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RAJUK Consultancy Farm - Cloud ERP</title>
+  <title>Cloud ERP — Premium Management Suite</title>
   
   <!-- Stable Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Firebase Core SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-</head>
-<body class="bg-[#0b0f19] text-slate-200 font-sans tracking-tight antialiased selection:bg-emerald-500 selection:text-white">
+  <!-- Inter & Geist Mono Font for High-End Look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Main ERP Layout System -->
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-mono { font-family: 'Geist Mono', monospace; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #111216; }
+    ::-webkit-scrollbar-thumb { background: #2f313a; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4b4e5b; }
+  </style>
+</head>
+<body class="bg-[#111216] text-slate-200 antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Main Layout Split -->
   <div id="erp-layout" class="min-h-screen flex flex-col md:flex-row">
     
-    <!-- Sidebar -->
-    <aside class="w-full md:w-64 bg-slate-950 text-slate-300 flex flex-col border-r border-slate-900 shrink-0 shadow-xl">
-      <div class="p-6 border-b border-slate-900/50 bg-gradient-to-b from-slate-900 to-slate-950 flex items-center gap-3">
-        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-400 to-teal-600 flex items-center justify-center font-black text-white text-lg shadow-md shadow-emerald-500/20">R</div>
+    <!-- Sidebar (Sophisticated Slate Dark) -->
+    <aside class="w-full md:w-64 bg-[#16171d] flex flex-col border-r border-[#22242e] shrink-0 shadow-lg">
+      <!-- Brand Header with Indigo Touch -->
+      <div class="h-16 px-6 border-b border-[#22242e] flex items-center gap-3 bg-[#191b22]">
+        <div class="h-7 w-7 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-xs shadow-md shadow-indigo-500/20">R</div>
         <div>
-          <h1 class="text-sm font-black text-white tracking-wide">RAJUK CONSULTANCY</h1>
-          <p class="text-[10px] text-emerald-400 font-bold tracking-widest">MANAGEMENT SUITE</p>
+          <h1 class="text-xs font-bold text-white tracking-wide uppercase">Rajuk Consultancy</h1>
+          <p class="text-[9px] text-indigo-400 font-semibold tracking-wider">Management Suite</p>
         </div>
       </div>
       
-      <!-- Sidebar Menu and Search Panel -->
-      <div class="p-4 flex-1 space-y-4">
-        <!-- Auth Action Panel in Sidebar -->
-        <div id="sidebar-auth-section">
-          <div class="px-3 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Login System</div>
-          <button id="google-login-btn" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-bold rounded-xl py-2.5 text-xs transition shadow-md flex items-center justify-center gap-2">
-            <svg class="h-4 w-4" viewBox="0 0 24 24"><path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114A5.99 5.99 0 0 1 8 12.526a5.99 5.99 0 0 1 5.991-5.99 5.87 5.87 0 0 1 4.092 1.643l3.078-3.078A9.94 9.94 0 0 0 13.99 2.5 9.99 9.99 0 0 0 4 12.526a9.99 9.99 0 0 0 9.99 10.027c5.694 0 9.563-3.998 9.563-9.728 0-.613-.053-1.22-.16-1.815l-11.143-.225Z"/></svg>
-            Sign in with Gmail
-          </button>
-        </div>
+      <!-- Sidebar Controls (Auth Section completely removed from here) -->
+      <div class="p-5 flex-1 flex flex-col justify-between space-y-6">
+        <div class="space-y-5">
+          <!-- Search Engine Input -->
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 px-1">Search Ledger</label>
+            <div class="relative">
+              <input type="text" id="search-input" oninput="renderMasterTable()" placeholder="Type name, phone..." class="w-full border border-[#2d303f] rounded-lg px-3 py-2 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all">
+            </div>
+          </div>
 
-        <div>
-          <div class="px-3 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Menu Panel</div>
-          <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs font-bold transition shadow-md">
-            📊 Mega Dashboard & Ledger
-          </a>
-        </div>
-
-        <!-- Search Client -->
-        <div class="px-2">
-          <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Search Client / Project</div>
-          <div class="relative">
-            <input type="text" id="search-input" oninput="renderMasterTable()" placeholder="🔍 Type name, phone or project..." class="w-full border border-slate-800 rounded-xl px-3 py-2 text-xs bg-slate-900 text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-emerald-500 transition">
+          <!-- Navigation Link -->
+          <div class="space-y-1">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 px-1">Navigation</label>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-indigo-600/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20 transition">
+              <span>📊</span> Mega Dashboard
+            </a>
           </div>
         </div>
       </div>
     </aside>
 
-    <!-- Content Area -->
+    <!-- Main Content Space -->
     <div class="flex-1 flex flex-col min-w-0">
       
-      <!-- Top Bar -->
-      <header class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-8 shrink-0 shadow-sm relative">
-        <div class="text-xs font-bold text-slate-400 flex items-center gap-2">
+      <!-- Top Navigation Bar -->
+      <header class="h-16 bg-[#16171d] border-b border-[#22242e] flex items-center justify-between px-6 md:px-8 shrink-0 shadow-sm">
+        <div class="text-[11px] font-medium text-slate-400 flex items-center gap-2">
           <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
-          Status: <span id="status-text" class="text-slate-200 font-extrabold text-xs">Offline / Guest Mode</span>
+          <span id="status-text" class="text-slate-300 font-mono">Guest Mode</span>
         </div>
         
-        <!-- Profile Account Menu -->
-        <div class="relative">
-          <div id="profile-trigger" class="flex items-center gap-3 cursor-pointer hover:bg-slate-800/60 p-1.5 px-3 rounded-xl transition select-none hidden">
-            <div class="text-right">
-              <p id="user-display-name" class="text-xs font-black text-slate-100">Loading...</p>
-              <p id="user-display-email" class="text-[10px] text-emerald-400 font-bold">...</p>
-            </div>
-            <img id="user-avatar" class="h-9 w-9 rounded-xl border border-slate-700 shadow-sm" src="" alt="avatar">
-          </div>
-
-          <!-- Dropdown Menu -->
-          <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 hidden z-50">
-            <div class="px-3 py-2 border-b border-slate-800/60 mb-1">
-              <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Account Action</p>
-            </div>
-            <button id="logout-btn" class="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-bold text-red-400 hover:bg-red-950/40 rounded-xl transition">
-              🚪 Sign Out Account
+        <!-- Identity & Profile Section (Integrated Smooth Authentication Area) -->
+        <div class="flex items-center gap-4">
+          
+          <!-- Gmail Login Interface Panel (Top Bar Location) -->
+          <div id="sidebar-auth-section">
+            <button id="google-login-btn" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold rounded-lg px-4 py-2 text-xs transition shadow-lg shadow-indigo-600/10 flex items-center justify-center gap-2">
+              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24"><path fill="currentColor" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114A5.99 5.99 0 0 1 8 12.526a5.99 5.99 0 0 1 5.991-5.99 5.87 5.87 0 0 1 4.092 1.643l3.078-3.078A9.94 9.94 0 0 0 13.99 2.5 9.99 9.99 0 0 0 4 12.526a9.99 9.99 0 0 0 9.99 10.027c5.694 0 9.563-3.998 9.563-9.728 0-.613-.053-1.22-.16-1.815l-11.143-.225Z"/></svg>
+              Connect Identity
             </button>
           </div>
+
+          <!-- Profile Dropdown Component -->
+          <div class="relative">
+            <div id="profile-trigger" class="flex items-center gap-2.5 cursor-pointer p-1.5 px-3 rounded-lg hover:bg-[#1f212a] border border-transparent hover:border-[#2d303f] transition select-none hidden">
+              <div class="text-right hidden sm:block">
+                <p id="user-display-name" class="text-xs font-bold text-white">User Account</p>
+                <p id="user-display-email" class="text-[10px] text-indigo-400 font-mono">...</p>
+              </div>
+              <img id="user-avatar" class="h-8 w-8 rounded-lg border border-[#2d303f]" src="" alt="avatar">
+            </div>
+
+            <!-- Dropdown Box -->
+            <div id="profile-dropdown" class="absolute right-0 mt-2 w-44 bg-[#191b22] border border-[#2d303f] rounded-xl shadow-xl p-1 hidden z-50">
+              <button id="logout-btn" class="w-full text-left flex items-center px-2 py-2 text-xs text-rose-400 hover:bg-rose-950/20 rounded-lg font-semibold transition">
+                Disconnect Session
+              </button>
+            </div>
+          </div>
+          
         </div>
       </header>
 
-      <!-- Dashboard Main View -->
-      <main class="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 max-w-7xl mx-auto w-full">
+      <!-- Dashboard Main Analytics Grid -->
+      <main class="flex-1 p-6 md:p-8 overflow-y-auto space-y-8 max-w-7xl w-full mx-auto">
         
-        <!-- Financial Summary Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-slate-700"></div>
-            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Project Volume</p>
-            <h3 id="global-budget" class="text-lg font-black text-slate-100 mt-2">৳0</h3>
+        <!-- Metrics Matrix Counters with Subtle Neon Glow on Borders -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div class="bg-[#16171d] border border-[#252834] p-4 rounded-xl shadow-sm">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Volume</p>
+            <h3 id="global-budget" class="text-lg font-bold tracking-tight text-white mt-1.5 font-mono">৳0</h3>
           </div>
-          <div class="bg-gradient-to-br from-emerald-600 to-teal-700 p-5 rounded-2xl shadow-md text-white border border-emerald-500/10">
-            <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-200">Total Revenue (Income)</p>
-            <h3 id="global-income" class="text-xl font-black mt-2">৳0</h3>
+          <div class="bg-[#16171d] border border-emerald-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+            <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Gross Income</p>
+            <h3 id="global-income" class="text-lg font-extrabold tracking-tight text-emerald-400 mt-1.5 font-mono">৳0</h3>
           </div>
-          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
-            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Expense</p>
-            <h3 id="global-expense" class="text-lg font-black text-red-400 mt-2">৳0</h3>
+          <div class="bg-[#16171d] border border-rose-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
+            <p class="text-[10px] font-bold uppercase tracking-wider text-rose-400">Total Cost</p>
+            <h3 id="global-expense" class="text-lg font-extrabold tracking-tight text-rose-400 mt-1.5 font-mono">৳0</h3>
           </div>
-          <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-5 rounded-2xl shadow-md text-white border border-amber-500/10">
-            <p class="text-[10px] font-bold uppercase tracking-wider text-amber-100">Outstanding (Due)</p>
-            <h3 id="global-due" class="text-xl font-black mt-2">৳0</h3>
+          <div class="bg-[#16171d] border border-amber-500/20 p-4 rounded-xl shadow-sm relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+            <p class="text-[10px] font-bold uppercase tracking-wider text-amber-400">Outstanding Accounts</p>
+            <h3 id="global-due" class="text-lg font-extrabold tracking-tight text-amber-400 mt-1.5 font-mono">৳0</h3>
           </div>
-          <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-5 rounded-2xl shadow-md text-white border border-blue-500/10">
-            <p class="text-[10px] font-bold uppercase tracking-wider text-blue-100">Net Profit (Cash)</p>
-            <h3 id="global-net" class="text-xl font-black mt-2">৳0</h3>
+          <div class="bg-[#1e202a] border border-indigo-500/30 p-4 rounded-xl col-span-2 lg:col-span-1 shadow-md relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+            <p class="text-[10px] font-bold uppercase tracking-wider text-indigo-300">Net Balance</p>
+            <h3 id="global-net" class="text-xl font-black tracking-tight text-white mt-1.5 font-mono">৳0</h3>
           </div>
         </div>
 
-        <!-- Controls Section Layout -->
+        <!-- Input Processing Action Sections -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="space-y-6">
-            <!-- Client Creation -->
-            <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-sm p-5">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-4 flex items-center gap-2">
-                <span class="h-2 w-2 rounded-full bg-emerald-500"></span> New Client & Project File
+            <!-- Client Registry Form Box -->
+            <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-5 shadow-sm">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-white mb-4 flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span> File Registry
               </h3>
               <form id="client-form" class="space-y-3">
-                <input type="text" id="client-name" placeholder="Client Name" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 outline-none transition">
-                <input type="text" id="client-phone" placeholder="Mobile Number" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 outline-none transition">
-                <input type="text" id="project-title" placeholder="Project Title" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 outline-none transition">
-                <input type="number" id="project-budget" placeholder="Total Contract Budget (৳)" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 outline-none transition">
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md shadow-emerald-600/10">Create Project File</button>
+                <input type="text" id="client-name" placeholder="Client Name" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
+                <input type="text" id="client-phone" placeholder="Contact Mobile" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
+                <input type="text" id="project-title" placeholder="Project / Scope Title" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
+                <input type="number" id="project-budget" placeholder="Contract Budget (৳)" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 focus:border-indigo-500 outline-none transition">
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg py-2.5 text-xs transition shadow-lg shadow-indigo-600/10">Create New File</button>
               </form>
             </div>
 
-            <!-- General Office Expense Form -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-sm p-5">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-red-400 mb-4 flex items-center gap-2">
-                <span class="h-2 w-2 rounded-full bg-red-500"></span> 🏢 General Office Expense Posting
+            <!-- General Office Overhead -->
+            <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-5 shadow-sm">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-white mb-4 flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span> Office Overhead
               </h3>
               <form id="office-expense-form" class="space-y-3">
-                <select id="oe-category" class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white outline-none focus:ring-2 focus:ring-red-500">
+                <select id="oe-category" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white focus:border-rose-500 outline-none">
                   <option value="Staff Salary">Staff Salary</option>
                   <option value="Office Rent">Office Rent</option>
-                  <option value="Utility Bill">Utility / Electricity Bill</option>
-                  <option value="Conveyance">Conveyance / Site Visit</option>
-                  <option value="Others">Others General Expenses</option>
+                  <option value="Utility Bill">Utility Bills</option>
+                  <option value="Conveyance">Conveyance / Logistics</option>
+                  <option value="Others">Miscellaneous Expense</option>
                 </select>
-                <input type="number" id="oe-amount" placeholder="Expense Amount (৳)" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-red-500">
-                <input type="text" id="oe-details" placeholder="Expense Description" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-red-500">
-                <input type="date" id="oe-date" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white outline-none focus:ring-2 focus:ring-red-500">
-                <button type="submit" class="w-full bg-red-950/30 text-red-400 hover:bg-red-600 hover:text-white border border-red-900/50 font-bold rounded-xl py-2.5 text-xs transition">Post Office Expense</button>
+                <input type="number" id="oe-amount" placeholder="Overhead Amount (৳)" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none">
+                <input type="text" id="oe-details" placeholder="Overhead Remarks/Details" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none">
+                <input type="date" id="oe-date" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-slate-300 outline-none">
+                <button type="submit" class="w-full bg-[#241a21] hover:bg-rose-900 border border-rose-900/40 text-rose-400 hover:text-white font-semibold rounded-lg py-2.5 text-xs transition">Log General Overhead</button>
               </form>
             </div>
           </div>
 
-          <!-- Project Specific Posting -->
-          <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-sm p-6 lg:col-span-2 flex flex-col justify-between">
+          <!-- Transaction Posting Ledger Control Nodes -->
+          <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-5 lg:col-span-2 flex flex-col justify-between shadow-sm">
             <div>
-              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-4 flex items-center gap-2">
-                <span class="h-2 w-2 rounded-full bg-blue-500"></span> 💸 Project Installment Received & Costs
+              <h3 class="text-xs font-bold uppercase tracking-wider text-white mb-4 flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Journal Voucher Entry
               </h3>
               <form id="tx-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="sm:col-span-2">
-                  <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Select Project File</label>
-                  <select id="tx-client-select" class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white outline-none focus:ring-2 focus:ring-slate-700"></select>
+                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Target Project Profile</label>
+                  <select id="tx-client-select" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white outline-none focus:border-indigo-500"></select>
                 </div>
                 <div>
-                  <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Transaction Type</label>
-                  <select id="tx-type" class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white outline-none focus:ring-2 focus:ring-slate-700">
-                    <option value="income">📥 Installment / Advance Receipt (Income)</option>
-                    <option value="expense">📤 RAJUK Fees / Challan Cost (Expense)</option>
+                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Entry Class</label>
+                  <select id="tx-type" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white outline-none focus:border-indigo-500">
+                    <option value="income">📥 Debit (Installment Receipt)</option>
+                    <option value="expense">📤 Credit (Project Scope Cost)</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Amount (৳)</label>
-                  <input type="number" id="tx-amount" placeholder="৳" required class="w-full border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-slate-700">
+                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Transaction Value (৳)</label>
+                  <input type="number" id="tx-amount" placeholder="৳" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
                 </div>
-                <div class="sm:col-span-2">
-                  <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Date & Remarks</label>
-                  <div class="flex flex-col sm:flex-row gap-2">
-                    <input type="date" id="tx-date" required class="border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white outline-none focus:ring-2 focus:ring-slate-700 w-full sm:w-40">
-                    <input type="text" id="tx-details" placeholder="Remarks..." required class="flex-1 border border-slate-800 rounded-xl p-2.5 text-xs bg-slate-950 text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-slate-700">
+                <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div class="sm:col-span-1">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Date</label>
+                    <input type="date" id="tx-date" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-slate-300 outline-none focus:border-indigo-500">
+                  </div>
+                  <div class="sm:col-span-2">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Narration / Particulars</label>
+                    <input type="text" id="tx-details" placeholder="Narration notes..." required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
                   </div>
                 </div>
-                <div class="sm:col-span-2 text-right mt-2">
-                  <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl px-6 py-2.5 text-xs transition">Submit Ledger Entry</button>
+                <div class="sm:col-span-2 text-right pt-2">
+                  <button type="submit" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-lg px-6 py-2.5 text-xs transition shadow-lg shadow-emerald-600/10">Post Transaction</button>
                 </div>
               </form>
             </div>
 
-            <!-- Recent Expenses Table -->
-            <div class="mt-6 pt-4 border-t border-slate-800">
-              <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">📜 Recent General Office Expenses</h4>
-              <div class="max-h-32 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950/40">
-                <table class="w-full text-left text-[11px] text-slate-300">
-                  <tbody id="office-expense-rows"></tbody>
+            <!-- Recent General Overhead Records Module List -->
+            <div class="mt-6 pt-4 border-t border-[#22242e]">
+              <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-0.5">Recent General Overhead Records</h4>
+              <div class="max-h-24 overflow-y-auto border border-[#22242e] rounded-lg bg-[#121319]">
+                <table class="w-full text-left text-[11px]">
+                  <tbody id="office-expense-rows" class="divide-y divide-[#22242e] text-slate-300"></tbody>
                 </table>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Central Table -->
-        <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-sm overflow-hidden">
-          <div class="p-5 border-b border-slate-800 bg-slate-950/20">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🏢 Central Client Database & Project Ledger</h3>
+        <!-- Master Table Document -->
+        <div class="bg-[#16171d] border border-[#22242e] rounded-xl overflow-hidden shadow-sm">
+          <div class="px-6 py-4 border-b border-[#22242e] bg-[#191b22]">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-white">Master Subsidiary Ledger Accounts</h3>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
-                <tr class="bg-slate-950/60 text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-800">
-                  <th class="p-4 pl-6">Client & Project</th>
-                  <th class="p-4">Contact</th>
-                  <th class="p-4 text-right">Contract Budget</th>
-                  <th class="p-4 text-right">Total Income</th>
-                  <th class="p-4 text-right">Total Cost</th>
-                  <th class="p-4 text-right">Outstanding Due</th>
-                  <th class="p-4 pr-6 text-center">Action</th>
+                <tr class="bg-[#1a1c24] text-slate-400 font-semibold uppercase tracking-wider border-b border-[#22242e]">
+                  <th class="px-6 py-4">Accounts Workspace</th>
+                  <th class="px-4 py-4">Contact Link</th>
+                  <th class="px-4 py-4 text-right">Contract Allocation</th>
+                  <th class="px-4 py-4 text-right">Settled Revenue</th>
+                  <th class="px-4 py-4 text-right">Absorbed Costs</th>
+                  <th class="px-4 py-4 text-right">Balance Receivables</th>
+                  <th class="px-6 py-4 text-center">Action</th>
                 </tr>
               </thead>
-              <tbody id="clients-table-body" class="divide-y divide-slate-800 text-slate-300 font-medium"></tbody>
+              <tbody id="clients-table-body" class="divide-y divide-[#22242e] text-slate-300 font-medium"></tbody>
             </table>
           </div>
         </div>
 
-        <!-- Ledger Drawer -->
-        <div id="ledger-drawer" class="bg-slate-900 rounded-2xl border-2 border-emerald-500 shadow-2xl p-6 hidden">
-          <div class="flex justify-between items-start border-b border-slate-800 pb-4">
+        <!-- Detailed Drawer Sheet UI -->
+        <div id="ledger-drawer" class="bg-[#16171d] border border-indigo-500/40 rounded-xl p-6 hidden shadow-2xl transition-all duration-300">
+          <div class="flex justify-between items-start border-b border-[#22242e] pb-4">
             <div>
-              <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-900">Detailed Statement File</span>
-              <h2 id="drawer-title" class="text-base font-bold text-slate-100 mt-1">Customer Ledger Statement</h2>
-              <p id="drawer-sub" class="text-xs text-slate-400 font-medium"></p>
+              <span class="text-[9px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-indigo-950/60 text-indigo-400 border border-indigo-900/50">Subsidiary Analysis Statement</span>
+              <h2 id="drawer-title" class="text-sm font-bold text-white mt-1.5">Statement Analysis</h2>
+              <p id="drawer-sub" class="text-xs text-slate-400 mt-0.5"></p>
             </div>
-            <button onclick="closeDrawer()" class="h-6 w-6 rounded-full hover:bg-slate-800 text-slate-400 hover:text-slate-200 flex items-center justify-center font-bold">✕</button>
+            <button onclick="closeDrawer()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-[#1f212a] border border-[#2d303f] rounded-lg font-mono transition">✕ Close</button>
           </div>
-          <div class="mt-6">
+          <div class="mt-4 overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
-                <tr class="bg-slate-950/60 text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-800">
-                  <th class="p-3">Date</th>
-                  <th class="p-3">Description</th>
-                  <th class="p-3">Type</th>
-                  <th class="p-3 text-right">Amount</th>
+                <tr class="text-slate-400 font-semibold uppercase tracking-wider border-b border-[#22242e]">
+                  <th class="py-3 px-3">Valuation Date</th>
+                  <th class="py-3 px-3">Narrative Descriptions</th>
+                  <th class="py-3 px-3">Voucher Class</th>
+                  <th class="py-3 px-3 text-right">Financial Impact</th>
                 </tr>
               </thead>
-              <tbody id="drawer-table-body" class="divide-y divide-slate-800"></tbody>
+              <tbody id="drawer-table-body" class="divide-y divide-[#22242e] text-slate-300"></tbody>
             </table>
           </div>
         </div>
@@ -254,7 +273,7 @@
     </div>
   </div>
 
-  <!-- Linking Isolated App Script Logical Code -->
+  <!-- Isolated Logic Connection File -->
   <script src="app.js"></script>
 </body>
 </html>
