@@ -18,6 +18,7 @@ let farmData = [];
 let officeExpenses = [];
 let databasePathRef = null;
 let openLedgerId = null;
+let activeClientFilter = 'none'; // 'none' means hidden on fresh start
 
 // Catch UI Reference Elements
 const loginBtn = document.getElementById('google-login-btn');
@@ -29,7 +30,6 @@ const sidebarAuthSection = document.getElementById('sidebar-auth-section');
 const clientForm = document.getElementById('client-form');
 const txForm = document.getElementById('tx-form');
 const officeExpenseForm = document.getElementById('office-expense-form');
-const clientSelect = document.getElementById('tx-client-select');
 const tableBody = document.getElementById('clients-table-body');
 const officeExpenseRows = document.getElementById('office-expense-rows');
 const ledgerDrawer = document.getElementById('ledger-drawer');
@@ -53,7 +53,12 @@ if (monthFilter) {
 if (searchInput) {
   searchInput.addEventListener('input', () => {
     switchTab('dashboard-view');
-    renderMasterTable();
+    // Force set filter to 'all' if user starts typing in sidebar search box
+    if(activeClientFilter === 'none') {
+      setClientFilter('all');
+    } else {
+      renderMasterTable();
+    }
   });
 }
 
@@ -63,17 +68,45 @@ window.switchTab = function(tabId) {
   document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.className = "tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b]";
+    btn.className = "tab-btn flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent w-full";
   });
 
   const activeBtn = document.getElementById(`btn-${tabId}`);
   if(activeBtn) {
-    activeBtn.className = "tab-btn flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition bg-indigo-600 text-white shadow-md shadow-indigo-600/10";
+    activeBtn.className = "tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20";
   }
 }
 
-// Initialize Blank Dashboard
+// Control Table Visibility and Custom States
+window.setClientFilter = function(filterType) {
+  activeClientFilter = filterType;
+  
+  const container = document.getElementById('master-table-container');
+  const btnAll = document.getElementById('filter-btn-all');
+  const btnNew = document.getElementById('filter-btn-new');
+  const btnOld = document.getElementById('filter-btn-old');
+  
+  [btnAll, btnNew, btnOld].forEach(btn => {
+    if(btn) btn.className = "px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white";
+  });
+  
+  const activeBtn = document.getElementById(`filter-btn-${filterType}`);
+  if(activeBtn) activeBtn.className = "px-3 py-1.5 text-[11px] font-bold rounded-md transition-all bg-indigo-600 text-white shadow-sm";
+  
+  if(container) {
+    if(filterType === 'none') {
+      container.classList.add('hidden');
+    } else {
+      container.classList.remove('hidden');
+    }
+  }
+  
+  renderMasterTable();
+}
+
+// Initialize System Pipelines
 uiUpdatePipeline();
+setClientFilter('none'); // Safe hide initially
 
 // User Menu Events Handlers
 if (profileTrigger) {
@@ -253,6 +286,7 @@ if (clientForm) {
     databasePathRef.child('clients').push(newClient);
     clientForm.reset();
     alert('Project file deployed to cloud database successfully!');
+    setClientFilter('all'); // auto show all table items
     switchTab('dashboard-view');
   });
 }
@@ -278,7 +312,6 @@ if (txForm) {
       
       databasePathRef.child('clients').child(id).update({ history: updatedHistory });
       
-      // Form fields and custom dropdown reset
       document.getElementById('tx-amount').value = '';
       document.getElementById('tx-details').value = '';
       document.getElementById('tx-client-select').value = '';
@@ -289,6 +322,7 @@ if (txForm) {
         selectedText.className = 'text-slate-500';
       }
 
+      setClientFilter('all');
       uiUpdatePipeline();
       alert('Voucher posted successfully!');
       switchTab('dashboard-view');
@@ -314,9 +348,7 @@ if (officeExpenseForm) {
   });
 }
 
-// ----------------------------------------------------
-// NEW CUSTOM SEARCHABLE DROPDOWN ENGINE FOR VOUCHERS
-// ----------------------------------------------------
+// PREMIUM SEARCHABLE DROPDOWN CORE FOR JOURNAL ENTRIES
 function renderDropdown() {
   const trigger = document.getElementById('dropdown-trigger');
   const dropdownList = document.getElementById('custom-dropdown-list');
@@ -327,7 +359,6 @@ function renderDropdown() {
 
   if (!trigger || !dropdownList || !itemsContainer) return;
 
-  // Toggle dropdown on trigger click
   trigger.onclick = function(e) {
     e.stopPropagation();
     dropdownList.classList.toggle('hidden');
@@ -338,7 +369,6 @@ function renderDropdown() {
     }
   };
 
-  // Close dropdown on outside click
   document.onclick = function() {
     dropdownList.classList.add('hidden');
   };
@@ -347,7 +377,6 @@ function renderDropdown() {
     e.stopPropagation();
   };
 
-  // Live filter item list inside dropdown
   function filterDropdownItems(query) {
     itemsContainer.innerHTML = '';
     
@@ -364,7 +393,7 @@ function renderDropdown() {
     filtered.forEach(c => {
       const item = document.createElement('div');
       item.className = "p-2.5 text-xs text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg cursor-pointer transition-all font-medium flex justify-between items-center";
-      item.innerHTML = `<span>${c.project} <span class="text-[10px] text-slate-500">TL: (${c.name})</span></span>`;
+      item.innerHTML = `<span>${c.project} <span class="text-[10px] text-slate-500">(${c.name})</span></span>`;
       
       item.onclick = function() {
         hiddenInput.value = c.id;
@@ -383,7 +412,6 @@ function renderDropdown() {
     };
   }
 
-  // Manage setup default UI states
   if (farmData.length === 0) {
     selectedText.innerText = "No Active Projects Available";
     selectedText.className = "text-slate-500";
@@ -406,13 +434,21 @@ function renderDropdown() {
   }
 }
 
-// Master Table UI Builders
+// Master Ledger Table (Conditional Engine for Filter tabs)
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const container = document.getElementById('master-table-container');
   
   if (!auth.currentUser) {
+    if(container) container.classList.remove('hidden');
     tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Dashboard is blank. Please sign in with Google from the top menu to view database files.</td></tr>`;
+    return;
+  }
+
+  // Keep hidden if no button tab is explicitly requested
+  if (activeClientFilter === 'none') {
+    if(container) container.classList.add('hidden');
     return;
   }
 
@@ -421,14 +457,28 @@ function renderMasterTable() {
     return;
   }
 
-  const filteredData = farmData.filter(c => {
+  // Step 1: Filter using Search query
+  let filteredData = farmData.filter(c => {
     return c.name.toLowerCase().includes(query) || 
            c.phone.includes(query) || 
            c.project.toLowerCase().includes(query);
   });
 
+  // Step 2: Advanced logical conditioning for New/Old targets
+  if (activeClientFilter === 'new') {
+    filteredData = filteredData.filter(c => {
+      const hasIncome = c.history.some(t => t.type === 'income');
+      return !hasIncome; // New client = No transaction income yet
+    });
+  } else if (activeClientFilter === 'old') {
+    filteredData = filteredData.filter(c => {
+      const hasIncome = c.history.some(t => t.type === 'income');
+      return hasIncome; // Old client = Already has transaction income
+    });
+  }
+
   tableBody.innerHTML = filteredData.length === 0 ? 
-    `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No matching files found.</td></tr>` : '';
+    `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No matching profiles found in this category.</td></tr>` : '';
 
   filteredData.forEach(c => {
     let localIncome = 0, localExpense = 0;
