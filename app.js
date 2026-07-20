@@ -14,7 +14,7 @@ const auth = firebase.auth();
 const rtdb = firebase.database();
 
 // Global Security Passcode (এখানে আপনার পছন্দের পাসকোড দিন)
-const SECURITY_PASSCODE = "6219";
+const SECURITY_PASSCODE = "1234";
 
 // State Memory Management Variables
 let farmData = [];
@@ -137,15 +137,27 @@ if (logoutBtn) {
 
 // Firebase Auth Authentication State Realtime Observers
 auth.onAuthStateChanged(user => {
+  // পাসকোড ইনপুটের আগে অ্যাপের কন্টেন্ট হাইড রাখতে বডি কন্টেইনার টার্গেট করা
+  const appContainer = document.getElementById('tab-dashboard-view') || document.body;
+  
   if (user) {
+    // পাসকোড দেওয়ার আগে ব্যাকগ্রাউন্ড সম্পূর্ণ ইনভিজিবল রাখা
+    appContainer.style.opacity = "0";
+    appContainer.style.pointerEvents = "none";
+
     // অ্যাপে প্রবেশ করার সময় পাসকোড সিকিউরিটি চেক
     const accessCode = prompt("Enter Security Passcode to Access System:");
+    
     if (accessCode !== SECURITY_PASSCODE) {
       alert("Invalid Passcode! Access Denied.");
       auth.signOut();
       window.location.reload();
       return;
     }
+
+    // পাসকোড সঠিক হলে ড্যাশবোর্ড স্ক্রিন দৃশ্যমান করা
+    appContainer.style.opacity = "1";
+    appContainer.style.pointerEvents = "auto";
 
     if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
     if (profileTrigger) profileTrigger.classList.remove('hidden');
@@ -162,6 +174,10 @@ auth.onAuthStateChanged(user => {
     databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
     subscribeToCloudStreams();
   } else {
+    // লগআউট মোডে থাকলে বা গুগল লগইন স্ক্রিনে অ্যাপ দৃশ্যমান রাখা
+    appContainer.style.opacity = "1";
+    appContainer.style.pointerEvents = "auto";
+
     if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
     if (profileTrigger) profileTrigger.classList.add('hidden');
     
@@ -445,7 +461,7 @@ function renderDropdown() {
   }
 }
 
-// Master Ledger Table (সঠিক লজিক কন্ডিশন ইঞ্জিন)
+// Master Ledger Table (সঠিক ফিল্টারিং কন্ডিশন লজিক)
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -474,17 +490,17 @@ function renderMasterTable() {
            c.project.toLowerCase().includes(query);
   });
 
-  // Step 2: রিকোয়ারমেন্ট অনুযায়ী পারফেক্ট ফিল্টার লজিক
-  // New Client = যাদের এখনও কোনো পেমেন্ট (Income) আসে নাই (শুধু রেজিস্ট্রি বা খরচ হয়েছে)
+  // Step 2: রিকোয়ারমেন্ট লজিক: পেমেন্ট বা Income আসলেই সে Old Client, নাহলে New Client
+  // New Client = যাদের এখনও কোনো পেমেন্ট (Income) আসে নাই
   if (activeClientFilter === 'new') {
     filteredData = filteredData.filter(c => {
       const hasIncome = c.history && c.history.some(t => t.type === 'income');
       return !hasIncome; 
     });
   } 
-  // Old Client = সব ক্লায়েন্ট একসাথে দেখাবে (কোনো সাব-ফিল্টার লাগবে না)
+  // Old Client = সব ক্লায়েন্ট একসাথে দেখাবে (পুরো ডাটাবেজ)
   else if (activeClientFilter === 'old' || activeClientFilter === 'all') {
-    // Displays everything matching search queries
+    // Displays everything
   }
 
   tableBody.innerHTML = filteredData.length === 0 ? 
