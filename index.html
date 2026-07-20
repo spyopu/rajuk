@@ -167,11 +167,28 @@
           
           <!-- Master Table Document -->
           <div class="bg-[#16171d] border border-[#22242e] rounded-xl overflow-hidden shadow-sm">
-            <div class="px-6 py-4 border-b border-[#22242e] bg-[#191b22] flex justify-between items-center">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-white">Master Subsidiary Ledger Accounts</h3>
-              <span class="text-[10px] font-mono text-slate-500">Filtered by Sidebar Search</span>
+            <div class="px-6 py-4 border-b border-[#22242e] bg-[#191b22] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-white">Subsidiary Ledger Accounts</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Select a view option below to display records</p>
+              </div>
+              
+              <!-- Filter Buttons -->
+              <div class="flex items-center gap-1.5 bg-[#111216] p-1 rounded-lg border border-[#2d303f]">
+                <button onclick="setClientFilter('all')" id="filter-btn-all" class="px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white">
+                  All
+                </button>
+                <button onclick="setClientFilter('new')" id="filter-btn-new" class="px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white">
+                  New Client
+                </button>
+                <button onclick="setClientFilter('old')" id="filter-btn-old" class="px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white">
+                  Old Client
+                </button>
+              </div>
             </div>
-            <div class="overflow-x-auto">
+
+            <!-- Default Hidden Table Container -->
+            <div id="master-table-container" class="overflow-x-auto hidden">
               <table class="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr class="bg-[#1a1c24] text-slate-400 font-semibold uppercase tracking-wider border-b border-[#22242e]">
