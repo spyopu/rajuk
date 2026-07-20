@@ -14,7 +14,7 @@ const auth = firebase.auth();
 const rtdb = firebase.database();
 
 // Global Security Passcode (এখানে আপনার ডিলিট পাসকোডটি সেট করুন)
-const SECURITY_PASSCODE = "1234";
+const SECURITY_PASSCODE = "6219";
 
 // State Memory Management Variables
 let farmData = [];
