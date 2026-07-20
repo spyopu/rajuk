@@ -13,6 +13,9 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const rtdb = firebase.database();
 
+// Global Security Passcode (এখানে আপনার ডিলিট পাসকোডটি সেট করুন)
+const SECURITY_PASSCODE = "1234";
+
 // State Memory Management Variables
 let farmData = [];
 let officeExpenses = [];
@@ -594,18 +597,30 @@ function refreshDrawer(id) {
   });
 }
 
-// Node Deletion Scripts
+// Node Deletion Scripts (পাসকোড সিকিউরিটি যুক্ত করা হয়েছে)
 window.deleteClient = function(id) {
   if(!databasePathRef) return;
   if(confirm('Are you sure you want to permanently delete this file and all its records?')) {
-    databasePathRef.child('clients').child(id).remove();
-    if(openLedgerId === id) closeDrawer();
+    const deleteCode = prompt("Enter Security Passcode to Confirm Deletion:");
+    if (deleteCode === SECURITY_PASSCODE) {
+      databasePathRef.child('clients').child(id).remove();
+      if(openLedgerId === id) closeDrawer();
+      alert('Project record deleted successfully.');
+    } else {
+      alert("Incorrect Passcode! Action cancelled.");
+    }
   }
 }
 
 window.deleteOfficeExpense = function(id) {
   if(!databasePathRef) return;
   if(confirm('Delete this general office expense node?')) {
-    databasePathRef.child('office_expenses').child(id).remove();
+    const deleteCode = prompt("Enter Security Passcode to Confirm Deletion:");
+    if (deleteCode === SECURITY_PASSCODE) {
+      databasePathRef.child('office_expenses').child(id).remove();
+      alert('Expense record deleted successfully.');
+    } else {
+      alert("Incorrect Passcode! Action cancelled.");
+    }
   }
 }
