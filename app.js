@@ -1,4 +1,4 @@
-// app.js — Complete Premium Architecture with Google Auth & Monthly Reporting
+// app.js — Complete Premium Architecture with Advanced Expense Breakdown
 
 // --- State Variables ---
 let clients = [];
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupMonthFilterUI();
   attachFormListeners();
   setupGoogleAuthListeners();
-  loadMockOrLiveServerData();
+  loadMockOrLiveServerData(); // এখানে এখন সম্পূর্ণ ব্ল্যাঙ্ক/খালি ডেটা লোড হবে
 });
 
 // --- UI Injection for Month Filter ---
@@ -50,21 +50,17 @@ function setupGoogleAuthListeners() {
       const userName = document.getElementById("user-display-name");
       const userEmail = document.getElementById("user-display-email");
 
-      // Firebase Auth কানেক্ট করার জন্য নিচের মক লজিকটি লাইভ Firebase কোড দিয়ে রিপ্লেস করতে পারেন।
-      // বর্তমানে এটি ক্লিক করার সাথে সাথে ইন্টারফেস অ্যাক্টিভ করে দেবে:
       statusIndicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-none";
       statusText.innerText = "Connected Securely";
       authSection.classList.add("hidden");
       profileTrigger.classList.remove("hidden");
       
-      // ইউজার প্রোফাইল ডেটা ইনজেকশন
       userAvatar.src = "https://ui-avatars.com/api/?name=Opu+Ahmed&background=6366f1&color=fff"; 
       userName.innerText = "Opu Ahmed";
       userEmail.innerText = "opu.marketing@agency.com";
     });
   }
 
-  // প্রোফাইল ড্রপডাউন টগল
   if (profileTrigger) {
     profileTrigger.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -72,14 +68,12 @@ function setupGoogleAuthListeners() {
     });
   }
 
-  // স্ক্রিনের বাইরে ক্লিক করলে ড্রপডাউন বন্ধ হওয়া
   document.addEventListener("click", () => {
     if (dropdown && !dropdown.classList.contains("hidden")) {
       dropdown.classList.add("hidden");
     }
   });
 
-  // সেশন ডিসকানেক্ট / লগআউট
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       location.reload();
@@ -95,7 +89,7 @@ function attachFormListeners() {
     const name = document.getElementById("client-name").value.trim();
     const phone = document.getElementById("client-phone").value.trim();
     const title = document.getElementById("project-title").value.trim();
-    const budget = parseFloat(document.getElementById("project-budget").value);
+    const budget = parseFloat(document.getElementById("project-budget").value) || 0;
 
     const newClient = {
       id: "c_" + Date.now(),
@@ -111,29 +105,62 @@ function attachFormListeners() {
     calculateAndRenderAll();
   });
 
-  // 2. Office Overhead
+  // 2. Office Overhead (General Cost with Total, Paid/Advance, Due)
   const oeForm = document.getElementById("office-expense-form");
   if (oeForm) {
+    oeForm.innerHTML = `
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Category (e.g. Staff Salary, Shop Rent)</label>
+          <input type="text" id="oe-category" placeholder="Salary / Rent" required class="w-full bg-[#1b1d26] border border-[#2d303f] rounded-lg px-3 py-2 text-sm text-white focus:border-indigo-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Total Fixed Amount (মোট বরাদ্দ)</label>
+          <input type="number" id="oe-total-amount" placeholder="৳" required class="w-full bg-[#1b1d26] border border-[#2d303f] rounded-lg px-3 py-2 text-sm font-mono text-white focus:border-indigo-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Paid / Advance Amount (আজকে দিলেন)</label>
+          <input type="number" id="oe-paid-amount" placeholder="৳" required class="w-full bg-[#1b1d26] border border-[#2d303f] rounded-lg px-3 py-2 text-sm font-mono text-white focus:border-indigo-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Date</label>
+          <input type="date" id="oe-date" required class="w-full bg-[#1b1d26] border border-[#2d303f] rounded-lg px-3 py-2 text-sm text-white focus:border-indigo-500 outline-none">
+        </div>
+      </div>
+      <div class="mt-3">
+        <label class="block text-xs text-slate-400 mb-1">Details / Remarks</label>
+        <input type="text" id="oe-details" placeholder="Note here..." class="w-full bg-[#1b1d26] border border-[#2d303f] rounded-lg px-3 py-2 text-sm text-white focus:border-indigo-500 outline-none">
+      </div>
+      <button type="submit" class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition">Post General Cost</button>
+    `;
+
+    // সেটআপ আজকের তারিখ ডিফল্ট হিসেবে
+    document.getElementById("oe-date").value = new Date().toISOString().slice(0, 10);
+
     oeForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const category = document.getElementById("oe-category").value;
-      const amount = parseFloat(document.getElementById("oe-amount").value);
+      const category = document.getElementById("oe-category").value.trim();
+      const totalAmount = parseFloat(document.getElementById("oe-total-amount").value) || 0;
+      const paidAmount = parseFloat(document.getElementById("oe-paid-amount").value) || 0;
       const details = document.getElementById("oe-details").value.trim();
       const date = document.getElementById("oe-date").value;
-      const isAdvance = document.getElementById("oe-is-advance").checked;
+
+      const dueAmount = totalAmount - paidAmount;
 
       const newExpense = {
         id: "oe_" + Date.now(),
         category,
-        amount,
-        details: isAdvance ? `[ADVANCE] ${details}` : details,
+        totalAmount,
+        paidAmount,
+        dueAmount,
+        details,
         date,
-        isAdvance,
         createdAt: new Date().toISOString()
       };
 
       officeExpenses.push(newExpense);
       oeForm.reset();
+      document.getElementById("oe-date").value = new Date().toISOString().slice(0, 10);
       calculateAndRenderAll();
     });
   }
@@ -143,7 +170,7 @@ function attachFormListeners() {
     e.preventDefault();
     const clientId = document.getElementById("tx-client-select").value;
     const type = document.getElementById("tx-type").value;
-    const amount = parseFloat(document.getElementById("tx-amount").value);
+    const amount = parseFloat(document.getElementById("tx-amount").value) || 0;
     const date = document.getElementById("tx-date").value;
     const details = document.getElementById("tx-details").value.trim();
 
@@ -216,22 +243,45 @@ function calculateAndRenderAll() {
     clientRowsContainer.appendChild(row);
   });
 
-  // 2. Process General Office Overhead
+  // 2. Process General Office Overhead with detailed structure
   const expenseRowsContainer = document.getElementById("office-expense-rows");
+  
+  // টেবিল হেডার আপডেট (যাতে মোট, অ্যাডভান্স ও ডিউ কলাম দেখা যায়)
+  const expenseTable = expenseRowsContainer.closest('table');
+  if (expenseTable && !expenseTable.dataset.updatedHeaders) {
+    const thead = expenseTable.querySelector('thead');
+    if (thead) {
+      thead.innerHTML = `
+        <tr class="text-left text-slate-400 text-xs uppercase tracking-wider border-b border-[#22242e]">
+          <th class="p-3">Category</th>
+          <th class="p-3">Note</th>
+          <th class="p-3">Date</th>
+          <th class="p-3 text-right">Total Cost</th>
+          <th class="p-3 text-right">Paid / Adv</th>
+          <th class="p-3 text-right">Due Left</th>
+        </tr>
+      `;
+      expenseTable.dataset.updatedHeaders = "true";
+    }
+  }
+
   expenseRowsContainer.innerHTML = "";
 
   officeExpenses.forEach(exp => {
     if (isCurrentMonth(exp.date)) {
-      totalCost += exp.amount;
+      // মোট খরচ হিসেবে শুধুমাত্র যতটুকু ক্যাশ পেমেন্ট বা অ্যাডভান্স দেওয়া হয়েছে তা যুক্ত হবে
+      totalCost += exp.paidAmount; 
     }
 
     const row = document.createElement("tr");
     row.className = "hover:bg-[#1a1c24] text-xs border-b border-[#22242e]";
     row.innerHTML = `
-      <td class="p-2 font-bold ${exp.isAdvance ? 'text-purple-400' : 'text-slate-300'}">${exp.category} ${exp.isAdvance ? '(Adv)' : ''}</td>
-      <td class="p-2 text-slate-400">${exp.details}</td>
-      <td class="p-2 font-mono text-slate-400">${exp.date}</td>
-      <td class="p-2 text-right font-mono text-rose-400 font-bold">৳${exp.amount}</td>
+      <td class="p-3 font-bold text-slate-200">${exp.category}</td>
+      <td class="p-3 text-slate-400">${exp.details || '-'}</td>
+      <td class="p-3 font-mono text-slate-400">${exp.date}</td>
+      <td class="p-3 text-right font-mono text-slate-300">৳${exp.totalAmount.toLocaleString()}</td>
+      <td class="p-3 text-right font-mono text-emerald-400 font-bold">৳${exp.paidAmount.toLocaleString()}</td>
+      <td class="p-3 text-right font-mono ${exp.dueAmount > 0 ? 'text-amber-400 font-bold' : 'text-slate-500'}">৳${exp.dueAmount.toLocaleString()}</td>
     `;
     expenseRowsContainer.appendChild(row);
   });
@@ -310,19 +360,11 @@ window.closeDrawer = function() {
   currentSelectedClientId = null;
 };
 
-// --- Mock Data Loader ---
+// --- Mock Data Loader (এখন সম্পূর্ণ ক্লিন এবং খালি) ---
 function loadMockOrLiveServerData() {
-  clients = [
-    { id: "c_1", name: "Karim Rahman", phone: "01711000222", title: "Rajuk Plan Approval", budget: 150000, createdAt: "2026-07-01T10:00:00.000Z" }
-  ];
-  transactions = [
-    { id: "tx_1", clientId: "c_1", type: "income", amount: 50000, date: "2026-07-05", details: "Booking Advance Received", createdAt: "2026-07-05T12:00:00.000Z" },
-    { id: "tx_2", clientId: "c_1", type: "expense", amount: 15000, date: "2026-07-10", details: "Site Survey & Drafting Cost", createdAt: "2026-07-10T15:00:00.000Z" }
-  ];
-  officeExpenses = [
-    { id: "oe_1", category: "Office Rent", amount: 25000, details: "July Rent Paid", date: "2026-07-01", isAdvance: false },
-    { id: "oe_2", category: "Staff Salary", amount: 10000, details: "Advance to Digital Marketer", date: "2026-07-12", isAdvance: true }
-  ];
+  clients = [];
+  transactions = [];
+  officeExpenses = [];
   
   calculateAndRenderAll();
 }
