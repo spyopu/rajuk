@@ -34,10 +34,22 @@ const tableBody = document.getElementById('clients-table-body');
 const officeExpenseRows = document.getElementById('office-expense-rows');
 const ledgerDrawer = document.getElementById('ledger-drawer');
 const searchInput = document.getElementById('search-input');
+const monthFilter = document.getElementById('month-filter');
 
 // Initialize Today's Date Values Input fields
 if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
 if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
+
+// Initialize Default Value for Month Filter (Current Month)
+if (monthFilter) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  monthFilter.value = `${year}-${month}`;
+  
+  // Realtime recalculation when user switches month
+  monthFilter.addEventListener('change', uiUpdatePipeline);
+}
 
 // Initialize Blank Dashboard
 uiUpdatePipeline();
@@ -134,40 +146,47 @@ function uiUpdatePipeline() {
   if(openLedgerId) refreshDrawer(openLedgerId);
 }
 
-// Calculate Dashboard Total Amounts (Monthly Filter Added)
+// Calculate Dashboard Total Amounts (Dynamic Monthly Filter)
 function calculateGlobalMetrics() {
   let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
   
-  // চলতি মাসের প্রথম দিন এবং শেষ দিন বের করার লজিক
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth(); // 0 = Jan, 1 = Feb, etc.
+  // Extract Target Month & Year from input filter
+  let targetYear, targetMonth;
+  if (monthFilter && monthFilter.value) {
+    const parts = monthFilter.value.split('-'); 
+    targetYear = parseInt(parts[0]);
+    targetMonth = parseInt(parts[1]) - 1; 
+  } else {
+    const now = new Date();
+    targetYear = now.getFullYear();
+    targetMonth = now.getMonth();
+  }
   
-  const startOfMonth = new Date(currentYear, currentMonth, 1);
-  const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
+  // Set accurate timestamp limits for selected month scope
+  const startOfMonth = new Date(targetYear, targetMonth, 1);
+  const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
+  const monthLabel = startOfMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   farmData.forEach(c => {
-    budget += c.budget; // মোট ভলিউম আগের মতোই সব সময়ের থাকবে
+    budget += c.budget; // Global volume tracks total contract bindings
     let cIncome = 0;
     
     c.history.forEach(t => {
       const tDate = new Date(t.date);
-      
-      // শুধুমাত্র চলতি মাসের ট্রানজেকশনগুলো ফিল্টার করা হচ্ছে
-      const isCurrentMonth = (tDate >= startOfMonth && tDate <= endOfMonth);
+      const isSelectedMonth = (tDate >= startOfMonth && tDate <= endOfMonth);
 
       if (t.type === 'income') {
-        cIncome += t.amount; // ক্লায়েন্টের ডিউ বের করার জন্য সর্বমোট ইনকাম লাগবে
-        if (isCurrentMonth) income += t.amount; // টপ কার্ডে শুধু চলতি মাসের ইনকাম যাবে
+        cIncome += t.amount; 
+        if (isSelectedMonth) income += t.amount; 
       }
-      if (t.type === 'expense' && isCurrentMonth) {
-        prjExpense += t.amount; // টপ কার্ডে শুধু চলতি মাসের প্রজেক্ট খরচ যাবে
+      if (t.type === 'expense' && isSelectedMonth) {
+        prjExpense += t.amount; 
       }
     });
-    due += (c.budget - cIncome); // আউটস্ট্যান্ডিং বা ডিউ হিসাব আগের মতোই মোট থাকবে
+    due += (c.budget - cIncome); // Receivables check remaining balances over entire lifetime
   });
 
-  // অফিস ওভারহেড থেকে শুধু চলতি মাসের খরচ নেওয়া হচ্ছে
+  // Collect and aggregate general company operational costs for selected month
   officeExpenses.forEach(oe => {
     const oeDate = new Date(oe.date);
     if (oeDate >= startOfMonth && oeDate <= endOfMonth) {
@@ -178,19 +197,19 @@ function calculateGlobalMetrics() {
   let grandTotalExpense = prjExpense + totalOfficeExpense;
   let netIncome = income - grandTotalExpense;
 
-  // UI আপডেট এবং লেবেল পরিবর্তন (মাসিক বোঝানোর জন্য)
+  // Map updates out seamlessly into active DOM nodes
   if (document.getElementById('global-budget')) document.getElementById('global-budget').innerText = '৳' + budget.toLocaleString('en-IN');
   
   const incomeCard = document.getElementById('global-income');
   if (incomeCard) {
     incomeCard.innerText = '৳' + income.toLocaleString('en-IN');
-    incomeCard.previousElementSibling.innerText = "Gross Income (This Month)";
+    incomeCard.previousElementSibling.innerText = `Gross Income (${monthLabel})`;
   }
   
   const expenseCard = document.getElementById('global-expense');
   if (expenseCard) {
     expenseCard.innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
-    expenseCard.previousElementSibling.innerText = "Total Cost (This Month)";
+    expenseCard.previousElementSibling.innerText = `Total Cost (${monthLabel})`;
   }
   
   if (document.getElementById('global-due')) document.getElementById('global-due').innerText = '৳' + due.toLocaleString('en-IN');
@@ -198,7 +217,7 @@ function calculateGlobalMetrics() {
   const netCard = document.getElementById('global-net');
   if (netCard) {
     netCard.innerText = '৳' + netIncome.toLocaleString('en-IN');
-    netCard.previousElementSibling.innerText = "Net Balance (This Month)";
+    netCard.previousElementSibling.innerText = `Net Balance (${monthLabel})`;
   }
 }
 
@@ -279,7 +298,7 @@ function renderMasterTable() {
     return;
   }
 
-  // রিকোয়ারমেন্ট ১: সার্চ বক্স ফাকা থাকলে টেবিল একদম খালি থাকবে এবং মেসেজ দেখাবে
+  // রিকোয়ারমেন্ট ১: সার্চ ফাকা থাকলে টেবিল একদম খালি থাকবে এবং ডিরেকশন মেসেজ দেখাবে
   if (query === '') {
     tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">🔍 Type client name, phone or project key on sidebar search ledger to pull accounts data.</td></tr>`;
     return;
@@ -327,13 +346,33 @@ function renderMasterTable() {
 
 function renderOfficeExpenses() {
   if (!officeExpenseRows) return;
-  if (officeExpenses.length === 0) {
-    officeExpenseRows.innerHTML = `<tr><td class="p-3 text-center text-slate-500">${auth.currentUser ? 'No general office expenses logged yet.' : 'Please login to track expenses.'}</td></tr>`;
+  
+  // Filter and show office overhead records belonging strictly to target chosen period
+  let targetYear, targetMonth;
+  if (monthFilter && monthFilter.value) {
+    const parts = monthFilter.value.split('-');
+    targetYear = parseInt(parts[0]);
+    targetMonth = parseInt(parts[1]) - 1;
+  } else {
+    const now = new Date();
+    targetYear = now.getFullYear();
+    targetMonth = now.getMonth();
+  }
+  const startOfMonth = new Date(targetYear, targetMonth, 1);
+  const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
+
+  const localFilteredExpenses = officeExpenses.filter(oe => {
+    const d = new Date(oe.date);
+    return d >= startOfMonth && d <= endOfMonth;
+  });
+
+  if (localFilteredExpenses.length === 0) {
+    officeExpenseRows.innerHTML = `<tr><td class="p-3 text-center text-slate-500">${auth.currentUser ? 'No expenses logged for this month.' : 'Please login to track expenses.'}</td></tr>`;
     return;
   }
 
   officeExpenseRows.innerHTML = '';
-  officeExpenses.forEach(oe => {
+  localFilteredExpenses.forEach(oe => {
     const tr = document.createElement('tr');
     tr.className = "border-b border-slate-800 last:border-none";
     tr.innerHTML = `
