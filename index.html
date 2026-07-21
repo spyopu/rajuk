@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cloud ERP — Premium Management Suite</title>
+  <title>Cloud ERP — Management Suite</title>
   
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   
-  <!-- Stable Tailwind CSS CDN -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Inter & Geist Mono Font -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- == FIREBASE SDK v8 LIBRARIES == -->
+  <!-- FIREBASE SDK v8 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -47,21 +47,12 @@
         </div>
       </div>
       
-      <!-- Sidebar Controls -->
+      <!-- Sidebar Navigation Menu -->
       <div class="p-4 md:p-5 flex-1 flex flex-col justify-between space-y-4 md:space-y-6">
-        <div class="space-y-4 md:space-y-5">
-          <!-- Search Engine Input -->
-          <div>
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 px-1">Search Ledger</label>
-            <div class="relative">
-              <input type="text" id="search-input" placeholder="Type name, phone..." class="w-full border border-[#2d303f] rounded-lg px-3 py-2 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500 transition-all">
-            </div>
-          </div>
-
-          <!-- Tabs Menu -->
+        <div class="space-y-3">
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Navigation Menu</label>
+          
           <div class="grid grid-cols-2 md:grid-cols-1 gap-1.5">
-            <label class="col-span-2 md:col-span-1 block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 px-1">Dashboard Menu</label>
-            
             <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn w-full flex items-center gap-2 text-[11px] md:text-xs font-bold px-3 py-2 md:py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20">
               <span>📊</span> Overview
             </button>
@@ -82,7 +73,7 @@
       </div>
     </aside>
 
-    <!-- Main Content Space -->
+    <!-- Main Content Area -->
     <div class="flex-1 flex flex-col min-w-0">
       
       <!-- Top Navigation Bar -->
@@ -92,7 +83,7 @@
           <span id="status-text" class="text-slate-300 font-mono truncate max-w-[140px] md:max-w-none">Guest Mode</span>
         </div>
         
-        <!-- Identity & Profile Section -->
+        <!-- Auth Profile Section -->
         <div class="flex items-center gap-3">
           <div id="sidebar-auth-section">
             <button id="google-login-btn" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold rounded-lg px-3 py-1.5 text-[11px] md:text-xs transition shadow-lg shadow-indigo-600/10 flex items-center gap-1.5">
@@ -118,19 +109,19 @@
         </div>
       </header>
 
-      <!-- Main Content Container -->
+      <!-- Main Container -->
       <main class="flex-1 p-4 md:p-8 overflow-y-auto max-w-7xl w-full mx-auto space-y-4 md:space-y-6">
         
-        <!-- DASHBOARD HEADER -->
+        <!-- Header Title -->
         <div>
           <h2 class="text-lg md:text-xl font-extrabold tracking-tight text-white">Mega Dashboard</h2>
           <p class="text-[11px] md:text-xs text-slate-400 mt-0.5">Manage your agency accounts, workflows, and company overheads.</p>
         </div>
 
-        <!-- TAB 1: DASHBOARD OVERVIEW -->
+        <!-- TAB 1: OVERVIEW -->
         <div id="tab-dashboard-view" class="tab-content space-y-4 md:space-y-6">
           
-          <!-- Month Selector -->
+          <!-- Month Control -->
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#16171d] p-3 md:p-4 rounded-xl border border-[#22242e]">
             <div>
               <h2 class="text-xs md:text-sm font-bold text-white">Statement Period Control</h2>
@@ -142,7 +133,7 @@
             </div>
           </div>
 
-          <!-- Metrics Cards Matrix -->
+          <!-- Summary Cards -->
           <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
             <div class="bg-[#16171d] border border-[#252834] p-3 md:p-4 rounded-xl shadow-sm">
               <p class="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Volume</p>
@@ -168,21 +159,31 @@
           
           <!-- Master Accounts Container -->
           <div class="bg-[#16171d] border border-[#22242e] rounded-xl overflow-hidden shadow-sm">
-            <div class="p-3 md:px-6 md:py-4 border-b border-[#22242e] bg-[#191b22] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5">
+            
+            <!-- Table Controls & Search Bar (Table Header) -->
+            <div class="p-3 md:px-6 md:py-4 border-b border-[#22242e] bg-[#191b22] flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3">
               <div>
                 <h3 class="text-xs font-bold uppercase tracking-wider text-white">Subsidiary Accounts</h3>
-                <p class="text-[10px] md:text-[11px] text-slate-400 mt-0.5">Filter records using options below</p>
+                <p class="text-[10px] md:text-[11px] text-slate-400 mt-0.5">Filter and search records using options below</p>
               </div>
-              
-              <!-- Filter Buttons -->
-              <div class="flex items-center gap-1 bg-[#111216] p-1 rounded-lg border border-[#2d303f] w-full sm:w-auto justify-between">
-                <button onclick="setClientFilter('all')" id="filter-btn-all" class="flex-1 sm:flex-none px-2.5 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all text-slate-400">All</button>
-                <button onclick="setClientFilter('new')" id="filter-btn-new" class="flex-1 sm:flex-none px-2.5 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all text-slate-400">New</button>
-                <button onclick="setClientFilter('old')" id="filter-btn-old" class="flex-1 sm:flex-none px-2.5 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all text-slate-400">Old</button>
+
+              <!-- Search Bar & Filters Combined -->
+              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                <!-- Search Input Placement (Moved Above Table) -->
+                <div class="relative min-w-[200px]">
+                  <input type="text" id="search-input" placeholder="🔍 Search name, phone..." class="w-full border border-[#2d303f] rounded-lg px-3 py-1.5 text-xs bg-[#111216] text-white placeholder-slate-500 outline-none focus:border-indigo-500 transition-all">
+                </div>
+
+                <!-- Filter Pills -->
+                <div class="flex items-center gap-1 bg-[#111216] p-1 rounded-lg border border-[#2d303f] justify-between sm:justify-start">
+                  <button onclick="setClientFilter('all')" id="filter-btn-all" class="flex-1 sm:flex-none px-3 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all text-slate-400">All</button>
+                  <button onclick="setClientFilter('new')" id="filter-btn-new" class="flex-1 sm:flex-none px-3 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all text-slate-400">New</button>
+                  <button onclick="setClientFilter('old')" id="filter-btn-old" class="flex-1 sm:flex-none px-3 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all text-slate-400">Old</button>
+                </div>
               </div>
             </div>
 
-            <!-- Desktop View: Table -->
+            <!-- Desktop Table View -->
             <div id="master-table-container" class="overflow-x-auto hidden sm:block">
               <table class="w-full text-left border-collapse text-xs">
                 <thead>
@@ -200,7 +201,7 @@
               </table>
             </div>
 
-            <!-- Mobile Responsive Card View Container -->
+            <!-- Mobile Responsive Card View -->
             <div id="master-card-container" class="p-3 space-y-3 sm:hidden"></div>
 
           </div>
@@ -351,7 +352,7 @@
     </div>
   </div>
 
-  <!-- Security Passcode Modal -->
+  <!-- Passcode Modal -->
   <div id="securityModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-[#181a20] border border-[#2a2d37] rounded-xl p-4 md:p-5 w-full max-w-xs shadow-xl text-center">
       <h3 class="text-sm font-semibold text-slate-200 mb-1">Enter Passcode</h3>
