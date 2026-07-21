@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>রাজউক ট্যালি - ডিজিটাল ক্যাশ বুক</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen pb-20 font-sans">
+
+  <!-- Header (TallyKhata Red Theme) -->
+  <header class="bg-red-600 text-white p-3.5 sticky top-0 z-30 shadow-md">
+    <div class="max-w-md mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-2.5">
+        <div class="h-9 w-9 rounded-full bg-white text-red-600 flex items-center justify-center font-bold text-xl shadow">
+          ট
+        </div>
+        <div>
+          <h1 class="text-base font-bold leading-none">রাজউক ট্যালি</h1>
+          <p class="text-[11px] text-red-100">ডিজিটাল হিসাব খাতা</p>
+        </div>
+      </div>
+      <button id="btn-top-report" class="text-xs bg-red-700 text-white font-medium px-3 py-1.5 rounded-lg border border-red-500 hover:bg-red-800 transition">
+        📊 রিপোর্ট
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-md mx-auto p-3 space-y-3">
+
+    <!-- TAB 1: DASHBOARD & PROJECTS -->
+    <div id="tab-dashboard" class="tab-content space-y-3">
+      <!-- Overview Cards -->
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div class="bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm">
+          <p class="text-[10px] text-gray-500 font-medium">মোট বাজেট</p>
+          <p id="dash-budget" class="text-xs font-bold text-gray-800 mt-0.5">৳০</p>
+        </div>
+        <div class="bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm">
+          <p class="text-[10px] text-gray-500 font-medium">মোট জমা</p>
+          <p id="dash-received" class="text-xs font-bold text-emerald-600 mt-0.5">৳০</p>
+        </div>
+        <div class="bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm">
+          <p class="text-[10px] text-gray-500 font-medium">মোট বাকি</p>
+          <p id="dash-due" class="text-xs font-bold text-red-600 mt-0.5">৳০</p>
+        </div>
+      </div>
+
+      <!-- Action & Search -->
+      <div class="flex items-center gap-2">
+        <input type="text" id="search-input" placeholder="কাস্টমার বা প্রজেক্ট খুঁজুন..." class="flex-1 bg-white border border-gray-300 text-xs text-gray-800 rounded-xl px-3 py-2 focus:outline-none focus:border-red-500 shadow-sm">
+        <button id="btn-open-add-project" class="bg-red-600 text-white text-xs px-3.5 py-2 rounded-xl font-bold hover:bg-red-700 transition shrink-0 shadow-sm">
+          ➕ প্রজেক্ট
+        </button>
+      </div>
+
+      <!-- Projects List Container -->
+      <div id="projects-list-container" class="space-y-2">
+        <!-- Dynamic Projects Rendered Here -->
+      </div>
+    </div>
+
+    <!-- TAB 2: VOUCHER ENTRY -->
+    <div id="tab-voucher" class="tab-content hidden space-y-3">
+      <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+        <h2 class="text-xs font-bold text-gray-800 mb-3 border-b pb-2 border-gray-100 flex items-center gap-1.5">
+          <span class="text-red-600">📥</span> প্রজেক্ট ক্যাশ এন্ট্রি (ভাউচার)
+        </h2>
+        <form id="form-project-tx" class="space-y-3 text-xs">
+          <div>
+            <label class="block text-gray-600 mb-1 font-medium">প্রজেক্ট নির্বাচন করুন</label>
+            <select id="tx-project-select" required class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-red-500">
+              <option value="">সিলেক্ট করুন...</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-gray-600 mb-1 font-medium">লেনদেনের ধরন</label>
+              <select id="tx-type" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-red-500">
+                <option value="collection">📥 টাকা পেলাম (পাবো/Income)</option>
+                <option value="cost">📤 প্রজেক্ট খরচ (দিল/Direct Cost)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-600 mb-1 font-medium">টাকার পরিমাণ (৳)</label>
+              <input type="number" id="tx-amount" placeholder="0" required class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-red-500">
+            </div>
+          </div>
+          <div>
+            <label class="block text-gray-600 mb-1 font-medium">তারিখ</label>
+            <input type="date" id="tx-date" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-red-500">
+          </div>
+          <div>
+            <label class="block text-gray-600 mb-1 font-medium">বিবরণ / নোট</label>
+            <input type="text" id="tx-note" placeholder="যেমন: প্রথম কিস্তি / রড কেনা" required class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-red-500">
+          </div>
+          <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg transition shadow-sm mt-1">
+            সেভ ভাউচার
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB 3: OFFICE EXPENSE & BOSS FUND -->
+    <div id="tab-other" class="tab-content hidden space-y-3">
+      <!-- Office Expenses -->
+      <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
+        <h2 class="text-xs font-bold text-gray-800 border-b pb-2 border-gray-100 flex items-center gap-1.5">
+          <span class="text-red-600">🏢</span> সাধারণ অফিস খরচ
+        </h2>
+        <form id="form-office-expense" class="space-y-2 text-xs">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" id="office-cat" placeholder="খাত (যেমন: ভাড়া/চা/ইন্টারনেট)" required class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+            <input type="number" id="office-amount" placeholder="পরিমাণ ৳" required class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="date" id="office-date" class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+            <input type="text" id="office-note" placeholder="নোট (ঐচ্ছিক)" class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+          </div>
+          <button type="submit" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-lg transition text-xs font-bold">
+            খরচ যুক্ত করুন
+          </button>
+        </form>
+        <div id="office-logs-list" class="divide-y divide-gray-100 text-xs max-h-40 overflow-y-auto"></div>
+      </div>
+
+      <!-- Boss Wallet -->
+      <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
+        <div class="flex justify-between items-center border-b pb-2 border-gray-100">
+          <h2 class="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+            <span class="text-red-600">👑</span> মালিকের পার্সোনাল ফান্ড
+          </h2>
+          <span id="boss-wallet-balance" class="text-xs font-bold text-red-600">৳০</span>
+        </div>
+        <p id="boss-wallet-status" class="text-[10px] text-gray-500">ব্যালেন্স হিসেব</p>
+        <form id="form-boss-tx" class="space-y-2 text-xs">
+          <div class="grid grid-cols-2 gap-2">
+            <select id="boss-tx-type" class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+              <option value="deposit">📥 বস ইনভেস্ট করেছেন</option>
+              <option value="withdraw">📤 বস ক্যাশ নিয়েছেন</option>
+            </select>
+            <input type="number" id="boss-amount" placeholder="পরিমাণ ৳" required class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="date" id="boss-date" class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+            <input type="text" id="boss-note" placeholder="কারণ / নোট" class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+          </div>
+          <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition text-xs font-bold">
+            এন্ট্রি করুন
+          </button>
+        </form>
+        <div id="boss-logs-list" class="divide-y divide-gray-100 text-xs max-h-40 overflow-y-auto"></div>
+      </div>
+    </div>
+
+    <!-- TAB 4: REPORTS -->
+    <div id="tab-reports" class="tab-content hidden space-y-3">
+      <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
+        <h2 class="text-xs font-bold text-gray-800 border-b pb-2 border-gray-100">📈 লাভ-ক্ষতি সামারি রিপোর্ট</h2>
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between text-gray-600">
+            <span>মোট কাস্টমার আয় (Collection):</span>
+            <span id="rpt-total-income" class="font-bold text-emerald-600">৳০</span>
+          </div>
+          <div class="flex justify-between text-gray-600">
+            <span>মোট প্রজেক্ট খরচ (Direct Cost):</span>
+            <span id="rpt-project-cost" class="font-bold text-red-600">৳০</span>
+          </div>
+          <div class="flex justify-between font-bold border-t border-gray-100 pt-1.5 text-gray-800">
+            <span>মোট গ্রস প্রফিট:</span>
+            <span id="rpt-gross-profit" class="text-gray-900">৳০</span>
+          </div>
+          <div class="flex justify-between text-gray-600">
+            <span>সাধারণ অফিস খরচ:</span>
+            <span id="rpt-office-cost" class="font-bold text-red-600">৳০</span>
+          </div>
+          <div class="flex justify-between text-sm font-bold border-t border-gray-200 pt-2 text-gray-900">
+            <span>নিট লাভ / ক্ষতি (Net Profit):</span>
+            <span id="rpt-net-profit" class="text-emerald-600">৳০</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
+        <h2 class="text-xs font-bold text-gray-800 border-b pb-2 border-gray-100">🏦 মালিকের মূলধন রিপোর্ট</h2>
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between text-gray-600">
+            <span>বসের দেওয়া মোট ফান্ড:</span>
+            <span id="rpt-boss-given" class="font-bold text-emerald-600">৳০</span>
+          </div>
+          <div class="flex justify-between text-gray-600">
+            <span>বসের উত্তোলন করা ক্যাশ:</span>
+            <span id="rpt-boss-taken" class="font-bold text-red-600">৳০</span>
+          </div>
+          <div class="flex justify-between text-xs font-bold border-t border-gray-100 pt-2 text-gray-900">
+            <span>নিট মালিকানার বর্তমান স্থিতি:</span>
+            <span id="rpt-boss-net" class="text-red-600">৳০</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Navigation Bar (TallyKhata Bottom Style) -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30 shadow-lg">
+    <div class="max-w-md mx-auto flex justify-around p-1.5 text-[10px]">
+      <button class="nav-btn flex flex-col items-center gap-0.5 text-red-600 font-bold" data-tab="tab-dashboard">
+        <span class="text-base">📁</span>
+        <span>প্রজেক্টসমূহ</span>
+      </button>
+      <button class="nav-btn flex flex-col items-center gap-0.5 text-gray-500" data-tab="tab-voucher">
+        <span class="text-base">📝</span>
+        <span>ভাউচার এন্ট্রি</span>
+      </button>
+      <button class="nav-btn flex flex-col items-center gap-0.5 text-gray-500" data-tab="tab-other">
+        <span class="text-base">🏢</span>
+        <span>অফিস ও বস</span>
+      </button>
+      <button class="nav-btn flex flex-col items-center gap-0.5 text-gray-500" data-tab="tab-reports">
+        <span class="text-base">📊</span>
+        <span>রিপোর্ট</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MODAL: ADD PROJECT -->
+  <div id="modal-add-project" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white border border-gray-200 rounded-xl p-4 w-full max-w-sm space-y-3 shadow-xl">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-2">
+        <h3 class="text-xs font-bold text-gray-800">➕ নতুন প্রজেক্ট যুক্ত করুন</h3>
+        <button id="btn-close-add-project" class="text-gray-400 hover:text-gray-600">✕</button>
+      </div>
+      <form id="form-add-project" class="space-y-2 text-xs">
+        <div>
+          <label class="block text-gray-600 mb-1">কাস্টমার / ক্লায়েন্টের নাম</label>
+          <input type="text" id="new-client-name" required placeholder="যেমন: রহিম সাহেব" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+        </div>
+        <div>
+          <label class="block text-gray-600 mb-1">মোবাইল নম্বর</label>
+          <input type="text" id="new-client-mobile" placeholder="017xxxxxxxx" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+        </div>
+        <div>
+          <label class="block text-gray-600 mb-1">প্রজেক্ট / কাজের নাম</label>
+          <input type="text" id="new-project-name" required placeholder="যেমন: ৩য় তলার প্ল্যানিং" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+        </div>
+        <div>
+          <label class="block text-gray-600 mb-1">চুক্তিকৃত বাজেট (৳)</label>
+          <input type="number" id="new-project-budget" required placeholder="0" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
+        </div>
+        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition mt-2 shadow-sm">
+          সেভ করুন
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PROJECT LEDGER -->
+  <div id="modal-project-ledger" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white border border-gray-200 rounded-xl p-4 w-full max-w-md max-h-[85vh] flex flex-col justify-between shadow-xl">
+      <div>
+        <div class="flex justify-between items-center border-b border-gray-100 pb-2">
+          <div>
+            <h3 id="ledger-client-title" class="text-xs font-bold text-gray-800">কাস্টমার খতিয়ান</h3>
+            <p id="ledger-client-sub" class="text-[10px] text-gray-500"></p>
+          </div>
+          <button id="btn-close-ledger" class="text-gray-400 hover:text-gray-600">✕</button>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-2 text-center my-3">
+          <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+            <p class="text-[9px] text-gray-500">বাজেট</p>
+            <p id="ledger-budget" class="text-xs font-bold text-gray-800 mt-0.5">৳০</p>
+          </div>
+          <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-100">
+            <p class="text-[9px] text-emerald-600">জমা</p>
+            <p id="ledger-collections" class="text-xs font-bold text-emerald-700 mt-0.5">৳০</p>
+          </div>
+          <div class="bg-red-50 p-2 rounded-lg border border-red-100">
+            <p class="text-[9px] text-red-600">বাকি</p>
+            <p id="ledger-due" class="text-xs font-bold text-red-700 mt-0.5">৳০</p>
+          </div>
+        </div>
+
+        <h4 class="text-[11px] font-bold text-gray-700 mb-2">লেনদেনের ইতিহাস:</h4>
+        <div id="ledger-tx-list" class="space-y-2 max-h-56 overflow-y-auto text-xs pr-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+  <!-- App Main Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
