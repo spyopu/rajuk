@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cloud ERP — Premium Management Suite</title>
+  <title>Management Suite</title>
   
   <!-- Stable Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -67,11 +67,11 @@
             </button>
             
             <button id="btn-journal-view" onclick="switchTab('journal-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent">
-              <span>💸</span> Journal Posting
+              <span>💸</span> Project Costing
             </button>
             
             <button id="btn-office-view" onclick="switchTab('office-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent">
-              <span>🏢</span> Office Overhead
+              <span>🏢</span> Office Expenses
             </button>
           </div>
         </div>
@@ -92,7 +92,7 @@
         <div class="flex items-center gap-4">
           <div id="sidebar-auth-section">
             <button id="google-login-btn" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold rounded-lg px-4 py-2 text-xs transition shadow-lg shadow-indigo-600/10 flex items-center justify-center gap-2">
-              Connect Identity
+              Login With Google
             </button>
           </div>
 
@@ -119,7 +119,7 @@
         
         <!-- MEGA DASHBOARD HEADER -->
         <div>
-          <h2 class="text-xl font-extrabold tracking-tight text-white">Mega Dashboard</h2>
+          <h2 class="text-xl font-extrabold tracking-tight text-white">Dashboard</h2>
           <p class="text-xs text-slate-400 mt-0.5">Manage your agency accounts, client workflows, and company operational overhead profiles.</p>
         </div>
 
@@ -175,10 +175,10 @@
                   All
                 </button>
                 <button onclick="setClientFilter('new')" id="filter-btn-new" class="px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white">
-                  New Client
+                  New
                 </button>
                 <button onclick="setClientFilter('old')" id="filter-btn-old" class="px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white">
-                  Old Client
+                  Old
                 </button>
               </div>
             </div>
@@ -188,12 +188,12 @@
               <table class="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr class="bg-[#1a1c24] text-slate-400 font-semibold uppercase tracking-wider border-b border-[#22242e]">
-                    <th class="px-6 py-4">Accounts Workspace</th>
-                    <th class="px-4 py-4">Contact Link</th>
-                    <th class="px-4 py-4 text-right">Contract Allocation</th>
-                    <th class="px-4 py-4 text-right">Settled Revenue</th>
-                    <th class="px-4 py-4 text-right">Absorbed Costs</th>
-                    <th class="px-4 py-4 text-right">Balance Receivables</th>
+                    <th class="px-6 py-4">Client/Project</th>
+                    <th class="px-4 py-4">Contact No</th>
+                    <th class="px-4 py-4 text-right">Contract</th>
+                    <th class="px-4 py-4 text-right">Received</th>
+                    <th class="px-4 py-4 text-right">Expense</th>
+                    <th class="px-4 py-4 text-right">Due</th>
                     <th class="px-6 py-4 text-center">Action</th>
                   </tr>
                 </thead>
@@ -207,7 +207,7 @@
         <div id="tab-client-view" class="tab-content space-y-6 hidden">
           <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-6 shadow-sm max-w-xl">
             <div class="mb-4">
-              <h3 class="text-sm font-bold text-white flex items-center gap-2">💼 Open New Client Account File</h3>
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">💼 Open Client Account</h3>
               <p class="text-xs text-slate-400 mt-0.5">Register project scope guidelines and overall client contract parameters.</p>
             </div>
             <form id="client-form" class="space-y-4">
@@ -226,7 +226,7 @@
         <div id="tab-journal-view" class="tab-content space-y-6 hidden">
           <div class="bg-[#16171d] border border-[#22242e] rounded-xl p-6 shadow-sm max-w-3xl">
             <div class="mb-4">
-              <h3 class="text-sm font-bold text-white flex items-center gap-2">💸 Project Journal Voucher Entry</h3>
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">💸 Project History</h3>
               <p class="text-xs text-slate-400 mt-0.5">Log debit milestone updates or deduct operational expenses incurred on open project profiles.</p>
             </div>
             <form id="tx-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -240,7 +240,7 @@
                   
                   <!-- Dropdown Display Box -->
                   <div id="dropdown-trigger" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white flex justify-between items-center cursor-pointer select-none">
-                    <span id="dropdown-selected-text" class="text-slate-500">Select Project Profile...</span>
+                    <span id="dropdown-selected-text" class="text-slate-500">Select Project</span>
                     <span class="text-slate-400 text-[10px]">▼</span>
                   </div>
 
@@ -255,10 +255,10 @@
               </div>
 
               <div>
-                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Entry Class</label>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Entry Purpose</label>
                 <select id="tx-type" class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white outline-none focus:border-indigo-500">
-                  <option value="income">📥 Debit (Installment Receipt)</option>
-                  <option value="expense">📤 Credit (Project Scope Cost)</option>
+                  <option value="income">📥 Debit (Installment)</option>
+                  <option value="expense">📤 Credit (Project Cost)</option>
                 </select>
               </div>
               <div>
@@ -271,8 +271,8 @@
                   <input type="date" id="tx-date" required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-slate-300 outline-none focus:border-indigo-500">
                 </div>
                 <div class="sm:col-span-2">
-                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Narration / Particulars</label>
-                  <input type="text" id="tx-details" placeholder="Narration notes..." required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
+                  <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-0.5">Notes</label>
+                  <input type="text" id="tx-details" placeholder="Details..." required class="w-full border border-[#2d303f] rounded-lg px-3 py-2.5 text-xs bg-[#1b1d26] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
                 </div>
               </div>
               <div class="sm:col-span-2 text-right pt-2">
