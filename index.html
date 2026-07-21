@@ -64,7 +64,7 @@
   <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
     
     <!-- LEFT SIDEBAR / TAB CONTROLLER -->
-    <aside class="lg:col-span-3 space-y-2">
+    <aside class="lg:col-span-3 space-y-4">
       <div class="bg-[#12131a] border border-slate-800 rounded-2xl p-3 space-y-1 shadow-lg">
         <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-3 py-1.5">Navigation</div>
         
@@ -95,27 +95,37 @@
       <!-- VIEW 1: FINANCIAL OVERVIEW & MASTER TABLE -->
       <section id="tab-dashboard-view" class="tab-content space-y-6">
         
-        <!-- Summary Cards Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+        <!-- Summary Cards Grid (Without side borders) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           
-          <div class="bg-[#12131a] border border-slate-800/80 rounded-2xl p-4 shadow-md">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gross Income</p>
-            <h3 id="global-income" class="text-lg md:text-xl font-black text-emerald-400 mt-1">৳0</h3>
+          <!-- Card 1: Total Volume -->
+          <div class="bg-[#12131a] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col justify-between">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Volume</p>
+            <h3 id="global-volume" class="text-lg font-black text-indigo-400 mt-2">৳0</h3>
           </div>
 
-          <div class="bg-[#12131a] border border-slate-800/80 rounded-2xl p-4 shadow-md">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Cost</p>
-            <h3 id="global-expense" class="text-lg md:text-xl font-black text-red-400 mt-1">৳0</h3>
+          <!-- Card 2: Gross Income -->
+          <div class="bg-[#12131a] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col justify-between">
+            <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Gross Income</p>
+            <h3 id="global-income" class="text-lg font-black text-emerald-400 mt-2">৳0</h3>
           </div>
 
-          <div class="bg-[#12131a] border border-slate-800/80 rounded-2xl p-4 shadow-md">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Net Balance</p>
-            <h3 id="global-net" class="text-lg md:text-xl font-black text-indigo-400 mt-1">৳0</h3>
+          <!-- Card 3: Total Cost -->
+          <div class="bg-[#12131a] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col justify-between">
+            <p class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Total Cost</p>
+            <h3 id="global-expense" class="text-lg font-black text-rose-400 mt-2">৳0</h3>
           </div>
 
-          <div class="bg-[#12131a] border border-slate-800/80 rounded-2xl p-4 shadow-md">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Receivables</p>
-            <h3 id="global-due" class="text-lg md:text-xl font-black text-amber-500 mt-1">৳0</h3>
+          <!-- Card 4: Outstanding Accounts -->
+          <div class="bg-[#12131a] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col justify-between">
+            <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wider">Outstanding Accounts</p>
+            <h3 id="global-due" class="text-lg font-black text-amber-500 mt-2">৳0</h3>
+          </div>
+
+          <!-- Card 5: Net Balance -->
+          <div class="bg-[#12131a] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col justify-between">
+            <p class="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Net Balance</p>
+            <h3 id="global-net" class="text-lg font-black text-purple-400 mt-2">৳0</h3>
           </div>
 
         </div>
@@ -347,16 +357,15 @@
 
   </div>
 
-  <!-- CUSTOM PASSCODE SECURITY MODAL (For Secure & Silent Deletions) -->
+  <!-- PASSCODE MODAL FOR DELETION -->
   <div id="passcode-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4 text-center">
+    <div class="bg-[#12131a] border border-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4 text-center">
       <div>
         <h3 class="text-white font-bold text-base mb-1">🔐 Security Check</h3>
         <p class="text-slate-400 text-xs">Enter security passcode to confirm deletion:</p>
       </div>
 
-      <!-- Password Input for 100% Privacy -->
-      <input type="password" id="modal-passcode-input" placeholder="Enter Passcode" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 text-center tracking-widest" autocomplete="off">
+      <input type="password" id="modal-passcode-input" placeholder="Enter Passcode" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 text-center tracking-widest" autocomplete="off">
 
       <div class="flex gap-2">
         <button id="modal-cancel-btn" class="w-1/2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 rounded-xl text-xs transition">Cancel</button>
