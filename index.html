@@ -95,7 +95,7 @@
       <!-- VIEW 1: FINANCIAL OVERVIEW & MASTER TABLE -->
       <section id="tab-dashboard-view" class="tab-content space-y-6">
         
-        <!-- Summary Cards Grid (Without side borders) -->
+        <!-- Summary Cards Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           
           <!-- Card 1: Total Volume -->
@@ -106,13 +106,13 @@
 
           <!-- Card 2: Gross Income -->
           <div class="bg-[#12131a] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col justify-between">
-            <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Gross Income</p>
+            <p id="label-income" class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Gross Income</p>
             <h3 id="global-income" class="text-lg font-black text-emerald-400 mt-2">৳0</h3>
           </div>
 
           <!-- Card 3: Total Cost -->
           <div class="bg-[#12131a] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col justify-between">
-            <p class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Total Cost</p>
+            <p id="label-expense" class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Total Cost</p>
             <h3 id="global-expense" class="text-lg font-black text-rose-400 mt-2">৳0</h3>
           </div>
 
@@ -124,7 +124,7 @@
 
           <!-- Card 5: Net Balance -->
           <div class="bg-[#12131a] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col justify-between">
-            <p class="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Net Balance</p>
+            <p id="label-net" class="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Net Balance</p>
             <h3 id="global-net" class="text-lg font-black text-purple-400 mt-2">৳0</h3>
           </div>
 
@@ -191,6 +191,7 @@
                   <th class="p-3">Transaction Details</th>
                   <th class="p-3">Type</th>
                   <th class="p-3 text-right">Amount</th>
+                  <th class="p-3 text-center">Action</th>
                 </tr>
               </thead>
               <tbody id="drawer-table-body" class="text-xs divide-y divide-slate-800">
@@ -243,7 +244,6 @@
         </div>
 
         <form id="tx-form" class="space-y-4">
-          <!-- Custom Searchable Project Select Dropdown -->
           <div class="relative">
             <label class="text-xs font-bold text-slate-400 block mb-1">Select Target Project Profile</label>
             <input type="hidden" id="tx-client-select">
@@ -256,7 +256,7 @@
             <div id="custom-dropdown-list" class="absolute left-0 right-0 top-full mt-1 bg-[#181924] border border-slate-800 rounded-2xl shadow-2xl p-2 hidden z-50 space-y-2">
               <input type="text" id="dropdown-search-input" placeholder="Search project..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none">
               <div id="dropdown-items-container" class="max-h-48 overflow-y-auto space-y-1">
-                <!-- Javascript items -->
+                <!-- Dynamic dropdown items -->
               </div>
             </div>
           </div>
@@ -292,7 +292,7 @@
       <!-- VIEW 4: OFFICE EXPENSES TRACKER -->
       <section id="tab-office-expense-view" class="tab-content hidden grid grid-cols-1 md:grid-cols-12 gap-6">
         
-        <!-- Office Expense Input Form -->
+        <!-- Form Panel -->
         <div class="md:col-span-5 bg-[#12131a] border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
           <div>
             <h2 class="font-bold text-white text-base">🏢 Log Office Expense</h2>
@@ -330,7 +330,7 @@
           </form>
         </div>
 
-        <!-- Office Expenses Monthly Log Table -->
+        <!-- Table Panel -->
         <div class="md:col-span-7 bg-[#12131a] border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
           <h2 class="font-bold text-white text-base">📋 General Office Expense Logs</h2>
 
@@ -345,7 +345,7 @@
                 </tr>
               </thead>
               <tbody id="office-expense-rows" class="text-xs divide-y divide-slate-800">
-                <!-- Javascript Dynamic Expense Rows -->
+                <!-- Dynamic Rows -->
               </tbody>
             </table>
           </div>
@@ -374,7 +374,6 @@
     </div>
   </div>
 
-  <!-- External JS Script -->
   <script src="app.js"></script>
 </body>
 </html>
