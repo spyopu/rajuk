@@ -10,11 +10,13 @@ const firebaseConfig = {
 };
 
 // Firebase Initialization
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 const rtdb = firebase.database();
+const auth = firebase.auth();
 
-// Application State
+// State Variables
 let state = {
   projects: [],
   officeExpenses: [],
@@ -25,8 +27,44 @@ let state = {
 document.addEventListener('DOMContentLoaded', () => {
   initDates();
   bindEvents();
-  listenToDatabase();
+  initAuthObserver();
 });
+
+// Authentication Management
+function initAuthObserver() {
+  auth.onAuthStateChanged(user => {
+    const authScreen = document.getElementById('auth-screen');
+    const mainApp = document.getElementById('main-app');
+
+    if (user) {
+      // User is logged in
+      authScreen.classList.add('hidden');
+      mainApp.classList.remove('hidden');
+
+      // Update User Profile UI
+      const nameDisplay = document.getElementById('user-name-display');
+      const emailDisplay = document.getElementById('user-email-display');
+      const avatarImg = document.getElementById('user-avatar');
+      const avatarPlaceholder = document.getElementById('user-avatar-placeholder');
+
+      if (nameDisplay) nameDisplay.innerText = user.displayName || 'ব্যবহারকারী';
+      if (emailDisplay) emailDisplay.innerText = user.email || '';
+
+      if (user.photoURL) {
+        avatarImg.src = user.photoURL;
+        avatarImg.classList.remove('hidden');
+        if (avatarPlaceholder) avatarPlaceholder.classList.add('hidden');
+      }
+
+      // Start listening to RTDB
+      listenToDatabase();
+    } else {
+      // User is logged out
+      authScreen.classList.remove('hidden');
+      mainApp.classList.add('hidden');
+    }
+  });
+}
 
 function initDates() {
   const today = new Date().toISOString().split('T')[0];
@@ -36,6 +74,10 @@ function initDates() {
 }
 
 function bindEvents() {
+  // Login & Logout Events
+  document.getElementById('btn-google-login').addEventListener('click', handleGoogleLogin);
+  document.getElementById('btn-logout').addEventListener('click', handleLogout);
+
   // Navigation Tabs
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -63,6 +105,23 @@ function bindEvents() {
   document.getElementById('search-input').addEventListener('keyup', renderProjects);
 }
 
+// Google Login Handler
+async function handleGoogleLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    await auth.signInWithPopup(provider);
+  } catch (err) {
+    alert('❌ গুগল লগইন করা যায়নি: ' + err.message);
+  }
+}
+
+// Logout Handler
+async function handleLogout() {
+  if (confirm('আপনি কি নিশ্চিত যে লগআউট করতে চান?')) {
+    await auth.signOut();
+  }
+}
+
 // REALTIME DATABASE LISTENERS
 function listenToDatabase() {
   rtdb.ref('projects').on('value', snapshot => {
@@ -74,6 +133,8 @@ function listenToDatabase() {
       });
     }
     refreshUI();
+  }, error => {
+    alert('❌ ফায়ারবেস পারমিশন এরর! Database Rules চেক করুন।');
   });
 
   rtdb.ref('office_expenses').on('value', snapshot => {
@@ -128,10 +189,10 @@ function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
 // DASHBOARD & PROJECT LOGIC
 function renderDashboard() {
-  let totalBudget = state.projects.reduce((acc, p) => acc + (p.budget || 0), 0);
+  let totalBudget = state.projects.reduce((acc, p) => acc + (parseFloat(p.budget) || 0), 0);
   let totalReceived = state.projects.reduce((acc, p) => {
     let txs = p.transactions ? Object.values(p.transactions) : [];
-    let coll = txs.filter(t => t.type === 'collection').reduce((a, t) => a + t.amount, 0);
+    let coll = txs.filter(t => t.type === 'collection').reduce((a, t) => a + (parseFloat(t.amount) || 0), 0);
     return acc + coll;
   }, 0);
   let totalDue = totalBudget - totalReceived;
@@ -155,16 +216,16 @@ function renderProjects() {
     container.innerHTML = `
       <div class="text-center py-10 text-gray-500 text-xs bg-white rounded-xl border border-dashed border-gray-300">
         <p class="text-lg mb-1">📁</p>
-        <p class="font-semibold text-gray-600">ডেটাবেসে কোনো প্রজেক্ট পাওয়া যায়নি!</p>
-        <p class="mt-1">উপরের <b class="text-red-600">"➕ প্রজেক্ট"</b> বাটনে ক্লিক করে প্রথম হিসাব যোগ করুন।</p>
+        <p class="font-semibold text-gray-600">কোনো প্রজেক্ট পাওয়া যায়নি!</p>
+        <p class="mt-1">উপরের <b class="text-red-600">"➕ প্রজেক্ট"</b> বাটনে ক্লিক করে প্রজেক্ট যোগ করুন।</p>
       </div>`;
     return;
   }
 
   filtered.forEach(p => {
     const txs = p.transactions ? Object.values(p.transactions) : [];
-    const totalColl = txs.filter(t => t.type === 'collection').reduce((a, t) => a + t.amount, 0);
-    const due = (p.budget || 0) - totalColl;
+    const totalColl = txs.filter(t => t.type === 'collection').reduce((a, t) => a + (parseFloat(t.amount) || 0), 0);
+    const due = (parseFloat(p.budget) || 0) - totalColl;
     const initial = p.client ? p.client.charAt(0).toUpperCase() : 'P';
     
     const card = document.createElement('div');
@@ -177,7 +238,7 @@ function renderProjects() {
         <div>
           <h3 class="text-xs font-bold text-gray-800">${p.client}</h3>
           <p class="text-[11px] text-gray-500">${p.title}</p>
-          <span class="text-[10px] text-gray-400">বাজেট: ৳${(p.budget || 0).toLocaleString('bn-BD')}</span>
+          <span class="text-[10px] text-gray-400">বাজেট: ৳${(parseFloat(p.budget) || 0).toLocaleString('bn-BD')}</span>
         </div>
       </div>
       <div class="text-right flex flex-col items-end gap-1">
@@ -203,14 +264,23 @@ function renderProjects() {
   });
 }
 
-// REALTIME DATABASE OPERATIONS
+// HANDLERS FOR CREATION & TRANSACTIONS
 async function handleCreateProject(e) {
   e.preventDefault();
+  const client = document.getElementById('new-client-name').value;
+  const title = document.getElementById('new-project-name').value;
+  const budget = parseFloat(document.getElementById('new-project-budget').value) || 0;
+
+  if (!client || !title) {
+    alert('⚠️ কাস্টমার এবং প্রজেক্টের নাম পূরণ করুন!');
+    return;
+  }
+
   const newProj = {
-    client: document.getElementById('new-client-name').value,
-    mobile: document.getElementById('new-client-mobile').value,
-    title: document.getElementById('new-project-name').value,
-    budget: parseFloat(document.getElementById('new-project-budget').value) || 0,
+    client: client,
+    mobile: document.getElementById('new-client-mobile').value || '',
+    title: title,
+    budget: budget,
     timestamp: Date.now()
   };
 
@@ -218,21 +288,30 @@ async function handleCreateProject(e) {
     await rtdb.ref('projects').push(newProj);
     closeModal('modal-add-project');
     e.target.reset();
-    alert('নতুন প্রজেক্ট ডাটাবেসে সেভ হয়েছে!');
+    alert('✅ নতুন প্রজেক্ট সফলভাবে যোগ হয়েছে!');
   } catch (err) {
-    alert('সমস্যা হয়েছে: ' + err.message);
+    alert('❌ সমস্যা হয়েছে: ' + err.message);
   }
 }
 
 async function handleProjectTransaction(e) {
   e.preventDefault();
   const projId = document.getElementById('tx-project-select').value;
-  if (!projId) return alert('প্রজেক্ট সিলেক্ট করুন!');
+  
+  if (!projId) {
+    alert('⚠️ দয়া করে তালিকা থেকে প্রজেক্ট নির্বাচন করুন!');
+    return;
+  }
 
   const type = document.getElementById('tx-type').value;
   const amount = parseFloat(document.getElementById('tx-amount').value) || 0;
   const date = document.getElementById('tx-date').value;
   const note = document.getElementById('tx-note').value;
+
+  if (amount <= 0) {
+    alert('⚠️ টাকার পরিমাণ অবশ্যই ০ থেকে বেশি হতে হবে!');
+    return;
+  }
 
   const txData = { type, amount, date, note, timestamp: Date.now() };
 
@@ -240,9 +319,9 @@ async function handleProjectTransaction(e) {
     await rtdb.ref(`projects/${projId}/transactions`).push(txData);
     e.target.reset();
     initDates();
-    alert('ভাউচার সেভ হয়েছে!');
+    alert('✅ ক্যাশ এন্ট্রি / ভাউচার সেভ হয়েছে!');
   } catch (err) {
-    alert('সমস্যা হয়েছে: ' + err.message);
+    alert('❌ সেভ হতে সমস্যা হয়েছে: ' + err.message);
   }
 }
 
@@ -253,13 +332,13 @@ function openProjectLedger(projId) {
   const rawTxs = proj.transactions || {};
   const txs = Object.keys(rawTxs).map(k => ({ id: k, ...rawTxs[k] })).reverse();
 
-  const totalColl = txs.filter(t => t.type === 'collection').reduce((a, t) => a + t.amount, 0);
-  const due = (proj.budget || 0) - totalColl;
+  const totalColl = txs.filter(t => t.type === 'collection').reduce((a, t) => a + (parseFloat(t.amount) || 0), 0);
+  const due = (parseFloat(proj.budget) || 0) - totalColl;
 
   document.getElementById('ledger-client-title').innerText = proj.client;
-  document.getElementById('ledger-client-sub').innerText = `${proj.title} • 📞 ${proj.mobile}`;
+  document.getElementById('ledger-client-sub').innerText = `${proj.title} • 📞 ${proj.mobile || 'N/A'}`;
   
-  document.getElementById('ledger-budget').innerText = `৳${(proj.budget || 0).toLocaleString('bn-BD')}`;
+  document.getElementById('ledger-budget').innerText = `৳${(parseFloat(proj.budget) || 0).toLocaleString('bn-BD')}`;
   document.getElementById('ledger-collections').innerText = `৳${totalColl.toLocaleString('bn-BD')}`;
   document.getElementById('ledger-due').innerText = `৳${due.toLocaleString('bn-BD')}`;
 
@@ -285,7 +364,7 @@ function openProjectLedger(projId) {
         </div>
         <div class="text-right flex items-center gap-2">
           <span class="font-bold ${isIncome ? 'text-emerald-600' : 'text-red-600'}">
-            ${isIncome ? '+' : '-'}৳${tx.amount.toLocaleString('bn-BD')}
+            ${isIncome ? '+' : '-'}৳${(parseFloat(tx.amount) || 0).toLocaleString('bn-BD')}
           </span>
           <button class="btn-del-single text-gray-400 hover:text-red-600 text-xs p-1">🗑️</button>
         </div>
@@ -325,18 +404,27 @@ function populateProjectDropdown() {
 
 async function handleOfficeExpense(e) {
   e.preventDefault();
+  const category = document.getElementById('office-cat').value;
+  const amount = parseFloat(document.getElementById('office-amount').value) || 0;
+
+  if (amount <= 0) return alert('⚠️ টাকার পরিমাণ সঠিক দিন!');
+
   const newExp = {
-    category: document.getElementById('office-cat').value,
-    amount: parseFloat(document.getElementById('office-amount').value) || 0,
+    category,
+    amount,
     date: document.getElementById('office-date').value,
-    note: document.getElementById('office-note').value,
+    note: document.getElementById('office-note').value || '',
     timestamp: Date.now()
   };
 
-  await rtdb.ref('office_expenses').push(newExp);
-  e.target.reset();
-  initDates();
-  alert('অফিস খরচ রেকর্ড করা হয়েছে!');
+  try {
+    await rtdb.ref('office_expenses').push(newExp);
+    e.target.reset();
+    initDates();
+    alert('✅ অফিস খরচ যোগ করা হয়েছে!');
+  } catch (err) {
+    alert('❌ সমস্যা হয়েছে: ' + err.message);
+  }
 }
 
 function renderOfficeLogs() {
@@ -348,14 +436,14 @@ function renderOfficeLogs() {
   }
   state.officeExpenses.forEach(o => {
     const row = document.createElement('div');
-    row.className = "py-2 flex justify-between items-center";
+    row.className = "py-2 flex justify-between items-center border-b border-gray-100 last:border-none";
     row.innerHTML = `
       <div>
         <p class="font-bold text-gray-700">${o.category}</p>
-        <p class="text-[10px] text-gray-400">${o.note} • ${o.date}</p>
+        <p class="text-[10px] text-gray-400">${o.note ? o.note + ' • ' : ''}${o.date}</p>
       </div>
       <div class="flex items-center gap-2">
-        <span class="font-bold text-red-600">৳${o.amount.toLocaleString('bn-BD')}</span>
+        <span class="font-bold text-red-600">৳${(parseFloat(o.amount) || 0).toLocaleString('bn-BD')}</span>
         <button class="btn-del-off text-gray-400 hover:text-red-600 text-xs">🗑️</button>
       </div>
     `;
@@ -372,26 +460,34 @@ async function deleteOfficeExpense(id) {
 
 async function handleBossTransaction(e) {
   e.preventDefault();
+  const amount = parseFloat(document.getElementById('boss-amount').value) || 0;
+
+  if (amount <= 0) return alert('⚠️ টাকার পরিমাণ সঠিক দিন!');
+
   const newBossTx = {
     type: document.getElementById('boss-tx-type').value,
-    amount: parseFloat(document.getElementById('boss-amount').value) || 0,
+    amount: amount,
     date: document.getElementById('boss-date').value,
-    note: document.getElementById('boss-note').value,
+    note: document.getElementById('boss-note').value || '',
     timestamp: Date.now()
   };
 
-  await rtdb.ref('boss_logs').push(newBossTx);
-  e.target.reset();
-  initDates();
-  alert('মালিকের ফান্ড লেনদেন এন্ট্রি করা হয়েছে!');
+  try {
+    await rtdb.ref('boss_logs').push(newBossTx);
+    e.target.reset();
+    initDates();
+    alert('✅ মালিকের ফান্ড লেনদেন রেকর্ড করা হয়েছে!');
+  } catch (err) {
+    alert('❌ সমস্যা হয়েছে: ' + err.message);
+  }
 }
 
 function renderBossLogs() {
   const list = document.getElementById('boss-logs-list');
   list.innerHTML = '';
   
-  let given = state.bossLogs.filter(b => b.type === 'deposit').reduce((acc, b) => acc + b.amount, 0);
-  let taken = state.bossLogs.filter(b => b.type === 'withdraw').reduce((acc, b) => acc + b.amount, 0);
+  let given = state.bossLogs.filter(b => b.type === 'deposit').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
+  let taken = state.bossLogs.filter(b => b.type === 'withdraw').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
   let netBossWallet = given - taken;
 
   document.getElementById('boss-wallet-balance').innerText = `৳${Math.abs(netBossWallet).toLocaleString('bn-BD')}`;
@@ -404,15 +500,15 @@ function renderBossLogs() {
 
   state.bossLogs.forEach(b => {
     const row = document.createElement('div');
-    row.className = "py-2 flex justify-between items-center";
+    row.className = "py-2 flex justify-between items-center border-b border-gray-100 last:border-none";
     row.innerHTML = `
       <div>
         <p class="font-bold text-gray-700">${b.type === 'deposit' ? '📥 টাকা দিয়েছেন' : '📤 টাকা নিয়েছেন'}</p>
-        <p class="text-[10px] text-gray-400">${b.note} • ${b.date}</p>
+        <p class="text-[10px] text-gray-400">${b.note ? b.note + ' • ' : ''}${b.date}</p>
       </div>
       <div class="flex items-center gap-2">
         <span class="font-bold ${b.type === 'deposit' ? 'text-emerald-600' : 'text-red-600'}">
-          ${b.type === 'deposit' ? '+' : '-'}৳${b.amount.toLocaleString('bn-BD')}
+          ${b.type === 'deposit' ? '+' : '-'}৳${(parseFloat(b.amount) || 0).toLocaleString('bn-BD')}
         </span>
         <button class="btn-del-boss text-gray-400 hover:text-red-600 text-xs">🗑️</button>
       </div>
@@ -435,17 +531,18 @@ function renderReport() {
   state.projects.forEach(p => {
     let txs = p.transactions ? Object.values(p.transactions) : [];
     txs.forEach(t => {
-      if (t.type === 'collection') totalCollections += t.amount;
-      if (t.type === 'cost') totalDirectCost += t.amount;
+      let amt = parseFloat(t.amount) || 0;
+      if (t.type === 'collection') totalCollections += amt;
+      if (t.type === 'cost') totalDirectCost += amt;
     });
   });
 
   let grossProfit = totalCollections - totalDirectCost;
-  let totalOfficeExpenses = state.officeExpenses.reduce((acc, o) => acc + o.amount, 0);
+  let totalOfficeExpenses = state.officeExpenses.reduce((acc, o) => acc + (parseFloat(o.amount) || 0), 0);
   let netProfit = grossProfit - totalOfficeExpenses;
 
-  let bossGiven = state.bossLogs.filter(b => b.type === 'deposit').reduce((acc, b) => acc + b.amount, 0);
-  let bossTaken = state.bossLogs.filter(b => b.type === 'withdraw').reduce((acc, b) => acc + b.amount, 0);
+  let bossGiven = state.bossLogs.filter(b => b.type === 'deposit').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
+  let bossTaken = state.bossLogs.filter(b => b.type === 'withdraw').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
 
   document.getElementById('rpt-total-income').innerText = `৳${totalCollections.toLocaleString('bn-BD')}`;
   document.getElementById('rpt-project-cost').innerText = `৳${totalDirectCost.toLocaleString('bn-BD')}`;
