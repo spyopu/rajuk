@@ -23,9 +23,9 @@ let state = {
   bossLogs: []
 };
 
-let currentDbRef = null; // লগইন করা ইউজার অনুযায়ী রেফারেন্স
+let currentDbRef = null;
 
-// DOM Content Loaded
+// DOM Loaded
 document.addEventListener('DOMContentLoaded', () => {
   initDates();
   bindEvents();
@@ -34,13 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Authentication Management
 function initAuthObserver() {
-  // রিডাইরেক্ট হয়ে ফিরে আসলে রেজাল্ট চেক করা (মোবাইলের জন্য)
+  // মোবাইলে Redirect মাধ্যমে লগইন হয়ে ফিরে আসলে তা হ্যান্ডেল করার জন্য
   auth.getRedirectResult().then(result => {
     if (result.user) {
-      console.log("Logged in via redirect");
+      console.log("Logged in successfully via redirect");
     }
   }).catch(error => {
-    console.error("Redirect Error:", error);
+    console.error("Redirect Login Error:", error);
   });
 
   auth.onAuthStateChanged(user => {
@@ -48,14 +48,14 @@ function initAuthObserver() {
     const mainApp = document.getElementById('main-app');
 
     if (user) {
-      // User logged in -> অ্যাপের ভেতরের অংশ দেখাবে
+      // লগইন সফল হলে মূল অ্যাপ দেখাবে
       if (authScreen) authScreen.classList.add('hidden');
       if (mainApp) mainApp.classList.remove('hidden');
 
-      // Set user DB path as per security rules: rajuk_erp_data/$uid
+      // আপনার সিকিউরিটি রুলস (rajuk_erp_data/$uid) অনুযায়ী রেফারেন্স সেট
       currentDbRef = rtdb.ref(`rajuk_erp_data/${user.uid}`);
 
-      // Update User Profile UI (Header / App Inside)
+      // Profile UI আপডেট
       const nameDisplay = document.getElementById('user-name-display');
       const emailDisplay = document.getElementById('user-email-display');
       const avatarImg = document.getElementById('user-avatar');
@@ -70,10 +70,10 @@ function initAuthObserver() {
         if (avatarPlaceholder) avatarPlaceholder.classList.add('hidden');
       }
 
-      // Start listening to RTDB for this specific user
+      // ডাটাবেস লিসেন চালু
       listenToDatabase();
     } else {
-      // User logged out -> লগইন পেজ দেখাবে
+      // লগআউট অবস্থায় থাকলে লগইন স্ক্রিন দেখাবে
       if (authScreen) authScreen.classList.remove('hidden');
       if (mainApp) mainApp.classList.add('hidden');
       currentDbRef = null;
@@ -89,10 +89,11 @@ function initDates() {
 }
 
 function bindEvents() {
-  // Login & Logout Events (App এর ভেতরে ও বাইরে যেখানেই বাটন থাকুক কাজ করবে)
+  // Google Login Click Event
   const loginBtn = document.getElementById('btn-google-login');
   if (loginBtn) loginBtn.addEventListener('click', handleGoogleLogin);
 
+  // App-এর ভেতরের Logout Button Event
   const logoutBtn = document.getElementById('btn-logout');
   if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
 
@@ -137,10 +138,11 @@ function bindEvents() {
   if (searchInput) searchInput.addEventListener('keyup', renderProjects);
 }
 
-// Google Login Handler (Mobile & PC Both Supported)
+// Google Login Handler (Mobile and Desktop Smart Handler)
 async function handleGoogleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
+    // মোবাইল ডিভাইসে পপ-আপ ব্লক হওয়া এড়াতে redirect ব্যবহার
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     if (isMobile) {
       await auth.signInWithRedirect(provider);
@@ -152,19 +154,18 @@ async function handleGoogleLogin() {
   }
 }
 
-// Logout Handler (App এর ভেতর থেকে বের হওয়ার জন্য)
+// App-এর ভেতর থেকে Logout করার নিয়ম
 async function handleLogout() {
-  if (confirm('আপনি কি নিশ্চিত যে অ্যাকাউন্ট থেকে লগআউট করতে চান?')) {
+  if (confirm('আপনি কি অ্যাপ থেকে বের হতে (লগআউট করতে) চান?')) {
     try {
       await auth.signOut();
-      alert('✅ আপনি সফলভাবে লগআউট হয়েছেন।');
     } catch (err) {
-      alert('❌ লগআউট করতে সমস্যা হয়েছে: ' + err.message);
+      alert('❌ লগআউট করা যায়নি: ' + err.message);
     }
   }
 }
 
-// REALTIME DATABASE LISTENERS (rajuk_erp_data/$uid)
+// REALTIME DATABASE LISTENERS (Exact Path as per Rules: rajuk_erp_data/$uid)
 function listenToDatabase() {
   if (!currentDbRef) return;
 
@@ -178,7 +179,7 @@ function listenToDatabase() {
     }
     refreshUI();
   }, error => {
-    alert('❌ ফায়ারবেস পারমিশন এরর: ' + error.message);
+    console.error('Firebase DB Error:', error);
   });
 
   currentDbRef.child('office_expenses').on('value', snapshot => {
