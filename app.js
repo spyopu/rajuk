@@ -1,4 +1,4 @@
-// 1. Firebase Configuration
+// 1. Firebase Initialization Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyD8kXy2rL9ptiPN4xEMg5h3o4RY_sPH79w",
   authDomain: "rajuk-bed98.firebaseapp.com",
@@ -9,627 +9,674 @@ const firebaseConfig = {
   appId: "1:367893646589:web:6c91f066dfb5143e204294"
 };
 
-// Firebase Initialization
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-const rtdb = firebase.database();
+firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const rtdb = firebase.database();
 
-// State Variables
-let state = {
-  projects: [],
-  officeExpenses: [],
-  bossLogs: []
-};
+// Global Security Passcode
+const SECURITY_PASSCODE = "1234";
 
-let currentDbRef = null;
+// State Memory Management Variables
+let farmData = [];
+let officeExpenses = [];
+let databasePathRef = null;
+let openLedgerId = null;
+let activeClientFilter = 'none';
 
-// DOM Loaded
-document.addEventListener('DOMContentLoaded', () => {
-  initDates();
-  bindEvents();
-  initAuthObserver();
+// Catch UI Reference Elements
+const loginBtn = document.getElementById('google-login-btn');
+const logoutBtn = document.getElementById('logout-btn');
+const profileTrigger = document.getElementById('profile-trigger');
+const profileDropdown = document.getElementById('profile-dropdown');
+const sidebarAuthSection = document.getElementById('sidebar-auth-section');
+
+const clientForm = document.getElementById('client-form');
+const txForm = document.getElementById('tx-form');
+const officeExpenseForm = document.getElementById('office-expense-form');
+const tableBody = document.getElementById('clients-table-body');
+const officeExpenseRows = document.getElementById('office-expense-rows');
+const ledgerDrawer = document.getElementById('ledger-drawer');
+const searchInput = document.getElementById('search-input');
+const monthFilter = document.getElementById('month-filter');
+
+// Initialize Today's Date Values Input fields
+if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
+if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
+
+// Initialize Default Value for Month Filter (Current Month)
+if (monthFilter) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  monthFilter.value = `${year}-${month}`;
+  monthFilter.addEventListener('change', uiUpdatePipeline);
+}
+
+// Bind search bar trigger dynamically
+if (searchInput) {
+  searchInput.addEventListener('input', () => {
+    switchTab('dashboard-view');
+    if(activeClientFilter === 'none') {
+      setClientFilter('all');
+    } else {
+      renderMasterTable();
+    }
+  });
+}
+
+// PREMIUM TAB SYSTEM CONTROLLER
+window.switchTab = function(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  const targetTab = document.getElementById(`tab-${tabId}`);
+  if (targetTab) targetTab.classList.remove('hidden');
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.className = "tab-btn flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent w-full";
+  });
+
+  const activeBtn = document.getElementById(`btn-${tabId}`);
+  if(activeBtn) {
+    activeBtn.className = "tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20";
+  }
+}
+
+// Control Table Visibility and Custom States
+window.setClientFilter = function(filterType) {
+  activeClientFilter = filterType;
+  
+  const container = document.getElementById('master-table-container');
+  const btnAll = document.getElementById('filter-btn-all');
+  const btnNew = document.getElementById('filter-btn-new');
+  const btnOld = document.getElementById('filter-btn-old');
+  
+  [btnAll, btnNew, btnOld].forEach(btn => {
+    if(btn) btn.className = "px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white";
+  });
+  
+  const activeBtn = document.getElementById(`filter-btn-${filterType}`);
+  if(activeBtn) activeBtn.className = "px-3 py-1.5 text-[11px] font-bold rounded-md transition-all bg-indigo-600 text-white shadow-sm";
+  
+  if(container) {
+    if(filterType === 'none') {
+      container.classList.add('hidden');
+    } else {
+      container.classList.remove('hidden');
+    }
+  }
+  
+  renderMasterTable();
+}
+
+// Initialize System Pipelines
+uiUpdatePipeline();
+setClientFilter('none');
+
+// User Menu Events Handlers
+if (profileTrigger) {
+  profileTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (profileDropdown) profileDropdown.classList.toggle('hidden');
+  });
+}
+
+document.addEventListener('click', () => {
+  if (profileDropdown) profileDropdown.classList.add('hidden');
 });
 
-// Authentication Management
-function initAuthObserver() {
-  // মোবাইলে Redirect মাধ্যমে লগইন হয়ে ফিরে আসলে তা হ্যান্ডেল করার জন্য
-  auth.getRedirectResult().then(result => {
-    if (result.user) {
-      console.log("Logged in successfully via redirect");
+// Mobile & Desktop Responsive Google Login System
+if (loginBtn) {
+  loginBtn.addEventListener('click', async () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    try {
+      if (isMobile) {
+        // মোবাইলের পপ-আপ ব্লকিং এড়াতে Redirect মেথড
+        await auth.signInWithRedirect(provider);
+      } else {
+        // পিসির জন্য Popup মেথড
+        await auth.signInWithPopup(provider);
+      }
+    } catch (err) {
+      alert("Login failed: " + err.message);
     }
-  }).catch(error => {
-    console.error("Redirect Login Error:", error);
+  });
+}
+
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', () => {
+    auth.signOut().then(() => window.location.reload());
+  });
+}
+
+// Mobile Redirect Login Handler
+auth.getRedirectResult().catch(err => {
+  console.error("Redirect Login Error: ", err);
+});
+
+// Firebase Auth Authentication State Realtime Observers
+auth.onAuthStateChanged(user => {
+  if (user) {
+    if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
+    if (profileTrigger) profileTrigger.classList.remove('hidden');
+    
+    const indicator = document.getElementById('status-indicator');
+    const text = document.getElementById('status-text');
+    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse";
+    if (text) text.innerText = "Firebase Realtime Cloud (100% Secured)";
+    
+    if (document.getElementById('user-display-name')) document.getElementById('user-display-name').innerText = user.displayName;
+    if (document.getElementById('user-display-email')) document.getElementById('user-display-email').innerText = user.email;
+    if (document.getElementById('user-avatar')) document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
+
+    databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
+    subscribeToCloudStreams();
+  } else {
+    if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
+    if (profileTrigger) profileTrigger.classList.add('hidden');
+    
+    const indicator = document.getElementById('status-indicator');
+    const text = document.getElementById('status-text');
+    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
+    if (text) text.innerText = "Offline / Guest Mode";
+    
+    farmData = [];
+    officeExpenses = [];
+    databasePathRef = null;
+    uiUpdatePipeline();
+  }
+});
+
+// Sync Stream listeners with Firebase Cloud Node 
+function subscribeToCloudStreams() {
+  if(!databasePathRef) return;
+  databasePathRef.child('clients').on('value', snapshot => {
+    farmData = [];
+    snapshot.forEach(childSnapshot => {
+      const val = childSnapshot.val();
+      if(!val.history) val.history = [];
+      else if(!Array.isArray(val.history)) {
+        val.history = Object.keys(val.history).map(k => val.history[k]);
+      }
+      farmData.push({ id: childSnapshot.key, ...val });
+    });
+    uiUpdatePipeline();
   });
 
-  auth.onAuthStateChanged(user => {
-    const authScreen = document.getElementById('auth-screen');
-    const mainApp = document.getElementById('main-app');
+  databasePathRef.child('office_expenses').on('value', snapshot => {
+    officeExpenses = [];
+    snapshot.forEach(childSnapshot => {
+      officeExpenses.push({ id: childSnapshot.key, ...childSnapshot.val() });
+    });
+    officeExpenses.sort((a,b) => new Date(b.date) - new Date(a.date));
+    uiUpdatePipeline();
+  });
+}
 
-    if (user) {
-      // লগইন সফল হলে মূল অ্যাপ দেখাবে
-      if (authScreen) authScreen.classList.add('hidden');
-      if (mainApp) mainApp.classList.remove('hidden');
+function uiUpdatePipeline() {
+  calculateGlobalMetrics();
+  renderDropdown();
+  renderMasterTable();
+  renderOfficeExpenses();
+  if(openLedgerId) refreshDrawer(openLedgerId);
+}
 
-      // আপনার সিকিউরিটি রুলস (rajuk_erp_data/$uid) অনুযায়ী রেফারেন্স সেট
-      currentDbRef = rtdb.ref(`rajuk_erp_data/${user.uid}`);
+// Calculate Dashboard Total Amounts
+function calculateGlobalMetrics() {
+  let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
+  
+  let targetYear, targetMonth;
+  if (monthFilter && monthFilter.value) {
+    const parts = monthFilter.value.split('-'); 
+    targetYear = parseInt(parts[0]);
+    targetMonth = parseInt(parts[1]) - 1; 
+  } else {
+    const now = new Date();
+    targetYear = now.getFullYear();
+    targetMonth = now.getMonth();
+  }
+  
+  const startOfMonth = new Date(targetYear, targetMonth, 1);
+  const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
+  const monthLabel = startOfMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
 
-      // Profile UI আপডেট
-      const nameDisplay = document.getElementById('user-name-display');
-      const emailDisplay = document.getElementById('user-email-display');
-      const avatarImg = document.getElementById('user-avatar');
-      const avatarPlaceholder = document.getElementById('user-avatar-placeholder');
+  farmData.forEach(c => {
+    budget += c.budget; 
+    let cIncome = 0;
+    
+    c.history.forEach(t => {
+      const tDate = new Date(t.date);
+      const isSelectedMonth = (tDate >= startOfMonth && tDate <= endOfMonth);
 
-      if (nameDisplay) nameDisplay.innerText = user.displayName || 'ব্যবহারকারী';
-      if (emailDisplay) emailDisplay.innerText = user.email || '';
+      if (t.type === 'income') {
+        cIncome += t.amount; 
+        if (isSelectedMonth) income += t.amount; 
+      }
+      if (t.type === 'expense' && isSelectedMonth) {
+        prjExpense += t.amount; 
+      }
+    });
+    due += (c.budget - cIncome); 
+  });
 
-      if (avatarImg && user.photoURL) {
-        avatarImg.src = user.photoURL;
-        avatarImg.classList.remove('hidden');
-        if (avatarPlaceholder) avatarPlaceholder.classList.add('hidden');
+  officeExpenses.forEach(oe => {
+    const oeDate = new Date(oe.date);
+    if (oeDate >= startOfMonth && oeDate <= endOfMonth) {
+      totalOfficeExpense += oe.amount;
+    }
+  });
+
+  let grandTotalExpense = prjExpense + totalOfficeExpense;
+  let netIncome = income - grandTotalExpense;
+
+  if (document.getElementById('global-budget')) document.getElementById('global-budget').innerText = '৳' + budget.toLocaleString('en-IN');
+  
+  const incomeCard = document.getElementById('global-income');
+  if (incomeCard) {
+    incomeCard.innerText = '৳' + income.toLocaleString('en-IN');
+    if(incomeCard.previousElementSibling) incomeCard.previousElementSibling.innerText = `Gross Income (${monthLabel})`;
+  }
+  
+  const expenseCard = document.getElementById('global-expense');
+  if (expenseCard) {
+    expenseCard.innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
+    if(expenseCard.previousElementSibling) expenseCard.previousElementSibling.innerText = `Total Cost (${monthLabel})`;
+  }
+  
+  if (document.getElementById('global-due')) document.getElementById('global-due').innerText = '৳' + due.toLocaleString('en-IN');
+  
+  const netCard = document.getElementById('global-net');
+  if (netCard) {
+    netCard.innerText = '৳' + netIncome.toLocaleString('en-IN');
+    if(netCard.previousElementSibling) netCard.previousElementSibling.innerText = `Net Balance (${monthLabel})`;
+  }
+}
+
+// Compact Passcode Modal Handler
+let pendingDeleteAction = null;
+
+function requestPasscodeAuth(onSuccess) {
+  const modal = document.getElementById('securityModal');
+  const passInput = document.getElementById('modalPasscodeInput');
+  const confirmBtn = document.getElementById('modalConfirmBtn');
+  const cancelBtn = document.getElementById('modalCancelBtn');
+
+  if (!modal || !passInput) return;
+
+  passInput.value = '';
+  passInput.classList.remove('border-red-500');
+  pendingDeleteAction = onSuccess;
+  modal.classList.remove('hidden');
+  
+  setTimeout(() => passInput.focus(), 50);
+
+  passInput.onkeyup = function(e) {
+    if (e.key === 'Enter') confirmBtn.click();
+  };
+
+  confirmBtn.onclick = function() {
+    const enteredPass = passInput.value.trim();
+    if (enteredPass === SECURITY_PASSCODE) {
+      modal.classList.add('hidden');
+      if (pendingDeleteAction) pendingDeleteAction();
+    } else {
+      passInput.classList.add('border-red-500');
+      passInput.value = '';
+      passInput.focus();
+    }
+  };
+
+  cancelBtn.onclick = function() {
+    modal.classList.add('hidden');
+    pendingDeleteAction = null;
+  };
+}
+
+// Form Submit Handlers
+if (clientForm) {
+  clientForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!databasePathRef) return;
+    const newClient = {
+      name: document.getElementById('client-name').value,
+      phone: document.getElementById('client-phone').value,
+      project: document.getElementById('project-title').value,
+      budget: parseFloat(document.getElementById('project-budget').value),
+      history: []
+    };
+    databasePathRef.child('clients').push(newClient);
+    clientForm.reset();
+    setClientFilter('all');
+    switchTab('dashboard-view');
+  });
+}
+
+if (txForm) {
+  txForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!databasePathRef) return;
+    const id = document.getElementById('tx-client-select').value;
+    if(!id) return;
+    
+    const client = farmData.find(c => c.id === id);
+    if(client) {
+      const updatedHistory = client.history || [];
+      updatedHistory.push({
+        id: 't_' + Date.now(),
+        type: document.getElementById('tx-type').value,
+        amount: parseFloat(document.getElementById('tx-amount').value),
+        details: document.getElementById('tx-details').value,
+        date: document.getElementById('tx-date').value
+      });
+      updatedHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
+      
+      databasePathRef.child('clients').child(id).update({ history: updatedHistory });
+      
+      document.getElementById('tx-amount').value = '';
+      document.getElementById('tx-details').value = '';
+      document.getElementById('tx-client-select').value = '';
+      
+      const selectedText = document.getElementById('dropdown-selected-text');
+      if (selectedText) {
+        selectedText.innerText = 'Select Project Profile...';
+        selectedText.className = 'text-slate-500';
       }
 
-      // ডাটাবেস লিসেন চালু
-      listenToDatabase();
-    } else {
-      // লগআউট অবস্থায় থাকলে লগইন স্ক্রিন দেখাবে
-      if (authScreen) authScreen.classList.remove('hidden');
-      if (mainApp) mainApp.classList.add('hidden');
-      currentDbRef = null;
+      setClientFilter('all');
+      uiUpdatePipeline();
+      switchTab('dashboard-view');
     }
   });
 }
 
-function initDates() {
-  const today = new Date().toISOString().split('T')[0];
-  document.querySelectorAll('input[type="date"]').forEach(inp => {
-    inp.value = today;
+if (officeExpenseForm) {
+  officeExpenseForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!databasePathRef) return;
+    const newExpense = {
+      category: document.getElementById('oe-category').value,
+      amount: parseFloat(document.getElementById('oe-amount').value),
+      details: document.getElementById('oe-details').value,
+      date: document.getElementById('oe-date').value
+    };
+    databasePathRef.child('office_expenses').push(newExpense);
+    document.getElementById('oe-amount').value = '';
+    document.getElementById('oe-details').value = '';
+    uiUpdatePipeline();
   });
 }
 
-function bindEvents() {
-  // Google Login Click Event
-  const loginBtn = document.getElementById('btn-google-login');
-  if (loginBtn) loginBtn.addEventListener('click', handleGoogleLogin);
+// Searchable Dropdown Logics
+function renderDropdown() {
+  const trigger = document.getElementById('dropdown-trigger');
+  const dropdownList = document.getElementById('custom-dropdown-list');
+  const dropdownSearchInput = document.getElementById('dropdown-search-input');
+  const itemsContainer = document.getElementById('dropdown-items-container');
+  const hiddenInput = document.getElementById('tx-client-select');
+  const selectedText = document.getElementById('dropdown-selected-text');
 
-  // App-এর ভেতরের Logout Button Event
-  const logoutBtn = document.getElementById('btn-logout');
-  if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+  if (!trigger || !dropdownList || !itemsContainer) return;
 
-  // Navigation Tabs
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const targetTab = e.currentTarget.getAttribute('data-tab');
-      switchTab(targetTab, e.currentTarget);
-    });
-  });
-
-  const topReportBtn = document.getElementById('btn-top-report');
-  if (topReportBtn) {
-    topReportBtn.addEventListener('click', () => switchTab('tab-reports'));
-  }
-
-  // Modals
-  const openProjBtn = document.getElementById('btn-open-add-project');
-  if (openProjBtn) openProjBtn.addEventListener('click', () => openModal('modal-add-project'));
-
-  const closeProjBtn = document.getElementById('btn-close-add-project');
-  if (closeProjBtn) closeProjBtn.addEventListener('click', () => closeModal('modal-add-project'));
-
-  const closeLedgerBtn = document.getElementById('btn-close-ledger');
-  if (closeLedgerBtn) closeLedgerBtn.addEventListener('click', () => closeModal('modal-project-ledger'));
-
-  // Form Submissions
-  const formAddProject = document.getElementById('form-add-project');
-  if (formAddProject) formAddProject.addEventListener('submit', handleCreateProject);
-
-  const formProjectTx = document.getElementById('form-project-tx');
-  if (formProjectTx) formProjectTx.addEventListener('submit', handleProjectTransaction);
-
-  const formOfficeExp = document.getElementById('form-office-expense');
-  if (formOfficeExp) formOfficeExp.addEventListener('submit', handleOfficeExpense);
-
-  const formBossTx = document.getElementById('form-boss-tx');
-  if (formBossTx) formBossTx.addEventListener('submit', handleBossTransaction);
-
-  // Search Filter
-  const searchInput = document.getElementById('search-input');
-  if (searchInput) searchInput.addEventListener('keyup', renderProjects);
-}
-
-// Google Login Handler (Mobile and Desktop Smart Handler)
-async function handleGoogleLogin() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  try {
-    // মোবাইল ডিভাইসে পপ-আপ ব্লক হওয়া এড়াতে redirect ব্যবহার
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (isMobile) {
-      await auth.signInWithRedirect(provider);
-    } else {
-      await auth.signInWithPopup(provider);
+  trigger.onclick = function(e) {
+    e.stopPropagation();
+    dropdownList.classList.toggle('hidden');
+    if (!dropdownList.classList.contains('hidden') && dropdownSearchInput) {
+      dropdownSearchInput.value = '';
+      filterDropdownItems('');
+      dropdownSearchInput.focus();
     }
-  } catch (err) {
-    alert('❌ গুগল লগইন করা যায়নি: ' + err.message);
-  }
-}
+  };
 
-// App-এর ভেতর থেকে Logout করার নিয়ম
-async function handleLogout() {
-  if (confirm('আপনি কি অ্যাপ থেকে বের হতে (লগআউট করতে) চান?')) {
-    try {
-      await auth.signOut();
-    } catch (err) {
-      alert('❌ লগআউট করা যায়নি: ' + err.message);
-    }
-  }
-}
+  document.onclick = function() {
+    dropdownList.classList.add('hidden');
+  };
 
-// REALTIME DATABASE LISTENERS (Exact Path as per Rules: rajuk_erp_data/$uid)
-function listenToDatabase() {
-  if (!currentDbRef) return;
+  dropdownList.onclick = function(e) {
+    e.stopPropagation();
+  };
 
-  currentDbRef.child('projects').on('value', snapshot => {
-    const data = snapshot.val();
-    state.projects = [];
-    if (data) {
-      Object.keys(data).forEach(key => {
-        state.projects.push({ id: key, ...data[key] });
-      });
-    }
-    refreshUI();
-  }, error => {
-    console.error('Firebase DB Error:', error);
-  });
-
-  currentDbRef.child('office_expenses').on('value', snapshot => {
-    const data = snapshot.val();
-    state.officeExpenses = [];
-    if (data) {
-      Object.keys(data).forEach(key => {
-        state.officeExpenses.unshift({ id: key, ...data[key] });
-      });
-    }
-    refreshUI();
-  });
-
-  currentDbRef.child('boss_logs').on('value', snapshot => {
-    const data = snapshot.val();
-    state.bossLogs = [];
-    if (data) {
-      Object.keys(data).forEach(key => {
-        state.bossLogs.unshift({ id: key, ...data[key] });
-      });
-    }
-    refreshUI();
-  });
-}
-
-function refreshUI() {
-  renderDashboard();
-  renderProjects();
-  populateProjectDropdown();
-  renderOfficeLogs();
-  renderBossLogs();
-  renderReport();
-}
-
-function switchTab(tabId, activeBtn) {
-  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-  const target = document.getElementById(tabId);
-  if (target) target.classList.remove('hidden');
-
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.classList.remove('text-red-600', 'font-bold');
-    btn.classList.add('text-gray-500');
-  });
-
-  if (activeBtn) {
-    activeBtn.classList.remove('text-gray-500');
-    activeBtn.classList.add('text-red-600', 'font-bold');
-  }
-}
-
-function openModal(id) { 
-  const el = document.getElementById(id);
-  if (el) el.classList.remove('hidden'); 
-}
-
-function closeModal(id) { 
-  const el = document.getElementById(id);
-  if (el) el.classList.add('hidden'); 
-}
-
-// DASHBOARD & PROJECT LOGIC
-function renderDashboard() {
-  let totalBudget = state.projects.reduce((acc, p) => acc + (parseFloat(p.budget) || 0), 0);
-  let totalReceived = state.projects.reduce((acc, p) => {
-    let txs = p.transactions ? Object.values(p.transactions) : [];
-    let coll = txs.filter(t => t.type === 'collection').reduce((a, t) => a + (parseFloat(t.amount) || 0), 0);
-    return acc + coll;
-  }, 0);
-  let totalDue = totalBudget - totalReceived;
-
-  const bEl = document.getElementById('dash-budget');
-  const rEl = document.getElementById('dash-received');
-  const dEl = document.getElementById('dash-due');
-
-  if (bEl) bEl.innerText = `৳${totalBudget.toLocaleString('bn-BD')}`;
-  if (rEl) rEl.innerText = `৳${totalReceived.toLocaleString('bn-BD')}`;
-  if (dEl) dEl.innerText = `৳${totalDue.toLocaleString('bn-BD')}`;
-}
-
-function renderProjects() {
-  const searchEl = document.getElementById('search-input');
-  const query = searchEl ? searchEl.value.toLowerCase() : '';
-  const container = document.getElementById('projects-list-container');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  const filtered = state.projects.filter(p => 
-    (p.client && p.client.toLowerCase().includes(query)) || 
-    (p.title && p.title.toLowerCase().includes(query))
-  );
-
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div class="text-center py-10 text-gray-500 text-xs bg-white rounded-xl border border-dashed border-gray-300">
-        <p class="text-lg mb-1">📁</p>
-        <p class="font-semibold text-gray-600">কোনো প্রজেক্ট পাওয়া যায়নি!</p>
-        <p class="mt-1">উপরের <b class="text-red-600">"➕ প্রজেক্ট"</b> বাটনে ক্লিক করে প্রজেক্ট যোগ করুন।</p>
-      </div>`;
-    return;
-  }
-
-  filtered.forEach(p => {
-    const txs = p.transactions ? Object.values(p.transactions) : [];
-    const totalColl = txs.filter(t => t.type === 'collection').reduce((a, t) => a + (parseFloat(t.amount) || 0), 0);
-    const due = (parseFloat(p.budget) || 0) - totalColl;
-    const initial = p.client ? p.client.charAt(0).toUpperCase() : 'P';
+  function filterDropdownItems(query) {
+    itemsContainer.innerHTML = '';
     
-    const card = document.createElement('div');
-    card.className = "bg-white rounded-xl shadow-sm border border-gray-200 p-3 flex justify-between items-center hover:border-gray-300 transition";
-    card.innerHTML = `
-      <div class="flex items-center gap-3">
-        <div class="h-10 w-10 rounded-full bg-red-100 text-red-600 border border-red-200 flex items-center justify-center font-bold text-sm shrink-0">
-          ${initial}
-        </div>
-        <div>
-          <h3 class="text-xs font-bold text-gray-800">${p.client}</h3>
-          <p class="text-[11px] text-gray-500">${p.title}</p>
-          <span class="text-[10px] text-gray-400">বাজেট: ৳${(parseFloat(p.budget) || 0).toLocaleString('bn-BD')}</span>
-        </div>
-      </div>
-      <div class="text-right flex flex-col items-end gap-1">
-        <div>
-          <p class="text-[10px] text-gray-400">বাকি (Due)</p>
-          <p class="text-xs font-bold ${due > 0 ? 'text-red-600' : 'text-emerald-600'}">৳${due.toLocaleString('bn-BD')}</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button class="btn-ledger text-[10px] text-red-600 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded font-bold hover:bg-red-100 transition">
-             বিস্তারিত &gt;
-          </button>
-          <button class="btn-delete-project text-[10px] text-gray-400 hover:text-red-600 px-1 py-0.5 transition">
-            🗑️
-          </button>
-        </div>
-      </div>
-    `;
+    const filtered = farmData.filter(c => 
+      c.project.toLowerCase().includes(query.toLowerCase()) || 
+      c.name.toLowerCase().includes(query.toLowerCase())
+    );
 
-    card.querySelector('.btn-ledger').addEventListener('click', () => openProjectLedger(p.id));
-    card.querySelector('.btn-delete-project').addEventListener('click', () => deleteProject(p.id));
+    if (filtered.length === 0) {
+      itemsContainer.innerHTML = `<div class="p-2.5 text-xs text-slate-500 text-center">No projects found</div>`;
+      return;
+    }
 
-    container.appendChild(card);
-  });
-}
-
-// HANDLERS FOR CREATION & TRANSACTIONS
-async function handleCreateProject(e) {
-  e.preventDefault();
-  if (!currentDbRef) return alert('⚠️ আপনি লগইন অবস্থায় নেই!');
-
-  const client = document.getElementById('new-client-name').value;
-  const title = document.getElementById('new-project-name').value;
-  const budget = parseFloat(document.getElementById('new-project-budget').value) || 0;
-
-  if (!client || !title) {
-    alert('⚠️ কাস্টমার এবং প্রজেক্টের নাম পূরণ করুন!');
-    return;
+    filtered.forEach(c => {
+      const item = document.createElement('div');
+      item.className = "p-2.5 text-xs text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg cursor-pointer transition-all font-medium flex justify-between items-center";
+      item.innerHTML = `<span>${c.project} <span class="text-[10px] text-slate-500">(${c.name})</span></span>`;
+      
+      item.onclick = function() {
+        hiddenInput.value = c.id;
+        selectedText.innerText = `${c.project} (${c.name})`;
+        selectedText.className = "text-white font-semibold";
+        dropdownList.classList.add('hidden');
+      };
+      
+      itemsContainer.appendChild(item);
+    });
   }
 
-  const newProj = {
-    client: client,
-    mobile: document.getElementById('new-client-mobile').value || '',
-    title: title,
-    budget: budget,
-    timestamp: Date.now()
-  };
-
-  try {
-    await currentDbRef.child('projects').push(newProj);
-    closeModal('modal-add-project');
-    e.target.reset();
-    alert('✅ নতুন প্রজেক্ট সফলভাবে যোগ হয়েছে!');
-  } catch (err) {
-    alert('❌ সমস্যা হয়েছে: ' + err.message);
-  }
-}
-
-async function handleProjectTransaction(e) {
-  e.preventDefault();
-  if (!currentDbRef) return alert('⚠️ আপনি লগইন অবস্থায় নেই!');
-
-  const projId = document.getElementById('tx-project-select').value;
-  
-  if (!projId) {
-    alert('⚠️ দয়া করে তালিকা থেকে প্রজেক্ট নির্বাচন করুন!');
-    return;
+  if (dropdownSearchInput) {
+    dropdownSearchInput.oninput = function() {
+      filterDropdownItems(this.value);
+    };
   }
 
-  const type = document.getElementById('tx-type').value;
-  const amount = parseFloat(document.getElementById('tx-amount').value) || 0;
-  const date = document.getElementById('tx-date').value;
-  const note = document.getElementById('tx-note').value;
-
-  if (amount <= 0) {
-    alert('⚠️ টাকার পরিমাণ অবশ্যই ০ থেকে বেশি হতে হবে!');
-    return;
-  }
-
-  const txData = { type, amount, date, note, timestamp: Date.now() };
-
-  try {
-    await currentDbRef.child(`projects/${projId}/transactions`).push(txData);
-    e.target.reset();
-    initDates();
-    alert('✅ ক্যাশ এন্ট্রি / ভাউচার সেভ হয়েছে!');
-  } catch (err) {
-    alert('❌ সেভ হতে সমস্যা হয়েছে: ' + err.message);
-  }
-}
-
-function openProjectLedger(projId) {
-  const proj = state.projects.find(p => p.id === projId);
-  if (!proj) return;
-
-  const rawTxs = proj.transactions || {};
-  const txs = Object.keys(rawTxs).map(k => ({ id: k, ...rawTxs[k] })).reverse();
-
-  const totalColl = txs.filter(t => t.type === 'collection').reduce((a, t) => a + (parseFloat(t.amount) || 0), 0);
-  const due = (parseFloat(proj.budget) || 0) - totalColl;
-
-  document.getElementById('ledger-client-title').innerText = proj.client;
-  document.getElementById('ledger-client-sub').innerText = `${proj.title} • 📞 ${proj.mobile || 'N/A'}`;
-  
-  document.getElementById('ledger-budget').innerText = `৳${(parseFloat(proj.budget) || 0).toLocaleString('bn-BD')}`;
-  document.getElementById('ledger-collections').innerText = `৳${totalColl.toLocaleString('bn-BD')}`;
-  document.getElementById('ledger-due').innerText = `৳${due.toLocaleString('bn-BD')}`;
-
-  const txContainer = document.getElementById('ledger-tx-list');
-  txContainer.innerHTML = '';
-
-  if (txs.length === 0) {
-    txContainer.innerHTML = `<p class="text-gray-400 text-center py-4">কোনো লেনদেন পাওয়া যায়নি।</p>`;
+  if (farmData.length === 0) {
+    selectedText.innerText = "No Active Projects Available";
+    selectedText.className = "text-slate-500";
+    hiddenInput.value = "";
   } else {
-    txs.forEach(tx => {
-      const isIncome = tx.type === 'collection';
-      const row = document.createElement('div');
-      row.className = "bg-gray-50 p-2.5 rounded-lg border border-gray-200 flex justify-between items-center";
-      row.innerHTML = `
-        <div>
-          <div class="flex items-center gap-1.5">
-            <span class="px-1.5 py-0.2 text-[9px] rounded font-bold ${isIncome ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-red-100 text-red-700 border border-red-200'}">
-              ${isIncome ? '📥 টাকা পেলাম' : '📤 প্রজেক্ট খরচ'}
-            </span>
-            <span class="text-[11px] font-medium text-gray-700">${tx.note}</span>
-          </div>
-          <p class="text-[10px] text-gray-400 mt-1">📅 তারিখ: ${tx.date}</p>
-        </div>
-        <div class="text-right flex items-center gap-2">
-          <span class="font-bold ${isIncome ? 'text-emerald-600' : 'text-red-600'}">
-            ${isIncome ? '+' : '-'}৳${(parseFloat(tx.amount) || 0).toLocaleString('bn-BD')}
-          </span>
-          <button class="btn-del-single text-gray-400 hover:text-red-600 text-xs p-1">🗑️</button>
-        </div>
-      `;
-
-      row.querySelector('.btn-del-single').addEventListener('click', () => {
-        deleteSingleTransaction(proj.id, tx.id);
-      });
-
-      txContainer.appendChild(row);
-    });
-  }
-
-  openModal('modal-project-ledger');
-}
-
-async function deleteSingleTransaction(projId, txId) {
-  if (confirm('আপনি কি এই লেনদেনটি মুছে ফেলতে চান?') && currentDbRef) {
-    await currentDbRef.child(`projects/${projId}/transactions/${txId}`).remove();
-    openProjectLedger(projId);
+    if(!hiddenInput.value) {
+      selectedText.innerText = "Select Project Profile...";
+      selectedText.className = "text-slate-500";
+    } else {
+      const current = farmData.find(c => c.id === hiddenInput.value);
+      if(current) {
+        selectedText.innerText = `${current.project} (${current.name})`;
+        selectedText.className = "text-white font-semibold";
+      } else {
+        selectedText.innerText = "Select Project Profile...";
+        selectedText.className = "text-slate-500";
+        hiddenInput.value = "";
+      }
+    }
   }
 }
 
-async function deleteProject(id) {
-  if (confirm('আপনি কি নিশ্চিত এই প্রজেক্টের সমস্ত হিসাব মুছে ফেলবেন?') && currentDbRef) {
-    await currentDbRef.child(`projects/${id}`).remove();
-  }
-}
-
-function populateProjectDropdown() {
-  const select = document.getElementById('tx-project-select');
-  if (!select) return;
-  select.innerHTML = `<option value="">সিলেক্ট করুন...</option>`;
-  state.projects.forEach(p => {
-    select.innerHTML += `<option value="${p.id}">${p.client} — ${p.title}</option>`;
-  });
-}
-
-async function handleOfficeExpense(e) {
-  e.preventDefault();
-  if (!currentDbRef) return alert('⚠️ আপনি লগইন অবস্থায় নেই!');
-
-  const category = document.getElementById('office-cat').value;
-  const amount = parseFloat(document.getElementById('office-amount').value) || 0;
-
-  if (amount <= 0) return alert('⚠️ টাকার পরিমাণ সঠিক দিন!');
-
-  const newExp = {
-    category,
-    amount,
-    date: document.getElementById('office-date').value,
-    note: document.getElementById('office-note').value || '',
-    timestamp: Date.now()
-  };
-
-  try {
-    await currentDbRef.child('office_expenses').push(newExp);
-    e.target.reset();
-    initDates();
-    alert('✅ অফিস খরচ যোগ করা হয়েছে!');
-  } catch (err) {
-    alert('❌ সমস্যা হয়েছে: ' + err.message);
-  }
-}
-
-function renderOfficeLogs() {
-  const list = document.getElementById('office-logs-list');
-  if (!list) return;
-  list.innerHTML = '';
-  if (state.officeExpenses.length === 0) {
-    list.innerHTML = `<p class="text-gray-400 text-[11px] py-2">কোনো অফিস খরচ পাওয়া যায়নি।</p>`;
-    return;
-  }
-  state.officeExpenses.forEach(o => {
-    const row = document.createElement('div');
-    row.className = "py-2 flex justify-between items-center border-b border-gray-100 last:border-none";
-    row.innerHTML = `
-      <div>
-        <p class="font-bold text-gray-700">${o.category}</p>
-        <p class="text-[10px] text-gray-400">${o.note ? o.note + ' • ' : ''}${o.date}</p>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="font-bold text-red-600">৳${(parseFloat(o.amount) || 0).toLocaleString('bn-BD')}</span>
-        <button class="btn-del-off text-gray-400 hover:text-red-600 text-xs">🗑️</button>
-      </div>
-    `;
-    row.querySelector('.btn-del-off').addEventListener('click', () => deleteOfficeExpense(o.id));
-    list.appendChild(row);
-  });
-}
-
-async function deleteOfficeExpense(id) {
-  if (confirm('এই অফিস খরচটি মুছে ফেলতে চান?') && currentDbRef) {
-    await currentDbRef.child(`office_expenses/${id}`).remove();
-  }
-}
-
-async function handleBossTransaction(e) {
-  e.preventDefault();
-  if (!currentDbRef) return alert('⚠️ আপনি লগইন অবস্থায় নেই!');
-
-  const amount = parseFloat(document.getElementById('boss-amount').value) || 0;
-
-  if (amount <= 0) return alert('⚠️ টাকার পরিমাণ সঠিক দিন!');
-
-  const newBossTx = {
-    type: document.getElementById('boss-tx-type').value,
-    amount: amount,
-    date: document.getElementById('boss-date').value,
-    note: document.getElementById('boss-note').value || '',
-    timestamp: Date.now()
-  };
-
-  try {
-    await currentDbRef.child('boss_logs').push(newBossTx);
-    e.target.reset();
-    initDates();
-    alert('✅ মালিকের ফান্ড লেনদেন রেকর্ড করা হয়েছে!');
-  } catch (err) {
-    alert('❌ সমস্যা হয়েছে: ' + err.message);
-  }
-}
-
-function renderBossLogs() {
-  const list = document.getElementById('boss-logs-list');
-  if (!list) return;
-  list.innerHTML = '';
+// Master Table Rendering
+function renderMasterTable() {
+  if (!tableBody) return;
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const container = document.getElementById('master-table-container');
   
-  let given = state.bossLogs.filter(b => b.type === 'deposit').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
-  let taken = state.bossLogs.filter(b => b.type === 'withdraw').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
-  let netBossWallet = given - taken;
-
-  const balEl = document.getElementById('boss-wallet-balance');
-  const statEl = document.getElementById('boss-wallet-status');
-
-  if (balEl) balEl.innerText = `৳${Math.abs(netBossWallet).toLocaleString('bn-BD')}`;
-  if (statEl) statEl.innerText = netBossWallet >= 0 ? 'কোম্পানি বসের কাছে ঋণগ্রস্ত' : 'বস উত্তোলন করেছেন';
-
-  if (state.bossLogs.length === 0) {
-    list.innerHTML = `<p class="text-gray-400 text-[11px] py-2">কোনো রেকর্ড নেই।</p>`;
+  if (!auth.currentUser) {
+    if(container) container.classList.remove('hidden');
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Dashboard is blank. Please sign in with Google from the top menu to view database files.</td></tr>`;
     return;
   }
 
-  state.bossLogs.forEach(b => {
-    const row = document.createElement('div');
-    row.className = "py-2 flex justify-between items-center border-b border-gray-100 last:border-none";
-    row.innerHTML = `
-      <div>
-        <p class="font-bold text-gray-700">${b.type === 'deposit' ? '📥 টাকা দিয়েছেন' : '📤 টাকা নিয়েছেন'}</p>
-        <p class="text-[10px] text-gray-400">${b.note ? b.note + ' • ' : ''}${b.date}</p>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="font-bold ${b.type === 'deposit' ? 'text-emerald-600' : 'text-red-600'}">
-          ${b.type === 'deposit' ? '+' : '-'}৳${(parseFloat(b.amount) || 0).toLocaleString('bn-BD')}
-        </span>
-        <button class="btn-del-boss text-gray-400 hover:text-red-600 text-xs">🗑️</button>
-      </div>
+  if (activeClientFilter === 'none') {
+    if(container) container.classList.add('hidden');
+    return;
+  }
+
+  if (farmData.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No records found. Please add a client first.</td></tr>`;
+    return;
+  }
+
+  let filteredData = farmData.filter(c => {
+    return c.name.toLowerCase().includes(query) || 
+           c.phone.includes(query) || 
+           c.project.toLowerCase().includes(query);
+  });
+
+  if (activeClientFilter === 'new') {
+    filteredData = filteredData.filter(c => {
+      const hasIncome = c.history.some(t => t.type === 'income');
+      return !hasIncome;
+    });
+  } else if (activeClientFilter === 'old') {
+    filteredData = filteredData.filter(c => {
+      const hasIncome = c.history.some(t => t.type === 'income');
+      return hasIncome;
+    });
+  }
+
+  tableBody.innerHTML = filteredData.length === 0 ? 
+    `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No matching profiles found in this category.</td></tr>` : '';
+
+  filteredData.forEach(c => {
+    let localIncome = 0, localExpense = 0;
+    c.history.forEach(t => {
+      if(t.type === 'income') localIncome += t.amount;
+      if(t.type === 'expense') localExpense += t.amount;
+    });
+    let cDue = c.budget - localIncome;
+
+    const tr = document.createElement('tr');
+    tr.className = "hover:bg-slate-800/40 transition font-medium border-b border-slate-800 last:border-none text-slate-300";
+    tr.innerHTML = `
+      <td class="p-4 pl-6">
+        <div class="font-bold text-slate-100 text-sm">${c.project}</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">${c.name}</div>
+      </td>
+      <td class="p-4 font-mono text-xs text-slate-400">${c.phone}</td>
+      <td class="p-4 text-right font-bold text-slate-100">৳${c.budget.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-right font-bold text-emerald-400">৳${localIncome.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-right font-bold text-red-400">৳${localExpense.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-right font-black ${cDue > 0 ? 'text-amber-500' : 'text-slate-500'}">৳${cDue.toLocaleString('en-IN')}</td>
+      <td class="p-4 pr-6 text-center">
+        <div class="flex justify-center items-center gap-2">
+          <button onclick="openDrawer('${c.id}')" class="bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-200 px-3 py-1.5 rounded-xl text-[11px] font-bold transition">Ledger</button>
+          <button onclick="deleteClient('${c.id}')" class="text-slate-600 hover:text-red-500 font-bold p-1 transition">✕</button>
+        </div>
+      </td>
     `;
-    row.querySelector('.btn-del-boss').addEventListener('click', () => deleteBossLog(b.id));
-    list.appendChild(row);
+    tableBody.appendChild(tr);
   });
 }
 
-async function deleteBossLog(id) {
-  if (confirm('মালিকের এই লেনদেনটি মুছে ফেলতে চান?') && currentDbRef) {
-    await currentDbRef.child(`boss_logs/${id}`).remove();
+function renderOfficeExpenses() {
+  if (!officeExpenseRows) return;
+  
+  let targetYear, targetMonth;
+  if (monthFilter && monthFilter.value) {
+    const parts = monthFilter.value.split('-');
+    targetYear = parseInt(parts[0]);
+    targetMonth = parseInt(parts[1]) - 1;
+  } else {
+    const now = new Date();
+    targetYear = now.getFullYear();
+    targetMonth = now.getMonth();
+  }
+  const startOfMonth = new Date(targetYear, targetMonth, 1);
+  const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
+
+  const localFilteredExpenses = officeExpenses.filter(oe => {
+    const d = new Date(oe.date);
+    return d >= startOfMonth && d <= endOfMonth;
+  });
+
+  if (localFilteredExpenses.length === 0) {
+    officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-500">${auth.currentUser ? 'No expenses logged for this month.' : 'Please login to track expenses.'}</td></tr>`;
+    return;
+  }
+
+  officeExpenseRows.innerHTML = '';
+  localFilteredExpenses.forEach(oe => {
+    const tr = document.createElement('tr');
+    tr.className = "border-b border-slate-800 last:border-none";
+    tr.innerHTML = `
+      <td class="p-3 pl-3 font-semibold text-slate-200">${oe.details} <span class="text-[9px] bg-red-950 text-red-400 px-1.5 py-0.5 rounded border border-red-900/50 font-bold">${oe.category}</span></td>
+      <td class="p-3 text-slate-500 font-mono text-[10px]">${oe.date}</td>
+      <td class="p-3 text-right font-bold text-red-400">৳${oe.amount.toLocaleString('en-IN')}</td>
+      <td class="p-3 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-600 hover:text-red-500 font-bold transition">✕</button></td>
+    `;
+    officeExpenseRows.appendChild(tr);
+  });
+}
+
+// Drawer Sheet Controllers
+window.openDrawer = function(id) {
+  openLedgerId = id;
+  if (ledgerDrawer) {
+    ledgerDrawer.classList.remove('hidden');
+    refreshDrawer(id);
+    ledgerDrawer.scrollIntoView({ behavior: 'smooth' });
   }
 }
 
-function renderReport() {
-  let totalCollections = 0;
-  let totalDirectCost = 0;
-
-  state.projects.forEach(p => {
-    let txs = p.transactions ? Object.values(p.transactions) : [];
-    txs.forEach(t => {
-      let amt = parseFloat(t.amount) || 0;
-      if (t.type === 'collection') totalCollections += amt;
-      if (t.type === 'cost') totalDirectCost += amt;
-    });
-  });
-
-  let grossProfit = totalCollections - totalDirectCost;
-  let totalOfficeExpenses = state.officeExpenses.reduce((acc, o) => acc + (parseFloat(o.amount) || 0), 0);
-  let netProfit = grossProfit - totalOfficeExpenses;
-
-  let bossGiven = state.bossLogs.filter(b => b.type === 'deposit').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
-  let bossTaken = state.bossLogs.filter(b => b.type === 'withdraw').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
-
-  const setTxt = (id, val) => {
-    const el = document.getElementById(id);
-    if (el) el.innerText = val;
-  };
-
-  setTxt('rpt-total-income', `৳${totalCollections.toLocaleString('bn-BD')}`);
-  setTxt('rpt-project-cost', `৳${totalDirectCost.toLocaleString('bn-BD')}`);
-  setTxt('rpt-gross-profit', `৳${grossProfit.toLocaleString('bn-BD')}`);
-  setTxt('rpt-office-cost', `৳${totalOfficeExpenses.toLocaleString('bn-BD')}`);
-  setTxt('rpt-net-profit', `৳${netProfit.toLocaleString('bn-BD')}`);
-
-  setTxt('rpt-boss-given', `৳${bossGiven.toLocaleString('bn-BD')}`);
-  setTxt('rpt-boss-taken', `৳${bossTaken.toLocaleString('bn-BD')}`);
-  setTxt('rpt-boss-net', `৳${(bossGiven - bossTaken).toLocaleString('bn-BD')}`);
+window.closeDrawer = function() {
+  openLedgerId = null;
+  if (ledgerDrawer) ledgerDrawer.classList.add('hidden');
 }
+
+function refreshDrawer(id) {
+  const client = farmData.find(c => c.id === id);
+  if(!client) return closeDrawer();
+
+  if (document.getElementById('drawer-title')) document.getElementById('drawer-title').innerText = `🏢 File: ${client.project} (${client.name})`;
+  if (document.getElementById('drawer-sub')) document.getElementById('drawer-sub').innerText = `Contact: ${client.phone} | Budget: ৳${client.budget.toLocaleString('en-IN')}`;
+
+  const dBody = document.getElementById('drawer-table-body');
+  if (!dBody) return;
+  dBody.innerHTML = (!client.history || client.history.length === 0) ? 
+    `<tr><td colspan="5" class="p-4 text-center text-slate-400 font-medium">No ledger accounts registered for this project.</td></tr>` : '';
+
+  client.history.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.className = "border-b border-slate-800 last:border-none font-medium text-slate-300";
+    let typeText = t.type === 'income' ? '<span class="text-emerald-400 font-bold">📥 Debit</span>' : '<span class="text-red-400 font-bold">📤 Credit</span>';
+    let valColor = t.type === 'income' ? 'text-emerald-400' : 'text-red-400';
+
+    tr.innerHTML = `
+      <td class="p-3 text-slate-500 font-mono">${t.date}</td>
+      <td class="p-3 font-semibold text-slate-200">${t.details}</td>
+      <td class="p-3">${typeText}</td>
+      <td class="p-3 text-right font-black ${valColor}">৳${t.amount.toLocaleString('en-IN')}</td>
+      <td class="p-3 text-center">
+        <button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-600 hover:text-red-500 font-bold transition px-2">✕</button>
+      </td>
+    `;
+    dBody.appendChild(tr);
+  });
+}
+
+// Passcode Protected Deletion Handlers
+window.deleteClient = function(id) {
+  if(!databasePathRef) return;
+  requestPasscodeAuth(() => {
+    databasePathRef.child('clients').child(id).remove()
+      .then(() => {
+        if(openLedgerId === id) closeDrawer();
+      });
+  });
+};
+
+window.deleteOfficeExpense = function(id) {
+  if(!databasePathRef) return;
+  requestPasscodeAuth(() => {
+    databasePathRef.child('office_expenses').child(id).remove();
+  });
+};
+
+window.deleteTransaction = function(clientId, txId) {
+  if(!databasePathRef) return;
+  const client = farmData.find(c => c.id === clientId);
+  if(!client) return;
+
+  requestPasscodeAuth(() => {
+    const updatedHistory = (client.history || []).filter(t => t.id !== txId);
+    databasePathRef.child('clients').child(clientId).update({ history: updatedHistory });
+  });
+};
