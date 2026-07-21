@@ -23,6 +23,8 @@ let state = {
   bossLogs: []
 };
 
+let currentDbRef = null; // লগইন করা ইউজার অনুযায়ী রেফারেন্স
+
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', () => {
   initDates();
@@ -41,6 +43,9 @@ function initAuthObserver() {
       authScreen.classList.add('hidden');
       mainApp.classList.remove('hidden');
 
+      // Set user DB path as per security rules: rajuk_erp_data/$uid
+      currentDbRef = rtdb.ref(`rajuk_erp_data/${user.uid}`);
+
       // Update User Profile UI
       const nameDisplay = document.getElementById('user-name-display');
       const emailDisplay = document.getElementById('user-email-display');
@@ -56,12 +61,13 @@ function initAuthObserver() {
         if (avatarPlaceholder) avatarPlaceholder.classList.add('hidden');
       }
 
-      // Start listening to RTDB
+      // Start listening to RTDB for this specific user
       listenToDatabase();
     } else {
       // User is logged out
       authScreen.classList.remove('hidden');
       mainApp.classList.add('hidden');
+      currentDbRef = null;
     }
   });
 }
@@ -122,9 +128,11 @@ async function handleLogout() {
   }
 }
 
-// REALTIME DATABASE LISTENERS
+// REALTIME DATABASE LISTENERS (Using rajuk_erp_data/$uid)
 function listenToDatabase() {
-  rtdb.ref('projects').on('value', snapshot => {
+  if (!currentDbRef) return;
+
+  currentDbRef.child('projects').on('value', snapshot => {
     const data = snapshot.val();
     state.projects = [];
     if (data) {
@@ -134,10 +142,10 @@ function listenToDatabase() {
     }
     refreshUI();
   }, error => {
-    alert('❌ ফায়ারবেস পারমিশন এরর! Database Rules চেক করুন।');
+    alert('❌ ফায়ারবেস পারমিশন এরর: ' + error.message);
   });
 
-  rtdb.ref('office_expenses').on('value', snapshot => {
+  currentDbRef.child('office_expenses').on('value', snapshot => {
     const data = snapshot.val();
     state.officeExpenses = [];
     if (data) {
@@ -148,7 +156,7 @@ function listenToDatabase() {
     refreshUI();
   });
 
-  rtdb.ref('boss_logs').on('value', snapshot => {
+  currentDbRef.child('boss_logs').on('value', snapshot => {
     const data = snapshot.val();
     state.bossLogs = [];
     if (data) {
@@ -267,6 +275,8 @@ function renderProjects() {
 // HANDLERS FOR CREATION & TRANSACTIONS
 async function handleCreateProject(e) {
   e.preventDefault();
+  if (!currentDbRef) return alert('⚠️ আপনি লগইন অবস্থায় নেই!');
+
   const client = document.getElementById('new-client-name').value;
   const title = document.getElementById('new-project-name').value;
   const budget = parseFloat(document.getElementById('new-project-budget').value) || 0;
@@ -285,7 +295,7 @@ async function handleCreateProject(e) {
   };
 
   try {
-    await rtdb.ref('projects').push(newProj);
+    await currentDbRef.child('projects').push(newProj);
     closeModal('modal-add-project');
     e.target.reset();
     alert('✅ নতুন প্রজেক্ট সফলভাবে যোগ হয়েছে!');
@@ -296,6 +306,8 @@ async function handleCreateProject(e) {
 
 async function handleProjectTransaction(e) {
   e.preventDefault();
+  if (!currentDbRef) return alert('⚠️ আপনি লগইন অবস্থায় নেই!');
+
   const projId = document.getElementById('tx-project-select').value;
   
   if (!projId) {
@@ -316,7 +328,7 @@ async function handleProjectTransaction(e) {
   const txData = { type, amount, date, note, timestamp: Date.now() };
 
   try {
-    await rtdb.ref(`projects/${projId}/transactions`).push(txData);
+    await currentDbRef.child(`projects/${projId}/transactions`).push(txData);
     e.target.reset();
     initDates();
     alert('✅ ক্যাশ এন্ট্রি / ভাউচার সেভ হয়েছে!');
@@ -382,15 +394,15 @@ function openProjectLedger(projId) {
 }
 
 async function deleteSingleTransaction(projId, txId) {
-  if (confirm('আপনি কি এই লেনদেনটি মুছে ফেলতে চান?')) {
-    await rtdb.ref(`projects/${projId}/transactions/${txId}`).remove();
+  if (confirm('আপনি কি এই লেনদেনটি মুছে ফেলতে চান?') && currentDbRef) {
+    await currentDbRef.child(`projects/${projId}/transactions/${txId}`).remove();
     openProjectLedger(projId);
   }
 }
 
 async function deleteProject(id) {
-  if (confirm('আপনি কি নিশ্চিত এই প্রজেক্টের সমস্ত হিসাব মুছে ফেলবেন?')) {
-    await rtdb.ref(`projects/${id}`).remove();
+  if (confirm('আপনি কি নিশ্চিত এই প্রজেক্টের সমস্ত হিসাব মুছে ফেলবেন?') && currentDbRef) {
+    await currentDbRef.child(`projects/${id}`).remove();
   }
 }
 
@@ -404,6 +416,8 @@ function populateProjectDropdown() {
 
 async function handleOfficeExpense(e) {
   e.preventDefault();
+  if (!currentDbRef) return alert('⚠️ আপনি লগইন অবস্থায় নেই!');
+
   const category = document.getElementById('office-cat').value;
   const amount = parseFloat(document.getElementById('office-amount').value) || 0;
 
@@ -418,7 +432,7 @@ async function handleOfficeExpense(e) {
   };
 
   try {
-    await rtdb.ref('office_expenses').push(newExp);
+    await currentDbRef.child('office_expenses').push(newExp);
     e.target.reset();
     initDates();
     alert('✅ অফিস খরচ যোগ করা হয়েছে!');
@@ -453,13 +467,15 @@ function renderOfficeLogs() {
 }
 
 async function deleteOfficeExpense(id) {
-  if (confirm('এই অফিস খরচটি মুছে ফেলতে চান?')) {
-    await rtdb.ref(`office_expenses/${id}`).remove();
+  if (confirm('এই অফিস খরচটি মুছে ফেলতে চান?') && currentDbRef) {
+    await currentDbRef.child(`office_expenses/${id}`).remove();
   }
 }
 
 async function handleBossTransaction(e) {
   e.preventDefault();
+  if (!currentDbRef) return alert('⚠️ আপনি লগইন অবস্থায় নেই!');
+
   const amount = parseFloat(document.getElementById('boss-amount').value) || 0;
 
   if (amount <= 0) return alert('⚠️ টাকার পরিমাণ সঠিক দিন!');
@@ -473,7 +489,7 @@ async function handleBossTransaction(e) {
   };
 
   try {
-    await rtdb.ref('boss_logs').push(newBossTx);
+    await currentDbRef.child('boss_logs').push(newBossTx);
     e.target.reset();
     initDates();
     alert('✅ মালিকের ফান্ড লেনদেন রেকর্ড করা হয়েছে!');
@@ -519,8 +535,8 @@ function renderBossLogs() {
 }
 
 async function deleteBossLog(id) {
-  if (confirm('মালিকের এই লেনদেনটি মুছে ফেলতে চান?')) {
-    await rtdb.ref(`boss_logs/${id}`).remove();
+  if (confirm('মালিকের এই লেনদেনটি মুছে ফেলতে চান?') && currentDbRef) {
+    await currentDbRef.child(`boss_logs/${id}`).remove();
   }
 }
 
