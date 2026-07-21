@@ -1,21 +1,21 @@
-// --- FIREBASE CONFIGURATION ---
+// 1. Firebase Initialization Configuration
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyD8kXy2rL9ptiPN4xEMg5h3o4RY_sPH79w",
+  authDomain: "rajuk-bed98.firebaseapp.com",
+  databaseURL: "https://rajuk-bed98-default-rtdb.firebaseio.com",
+  projectId: "rajuk-bed98",
+  storageBucket: "rajuk-bed98.firebasestorage.app",
+  messagingSenderId: "367893646589",
+  appId: "1:367893646589:web:6c91f066dfb5143e204294"
 };
 
-// Initialize Firebase
+// Initialize Firebase App
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const db = firebase.database();
 const auth = firebase.auth();
+const db = firebase.database();
 
 // STATE MANAGEMENT
 let clientsData = {};
@@ -23,7 +23,7 @@ let officeExpensesData = {};
 let currentFilter = 'all';
 let selectedMonth = ''; // Format: YYYY-MM
 let pendingDeleteAction = null;
-const SECURITY_PASSCODE = "1234"; // নিরাপত্তা পাসকোড
+const SECURITY_PASSCODE = "1234"; 
 
 // INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
@@ -33,9 +33,81 @@ document.addEventListener('DOMContentLoaded', () => {
   setupAuth();
 });
 
+// AUTHENTICATION SYSTEM
+function setupAuth() {
+  const loginBtn = document.getElementById('google-login-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const profileTrigger = document.getElementById('profile-trigger');
+  const profileDropdown = document.getElementById('profile-dropdown');
+
+  // Google Login Handler
+  if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          console.log("Logged in user:", result.user);
+        })
+        .catch((error) => {
+          console.error("Firebase Auth Error:", error);
+          
+          if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+            auth.signInWithRedirect(provider);
+          } else {
+            alert("Login Failed: " + error.message);
+          }
+        });
+    });
+  }
+
+  // Sign Out Handler
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      auth.signOut().then(() => {
+        if (profileDropdown) profileDropdown.classList.add('hidden');
+      });
+    });
+  }
+
+  // Profile Dropdown Toggle
+  if (profileTrigger) {
+    profileTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (profileDropdown) profileDropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', () => {
+      if (profileDropdown) profileDropdown.classList.add('hidden');
+    });
+  }
+
+  // Listen to Auth State Changes
+  auth.onAuthStateChanged((user) => {
+    const authSection = document.getElementById('sidebar-auth-section');
+    const userAvatar = document.getElementById('user-avatar');
+    const userName = document.getElementById('user-display-name');
+    const userEmail = document.getElementById('user-display-email');
+
+    if (user) {
+      if (authSection) authSection.classList.add('hidden');
+      if (profileTrigger) profileTrigger.classList.remove('hidden');
+      if (userAvatar) userAvatar.src = user.photoURL || 'https://via.placeholder.com/150';
+      if (userName) userName.innerText = user.displayName || 'User';
+      if (userEmail) userEmail.innerText = user.email || '';
+    } else {
+      if (authSection) authSection.classList.remove('hidden');
+      if (profileTrigger) profileTrigger.classList.add('hidden');
+    }
+  });
+}
+
 // SETUP MONTH FILTER
 function setupMonthFilter() {
   const monthInput = document.getElementById('month-filter');
+  if (!monthInput) return;
+
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -45,6 +117,7 @@ function setupMonthFilter() {
   monthInput.addEventListener('change', (e) => {
     selectedMonth = e.target.value;
     renderDashboard();
+    renderOfficeExpenses();
   });
 }
 
@@ -61,32 +134,32 @@ function listenToDatabase() {
     if (statusIndicator) statusIndicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500";
     if (statusText) statusText.innerText = "Firebase Realtime Cloud (100% Secured)";
   }, (error) => {
+    console.error("Database error:", error);
     if (statusIndicator) statusIndicator.className = "inline-block h-2 w-2 rounded-full bg-rose-500";
-    if (statusText) statusText.innerText = "Database Connection Error";
+    if (statusText) statusText.innerText = "Database Access Denied / Error";
   });
 
   // Listen to Office Expenses
   db.ref('office_expenses').on('value', (snapshot) => {
     officeExpensesData = snapshot.val() || {};
     renderOfficeExpenses();
-    renderDashboard(); // Re-render summary cards when expenses change
+    renderDashboard();
   });
 }
 
-// MAIN DASHBOARD CALCULATIONS AND RENDER
+// DASHBOARD CALCULATIONS & RENDER
 function renderDashboard() {
   const tableBody = document.getElementById('clients-table-body');
   if (!tableBody) return;
   tableBody.innerHTML = '';
 
-  let totalVolume = 0;       // Total Budget of ALL projects
-  let grossIncome = 0;       // Income in selected month
-  let totalCost = 0;         // Project Expenses + Office Expenses in selected month
-  let totalDue = 0;          // Total Outstanding Accounts
+  let totalVolume = 0;       
+  let grossIncome = 0;       
+  let totalCost = 0;         
+  let totalDue = 0;          
   
-  const searchInput = document.getElementById('search-input').value.toLowerCase();
+  const searchInput = (document.getElementById('search-input')?.value || '').toLowerCase();
   
-  // Format Month Title for Labels
   let monthLabelText = "";
   if (selectedMonth) {
     const [y, m] = selectedMonth.split('-');
@@ -94,31 +167,25 @@ function renderDashboard() {
     monthLabelText = ` (${monthNames[parseInt(m)-1]} ${y})`;
   }
 
-  document.getElementById('label-income').innerText = `GROSS INCOME${monthLabelText}`;
-  document.getElementById('label-expense').innerText = `TOTAL COST${monthLabelText}`;
-  document.getElementById('label-net').innerText = `NET BALANCE${monthLabelText}`;
+  if (document.getElementById('label-income')) document.getElementById('label-income').innerText = `GROSS INCOME${monthLabelText}`;
+  if (document.getElementById('label-expense')) document.getElementById('label-expense').innerText = `TOTAL COST${monthLabelText}`;
+  if (document.getElementById('label-net')) document.getElementById('label-net').innerText = `NET BALANCE${monthLabelText}`;
 
-  // Process Each Client/Project
   Object.keys(clientsData).forEach((id) => {
     const client = clientsData[id];
     const budget = Number(client.budget || 0);
     
-    // Total Volume = Sum of ALL project budgets
     totalVolume += budget;
 
     let clientIncome = 0;
     let clientExpense = 0;
 
-    // Process Transactions
     if (client.transactions) {
       Object.values(client.transactions).forEach((tx) => {
         const txAmount = Number(tx.amount || 0);
-        const txDate = tx.date || ''; // Format: YYYY-MM-DD
-        const txMonth = txDate.substring(0, 7);
+        const txMonth = (tx.date || '').substring(0, 7);
 
-        // All-time calculation for client level due
         if (tx.type === 'income') {
-          // If month filter matches
           if (!selectedMonth || txMonth === selectedMonth) {
             grossIncome += txAmount;
           }
@@ -135,8 +202,7 @@ function renderDashboard() {
     const clientDue = budget - clientIncome;
     totalDue += clientDue;
 
-    // Filtering logic for Directory Table
-    const matchesSearch = client.projectTitle.toLowerCase().includes(searchInput) || client.clientName.toLowerCase().includes(searchInput);
+    const matchesSearch = (client.projectTitle || '').toLowerCase().includes(searchInput) || (client.clientName || '').toLowerCase().includes(searchInput);
     let matchesFilter = true;
 
     if (currentFilter === 'new') {
@@ -169,7 +235,6 @@ function renderDashboard() {
     }
   });
 
-  // Calculate General Office Expenses for Selected Month
   Object.values(officeExpensesData).forEach((oe) => {
     const oeAmount = Number(oe.amount || 0);
     const oeMonth = (oe.date || '').substring(0, 7);
@@ -180,22 +245,19 @@ function renderDashboard() {
 
   const netBalance = grossIncome - totalCost;
 
-  // --- UPDATE CARDS IN DOM ---
-  document.getElementById('global-volume').innerText = `৳${totalVolume.toLocaleString()}`;
-  document.getElementById('global-income').innerText = `৳${grossIncome.toLocaleString()}`;
-  document.getElementById('global-expense').innerText = `৳${totalCost.toLocaleString()}`;
-  document.getElementById('global-due').innerText = `৳${totalDue.toLocaleString()}`;
+  if (document.getElementById('global-volume')) document.getElementById('global-volume').innerText = `৳${totalVolume.toLocaleString()}`;
+  if (document.getElementById('global-income')) document.getElementById('global-income').innerText = `৳${grossIncome.toLocaleString()}`;
+  if (document.getElementById('global-expense')) document.getElementById('global-expense').innerText = `৳${totalCost.toLocaleString()}`;
+  if (document.getElementById('global-due')) document.getElementById('global-due').innerText = `৳${totalDue.toLocaleString()}`;
   
   const netEl = document.getElementById('global-net');
-  netEl.innerText = `৳${netBalance.toLocaleString()}`;
-  if (netBalance < 0) {
-    netEl.className = "text-lg font-black text-rose-500 mt-2";
-  } else {
-    netEl.className = "text-lg font-black text-purple-400 mt-2";
+  if (netEl) {
+    netEl.innerText = `৳${netBalance.toLocaleString()}`;
+    netEl.className = netBalance < 0 ? "text-lg font-black text-rose-500 mt-2" : "text-lg font-black text-purple-400 mt-2";
   }
 }
 
-// RENDER OFFICE EXPENSES TABLE
+// RENDER OFFICE EXPENSES
 function renderOfficeExpenses() {
   const tbody = document.getElementById('office-expense-rows');
   if (!tbody) return;
@@ -267,16 +329,15 @@ function openDrawer(clientId) {
 }
 
 function closeDrawer() {
-  document.getElementById('ledger-drawer').classList.add('hidden');
+  document.getElementById('ledger-drawer')?.classList.add('hidden');
 }
 
 // EVENT LISTENERS & FORMS
 function setupEventListeners() {
-  // Search Bar
-  document.getElementById('search-input').addEventListener('input', renderDashboard);
+  document.getElementById('search-input')?.addEventListener('input', renderDashboard);
 
   // New Client Form
-  document.getElementById('client-form').addEventListener('submit', (e) => {
+  document.getElementById('client-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const projectTitle = document.getElementById('project-title').value;
     const clientName = document.getElementById('client-name').value;
@@ -296,7 +357,7 @@ function setupEventListeners() {
   });
 
   // New Transaction Form
-  document.getElementById('tx-form').addEventListener('submit', (e) => {
+  document.getElementById('tx-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const clientId = document.getElementById('tx-client-select').value;
     const type = document.getElementById('tx-type').value;
@@ -323,7 +384,7 @@ function setupEventListeners() {
   });
 
   // Office Expense Form
-  document.getElementById('office-expense-form').addEventListener('submit', (e) => {
+  document.getElementById('office-expense-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const category = document.getElementById('oe-category').value;
     const date = document.getElementById('oe-date').value;
@@ -340,21 +401,23 @@ function setupEventListeners() {
     });
   });
 
-  // Passcode Modal Controls
-  document.getElementById('modal-cancel-btn').addEventListener('click', closeModal);
-  document.getElementById('modal-confirm-btn').addEventListener('click', confirmDeleteAction);
+  // Passcode Modal
+  document.getElementById('modal-cancel-btn')?.addEventListener('click', closeModal);
+  document.getElementById('modal-confirm-btn')?.addEventListener('click', confirmDeleteAction);
 
-  // Custom Dropdown Controls
+  // Custom Search Dropdown
   const trigger = document.getElementById('dropdown-trigger');
   const list = document.getElementById('custom-dropdown-list');
   
-  trigger.addEventListener('click', () => list.classList.toggle('hidden'));
-  document.getElementById('dropdown-search-input').addEventListener('input', (e) => {
-    populateProjectDropdown(e.target.value.toLowerCase());
-  });
+  if (trigger && list) {
+    trigger.addEventListener('click', () => list.classList.toggle('hidden'));
+    document.getElementById('dropdown-search-input')?.addEventListener('input', (e) => {
+      populateProjectDropdown(e.target.value.toLowerCase());
+    });
+  }
 }
 
-// CUSTOM SEARCHABLE DROPDOWN
+// CUSTOM DROPDOWN POPULATE
 function populateProjectDropdown(search = '') {
   const container = document.getElementById('dropdown-items-container');
   if (!container) return;
@@ -362,7 +425,7 @@ function populateProjectDropdown(search = '') {
 
   Object.keys(clientsData).forEach((id) => {
     const client = clientsData[id];
-    if (client.projectTitle.toLowerCase().includes(search) || client.clientName.toLowerCase().includes(search)) {
+    if ((client.projectTitle || '').toLowerCase().includes(search) || (client.clientName || '').toLowerCase().includes(search)) {
       const div = document.createElement('div');
       div.className = 'p-2.5 hover:bg-indigo-600/20 rounded-xl cursor-pointer transition text-xs flex justify-between items-center';
       div.innerHTML = `
@@ -373,16 +436,19 @@ function populateProjectDropdown(search = '') {
       `;
       div.onclick = () => {
         document.getElementById('tx-client-select').value = id;
-        document.getElementById('dropdown-selected-text').innerText = `${client.projectTitle} (${client.clientName})`;
-        document.getElementById('dropdown-selected-text').className = "text-white font-bold";
-        document.getElementById('custom-dropdown-list').classList.add('hidden');
+        const selectedText = document.getElementById('dropdown-selected-text');
+        if (selectedText) {
+          selectedText.innerText = `${client.projectTitle} (${client.clientName})`;
+          selectedText.className = "text-white font-bold";
+        }
+        document.getElementById('custom-dropdown-list')?.classList.add('hidden');
       };
       container.appendChild(div);
     }
   });
 }
 
-// SECURITY DELETION HANDLERS
+// DELETE HANDLERS
 function requestDeleteClient(clientId) {
   pendingDeleteAction = () => db.ref(`clients/${clientId}`).remove();
   openModal();
@@ -400,16 +466,16 @@ function requestDeleteOfficeExpense(expenseId) {
 
 function openModal() {
   document.getElementById('modal-passcode-input').value = '';
-  document.getElementById('passcode-modal').classList.remove('hidden');
+  document.getElementById('passcode-modal')?.classList.remove('hidden');
 }
 
 function closeModal() {
-  document.getElementById('passcode-modal').classList.add('hidden');
+  document.getElementById('passcode-modal')?.classList.add('hidden');
   pendingDeleteAction = null;
 }
 
 function confirmDeleteAction() {
-  const passcode = document.getElementById('modal-passcode-input').value;
+  const passcode = document.getElementById('modal-passcode-input')?.value;
   if (passcode === SECURITY_PASSCODE) {
     if (pendingDeleteAction) pendingDeleteAction();
     closeModal();
@@ -422,7 +488,7 @@ function confirmDeleteAction() {
 // TAB SWITCHING
 function switchTab(tabId) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-  document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+  document.getElementById(`tab-${tabId}`)?.classList.remove('hidden');
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.className = 'tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent';
@@ -439,39 +505,7 @@ function setClientFilter(filter) {
   renderDashboard();
 }
 
-// GOOGLE AUTH
-function setupAuth() {
-  const loginBtn = document.getElementById('google-login-btn');
-  const logoutBtn = document.getElementById('logout-btn');
-  const profileTrigger = document.getElementById('profile-trigger');
-  const profileDropdown = document.getElementById('profile-dropdown');
-
-  loginBtn.addEventListener('click', () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider);
-  });
-
-  logoutBtn.addEventListener('click', () => auth.signOut());
-
-  profileTrigger.addEventListener('click', () => {
-    profileDropdown.classList.toggle('hidden');
-  });
-
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      document.getElementById('sidebar-auth-section').classList.add('hidden');
-      profileTrigger.classList.remove('hidden');
-      document.getElementById('user-avatar').src = user.photoURL || '';
-      document.getElementById('user-display-name').innerText = user.displayName || 'User';
-      document.getElementById('user-display-email').innerText = user.email || '';
-    } else {
-      document.getElementById('sidebar-auth-section').classList.remove('hidden');
-      profileTrigger.classList.add('hidden');
-    }
-  });
-}
-
-// HELPER UTILS
+// UTILS
 function escapeHtml(str) {
   return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
