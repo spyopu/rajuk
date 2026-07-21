@@ -10,7 +10,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -24,36 +24,36 @@
     ::-webkit-scrollbar-thumb { background: #262833; border-radius: 99px; }
   </style>
 </head>
-<body class="bg-[#0f1015] text-slate-300 antialiased selection:bg-indigo-500 selection:text-white">
+<body class="bg-[#0f1015] text-slate-200 antialiased selection:bg-indigo-500 selection:text-white">
 
   <div id="erp-layout" class="min-h-screen flex flex-col md:flex-row">
     
-    <!-- Minimal Navigation Sidebar/Header -->
+    <!-- Navigation Header / Sidebar -->
     <aside class="w-full md:w-60 bg-[#14151c] flex flex-col border-b md:border-b-0 md:border-r border-[#1e202a] shrink-0">
-      <div class="h-12 md:h-14 px-3 md:px-5 border-b border-[#1e202a] flex items-center justify-between bg-[#14151c]">
-        <div class="flex items-center gap-2">
-          <div class="h-6 w-6 rounded bg-indigo-600 flex items-center justify-center font-bold text-white text-[10px]">R</div>
-          <span class="text-xs font-bold text-white tracking-wider uppercase">Rajuk ERP</span>
+      <div class="h-14 px-4 border-b border-[#1e202a] flex items-center justify-between bg-[#14151c]">
+        <div class="flex items-center gap-2.5">
+          <div class="h-7 w-7 rounded bg-indigo-600 flex items-center justify-center font-bold text-white text-xs">R</div>
+          <span class="text-sm font-bold text-white tracking-wider uppercase">Rajuk ERP</span>
         </div>
-        <div class="text-[9px] font-mono text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-900/40 md:hidden">Minimal Mode</div>
+        <div class="text-xs font-mono text-indigo-400 bg-indigo-950/60 px-2.5 py-1 rounded border border-indigo-900/40 md:hidden">Minimal</div>
       </div>
       
-      <!-- Compact Navigation Menu -->
+      <!-- Navigation Menu -->
       <div class="p-2 md:p-4 flex-1">
-        <div class="grid grid-cols-4 md:grid-cols-1 gap-1">
-          <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-[10px] md:text-xs font-semibold px-2 py-2 rounded transition bg-indigo-600 text-white text-center md:text-left">
+        <div class="grid grid-cols-4 md:grid-cols-1 gap-1.5">
+          <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold px-2 py-2.5 rounded transition bg-indigo-600 text-white text-center md:text-left">
             <span>📊</span> <span class="hidden sm:inline">Overview</span>
           </button>
           
-          <button id="btn-client-view" onclick="switchTab('client-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-[10px] md:text-xs font-semibold px-2 py-2 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left">
+          <button id="btn-client-view" onclick="switchTab('client-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold px-2 py-2.5 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left">
             <span>💼</span> <span class="hidden sm:inline">Registry</span>
           </button>
           
-          <button id="btn-journal-view" onclick="switchTab('journal-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-[10px] md:text-xs font-semibold px-2 py-2 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left">
+          <button id="btn-journal-view" onclick="switchTab('journal-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold px-2 py-2.5 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left">
             <span>💸</span> <span class="hidden sm:inline">Posting</span>
           </button>
           
-          <button id="btn-office-view" onclick="switchTab('office-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-[10px] md:text-xs font-semibold px-2 py-2 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left">
+          <button id="btn-office-view" onclick="switchTab('office-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold px-2 py-2.5 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left">
             <span>🏢</span> <span class="hidden sm:inline">Overhead</span>
           </button>
         </div>
@@ -63,28 +63,28 @@
     <!-- Main Section -->
     <div class="flex-1 flex flex-col min-w-0">
       
-      <!-- Ultra-Slim Topbar -->
-      <header class="h-11 md:h-14 bg-[#14151c] border-b border-[#1e202a] flex items-center justify-between px-3 md:px-6 shrink-0">
-        <div class="text-[10px] font-medium text-slate-400 flex items-center gap-1.5">
-          <span id="status-indicator" class="inline-block h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-          <span id="status-text" class="text-slate-400 font-mono text-[10px] truncate max-w-[120px] md:max-w-none">Guest Mode</span>
+      <!-- Topbar -->
+      <header class="h-12 md:h-14 bg-[#14151c] border-b border-[#1e202a] flex items-center justify-between px-3 md:px-6 shrink-0">
+        <div class="text-xs font-medium text-slate-400 flex items-center gap-2">
+          <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span id="status-text" class="text-slate-300 font-mono text-xs truncate max-w-[130px] md:max-w-none">Guest Mode</span>
         </div>
         
         <div class="flex items-center gap-2">
           <div id="sidebar-auth-section">
-            <button id="google-login-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded px-2.5 py-1 text-[10px] transition">
+            <button id="google-login-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded px-3 py-1.5 text-xs transition">
               Sign In
             </button>
           </div>
 
           <div class="relative">
-            <div id="profile-trigger" class="flex items-center gap-1.5 cursor-pointer p-0.5 rounded hover:bg-[#1e202a] transition select-none hidden">
-              <span id="user-display-name" class="text-[10px] font-bold text-white hidden sm:block">User</span>
-              <img id="user-avatar" class="h-6 w-6 rounded-full border border-[#2b2d3a]" src="" alt="avatar">
+            <div id="profile-trigger" class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-[#1e202a] transition select-none hidden">
+              <span id="user-display-name" class="text-xs font-bold text-white hidden sm:block">User</span>
+              <img id="user-avatar" class="h-7 w-7 rounded-full border border-[#2b2d3a]" src="" alt="avatar">
             </div>
 
-            <div id="profile-dropdown" class="absolute right-0 mt-2 w-36 bg-[#181922] border border-[#262835] rounded-lg shadow-xl p-1 hidden z-50">
-              <button id="logout-btn" class="w-full text-left px-2 py-1.5 text-[11px] text-rose-400 hover:bg-rose-950/20 rounded font-semibold transition">
+            <div id="profile-dropdown" class="absolute right-0 mt-2 w-40 bg-[#181922] border border-[#262835] rounded-lg shadow-xl p-1.5 hidden z-50">
+              <button id="logout-btn" class="w-full text-left px-2.5 py-1.5 text-xs text-rose-400 hover:bg-rose-950/20 rounded font-semibold transition">
                 Log Out
               </button>
             </div>
@@ -92,60 +92,59 @@
         </div>
       </header>
 
-      <!-- Content Box -->
-      <main class="flex-1 p-3 md:p-6 overflow-y-auto max-w-6xl w-full mx-auto space-y-3 md:space-y-5">
+      <!-- Content Container -->
+      <main class="flex-1 p-3 md:p-6 overflow-y-auto max-w-6xl w-full mx-auto space-y-4 md:space-y-6">
 
         <!-- TAB 1: OVERVIEW -->
         <div id="tab-dashboard-view" class="tab-content space-y-3 md:space-y-4">
           
-          <!-- Sleek Statement Period Header -->
-          <div class="flex items-center justify-between bg-[#14151c] p-2.5 rounded-lg border border-[#1e202a]">
-            <span class="text-[11px] font-bold text-white">Metrics Overview</span>
+          <!-- Month Filter Header -->
+          <div class="flex items-center justify-between bg-[#14151c] p-3 rounded-lg border border-[#1e202a]">
+            <span class="text-xs md:text-sm font-bold text-white">Metrics Overview</span>
             <div class="flex items-center gap-1.5">
-              <input type="month" id="month-filter" class="bg-[#0f1015] border border-[#262835] text-indigo-400 font-bold font-mono text-[10px] rounded px-2 py-1 outline-none">
+              <input type="month" id="month-filter" class="bg-[#0f1015] border border-[#262835] text-indigo-400 font-bold font-mono text-xs rounded px-2.5 py-1 outline-none">
             </div>
           </div>
 
-          <!-- Minimal Metrics Grid (2 columns in mobile) -->
-          <div class="grid grid-cols-2 lg:grid-cols-5 gap-2 md:gap-3">
-            <div class="bg-[#14151c] border border-[#1e202a] p-2.5 rounded-lg">
-              <p class="text-[8px] md:text-[9px] font-bold uppercase tracking-wider text-slate-500">Volume</p>
-              <h3 id="global-budget" class="text-sm md:text-base font-bold text-slate-200 mt-0.5 font-mono">৳0</h3>
+          <!-- Metrics Grid -->
+          <div class="grid grid-cols-2 lg:grid-cols-5 gap-2.5 md:gap-3">
+            <div class="bg-[#14151c] border border-[#1e202a] p-3 rounded-lg">
+              <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-400">Volume</p>
+              <h3 id="global-budget" class="text-base md:text-lg font-bold text-slate-100 mt-0.5 font-mono">৳0</h3>
             </div>
-            <div class="bg-[#14151c] border border-emerald-500/20 p-2.5 rounded-lg">
-              <p class="text-[8px] md:text-[9px] font-bold uppercase tracking-wider text-emerald-500">Income</p>
-              <h3 id="global-income" class="text-sm md:text-base font-bold text-emerald-400 mt-0.5 font-mono">৳0</h3>
+            <div class="bg-[#14151c] border border-emerald-500/20 p-3 rounded-lg">
+              <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-emerald-400">Income</p>
+              <h3 id="global-income" class="text-base md:text-lg font-bold text-emerald-400 mt-0.5 font-mono">৳0</h3>
             </div>
-            <div class="bg-[#14151c] border border-rose-500/20 p-2.5 rounded-lg">
-              <p class="text-[8px] md:text-[9px] font-bold uppercase tracking-wider text-rose-500">Cost</p>
-              <h3 id="global-expense" class="text-sm md:text-base font-bold text-rose-400 mt-0.5 font-mono">৳0</h3>
+            <div class="bg-[#14151c] border border-rose-500/20 p-3 rounded-lg">
+              <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-rose-400">Cost</p>
+              <h3 id="global-expense" class="text-base md:text-lg font-bold text-rose-400 mt-0.5 font-mono">৳0</h3>
             </div>
-            <div class="bg-[#14151c] border border-amber-500/20 p-2.5 rounded-lg">
-              <p class="text-[8px] md:text-[9px] font-bold uppercase tracking-wider text-amber-500">Due</p>
-              <h3 id="global-due" class="text-sm md:text-base font-bold text-amber-400 mt-0.5 font-mono">৳0</h3>
+            <div class="bg-[#14151c] border border-amber-500/20 p-3 rounded-lg">
+              <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-amber-400">Due</p>
+              <h3 id="global-due" class="text-base md:text-lg font-bold text-amber-400 mt-0.5 font-mono">৳0</h3>
             </div>
-            <div class="bg-[#181922] border border-indigo-500/30 p-2.5 rounded-lg col-span-2 lg:col-span-1">
-              <p class="text-[8px] md:text-[9px] font-bold uppercase tracking-wider text-indigo-400">Net Balance</p>
-              <h3 id="global-net" class="text-base md:text-lg font-black text-white mt-0.5 font-mono">৳0</h3>
+            <div class="bg-[#181922] border border-indigo-500/30 p-3 rounded-lg col-span-2 lg:col-span-1">
+              <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-indigo-400">Net Balance</p>
+              <h3 id="global-net" class="text-lg md:text-xl font-black text-white mt-0.5 font-mono">৳0</h3>
             </div>
           </div>
           
           <!-- Master Accounts Container -->
           <div class="bg-[#14151c] border border-[#1e202a] rounded-lg overflow-hidden">
             
-            <!-- Compact Search Bar & Filter Header -->
-            <div class="p-2.5 border-b border-[#1e202a] bg-[#161720] flex flex-col sm:flex-row justify-between items-stretch gap-2">
+            <!-- Search & Filter Header -->
+            <div class="p-3 border-b border-[#1e202a] bg-[#161720] flex flex-col sm:flex-row justify-between items-stretch gap-2.5">
               
-              <!-- Search Bar -->
-              <div class="relative w-full sm:w-60">
-                <input type="text" id="search-input" placeholder="🔍 Search name, phone..." class="w-full border border-[#262835] rounded px-2.5 py-1 text-[11px] bg-[#0f1015] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
+              <div class="relative w-full sm:w-64">
+                <input type="text" id="search-input" placeholder="🔍 Search name, phone..." class="w-full border border-[#262835] rounded-lg px-3 py-1.5 text-xs bg-[#0f1015] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
               </div>
 
-              <!-- Filter Pills (Ultra-Compact) -->
-              <div class="flex items-center gap-1 bg-[#0f1015] p-0.5 rounded border border-[#262835]">
-                <button onclick="setClientFilter('all')" id="filter-btn-all" class="flex-1 sm:flex-none px-2.5 py-0.5 text-[10px] font-bold rounded text-slate-400">All</button>
-                <button onclick="setClientFilter('new')" id="filter-btn-new" class="flex-1 sm:flex-none px-2.5 py-0.5 text-[10px] font-bold rounded text-slate-400">New</button>
-                <button onclick="setClientFilter('old')" id="filter-btn-old" class="flex-1 sm:flex-none px-2.5 py-0.5 text-[10px] font-bold rounded text-slate-400">Old</button>
+              <!-- Filter Pills -->
+              <div class="flex items-center gap-1 bg-[#0f1015] p-1 rounded-lg border border-[#262835]">
+                <button onclick="setClientFilter('all')" id="filter-btn-all" class="flex-1 sm:flex-none px-3 py-1 text-xs font-semibold rounded text-slate-400">All</button>
+                <button onclick="setClientFilter('new')" id="filter-btn-new" class="flex-1 sm:flex-none px-3 py-1 text-xs font-semibold rounded text-slate-400">New</button>
+                <button onclick="setClientFilter('old')" id="filter-btn-old" class="flex-1 sm:flex-none px-3 py-1 text-xs font-semibold rounded text-slate-400">Old</button>
               </div>
             </div>
 
@@ -153,71 +152,71 @@
             <div id="master-table-container" class="overflow-x-auto hidden sm:block">
               <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr class="bg-[#181922] text-slate-400 font-semibold text-[10px] uppercase tracking-wider border-b border-[#1e202a]">
-                    <th class="px-4 py-2.5">Workspace</th>
-                    <th class="px-3 py-2.5">Contact</th>
-                    <th class="px-3 py-2.5 text-right">Contract</th>
-                    <th class="px-3 py-2.5 text-right">Settled</th>
-                    <th class="px-3 py-2.5 text-right">Cost</th>
-                    <th class="px-3 py-2.5 text-right">Receivables</th>
-                    <th class="px-4 py-2.5 text-center">Action</th>
+                  <tr class="bg-[#181922] text-slate-400 font-semibold text-xs uppercase tracking-wider border-b border-[#1e202a]">
+                    <th class="px-4 py-3">Workspace</th>
+                    <th class="px-3 py-3">Contact</th>
+                    <th class="px-3 py-3 text-right">Contract</th>
+                    <th class="px-3 py-3 text-right">Settled</th>
+                    <th class="px-3 py-3 text-right">Cost</th>
+                    <th class="px-3 py-3 text-right">Receivables</th>
+                    <th class="px-4 py-3 text-center">Action</th>
                   </tr>
                 </thead>
-                <tbody id="clients-table-body" class="divide-y divide-[#1e202a] text-slate-300 font-medium"></tbody>
+                <tbody id="clients-table-body" class="divide-y divide-[#1e202a] text-slate-200 font-medium"></tbody>
               </table>
             </div>
 
-            <!-- Minimal Mobile Card View -->
-            <div id="master-card-container" class="p-2 space-y-2 sm:hidden"></div>
+            <!-- Clear & Readable Mobile Cards -->
+            <div id="master-card-container" class="p-2.5 space-y-2.5 sm:hidden"></div>
 
           </div>
         </div>
 
         <!-- TAB 2: CLIENT REGISTRY -->
         <div id="tab-client-view" class="tab-content space-y-4 hidden">
-          <div class="bg-[#14151c] border border-[#1e202a] rounded-lg p-3 md:p-5 max-w-md">
-            <h3 class="text-xs font-bold text-white mb-3">💼 Open Client File</h3>
-            <form id="client-form" class="space-y-2.5">
-              <input type="text" id="client-name" placeholder="Client Name" required class="w-full border border-[#262835] rounded px-2.5 py-1.5 text-xs bg-[#0f1015] text-white outline-none">
-              <input type="text" id="client-phone" placeholder="Contact Mobile" required class="w-full border border-[#262835] rounded px-2.5 py-1.5 text-xs bg-[#0f1015] text-white outline-none">
-              <input type="text" id="project-title" placeholder="Project Title" required class="w-full border border-[#262835] rounded px-2.5 py-1.5 text-xs bg-[#0f1015] text-white outline-none">
-              <input type="number" id="project-budget" placeholder="Contract Budget (৳)" required class="w-full border border-[#262835] rounded px-2.5 py-1.5 text-xs bg-[#0f1015] text-white outline-none">
-              <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded py-2 text-xs transition">Create Profile</button>
+          <div class="bg-[#14151c] border border-[#1e202a] rounded-lg p-4 md:p-5 max-w-md">
+            <h3 class="text-sm font-bold text-white mb-3">💼 Open Client File</h3>
+            <form id="client-form" class="space-y-3">
+              <input type="text" id="client-name" placeholder="Client Name" required class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-white outline-none">
+              <input type="text" id="client-phone" placeholder="Contact Mobile" required class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-white outline-none">
+              <input type="text" id="project-title" placeholder="Project Title" required class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-white outline-none">
+              <input type="number" id="project-budget" placeholder="Contract Budget (৳)" required class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-white outline-none">
+              <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg py-2.5 text-xs transition">Create Profile</button>
             </form>
           </div>
         </div>
 
         <!-- TAB 3: JOURNAL POSTING -->
         <div id="tab-journal-view" class="tab-content space-y-4 hidden">
-          <div class="bg-[#14151c] border border-[#1e202a] rounded-lg p-3 md:p-5 max-w-lg">
-            <h3 class="text-xs font-bold text-white mb-3">💸 Voucher Entry</h3>
-            <form id="tx-form" class="space-y-2.5">
+          <div class="bg-[#14151c] border border-[#1e202a] rounded-lg p-4 md:p-5 max-w-lg">
+            <h3 class="text-sm font-bold text-white mb-3">💸 Voucher Entry</h3>
+            <form id="tx-form" class="space-y-3">
               <div>
                 <input type="hidden" id="tx-client-select" value="">
-                <div id="dropdown-trigger" class="w-full border border-[#262835] rounded px-2.5 py-1.5 text-xs bg-[#0f1015] text-white flex justify-between items-center cursor-pointer select-none">
-                  <span id="dropdown-selected-text" class="text-slate-500">Select Project...</span>
-                  <span class="text-slate-500 text-[10px]">▼</span>
+                <div id="dropdown-trigger" class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-white flex justify-between items-center cursor-pointer select-none">
+                  <span id="dropdown-selected-text" class="text-slate-400">Select Project...</span>
+                  <span class="text-slate-400 text-xs">▼</span>
                 </div>
-                <div id="custom-dropdown-list" class="absolute left-3 right-3 mt-1 bg-[#181922] border border-[#262835] rounded shadow-2xl p-2 hidden z-50">
-                  <input type="text" id="dropdown-search-input" placeholder="Type to search..." class="w-full border border-[#262835] rounded px-2 py-1 text-xs bg-[#0f1015] text-white outline-none mb-2">
-                  <div id="dropdown-items-container" class="max-h-36 overflow-y-auto space-y-1"></div>
+                <div id="custom-dropdown-list" class="absolute left-3 right-3 mt-1 bg-[#181922] border border-[#262835] rounded-lg shadow-2xl p-2 hidden z-50">
+                  <input type="text" id="dropdown-search-input" placeholder="Type to search..." class="w-full border border-[#262835] rounded px-2.5 py-1.5 text-xs bg-[#0f1015] text-white outline-none mb-2">
+                  <div id="dropdown-items-container" class="max-h-40 overflow-y-auto space-y-1"></div>
                 </div>
               </div>
 
-              <div class="grid grid-cols-2 gap-2">
-                <select id="tx-type" class="w-full border border-[#262835] rounded px-2 py-1.5 text-xs bg-[#0f1015] text-white outline-none">
+              <div class="grid grid-cols-2 gap-2.5">
+                <select id="tx-type" class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-white outline-none">
                   <option value="income">📥 Debit (Income)</option>
                   <option value="expense">📤 Credit (Cost)</option>
                 </select>
-                <input type="number" id="tx-amount" placeholder="Amount (৳)" required class="w-full border border-[#262835] rounded px-2 py-1.5 text-xs bg-[#0f1015] text-white outline-none">
+                <input type="number" id="tx-amount" placeholder="Amount (৳)" required class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-white outline-none">
               </div>
 
-              <div class="grid grid-cols-2 gap-2">
-                <input type="date" id="tx-date" required class="w-full border border-[#262835] rounded px-2 py-1.5 text-xs bg-[#0f1015] text-slate-300 outline-none">
-                <input type="text" id="tx-details" placeholder="Narration..." required class="w-full border border-[#262835] rounded px-2 py-1.5 text-xs bg-[#0f1015] text-white outline-none">
+              <div class="grid grid-cols-2 gap-2.5">
+                <input type="date" id="tx-date" required class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-slate-200 outline-none">
+                <input type="text" id="tx-details" placeholder="Narration..." required class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-white outline-none">
               </div>
 
-              <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded py-2 text-xs transition">Post Transaction</button>
+              <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg py-2.5 text-xs transition">Post Transaction</button>
             </form>
           </div>
         </div>
@@ -225,28 +224,28 @@
         <!-- TAB 4: OFFICE OVERHEAD -->
         <div id="tab-office-view" class="tab-content space-y-4 hidden">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div class="bg-[#14151c] border border-[#1e202a] rounded-lg p-3">
-              <h3 class="text-xs font-bold text-white mb-2">🏢 Record Expense</h3>
-              <form id="office-expense-form" class="space-y-2">
-                <select id="oe-category" class="w-full border border-[#262835] rounded px-2 py-1.5 text-xs bg-[#0f1015] text-white outline-none">
+            <div class="bg-[#14151c] border border-[#1e202a] rounded-lg p-4">
+              <h3 class="text-sm font-bold text-white mb-3">🏢 Record Expense</h3>
+              <form id="office-expense-form" class="space-y-2.5">
+                <select id="oe-category" class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-white outline-none">
                   <option value="Staff Salary">Salary</option>
                   <option value="Office Rent">Rent</option>
                   <option value="Utility Bill">Utility</option>
                   <option value="Conveyance">Conveyance</option>
                   <option value="Others">Others</option>
                 </select>
-                <input type="number" id="oe-amount" placeholder="Amount (৳)" required class="w-full border border-[#262835] rounded px-2 py-1.5 text-xs bg-[#0f1015] text-white outline-none">
-                <input type="text" id="oe-details" placeholder="Details..." required class="w-full border border-[#262835] rounded px-2 py-1.5 text-xs bg-[#0f1015] text-white outline-none">
-                <input type="date" id="oe-date" required class="w-full border border-[#262835] rounded px-2 py-1.5 text-xs bg-[#0f1015] text-slate-300 outline-none">
-                <button type="submit" class="w-full bg-rose-950/80 border border-rose-900/40 text-rose-400 hover:text-white font-semibold rounded py-1.5 text-xs transition">Log Overhead</button>
+                <input type="number" id="oe-amount" placeholder="Amount (৳)" required class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-white outline-none">
+                <input type="text" id="oe-details" placeholder="Details..." required class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-white outline-none">
+                <input type="date" id="oe-date" required class="w-full border border-[#262835] rounded-lg px-3 py-2 text-xs bg-[#0f1015] text-slate-200 outline-none">
+                <button type="submit" class="w-full bg-rose-950/80 border border-rose-900/40 text-rose-400 hover:text-white font-semibold rounded-lg py-2 text-xs transition">Log Overhead</button>
               </form>
             </div>
 
-            <div class="md:col-span-2 bg-[#14151c] border border-[#1e202a] rounded-lg p-3">
-              <h4 class="text-xs font-bold text-white mb-2">Overhead History</h4>
-              <div class="max-h-60 overflow-y-auto border border-[#1e202a] rounded bg-[#0f1015]">
+            <div class="md:col-span-2 bg-[#14151c] border border-[#1e202a] rounded-lg p-4">
+              <h4 class="text-xs font-bold text-white mb-2.5">Overhead History</h4>
+              <div class="max-h-64 overflow-y-auto border border-[#1e202a] rounded-lg bg-[#0f1015]">
                 <table class="w-full text-left text-xs">
-                  <tbody id="office-expense-rows" class="divide-y divide-[#1e202a] text-slate-300"></tbody>
+                  <tbody id="office-expense-rows" class="divide-y divide-[#1e202a] text-slate-200"></tbody>
                 </table>
               </div>
             </div>
@@ -254,17 +253,17 @@
         </div>
 
         <!-- Ledger Drawer Sheet -->
-        <div id="ledger-drawer" class="bg-[#14151c] border border-indigo-500/30 rounded-lg p-3 md:p-5 hidden shadow-2xl transition-all">
-          <div class="flex justify-between items-center border-b border-[#1e202a] pb-2">
+        <div id="ledger-drawer" class="bg-[#14151c] border border-indigo-500/30 rounded-lg p-4 md:p-5 hidden shadow-2xl transition-all">
+          <div class="flex justify-between items-center border-b border-[#1e202a] pb-2.5">
             <div>
-              <h2 id="drawer-title" class="text-xs font-bold text-white">Statement Analysis</h2>
-              <p id="drawer-sub" class="text-[10px] text-slate-400"></p>
+              <h2 id="drawer-title" class="text-xs md:text-sm font-bold text-white">Statement Analysis</h2>
+              <p id="drawer-sub" class="text-xs text-slate-400 mt-0.5"></p>
             </div>
-            <button onclick="closeDrawer()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-[#1e202a] rounded">✕</button>
+            <button onclick="closeDrawer()" class="text-slate-400 hover:text-white text-xs px-2.5 py-1 bg-[#1e202a] rounded-lg">✕ Close</button>
           </div>
           <div class="mt-3 overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
-              <tbody id="drawer-table-body" class="divide-y divide-[#1e202a] text-slate-300"></tbody>
+              <tbody id="drawer-table-body" class="divide-y divide-[#1e202a] text-slate-200"></tbody>
             </table>
           </div>
         </div>
@@ -275,12 +274,12 @@
 
   <!-- Passcode Modal -->
   <div id="securityModal" class="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3">
-    <div class="bg-[#181922] border border-[#262835] rounded-lg p-4 w-full max-w-xs text-center">
-      <h3 class="text-xs font-semibold text-slate-200 mb-1">Passcode Required</h3>
-      <input type="password" id="modalPasscodeInput" autocomplete="off" placeholder="••••" class="w-full bg-[#0f1015] border border-[#262835] focus:border-red-500 text-white rounded px-2 py-1 text-center text-sm outline-none mb-3 font-mono">
+    <div class="bg-[#181922] border border-[#262835] rounded-xl p-4 w-full max-w-xs text-center">
+      <h3 class="text-xs font-semibold text-slate-200 mb-2">Passcode Required</h3>
+      <input type="password" id="modalPasscodeInput" autocomplete="off" placeholder="••••" class="w-full bg-[#0f1015] border border-[#262835] focus:border-red-500 text-white rounded-lg px-3 py-1.5 text-center text-sm outline-none mb-3 font-mono">
       <div class="flex gap-2">
-        <button id="modalCancelBtn" class="flex-1 bg-[#20222f] text-slate-300 font-medium py-1 rounded text-xs">Cancel</button>
-        <button id="modalConfirmBtn" class="flex-1 bg-red-600 text-white font-medium py-1 rounded text-xs">Confirm</button>
+        <button id="modalCancelBtn" class="flex-1 bg-[#20222f] text-slate-300 font-medium py-1.5 rounded-lg text-xs">Cancel</button>
+        <button id="modalConfirmBtn" class="flex-1 bg-red-600 text-white font-medium py-1.5 rounded-lg text-xs">Confirm</button>
       </div>
     </div>
   </div>
