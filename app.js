@@ -57,12 +57,12 @@ window.switchTab = function(tabId) {
   document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.className = "tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-[10px] md:text-xs font-semibold px-2 py-2 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left";
+    btn.className = "tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold px-2 py-2.5 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left";
   });
 
   const activeBtn = document.getElementById(`btn-${tabId}`);
   if(activeBtn) {
-    activeBtn.className = "tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-[10px] md:text-xs font-semibold px-2 py-2 rounded transition bg-indigo-600 text-white text-center md:text-left";
+    activeBtn.className = "tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold px-2 py-2.5 rounded transition bg-indigo-600 text-white text-center md:text-left";
   }
 }
 
@@ -74,11 +74,11 @@ window.setClientFilter = function(filterType) {
   const btnOld = document.getElementById('filter-btn-old');
   
   [btnAll, btnNew, btnOld].forEach(btn => {
-    if(btn) btn.className = "flex-1 sm:flex-none px-2.5 py-0.5 text-[10px] font-bold rounded text-slate-400 hover:text-white";
+    if(btn) btn.className = "flex-1 sm:flex-none px-3 py-1 text-xs font-semibold rounded text-slate-400 hover:text-white";
   });
   
   const activeBtn = document.getElementById(`filter-btn-${filterType}`);
-  if(activeBtn) activeBtn.className = "flex-1 sm:flex-none px-2.5 py-0.5 text-[10px] font-bold rounded bg-indigo-600 text-white";
+  if(activeBtn) activeBtn.className = "flex-1 sm:flex-none px-3 py-1 text-xs font-bold rounded bg-indigo-600 text-white";
   
   renderMasterTable();
 }
@@ -114,7 +114,7 @@ auth.onAuthStateChanged(user => {
     
     const indicator = document.getElementById('status-indicator');
     const text = document.getElementById('status-text');
-    if (indicator) indicator.className = "inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse";
+    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse";
     if (text) text.innerText = "Cloud Secured";
     
     if (document.getElementById('user-display-name')) document.getElementById('user-display-name').innerText = user.displayName;
@@ -128,7 +128,7 @@ auth.onAuthStateChanged(user => {
     
     const indicator = document.getElementById('status-indicator');
     const text = document.getElementById('status-text');
-    if (indicator) indicator.className = "inline-block h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse";
+    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
     if (text) text.innerText = "Guest Mode";
     
     farmData = [];
@@ -353,14 +353,14 @@ function renderDropdown() {
     );
 
     if (filtered.length === 0) {
-      itemsContainer.innerHTML = `<div class="p-1.5 text-[10px] text-slate-500 text-center">No projects</div>`;
+      itemsContainer.innerHTML = `<div class="p-2 text-xs text-slate-500 text-center">No projects found</div>`;
       return;
     }
 
     filtered.forEach(c => {
       const item = document.createElement('div');
-      item.className = "p-1.5 text-[11px] text-slate-300 hover:bg-indigo-600 hover:text-white rounded cursor-pointer transition flex justify-between";
-      item.innerHTML = `<span>${c.project}</span> <span class="text-[9px] text-slate-500">${c.name}</span>`;
+      item.className = "p-2 text-xs text-slate-200 hover:bg-indigo-600 hover:text-white rounded cursor-pointer transition flex justify-between";
+      item.innerHTML = `<span>${c.project}</span> <span class="text-xs text-slate-400">${c.name}</span>`;
       
       item.onclick = function() {
         hiddenInput.value = c.id;
@@ -375,7 +375,7 @@ function renderDropdown() {
   if (dropdownSearchInput) dropdownSearchInput.oninput = function() { filterDropdownItems(this.value); };
 }
 
-// ULTRA-MINIMAL MOBILE RENDERER
+// READABLE MOBILE CARD RENDERER
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -386,14 +386,14 @@ function renderMasterTable() {
 
   if (!currentUser) {
     if(container) container.classList.remove('hidden');
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-amber-500 text-xs">⚠️ Please sign in.</td></tr>`;
-    if(cardContainer) cardContainer.innerHTML = `<div class="p-3 text-center text-amber-500 text-[11px]">⚠️ Sign in with Google</div>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-amber-500 text-xs">⚠️ Please sign in to access workspace.</td></tr>`;
+    if(cardContainer) cardContainer.innerHTML = `<div class="p-4 text-center text-amber-500 text-xs">⚠️ Sign in with Google</div>`;
     return;
   }
 
   if (farmData.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500 text-xs">No records.</td></tr>`;
-    if(cardContainer) cardContainer.innerHTML = `<div class="p-3 text-center text-slate-500 text-[11px]">No records found.</div>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500 text-xs">No records available.</td></tr>`;
+    if(cardContainer) cardContainer.innerHTML = `<div class="p-4 text-center text-slate-500 text-xs">No records found.</div>`;
     return;
   }
 
@@ -426,54 +426,54 @@ function renderMasterTable() {
     tr.innerHTML = `
       <td class="p-3 pl-4">
         <div class="font-bold text-slate-100">${c.project}</div>
-        <div class="text-[10px] text-slate-500">${c.name}</div>
+        <div class="text-xs text-slate-400">${c.name}</div>
       </td>
-      <td class="p-3 font-mono text-[11px] text-slate-400">${c.phone}</td>
-      <td class="p-3 text-right font-bold text-slate-200">৳${c.budget.toLocaleString('en-IN')}</td>
+      <td class="p-3 font-mono text-xs text-slate-300">${c.phone}</td>
+      <td class="p-3 text-right font-bold text-slate-100">৳${c.budget.toLocaleString('en-IN')}</td>
       <td class="p-3 text-right font-bold text-emerald-400">৳${localIncome.toLocaleString('en-IN')}</td>
       <td class="p-3 text-right font-bold text-rose-400">৳${localExpense.toLocaleString('en-IN')}</td>
-      <td class="p-3 text-right font-bold ${cDue > 0 ? 'text-amber-400' : 'text-slate-500'}">৳${cDue.toLocaleString('en-IN')}</td>
+      <td class="p-3 text-right font-bold ${cDue > 0 ? 'text-amber-400' : 'text-slate-400'}">৳${cDue.toLocaleString('en-IN')}</td>
       <td class="p-3 pr-4 text-center">
-        <button onclick="openDrawer('${c.id}')" class="bg-[#1e202a] hover:bg-indigo-600 text-slate-200 hover:text-white px-2.5 py-1 rounded text-[10px] font-semibold transition">Ledger</button>
-        <button onclick="deleteClient('${c.id}')" class="text-slate-600 hover:text-red-400 font-bold ml-1.5">✕</button>
+        <button onclick="openDrawer('${c.id}')" class="bg-[#1e202a] hover:bg-indigo-600 text-slate-200 hover:text-white px-2.5 py-1 rounded-lg text-xs font-semibold transition">Ledger</button>
+        <button onclick="deleteClient('${c.id}')" class="text-slate-500 hover:text-red-400 font-bold ml-2">✕</button>
       </td>
     `;
     tableBody.appendChild(tr);
 
-    // MINIMAL MOBILE CARD (Clutter-Free)
+    // READABLE & CLEAN MOBILE CARD
     if(cardContainer) {
       const card = document.createElement('div');
-      card.className = "bg-[#14151c] border border-[#1e202a] rounded p-2.5 space-y-2";
+      card.className = "bg-[#14151c] border border-[#1e202a] rounded-lg p-3 space-y-2.5";
       card.innerHTML = `
-        <div class="flex justify-between items-center border-b border-[#1e202a] pb-1.5">
+        <div class="flex justify-between items-start border-b border-[#1e202a] pb-2">
           <div>
-            <h4 class="font-bold text-white text-xs">${c.project}</h4>
-            <p class="text-[10px] text-slate-400">${c.name} • <span class="font-mono text-slate-500">${c.phone}</span></p>
+            <h4 class="font-bold text-white text-xs md:text-sm">${c.project}</h4>
+            <p class="text-xs text-slate-400 mt-0.5">${c.name} • <span class="font-mono text-slate-300">${c.phone}</span></p>
           </div>
-          <button onclick="deleteClient('${c.id}')" class="text-slate-600 hover:text-red-400 text-xs px-1">✕</button>
+          <button onclick="deleteClient('${c.id}')" class="text-slate-500 hover:text-red-400 text-sm px-1">✕</button>
         </div>
 
-        <div class="flex items-center justify-between text-[11px] font-mono pt-0.5">
-          <div>
-            <span class="text-[8px] text-slate-500 block uppercase font-sans">Budget</span>
+        <div class="grid grid-cols-4 gap-1 text-xs font-mono pt-1 text-center">
+          <div class="bg-[#0f1015] p-1.5 rounded border border-[#1e202a]">
+            <span class="text-[10px] text-slate-400 block font-sans">Budget</span>
             <span class="font-semibold text-slate-200">৳${c.budget.toLocaleString('en-IN')}</span>
           </div>
-          <div>
-            <span class="text-[8px] text-emerald-500 block uppercase font-sans">Income</span>
+          <div class="bg-[#0f1015] p-1.5 rounded border border-emerald-500/20">
+            <span class="text-[10px] text-emerald-400 block font-sans">Income</span>
             <span class="font-semibold text-emerald-400">৳${localIncome.toLocaleString('en-IN')}</span>
           </div>
-          <div>
-            <span class="text-[8px] text-rose-500 block uppercase font-sans">Cost</span>
+          <div class="bg-[#0f1015] p-1.5 rounded border border-rose-500/20">
+            <span class="text-[10px] text-rose-400 block font-sans">Cost</span>
             <span class="font-semibold text-rose-400">৳${localExpense.toLocaleString('en-IN')}</span>
           </div>
-          <div class="text-right">
-            <span class="text-[8px] text-amber-500 block uppercase font-sans">Due</span>
+          <div class="bg-[#0f1015] p-1.5 rounded border border-amber-500/20">
+            <span class="text-[10px] text-amber-400 block font-sans">Due</span>
             <span class="font-bold ${cDue > 0 ? 'text-amber-400' : 'text-slate-400'}">৳${cDue.toLocaleString('en-IN')}</span>
           </div>
         </div>
 
-        <button onclick="openDrawer('${c.id}')" class="w-full bg-[#1e202a] hover:bg-indigo-600 text-slate-300 hover:text-white font-semibold py-1 rounded text-[10px] transition">
-          View Ledger
+        <button onclick="openDrawer('${c.id}')" class="w-full bg-[#1e202a] hover:bg-indigo-600 text-slate-200 hover:text-white font-semibold py-1.5 rounded-lg text-xs transition">
+          View Statement Ledger
         </button>
       `;
       cardContainer.appendChild(card);
@@ -485,16 +485,16 @@ function renderOfficeExpenses() {
   if (!officeExpenseRows) return;
   officeExpenseRows.innerHTML = '';
   if(officeExpenses.length === 0) {
-    officeExpenseRows.innerHTML = `<tr><td class="p-2 text-center text-slate-500 text-[10px]">No records.</td></tr>`;
+    officeExpenseRows.innerHTML = `<tr><td class="p-3 text-center text-slate-500 text-xs">No records found.</td></tr>`;
     return;
   }
   officeExpenses.forEach(oe => {
     const tr = document.createElement('tr');
     tr.className = "border-b border-[#1e202a]";
     tr.innerHTML = `
-      <td class="p-2 font-medium text-slate-300 text-[11px]">${oe.details} <span class="text-[9px] text-slate-500 block">${oe.category} • ${oe.date}</span></td>
-      <td class="p-2 text-right font-bold text-rose-400 font-mono text-xs">৳${oe.amount.toLocaleString('en-IN')}</td>
-      <td class="p-2 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-600 hover:text-red-400 font-bold text-xs">✕</button></td>
+      <td class="p-2.5 font-medium text-slate-200 text-xs">${oe.details} <span class="text-xs text-slate-400 block">${oe.category} • ${oe.date}</span></td>
+      <td class="p-2.5 text-right font-bold text-rose-400 font-mono text-xs">৳${oe.amount.toLocaleString('en-IN')}</td>
+      <td class="p-2.5 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-500 hover:text-red-400 font-bold text-xs">✕</button></td>
     `;
     officeExpenseRows.appendChild(tr);
   });
@@ -524,18 +524,18 @@ function refreshDrawer(id) {
   const dBody = document.getElementById('drawer-table-body');
   if (!dBody) return;
   dBody.innerHTML = (!client.history || client.history.length === 0) ? 
-    `<tr><td class="p-3 text-center text-slate-500 text-[11px]">No transactions logged.</td></tr>` : '';
+    `<tr><td class="p-3 text-center text-slate-500 text-xs">No transactions logged.</td></tr>` : '';
 
   client.history.forEach(t => {
     const tr = document.createElement('tr');
-    tr.className = "border-b border-[#1e202a] text-[11px]";
+    tr.className = "border-b border-[#1e202a] text-xs";
     let valColor = t.type === 'income' ? 'text-emerald-400' : 'text-rose-400';
 
     tr.innerHTML = `
-      <td class="p-2 font-mono text-slate-500 text-[10px]">${t.date}</td>
-      <td class="p-2 font-medium text-slate-200">${t.details}</td>
-      <td class="p-2 text-right font-bold font-mono ${valColor}">৳${t.amount.toLocaleString('en-IN')}</td>
-      <td class="p-2 text-center"><button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-600 hover:text-red-400 font-bold text-xs">✕</button></td>
+      <td class="p-2.5 font-mono text-slate-400 text-xs">${t.date}</td>
+      <td class="p-2.5 font-medium text-slate-200">${t.details}</td>
+      <td class="p-2.5 text-right font-bold font-mono ${valColor}">৳${t.amount.toLocaleString('en-IN')}</td>
+      <td class="p-2.5 text-center"><button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-500 hover:text-red-400 font-bold text-xs">✕</button></td>
     `;
     dBody.appendChild(tr);
   });
