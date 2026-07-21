@@ -123,35 +123,28 @@ document.addEventListener('click', () => {
   if (profileDropdown) profileDropdown.classList.add('hidden');
 });
 
-// Mobile & Desktop Responsive Google Login System
+// SIMPLIFIED & FIXED GOOGLE LOGIN SYSTEM (Works everywhere)
 if (loginBtn) {
   loginBtn.addEventListener('click', async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
+    provider.setCustomParameters({ prompt: 'select_account' });
+    
     try {
-      if (isMobile) {
-        await auth.signInWithRedirect(provider);
-      } else {
-        await auth.signInWithPopup(provider);
-      }
+      await auth.signInWithPopup(provider);
     } catch (err) {
-      alert("Login failed: " + err.message);
+      if (err.code !== 'auth/popup-closed-by-user') {
+        alert("Login failed: " + err.message);
+      }
     }
   });
 }
 
-// FIXED LOGOUT: Reload বন্ধ করা হয়েছে যাতে অ্যাপ খোলা থাকে
+// LOGOUT: Application stays open
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
     auth.signOut();
   });
 }
-
-// Mobile Redirect Login Handler
-auth.getRedirectResult().catch(err => {
-  console.error("Redirect Login Error: ", err);
-});
 
 // Firebase Auth Authentication State Realtime Observers
 auth.onAuthStateChanged(user => {
@@ -171,7 +164,7 @@ auth.onAuthStateChanged(user => {
     databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
     subscribeToCloudStreams();
   } else {
-    // লগআউট অবস্থায় অ্যাপের কোনো ইন্টারফেস রিফ্রেশ বা বন্ধ হবে না
+    // Guest Mode logic
     if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
     if (profileTrigger) profileTrigger.classList.add('hidden');
     
@@ -292,7 +285,7 @@ function calculateGlobalMetrics() {
   }
 }
 
-// Compact Passcode Modal Handler
+// Passcode Modal Handler
 let pendingDeleteAction = null;
 
 function requestPasscodeAuth(onSuccess) {
@@ -332,7 +325,7 @@ function requestPasscodeAuth(onSuccess) {
   };
 }
 
-// Form Submit Handlers with Login Check Protection
+// Form Submit Handlers with Login Protection
 if (clientForm) {
   clientForm.addEventListener('submit', (e) => {
     e.preventDefault();
