@@ -34,19 +34,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Authentication Management
 function initAuthObserver() {
+  // রিডাইরেক্ট হয়ে ফিরে আসলে রেজাল্ট চেক করা (মোবাইলের জন্য)
+  auth.getRedirectResult().then(result => {
+    if (result.user) {
+      console.log("Logged in via redirect");
+    }
+  }).catch(error => {
+    console.error("Redirect Error:", error);
+  });
+
   auth.onAuthStateChanged(user => {
     const authScreen = document.getElementById('auth-screen');
     const mainApp = document.getElementById('main-app');
 
     if (user) {
-      // User is logged in
-      authScreen.classList.add('hidden');
-      mainApp.classList.remove('hidden');
+      // User logged in -> অ্যাপের ভেতরের অংশ দেখাবে
+      if (authScreen) authScreen.classList.add('hidden');
+      if (mainApp) mainApp.classList.remove('hidden');
 
       // Set user DB path as per security rules: rajuk_erp_data/$uid
       currentDbRef = rtdb.ref(`rajuk_erp_data/${user.uid}`);
 
-      // Update User Profile UI
+      // Update User Profile UI (Header / App Inside)
       const nameDisplay = document.getElementById('user-name-display');
       const emailDisplay = document.getElementById('user-email-display');
       const avatarImg = document.getElementById('user-avatar');
@@ -55,7 +64,7 @@ function initAuthObserver() {
       if (nameDisplay) nameDisplay.innerText = user.displayName || 'ব্যবহারকারী';
       if (emailDisplay) emailDisplay.innerText = user.email || '';
 
-      if (user.photoURL) {
+      if (avatarImg && user.photoURL) {
         avatarImg.src = user.photoURL;
         avatarImg.classList.remove('hidden');
         if (avatarPlaceholder) avatarPlaceholder.classList.add('hidden');
@@ -64,9 +73,9 @@ function initAuthObserver() {
       // Start listening to RTDB for this specific user
       listenToDatabase();
     } else {
-      // User is logged out
-      authScreen.classList.remove('hidden');
-      mainApp.classList.add('hidden');
+      // User logged out -> লগইন পেজ দেখাবে
+      if (authScreen) authScreen.classList.remove('hidden');
+      if (mainApp) mainApp.classList.add('hidden');
       currentDbRef = null;
     }
   });
@@ -80,9 +89,12 @@ function initDates() {
 }
 
 function bindEvents() {
-  // Login & Logout Events
-  document.getElementById('btn-google-login').addEventListener('click', handleGoogleLogin);
-  document.getElementById('btn-logout').addEventListener('click', handleLogout);
+  // Login & Logout Events (App এর ভেতরে ও বাইরে যেখানেই বাটন থাকুক কাজ করবে)
+  const loginBtn = document.getElementById('btn-google-login');
+  if (loginBtn) loginBtn.addEventListener('click', handleGoogleLogin);
+
+  const logoutBtn = document.getElementById('btn-logout');
+  if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
 
   // Navigation Tabs
   document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -92,43 +104,67 @@ function bindEvents() {
     });
   });
 
-  document.getElementById('btn-top-report').addEventListener('click', () => {
-    switchTab('tab-reports');
-  });
+  const topReportBtn = document.getElementById('btn-top-report');
+  if (topReportBtn) {
+    topReportBtn.addEventListener('click', () => switchTab('tab-reports'));
+  }
 
   // Modals
-  document.getElementById('btn-open-add-project').addEventListener('click', () => openModal('modal-add-project'));
-  document.getElementById('btn-close-add-project').addEventListener('click', () => closeModal('modal-add-project'));
-  document.getElementById('btn-close-ledger').addEventListener('click', () => closeModal('modal-project-ledger'));
+  const openProjBtn = document.getElementById('btn-open-add-project');
+  if (openProjBtn) openProjBtn.addEventListener('click', () => openModal('modal-add-project'));
+
+  const closeProjBtn = document.getElementById('btn-close-add-project');
+  if (closeProjBtn) closeProjBtn.addEventListener('click', () => closeModal('modal-add-project'));
+
+  const closeLedgerBtn = document.getElementById('btn-close-ledger');
+  if (closeLedgerBtn) closeLedgerBtn.addEventListener('click', () => closeModal('modal-project-ledger'));
 
   // Form Submissions
-  document.getElementById('form-add-project').addEventListener('submit', handleCreateProject);
-  document.getElementById('form-project-tx').addEventListener('submit', handleProjectTransaction);
-  document.getElementById('form-office-expense').addEventListener('submit', handleOfficeExpense);
-  document.getElementById('form-boss-tx').addEventListener('submit', handleBossTransaction);
+  const formAddProject = document.getElementById('form-add-project');
+  if (formAddProject) formAddProject.addEventListener('submit', handleCreateProject);
+
+  const formProjectTx = document.getElementById('form-project-tx');
+  if (formProjectTx) formProjectTx.addEventListener('submit', handleProjectTransaction);
+
+  const formOfficeExp = document.getElementById('form-office-expense');
+  if (formOfficeExp) formOfficeExp.addEventListener('submit', handleOfficeExpense);
+
+  const formBossTx = document.getElementById('form-boss-tx');
+  if (formBossTx) formBossTx.addEventListener('submit', handleBossTransaction);
 
   // Search Filter
-  document.getElementById('search-input').addEventListener('keyup', renderProjects);
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) searchInput.addEventListener('keyup', renderProjects);
 }
 
-// Google Login Handler
+// Google Login Handler (Mobile & PC Both Supported)
 async function handleGoogleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
-    await auth.signInWithPopup(provider);
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+      await auth.signInWithRedirect(provider);
+    } else {
+      await auth.signInWithPopup(provider);
+    }
   } catch (err) {
     alert('❌ গুগল লগইন করা যায়নি: ' + err.message);
   }
 }
 
-// Logout Handler
+// Logout Handler (App এর ভেতর থেকে বের হওয়ার জন্য)
 async function handleLogout() {
-  if (confirm('আপনি কি নিশ্চিত যে লগআউট করতে চান?')) {
-    await auth.signOut();
+  if (confirm('আপনি কি নিশ্চিত যে অ্যাকাউন্ট থেকে লগআউট করতে চান?')) {
+    try {
+      await auth.signOut();
+      alert('✅ আপনি সফলভাবে লগআউট হয়েছেন।');
+    } catch (err) {
+      alert('❌ লগআউট করতে সমস্যা হয়েছে: ' + err.message);
+    }
   }
 }
 
-// REALTIME DATABASE LISTENERS (Using rajuk_erp_data/$uid)
+// REALTIME DATABASE LISTENERS (rajuk_erp_data/$uid)
 function listenToDatabase() {
   if (!currentDbRef) return;
 
@@ -179,7 +215,8 @@ function refreshUI() {
 
 function switchTab(tabId, activeBtn) {
   document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-  document.getElementById(tabId).classList.remove('hidden');
+  const target = document.getElementById(tabId);
+  if (target) target.classList.remove('hidden');
 
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.classList.remove('text-red-600', 'font-bold');
@@ -192,8 +229,15 @@ function switchTab(tabId, activeBtn) {
   }
 }
 
-function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+function openModal(id) { 
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('hidden'); 
+}
+
+function closeModal(id) { 
+  const el = document.getElementById(id);
+  if (el) el.classList.add('hidden'); 
+}
 
 // DASHBOARD & PROJECT LOGIC
 function renderDashboard() {
@@ -205,14 +249,21 @@ function renderDashboard() {
   }, 0);
   let totalDue = totalBudget - totalReceived;
 
-  document.getElementById('dash-budget').innerText = `৳${totalBudget.toLocaleString('bn-BD')}`;
-  document.getElementById('dash-received').innerText = `৳${totalReceived.toLocaleString('bn-BD')}`;
-  document.getElementById('dash-due').innerText = `৳${totalDue.toLocaleString('bn-BD')}`;
+  const bEl = document.getElementById('dash-budget');
+  const rEl = document.getElementById('dash-received');
+  const dEl = document.getElementById('dash-due');
+
+  if (bEl) bEl.innerText = `৳${totalBudget.toLocaleString('bn-BD')}`;
+  if (rEl) rEl.innerText = `৳${totalReceived.toLocaleString('bn-BD')}`;
+  if (dEl) dEl.innerText = `৳${totalDue.toLocaleString('bn-BD')}`;
 }
 
 function renderProjects() {
-  const query = document.getElementById('search-input').value.toLowerCase();
+  const searchEl = document.getElementById('search-input');
+  const query = searchEl ? searchEl.value.toLowerCase() : '';
   const container = document.getElementById('projects-list-container');
+  if (!container) return;
+
   container.innerHTML = '';
 
   const filtered = state.projects.filter(p => 
@@ -408,6 +459,7 @@ async function deleteProject(id) {
 
 function populateProjectDropdown() {
   const select = document.getElementById('tx-project-select');
+  if (!select) return;
   select.innerHTML = `<option value="">সিলেক্ট করুন...</option>`;
   state.projects.forEach(p => {
     select.innerHTML += `<option value="${p.id}">${p.client} — ${p.title}</option>`;
@@ -443,6 +495,7 @@ async function handleOfficeExpense(e) {
 
 function renderOfficeLogs() {
   const list = document.getElementById('office-logs-list');
+  if (!list) return;
   list.innerHTML = '';
   if (state.officeExpenses.length === 0) {
     list.innerHTML = `<p class="text-gray-400 text-[11px] py-2">কোনো অফিস খরচ পাওয়া যায়নি।</p>`;
@@ -500,14 +553,18 @@ async function handleBossTransaction(e) {
 
 function renderBossLogs() {
   const list = document.getElementById('boss-logs-list');
+  if (!list) return;
   list.innerHTML = '';
   
   let given = state.bossLogs.filter(b => b.type === 'deposit').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
   let taken = state.bossLogs.filter(b => b.type === 'withdraw').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
   let netBossWallet = given - taken;
 
-  document.getElementById('boss-wallet-balance').innerText = `৳${Math.abs(netBossWallet).toLocaleString('bn-BD')}`;
-  document.getElementById('boss-wallet-status').innerText = netBossWallet >= 0 ? 'কোম্পানি বসের কাছে ঋণগ্রস্ত' : 'বস উত্তোলন করেছেন';
+  const balEl = document.getElementById('boss-wallet-balance');
+  const statEl = document.getElementById('boss-wallet-status');
+
+  if (balEl) balEl.innerText = `৳${Math.abs(netBossWallet).toLocaleString('bn-BD')}`;
+  if (statEl) statEl.innerText = netBossWallet >= 0 ? 'কোম্পানি বসের কাছে ঋণগ্রস্ত' : 'বস উত্তোলন করেছেন';
 
   if (state.bossLogs.length === 0) {
     list.innerHTML = `<p class="text-gray-400 text-[11px] py-2">কোনো রেকর্ড নেই।</p>`;
@@ -560,13 +617,18 @@ function renderReport() {
   let bossGiven = state.bossLogs.filter(b => b.type === 'deposit').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
   let bossTaken = state.bossLogs.filter(b => b.type === 'withdraw').reduce((acc, b) => acc + (parseFloat(b.amount) || 0), 0);
 
-  document.getElementById('rpt-total-income').innerText = `৳${totalCollections.toLocaleString('bn-BD')}`;
-  document.getElementById('rpt-project-cost').innerText = `৳${totalDirectCost.toLocaleString('bn-BD')}`;
-  document.getElementById('rpt-gross-profit').innerText = `৳${grossProfit.toLocaleString('bn-BD')}`;
-  document.getElementById('rpt-office-cost').innerText = `৳${totalOfficeExpenses.toLocaleString('bn-BD')}`;
-  document.getElementById('rpt-net-profit').innerText = `৳${netProfit.toLocaleString('bn-BD')}`;
+  const setTxt = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.innerText = val;
+  };
 
-  document.getElementById('rpt-boss-given').innerText = `৳${bossGiven.toLocaleString('bn-BD')}`;
-  document.getElementById('rpt-boss-taken').innerText = `৳${bossTaken.toLocaleString('bn-BD')}`;
-  document.getElementById('rpt-boss-net').innerText = `৳${(bossGiven - bossTaken).toLocaleString('bn-BD')}`;
+  setTxt('rpt-total-income', `৳${totalCollections.toLocaleString('bn-BD')}`);
+  setTxt('rpt-project-cost', `৳${totalDirectCost.toLocaleString('bn-BD')}`);
+  setTxt('rpt-gross-profit', `৳${grossProfit.toLocaleString('bn-BD')}`);
+  setTxt('rpt-office-cost', `৳${totalOfficeExpenses.toLocaleString('bn-BD')}`);
+  setTxt('rpt-net-profit', `৳${netProfit.toLocaleString('bn-BD')}`);
+
+  setTxt('rpt-boss-given', `৳${bossGiven.toLocaleString('bn-BD')}`);
+  setTxt('rpt-boss-taken', `৳${bossTaken.toLocaleString('bn-BD')}`);
+  setTxt('rpt-boss-net', `৳${(bossGiven - bossTaken).toLocaleString('bn-BD')}`);
 }
