@@ -375,7 +375,6 @@ function renderDropdown() {
   if (dropdownSearchInput) dropdownSearchInput.oninput = function() { filterDropdownItems(this.value); };
 }
 
-// READABLE MOBILE CARD RENDERER
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -420,7 +419,7 @@ function renderMasterTable() {
     });
     let cDue = c.budget - localIncome;
 
-    // Desktop Row
+    // Desktop Row View
     const tr = document.createElement('tr');
     tr.className = "hover:bg-[#181a24] transition font-medium border-b border-[#1e202a] text-slate-300";
     tr.innerHTML = `
@@ -440,10 +439,10 @@ function renderMasterTable() {
     `;
     tableBody.appendChild(tr);
 
-    // READABLE & CLEAN MOBILE CARD
+    // Full Screen Mobile Adaptive Cards
     if(cardContainer) {
       const card = document.createElement('div');
-      card.className = "bg-[#14151c] border border-[#1e202a] rounded-lg p-3 space-y-2.5";
+      card.className = "bg-[#14151c] border border-[#1e202a] rounded-lg p-3 space-y-2.5 w-full";
       card.innerHTML = `
         <div class="flex justify-between items-start border-b border-[#1e202a] pb-2">
           <div>
@@ -453,7 +452,7 @@ function renderMasterTable() {
           <button onclick="deleteClient('${c.id}')" class="text-slate-500 hover:text-red-400 text-sm px-1">✕</button>
         </div>
 
-        <div class="grid grid-cols-4 gap-1 text-xs font-mono pt-1 text-center">
+        <div class="grid grid-cols-4 gap-1.5 text-xs font-mono pt-1 text-center w-full">
           <div class="bg-[#0f1015] p-1.5 rounded border border-[#1e202a]">
             <span class="text-[10px] text-slate-400 block font-sans">Budget</span>
             <span class="font-semibold text-slate-200">৳${c.budget.toLocaleString('en-IN')}</span>
@@ -472,7 +471,7 @@ function renderMasterTable() {
           </div>
         </div>
 
-        <button onclick="openDrawer('${c.id}')" class="w-full bg-[#1e202a] hover:bg-indigo-600 text-slate-200 hover:text-white font-semibold py-1.5 rounded-lg text-xs transition">
+        <button onclick="openDrawer('${c.id}')" class="w-full bg-[#1e202a] hover:bg-indigo-600 text-slate-200 hover:text-white font-semibold py-2 rounded-lg text-xs transition">
           View Statement Ledger
         </button>
       `;
@@ -505,7 +504,9 @@ window.openDrawer = function(id) {
   if (ledgerDrawer) {
     ledgerDrawer.classList.remove('hidden');
     refreshDrawer(id);
-    ledgerDrawer.scrollIntoView({ behavior: 'smooth' });
+    if(window.innerWidth >= 768) {
+      ledgerDrawer.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 }
 
