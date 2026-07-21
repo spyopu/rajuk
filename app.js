@@ -13,15 +13,18 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const rtdb = firebase.database();
 
-// Global Security Passcode (এখানে আপনার ডিলিট পাসকোডটি সেট করুন)
-const SECURITY_PASSCODE = "6219";
+// Global Security Passcode
+const SECURITY_PASSCODE = "1234";
 
 // State Memory Management Variables
 let farmData = [];
 let officeExpenses = [];
 let databasePathRef = null;
 let openLedgerId = null;
-let activeClientFilter = 'none'; // 'none' means hidden on fresh start
+let activeClientFilter = 'none';
+
+// Deletion Callback Tracker
+let pendingDeleteAction = null;
 
 // Catch UI Reference Elements
 const loginBtn = document.getElementById('google-login-btn');
@@ -39,11 +42,56 @@ const ledgerDrawer = document.getElementById('ledger-drawer');
 const searchInput = document.getElementById('search-input');
 const monthFilter = document.getElementById('month-filter');
 
-// Initialize Today's Date Values Input fields
+// Modal Elements
+const passcodeModal = document.getElementById('passcode-modal');
+const modalPasscodeInput = document.getElementById('modal-passcode-input');
+const modalCancelBtn = document.getElementById('modal-cancel-btn');
+const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+
+// Modal Control System
+function requestPasscode(onSuccess) {
+  if (!passcodeModal) return;
+  pendingDeleteAction = onSuccess;
+  modalPasscodeInput.value = '';
+  passcodeModal.classList.remove('hidden');
+  modalPasscodeInput.focus();
+}
+
+if (modalCancelBtn) {
+  modalCancelBtn.onclick = function() {
+    passcodeModal.classList.add('hidden');
+    pendingDeleteAction = null;
+  };
+}
+
+if (modalConfirmBtn) {
+  modalConfirmBtn.onclick = function() {
+    if (modalPasscodeInput.value === SECURITY_PASSCODE) {
+      passcodeModal.classList.add('hidden');
+      if (typeof pendingDeleteAction === 'function') {
+        pendingDeleteAction();
+      }
+      pendingDeleteAction = null;
+    } else {
+      modalPasscodeInput.classList.add('border-red-500');
+      setTimeout(() => modalPasscodeInput.classList.remove('border-red-500'), 1000);
+    }
+  };
+}
+
+// Allow Enter Key Press in Passcode Modal
+if (modalPasscodeInput) {
+  modalPasscodeInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      modalConfirmBtn.click();
+    }
+  });
+}
+
+// Initialize Inputs
 if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
 if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
 
-// Initialize Default Value for Month Filter (Current Month)
 if (monthFilter) {
   const now = new Date();
   const year = now.getFullYear();
@@ -52,11 +100,9 @@ if (monthFilter) {
   monthFilter.addEventListener('change', uiUpdatePipeline);
 }
 
-// Bind search bar trigger dynamically
 if (searchInput) {
   searchInput.addEventListener('input', () => {
     switchTab('dashboard-view');
-    // Force set filter to 'all' if user starts typing in sidebar search box
     if(activeClientFilter === 'none') {
       setClientFilter('all');
     } else {
@@ -80,7 +126,7 @@ window.switchTab = function(tabId) {
   }
 }
 
-// Control Table Visibility and Custom States
+// Control Table Visibility
 window.setClientFilter = function(filterType) {
   activeClientFilter = filterType;
   
@@ -107,11 +153,9 @@ window.setClientFilter = function(filterType) {
   renderMasterTable();
 }
 
-// Initialize System Pipelines
 uiUpdatePipeline();
-setClientFilter('none'); // Safe hide initially
+setClientFilter('none');
 
-// User Menu Events Handlers
 if (profileTrigger) {
   profileTrigger.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -136,7 +180,6 @@ if (logoutBtn) {
   });
 }
 
-// Firebase Auth Authentication State Realtime Observers
 auth.onAuthStateChanged(user => {
   if (user) {
     if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
@@ -169,7 +212,6 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// Sync Stream listeners with Firebase Cloud Node 
 function subscribeToCloudStreams() {
   if(!databasePathRef) return;
   databasePathRef.child('clients').on('value', snapshot => {
@@ -203,7 +245,6 @@ function uiUpdatePipeline() {
   if(openLedgerId) refreshDrawer(openLedgerId);
 }
 
-// Calculate Dashboard Total Amounts (Dynamic Monthly Filter)
 function calculateGlobalMetrics() {
   let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
   
@@ -274,7 +315,6 @@ function calculateGlobalMetrics() {
   }
 }
 
-// Submit Data Handlers
 if (clientForm) {
   clientForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -288,8 +328,7 @@ if (clientForm) {
     };
     databasePathRef.child('clients').push(newClient);
     clientForm.reset();
-    alert('Project file deployed to cloud database successfully!');
-    setClientFilter('all'); // auto show all table items
+    setClientFilter('all');
     switchTab('dashboard-view');
   });
 }
@@ -327,7 +366,6 @@ if (txForm) {
 
       setClientFilter('all');
       uiUpdatePipeline();
-      alert('Voucher posted successfully!');
       switchTab('dashboard-view');
     }
   });
@@ -347,11 +385,9 @@ if (officeExpenseForm) {
     document.getElementById('oe-amount').value = '';
     document.getElementById('oe-details').value = '';
     uiUpdatePipeline();
-    alert('General operational overhead logged!');
   });
 }
 
-// PREMIUM SEARCHABLE DROPDOWN CORE FOR JOURNAL ENTRIES
 function renderDropdown() {
   const trigger = document.getElementById('dropdown-trigger');
   const dropdownList = document.getElementById('custom-dropdown-list');
@@ -437,7 +473,6 @@ function renderDropdown() {
   }
 }
 
-// Master Ledger Table (Conditional Engine for Filter tabs)
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -449,7 +484,6 @@ function renderMasterTable() {
     return;
   }
 
-  // Keep hidden if no button tab is explicitly requested
   if (activeClientFilter === 'none') {
     if(container) container.classList.add('hidden');
     return;
@@ -460,23 +494,21 @@ function renderMasterTable() {
     return;
   }
 
-  // Step 1: Filter using Search query
   let filteredData = farmData.filter(c => {
     return c.name.toLowerCase().includes(query) || 
            c.phone.includes(query) || 
            c.project.toLowerCase().includes(query);
   });
 
-  // Step 2: Advanced logical conditioning for New/Old targets
   if (activeClientFilter === 'new') {
     filteredData = filteredData.filter(c => {
       const hasIncome = c.history.some(t => t.type === 'income');
-      return !hasIncome; // New client = No transaction income yet
+      return !hasIncome;
     });
   } else if (activeClientFilter === 'old') {
     filteredData = filteredData.filter(c => {
       const hasIncome = c.history.some(t => t.type === 'income');
-      return hasIncome; // Old client = Already has transaction income
+      return hasIncome;
     });
   }
 
@@ -554,7 +586,6 @@ function renderOfficeExpenses() {
   });
 }
 
-// Open Slider Account Ledgers
 window.openDrawer = function(id) {
   openLedgerId = id;
   if (ledgerDrawer) {
@@ -597,30 +628,18 @@ function refreshDrawer(id) {
   });
 }
 
-// Node Deletion Scripts (পাসকোড সিকিউরিটি যুক্ত করা হয়েছে)
+// Node Deletion Logic with Smart Password Modal Protection (No Alerts)
 window.deleteClient = function(id) {
   if(!databasePathRef) return;
-  if(confirm('Are you sure you want to permanently delete this file and all its records?')) {
-    const deleteCode = prompt("Enter Security Passcode to Confirm Deletion:");
-    if (deleteCode === SECURITY_PASSCODE) {
-      databasePathRef.child('clients').child(id).remove();
-      if(openLedgerId === id) closeDrawer();
-      alert('Project record deleted successfully.');
-    } else {
-      alert("Incorrect Passcode! Action cancelled.");
-    }
-  }
+  requestPasscode(() => {
+    databasePathRef.child('clients').child(id).remove();
+    if(openLedgerId === id) closeDrawer();
+  });
 }
 
 window.deleteOfficeExpense = function(id) {
   if(!databasePathRef) return;
-  if(confirm('Delete this general office expense node?')) {
-    const deleteCode = prompt("Enter Security Passcode to Confirm Deletion:");
-    if (deleteCode === SECURITY_PASSCODE) {
-      databasePathRef.child('office_expenses').child(id).remove();
-      alert('Expense record deleted successfully.');
-    } else {
-      alert("Incorrect Passcode! Action cancelled.");
-    }
-  }
+  requestPasscode(() => {
+    databasePathRef.child('office_expenses').child(id).remove();
+  });
 }
