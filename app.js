@@ -1,645 +1,477 @@
-// 1. Firebase Initialization Configuration
+// --- FIREBASE CONFIGURATION ---
 const firebaseConfig = {
-  apiKey: "AIzaSyD8kXy2rL9ptiPN4xEMg5h3o4RY_sPH79w",
-  authDomain: "rajuk-bed98.firebaseapp.com",
-  databaseURL: "https://rajuk-bed98-default-rtdb.firebaseio.com",
-  projectId: "rajuk-bed98",
-  storageBucket: "rajuk-bed98.firebasestorage.app",
-  messagingSenderId: "367893646589",
-  appId: "1:367893646589:web:6c91f066dfb5143e204294"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.database();
 const auth = firebase.auth();
-const rtdb = firebase.database();
 
-// Global Security Passcode
-const SECURITY_PASSCODE = "1234";
-
-// State Memory Management Variables
-let farmData = [];
-let officeExpenses = [];
-let databasePathRef = null;
-let openLedgerId = null;
-let activeClientFilter = 'none';
-
-// Deletion Callback Tracker
+// STATE MANAGEMENT
+let clientsData = {};
+let officeExpensesData = {};
+let currentFilter = 'all';
+let selectedMonth = ''; // Format: YYYY-MM
 let pendingDeleteAction = null;
+const SECURITY_PASSCODE = "1234"; // নিরাপত্তা পাসকোড
 
-// Catch UI Reference Elements
-const loginBtn = document.getElementById('google-login-btn');
-const logoutBtn = document.getElementById('logout-btn');
-const profileTrigger = document.getElementById('profile-trigger');
-const profileDropdown = document.getElementById('profile-dropdown');
-const sidebarAuthSection = document.getElementById('sidebar-auth-section');
+// INITIALIZATION
+document.addEventListener('DOMContentLoaded', () => {
+  setupEventListeners();
+  setupMonthFilter();
+  listenToDatabase();
+  setupAuth();
+});
 
-const clientForm = document.getElementById('client-form');
-const txForm = document.getElementById('tx-form');
-const officeExpenseForm = document.getElementById('office-expense-form');
-const tableBody = document.getElementById('clients-table-body');
-const officeExpenseRows = document.getElementById('office-expense-rows');
-const ledgerDrawer = document.getElementById('ledger-drawer');
-const searchInput = document.getElementById('search-input');
-const monthFilter = document.getElementById('month-filter');
+// SETUP MONTH FILTER
+function setupMonthFilter() {
+  const monthInput = document.getElementById('month-filter');
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  selectedMonth = `${yyyy}-${mm}`;
+  monthInput.value = selectedMonth;
 
-// Modal Elements
-const passcodeModal = document.getElementById('passcode-modal');
-const modalPasscodeInput = document.getElementById('modal-passcode-input');
-const modalCancelBtn = document.getElementById('modal-cancel-btn');
-const modalConfirmBtn = document.getElementById('modal-confirm-btn');
-
-// Modal Control System
-function requestPasscode(onSuccess) {
-  if (!passcodeModal) return;
-  pendingDeleteAction = onSuccess;
-  modalPasscodeInput.value = '';
-  passcodeModal.classList.remove('hidden');
-  modalPasscodeInput.focus();
+  monthInput.addEventListener('change', (e) => {
+    selectedMonth = e.target.value;
+    renderDashboard();
+  });
 }
 
-if (modalCancelBtn) {
-  modalCancelBtn.onclick = function() {
-    passcodeModal.classList.add('hidden');
-    pendingDeleteAction = null;
-  };
+// REALTIME DATABASE LISTENERS
+function listenToDatabase() {
+  const statusIndicator = document.getElementById('status-indicator');
+  const statusText = document.getElementById('status-text');
+
+  // Listen to Projects/Clients
+  db.ref('clients').on('value', (snapshot) => {
+    clientsData = snapshot.val() || {};
+    renderDashboard();
+    populateProjectDropdown();
+    if (statusIndicator) statusIndicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500";
+    if (statusText) statusText.innerText = "Firebase Realtime Cloud (100% Secured)";
+  }, (error) => {
+    if (statusIndicator) statusIndicator.className = "inline-block h-2 w-2 rounded-full bg-rose-500";
+    if (statusText) statusText.innerText = "Database Connection Error";
+  });
+
+  // Listen to Office Expenses
+  db.ref('office_expenses').on('value', (snapshot) => {
+    officeExpensesData = snapshot.val() || {};
+    renderOfficeExpenses();
+    renderDashboard(); // Re-render summary cards when expenses change
+  });
 }
 
-if (modalConfirmBtn) {
-  modalConfirmBtn.onclick = function() {
-    if (modalPasscodeInput.value === SECURITY_PASSCODE) {
-      passcodeModal.classList.add('hidden');
-      if (typeof pendingDeleteAction === 'function') {
-        pendingDeleteAction();
-      }
-      pendingDeleteAction = null;
-    } else {
-      modalPasscodeInput.classList.add('border-red-500');
-      setTimeout(() => modalPasscodeInput.classList.remove('border-red-500'), 1000);
+// MAIN DASHBOARD CALCULATIONS AND RENDER
+function renderDashboard() {
+  const tableBody = document.getElementById('clients-table-body');
+  if (!tableBody) return;
+  tableBody.innerHTML = '';
+
+  let totalVolume = 0;       // Total Budget of ALL projects
+  let grossIncome = 0;       // Income in selected month
+  let totalCost = 0;         // Project Expenses + Office Expenses in selected month
+  let totalDue = 0;          // Total Outstanding Accounts
+  
+  const searchInput = document.getElementById('search-input').value.toLowerCase();
+  
+  // Format Month Title for Labels
+  let monthLabelText = "";
+  if (selectedMonth) {
+    const [y, m] = selectedMonth.split('-');
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    monthLabelText = ` (${monthNames[parseInt(m)-1]} ${y})`;
+  }
+
+  document.getElementById('label-income').innerText = `GROSS INCOME${monthLabelText}`;
+  document.getElementById('label-expense').innerText = `TOTAL COST${monthLabelText}`;
+  document.getElementById('label-net').innerText = `NET BALANCE${monthLabelText}`;
+
+  // Process Each Client/Project
+  Object.keys(clientsData).forEach((id) => {
+    const client = clientsData[id];
+    const budget = Number(client.budget || 0);
+    
+    // Total Volume = Sum of ALL project budgets
+    totalVolume += budget;
+
+    let clientIncome = 0;
+    let clientExpense = 0;
+
+    // Process Transactions
+    if (client.transactions) {
+      Object.values(client.transactions).forEach((tx) => {
+        const txAmount = Number(tx.amount || 0);
+        const txDate = tx.date || ''; // Format: YYYY-MM-DD
+        const txMonth = txDate.substring(0, 7);
+
+        // All-time calculation for client level due
+        if (tx.type === 'income') {
+          // If month filter matches
+          if (!selectedMonth || txMonth === selectedMonth) {
+            grossIncome += txAmount;
+          }
+          clientIncome += txAmount;
+        } else if (tx.type === 'expense') {
+          if (!selectedMonth || txMonth === selectedMonth) {
+            totalCost += txAmount;
+          }
+          clientExpense += txAmount;
+        }
+      });
     }
-  };
+
+    const clientDue = budget - clientIncome;
+    totalDue += clientDue;
+
+    // Filtering logic for Directory Table
+    const matchesSearch = client.projectTitle.toLowerCase().includes(searchInput) || client.clientName.toLowerCase().includes(searchInput);
+    let matchesFilter = true;
+
+    if (currentFilter === 'new') {
+      matchesFilter = clientIncome === 0;
+    } else if (currentFilter === 'old') {
+      matchesFilter = clientIncome > 0;
+    }
+
+    if (matchesSearch && matchesFilter) {
+      const row = document.createElement('tr');
+      row.className = 'hover:bg-slate-900/40 transition border-b border-slate-800/40';
+      row.innerHTML = `
+        <td class="p-3 pl-4">
+          <div class="font-bold text-white">${escapeHtml(client.projectTitle)}</div>
+          <div class="text-[10px] text-slate-500">${escapeHtml(client.clientName)}</div>
+        </td>
+        <td class="p-3 text-slate-400">${escapeHtml(client.clientPhone)}</td>
+        <td class="p-3 text-right font-semibold text-slate-200">৳${budget.toLocaleString()}</td>
+        <td class="p-3 text-right font-semibold text-emerald-400">৳${clientIncome.toLocaleString()}</td>
+        <td class="p-3 text-right font-semibold text-rose-400">৳${clientExpense.toLocaleString()}</td>
+        <td class="p-3 text-right font-semibold text-amber-500">৳${clientDue.toLocaleString()}</td>
+        <td class="p-3 text-center pr-4">
+          <div class="flex items-center justify-center gap-2">
+            <button onclick="openDrawer('${id}')" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white px-2.5 py-1 rounded-lg transition font-bold text-[11px]">Ledger</button>
+            <button onclick="requestDeleteClient('${id}')" class="text-slate-600 hover:text-rose-500 font-bold px-1 text-sm">✕</button>
+          </div>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    }
+  });
+
+  // Calculate General Office Expenses for Selected Month
+  Object.values(officeExpensesData).forEach((oe) => {
+    const oeAmount = Number(oe.amount || 0);
+    const oeMonth = (oe.date || '').substring(0, 7);
+    if (!selectedMonth || oeMonth === selectedMonth) {
+      totalCost += oeAmount;
+    }
+  });
+
+  const netBalance = grossIncome - totalCost;
+
+  // --- UPDATE CARDS IN DOM ---
+  document.getElementById('global-volume').innerText = `৳${totalVolume.toLocaleString()}`;
+  document.getElementById('global-income').innerText = `৳${grossIncome.toLocaleString()}`;
+  document.getElementById('global-expense').innerText = `৳${totalCost.toLocaleString()}`;
+  document.getElementById('global-due').innerText = `৳${totalDue.toLocaleString()}`;
+  
+  const netEl = document.getElementById('global-net');
+  netEl.innerText = `৳${netBalance.toLocaleString()}`;
+  if (netBalance < 0) {
+    netEl.className = "text-lg font-black text-rose-500 mt-2";
+  } else {
+    netEl.className = "text-lg font-black text-purple-400 mt-2";
+  }
 }
 
-// Allow Enter Key Press in Passcode Modal
-if (modalPasscodeInput) {
-  modalPasscodeInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      modalConfirmBtn.click();
+// RENDER OFFICE EXPENSES TABLE
+function renderOfficeExpenses() {
+  const tbody = document.getElementById('office-expense-rows');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  Object.keys(officeExpensesData).forEach((id) => {
+    const item = officeExpensesData[id];
+    const oeMonth = (item.date || '').substring(0, 7);
+
+    if (!selectedMonth || oeMonth === selectedMonth) {
+      const row = document.createElement('tr');
+      row.className = 'hover:bg-slate-900/40 transition border-b border-slate-800/40';
+      row.innerHTML = `
+        <td class="p-3">
+          <div class="font-bold text-white">${escapeHtml(item.details)}</div>
+          <span class="inline-block bg-slate-800 text-slate-400 text-[9px] px-2 py-0.5 rounded-md mt-1 font-semibold">${escapeHtml(item.category)}</span>
+        </td>
+        <td class="p-3 text-slate-400 text-[11px]">${item.date}</td>
+        <td class="p-3 text-right font-bold text-rose-400">৳${Number(item.amount).toLocaleString()}</td>
+        <td class="p-3 text-center">
+          <button onclick="requestDeleteOfficeExpense('${id}')" class="text-slate-600 hover:text-rose-500 font-bold px-2 py-1">✕</button>
+        </td>
+      `;
+      tbody.appendChild(row);
     }
   });
 }
 
-// Initialize Inputs
-if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
-if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
+// DRAWER & LEDGER MANAGEMENT
+function openDrawer(clientId) {
+  const client = clientsData[clientId];
+  if (!client) return;
 
-if (monthFilter) {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  monthFilter.value = `${year}-${month}`;
-  monthFilter.addEventListener('change', uiUpdatePipeline);
+  const drawer = document.getElementById('ledger-drawer');
+  document.getElementById('drawer-title').innerText = `${client.projectTitle} - Ledger`;
+  document.getElementById('drawer-sub').innerText = `Client: ${client.clientName} | Phone: ${client.clientPhone} | Agreed Budget: ৳${Number(client.budget).toLocaleString()}`;
+
+  const tbody = document.getElementById('drawer-table-body');
+  tbody.innerHTML = '';
+
+  if (client.transactions) {
+    Object.keys(client.transactions).forEach((txId) => {
+      const tx = client.transactions[txId];
+      const isIncome = tx.type === 'income';
+      
+      const row = document.createElement('tr');
+      row.className = 'hover:bg-slate-900/40 border-b border-slate-800/40';
+      row.innerHTML = `
+        <td class="p-3 text-slate-400 text-[11px]">${tx.date}</td>
+        <td class="p-3 font-semibold text-slate-200">${escapeHtml(tx.details)}</td>
+        <td class="p-3">
+          <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${isIncome ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+            ${isIncome ? 'INCOME' : 'EXPENSE'}
+          </span>
+        </td>
+        <td class="p-3 text-right font-bold ${isIncome ? 'text-emerald-400' : 'text-rose-400'}">৳${Number(tx.amount).toLocaleString()}</td>
+        <td class="p-3 text-center">
+          <button onclick="requestDeleteTransaction('${clientId}', '${txId}')" class="text-slate-600 hover:text-rose-500 font-bold px-2">✕</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  } else {
+    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">No ledger entries found for this project.</td></tr>`;
+  }
+
+  drawer.classList.remove('hidden');
+  drawer.scrollIntoView({ behavior: 'smooth' });
 }
 
-if (searchInput) {
-  searchInput.addEventListener('input', () => {
-    switchTab('dashboard-view');
-    if(activeClientFilter === 'none') {
-      setClientFilter('all');
-    } else {
-      renderMasterTable();
+function closeDrawer() {
+  document.getElementById('ledger-drawer').classList.add('hidden');
+}
+
+// EVENT LISTENERS & FORMS
+function setupEventListeners() {
+  // Search Bar
+  document.getElementById('search-input').addEventListener('input', renderDashboard);
+
+  // New Client Form
+  document.getElementById('client-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const projectTitle = document.getElementById('project-title').value;
+    const clientName = document.getElementById('client-name').value;
+    const clientPhone = document.getElementById('client-phone').value;
+    const budget = document.getElementById('project-budget').value;
+
+    db.ref('clients').push({
+      projectTitle,
+      clientName,
+      clientPhone,
+      budget: Number(budget),
+      createdAt: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => {
+      e.target.reset();
+      switchTab('dashboard-view');
+    });
+  });
+
+  // New Transaction Form
+  document.getElementById('tx-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const clientId = document.getElementById('tx-client-select').value;
+    const type = document.getElementById('tx-type').value;
+    const date = document.getElementById('tx-date').value;
+    const amount = document.getElementById('tx-amount').value;
+    const details = document.getElementById('tx-details').value;
+
+    if (!clientId) {
+      alert("Please select a project profile!");
+      return;
+    }
+
+    db.ref(`clients/${clientId}/transactions`).push({
+      type,
+      date,
+      amount: Number(amount),
+      details
+    }).then(() => {
+      e.target.reset();
+      document.getElementById('dropdown-selected-text').innerText = "Select Project Profile...";
+      document.getElementById('tx-client-select').value = "";
+      switchTab('dashboard-view');
+    });
+  });
+
+  // Office Expense Form
+  document.getElementById('office-expense-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const category = document.getElementById('oe-category').value;
+    const date = document.getElementById('oe-date').value;
+    const amount = document.getElementById('oe-amount').value;
+    const details = document.getElementById('oe-details').value;
+
+    db.ref('office_expenses').push({
+      category,
+      date,
+      amount: Number(amount),
+      details
+    }).then(() => {
+      e.target.reset();
+    });
+  });
+
+  // Passcode Modal Controls
+  document.getElementById('modal-cancel-btn').addEventListener('click', closeModal);
+  document.getElementById('modal-confirm-btn').addEventListener('click', confirmDeleteAction);
+
+  // Custom Dropdown Controls
+  const trigger = document.getElementById('dropdown-trigger');
+  const list = document.getElementById('custom-dropdown-list');
+  
+  trigger.addEventListener('click', () => list.classList.toggle('hidden'));
+  document.getElementById('dropdown-search-input').addEventListener('input', (e) => {
+    populateProjectDropdown(e.target.value.toLowerCase());
+  });
+}
+
+// CUSTOM SEARCHABLE DROPDOWN
+function populateProjectDropdown(search = '') {
+  const container = document.getElementById('dropdown-items-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  Object.keys(clientsData).forEach((id) => {
+    const client = clientsData[id];
+    if (client.projectTitle.toLowerCase().includes(search) || client.clientName.toLowerCase().includes(search)) {
+      const div = document.createElement('div');
+      div.className = 'p-2.5 hover:bg-indigo-600/20 rounded-xl cursor-pointer transition text-xs flex justify-between items-center';
+      div.innerHTML = `
+        <div>
+          <div class="font-bold text-white">${escapeHtml(client.projectTitle)}</div>
+          <div class="text-[10px] text-slate-400">${escapeHtml(client.clientName)}</div>
+        </div>
+      `;
+      div.onclick = () => {
+        document.getElementById('tx-client-select').value = id;
+        document.getElementById('dropdown-selected-text').innerText = `${client.projectTitle} (${client.clientName})`;
+        document.getElementById('dropdown-selected-text').className = "text-white font-bold";
+        document.getElementById('custom-dropdown-list').classList.add('hidden');
+      };
+      container.appendChild(div);
     }
   });
 }
 
-// PREMIUM TAB SYSTEM CONTROLLER
-window.switchTab = function(tabId) {
+// SECURITY DELETION HANDLERS
+function requestDeleteClient(clientId) {
+  pendingDeleteAction = () => db.ref(`clients/${clientId}`).remove();
+  openModal();
+}
+
+function requestDeleteTransaction(clientId, txId) {
+  pendingDeleteAction = () => db.ref(`clients/${clientId}/transactions/${txId}`).remove();
+  openModal();
+}
+
+function requestDeleteOfficeExpense(expenseId) {
+  pendingDeleteAction = () => db.ref(`office_expenses/${expenseId}`).remove();
+  openModal();
+}
+
+function openModal() {
+  document.getElementById('modal-passcode-input').value = '';
+  document.getElementById('passcode-modal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('passcode-modal').classList.add('hidden');
+  pendingDeleteAction = null;
+}
+
+function confirmDeleteAction() {
+  const passcode = document.getElementById('modal-passcode-input').value;
+  if (passcode === SECURITY_PASSCODE) {
+    if (pendingDeleteAction) pendingDeleteAction();
+    closeModal();
+    closeDrawer();
+  } else {
+    alert("Incorrect Passcode!");
+  }
+}
+
+// TAB SWITCHING
+function switchTab(tabId) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
   document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.className = "tab-btn flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent w-full";
+    btn.className = 'tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent';
   });
 
   const activeBtn = document.getElementById(`btn-${tabId}`);
-  if(activeBtn) {
-    activeBtn.className = "tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20";
+  if (activeBtn) {
+    activeBtn.className = 'tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20';
   }
 }
 
-// Control Table Visibility
-window.setClientFilter = function(filterType) {
-  activeClientFilter = filterType;
-  
-  const container = document.getElementById('master-table-container');
-  const btnAll = document.getElementById('filter-btn-all');
-  const btnNew = document.getElementById('filter-btn-new');
-  const btnOld = document.getElementById('filter-btn-old');
-  
-  [btnAll, btnNew, btnOld].forEach(btn => {
-    if(btn) btn.className = "px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white";
-  });
-  
-  const activeBtn = document.getElementById(`filter-btn-${filterType}`);
-  if(activeBtn) activeBtn.className = "px-3 py-1.5 text-[11px] font-bold rounded-md transition-all bg-indigo-600 text-white shadow-sm";
-  
-  if(container) {
-    if(filterType === 'none') {
-      container.classList.add('hidden');
-    } else {
-      container.classList.remove('hidden');
-    }
-  }
-  
-  renderMasterTable();
+function setClientFilter(filter) {
+  currentFilter = filter;
+  renderDashboard();
 }
 
-uiUpdatePipeline();
-setClientFilter('none');
+// GOOGLE AUTH
+function setupAuth() {
+  const loginBtn = document.getElementById('google-login-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const profileTrigger = document.getElementById('profile-trigger');
+  const profileDropdown = document.getElementById('profile-dropdown');
 
-if (profileTrigger) {
-  profileTrigger.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (profileDropdown) profileDropdown.classList.toggle('hidden');
-  });
-}
-
-document.addEventListener('click', () => {
-  if (profileDropdown) profileDropdown.classList.add('hidden');
-});
-
-if (loginBtn) {
   loginBtn.addEventListener('click', () => {
     const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(err => alert("Login failed: " + err.message));
-  });
-}
-
-if (logoutBtn) {
-  logoutBtn.addEventListener('click', () => {
-    auth.signOut().then(() => window.location.reload());
-  });
-}
-
-auth.onAuthStateChanged(user => {
-  if (user) {
-    if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
-    if (profileTrigger) profileTrigger.classList.remove('hidden');
-    
-    const indicator = document.getElementById('status-indicator');
-    const text = document.getElementById('status-text');
-    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse";
-    if (text) text.innerText = "Firebase Realtime Cloud (100% Secured)";
-    
-    if (document.getElementById('user-display-name')) document.getElementById('user-display-name').innerText = user.displayName;
-    if (document.getElementById('user-display-email')) document.getElementById('user-display-email').innerText = user.email;
-    if (document.getElementById('user-avatar')) document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
-
-    databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
-    subscribeToCloudStreams();
-  } else {
-    if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
-    if (profileTrigger) profileTrigger.classList.add('hidden');
-    
-    const indicator = document.getElementById('status-indicator');
-    const text = document.getElementById('status-text');
-    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
-    if (text) text.innerText = "Offline / Guest Mode";
-    
-    farmData = [];
-    officeExpenses = [];
-    databasePathRef = null;
-    uiUpdatePipeline();
-  }
-});
-
-function subscribeToCloudStreams() {
-  if(!databasePathRef) return;
-  databasePathRef.child('clients').on('value', snapshot => {
-    farmData = [];
-    snapshot.forEach(childSnapshot => {
-      const val = childSnapshot.val();
-      if(!val.history) val.history = [];
-      else if(!Array.isArray(val.history)) {
-        val.history = Object.keys(val.history).map(k => val.history[k]);
-      }
-      farmData.push({ id: childSnapshot.key, ...val });
-    });
-    uiUpdatePipeline();
+    auth.signInWithPopup(provider);
   });
 
-  databasePathRef.child('office_expenses').on('value', snapshot => {
-    officeExpenses = [];
-    snapshot.forEach(childSnapshot => {
-      officeExpenses.push({ id: childSnapshot.key, ...childSnapshot.val() });
-    });
-    officeExpenses.sort((a,b) => new Date(b.date) - new Date(a.date));
-    uiUpdatePipeline();
-  });
-}
+  logoutBtn.addEventListener('click', () => auth.signOut());
 
-function uiUpdatePipeline() {
-  calculateGlobalMetrics();
-  renderDropdown();
-  renderMasterTable();
-  renderOfficeExpenses();
-  if(openLedgerId) refreshDrawer(openLedgerId);
-}
-
-function calculateGlobalMetrics() {
-  let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
-  
-  let targetYear, targetMonth;
-  if (monthFilter && monthFilter.value) {
-    const parts = monthFilter.value.split('-'); 
-    targetYear = parseInt(parts[0]);
-    targetMonth = parseInt(parts[1]) - 1; 
-  } else {
-    const now = new Date();
-    targetYear = now.getFullYear();
-    targetMonth = now.getMonth();
-  }
-  
-  const startOfMonth = new Date(targetYear, targetMonth, 1);
-  const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
-  const monthLabel = startOfMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-  farmData.forEach(c => {
-    budget += c.budget; 
-    let cIncome = 0;
-    
-    c.history.forEach(t => {
-      const tDate = new Date(t.date);
-      const isSelectedMonth = (tDate >= startOfMonth && tDate <= endOfMonth);
-
-      if (t.type === 'income') {
-        cIncome += t.amount; 
-        if (isSelectedMonth) income += t.amount; 
-      }
-      if (t.type === 'expense' && isSelectedMonth) {
-        prjExpense += t.amount; 
-      }
-    });
-    due += (c.budget - cIncome); 
+  profileTrigger.addEventListener('click', () => {
+    profileDropdown.classList.toggle('hidden');
   });
 
-  officeExpenses.forEach(oe => {
-    const oeDate = new Date(oe.date);
-    if (oeDate >= startOfMonth && oeDate <= endOfMonth) {
-      totalOfficeExpense += oe.amount;
-    }
-  });
-
-  let grandTotalExpense = prjExpense + totalOfficeExpense;
-  let netIncome = income - grandTotalExpense;
-
-  if (document.getElementById('global-budget')) document.getElementById('global-budget').innerText = '৳' + budget.toLocaleString('en-IN');
-  
-  const incomeCard = document.getElementById('global-income');
-  if (incomeCard) {
-    incomeCard.innerText = '৳' + income.toLocaleString('en-IN');
-    incomeCard.previousElementSibling.innerText = `Gross Income (${monthLabel})`;
-  }
-  
-  const expenseCard = document.getElementById('global-expense');
-  if (expenseCard) {
-    expenseCard.innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
-    expenseCard.previousElementSibling.innerText = `Total Cost (${monthLabel})`;
-  }
-  
-  if (document.getElementById('global-due')) document.getElementById('global-due').innerText = '৳' + due.toLocaleString('en-IN');
-  
-  const netCard = document.getElementById('global-net');
-  if (netCard) {
-    netCard.innerText = '৳' + netIncome.toLocaleString('en-IN');
-    netCard.previousElementSibling.innerText = `Net Balance (${monthLabel})`;
-  }
-}
-
-if (clientForm) {
-  clientForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if(!databasePathRef) return alert('Please login first to sync project files!');
-    const newClient = {
-      name: document.getElementById('client-name').value,
-      phone: document.getElementById('client-phone').value,
-      project: document.getElementById('project-title').value,
-      budget: parseFloat(document.getElementById('project-budget').value),
-      history: []
-    };
-    databasePathRef.child('clients').push(newClient);
-    clientForm.reset();
-    setClientFilter('all');
-    switchTab('dashboard-view');
-  });
-}
-
-if (txForm) {
-  txForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if(!databasePathRef) return alert('Please login first to post entries!');
-    const id = document.getElementById('tx-client-select').value;
-    if(!id) return alert('No project file selected!');
-    
-    const client = farmData.find(c => c.id === id);
-    if(client) {
-      const updatedHistory = client.history || [];
-      updatedHistory.push({
-        id: 't_' + Date.now(),
-        type: document.getElementById('tx-type').value,
-        amount: parseFloat(document.getElementById('tx-amount').value),
-        details: document.getElementById('tx-details').value,
-        date: document.getElementById('tx-date').value
-      });
-      updatedHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
-      
-      databasePathRef.child('clients').child(id).update({ history: updatedHistory });
-      
-      document.getElementById('tx-amount').value = '';
-      document.getElementById('tx-details').value = '';
-      document.getElementById('tx-client-select').value = '';
-      
-      const selectedText = document.getElementById('dropdown-selected-text');
-      if (selectedText) {
-        selectedText.innerText = 'Select Project Profile...';
-        selectedText.className = 'text-slate-500';
-      }
-
-      setClientFilter('all');
-      uiUpdatePipeline();
-      switchTab('dashboard-view');
-    }
-  });
-}
-
-if (officeExpenseForm) {
-  officeExpenseForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if(!databasePathRef) return alert('Please login first to record expenses!');
-    const newExpense = {
-      category: document.getElementById('oe-category').value,
-      amount: parseFloat(document.getElementById('oe-amount').value),
-      details: document.getElementById('oe-details').value,
-      date: document.getElementById('oe-date').value
-    };
-    databasePathRef.child('office_expenses').push(newExpense);
-    document.getElementById('oe-amount').value = '';
-    document.getElementById('oe-details').value = '';
-    uiUpdatePipeline();
-  });
-}
-
-function renderDropdown() {
-  const trigger = document.getElementById('dropdown-trigger');
-  const dropdownList = document.getElementById('custom-dropdown-list');
-  const dropdownSearchInput = document.getElementById('dropdown-search-input');
-  const itemsContainer = document.getElementById('dropdown-items-container');
-  const hiddenInput = document.getElementById('tx-client-select');
-  const selectedText = document.getElementById('dropdown-selected-text');
-
-  if (!trigger || !dropdownList || !itemsContainer) return;
-
-  trigger.onclick = function(e) {
-    e.stopPropagation();
-    dropdownList.classList.toggle('hidden');
-    if (!dropdownList.classList.contains('hidden') && dropdownSearchInput) {
-      dropdownSearchInput.value = '';
-      filterDropdownItems('');
-      dropdownSearchInput.focus();
-    }
-  };
-
-  document.onclick = function() {
-    dropdownList.classList.add('hidden');
-  };
-
-  dropdownList.onclick = function(e) {
-    e.stopPropagation();
-  };
-
-  function filterDropdownItems(query) {
-    itemsContainer.innerHTML = '';
-    
-    const filtered = farmData.filter(c => 
-      c.project.toLowerCase().includes(query.toLowerCase()) || 
-      c.name.toLowerCase().includes(query.toLowerCase())
-    );
-
-    if (filtered.length === 0) {
-      itemsContainer.innerHTML = `<div class="p-2.5 text-xs text-slate-500 text-center">No projects found</div>`;
-      return;
-    }
-
-    filtered.forEach(c => {
-      const item = document.createElement('div');
-      item.className = "p-2.5 text-xs text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg cursor-pointer transition-all font-medium flex justify-between items-center";
-      item.innerHTML = `<span>${c.project} <span class="text-[10px] text-slate-500">(${c.name})</span></span>`;
-      
-      item.onclick = function() {
-        hiddenInput.value = c.id;
-        selectedText.innerText = `${c.project} (${c.name})`;
-        selectedText.className = "text-white font-semibold";
-        dropdownList.classList.add('hidden');
-      };
-      
-      itemsContainer.appendChild(item);
-    });
-  }
-
-  if (dropdownSearchInput) {
-    dropdownSearchInput.oninput = function() {
-      filterDropdownItems(this.value);
-    };
-  }
-
-  if (farmData.length === 0) {
-    selectedText.innerText = "No Active Projects Available";
-    selectedText.className = "text-slate-500";
-    hiddenInput.value = "";
-  } else {
-    if(!hiddenInput.value) {
-      selectedText.innerText = "Select Project Profile...";
-      selectedText.className = "text-slate-500";
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      document.getElementById('sidebar-auth-section').classList.add('hidden');
+      profileTrigger.classList.remove('hidden');
+      document.getElementById('user-avatar').src = user.photoURL || '';
+      document.getElementById('user-display-name').innerText = user.displayName || 'User';
+      document.getElementById('user-display-email').innerText = user.email || '';
     } else {
-      const current = farmData.find(c => c.id === hiddenInput.value);
-      if(current) {
-        selectedText.innerText = `${current.project} (${current.name})`;
-        selectedText.className = "text-white font-semibold";
-      } else {
-        selectedText.innerText = "Select Project Profile...";
-        selectedText.className = "text-slate-500";
-        hiddenInput.value = "";
-      }
+      document.getElementById('sidebar-auth-section').classList.remove('hidden');
+      profileTrigger.classList.add('hidden');
     }
-  }
-}
-
-function renderMasterTable() {
-  if (!tableBody) return;
-  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-  const container = document.getElementById('master-table-container');
-  
-  if (!auth.currentUser) {
-    if(container) container.classList.remove('hidden');
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Dashboard is blank. Please sign in with Google from the top menu to view database files.</td></tr>`;
-    return;
-  }
-
-  if (activeClientFilter === 'none') {
-    if(container) container.classList.add('hidden');
-    return;
-  }
-
-  if (farmData.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No records found. Please add a client first.</td></tr>`;
-    return;
-  }
-
-  let filteredData = farmData.filter(c => {
-    return c.name.toLowerCase().includes(query) || 
-           c.phone.includes(query) || 
-           c.project.toLowerCase().includes(query);
-  });
-
-  if (activeClientFilter === 'new') {
-    filteredData = filteredData.filter(c => {
-      const hasIncome = c.history.some(t => t.type === 'income');
-      return !hasIncome;
-    });
-  } else if (activeClientFilter === 'old') {
-    filteredData = filteredData.filter(c => {
-      const hasIncome = c.history.some(t => t.type === 'income');
-      return hasIncome;
-    });
-  }
-
-  tableBody.innerHTML = filteredData.length === 0 ? 
-    `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No matching profiles found in this category.</td></tr>` : '';
-
-  filteredData.forEach(c => {
-    let localIncome = 0, localExpense = 0;
-    c.history.forEach(t => {
-      if(t.type === 'income') localIncome += t.amount;
-      if(t.type === 'expense') localExpense += t.amount;
-    });
-    let cDue = c.budget - localIncome;
-
-    const tr = document.createElement('tr');
-    tr.className = "hover:bg-slate-800/40 transition font-medium border-b border-slate-800 last:border-none text-slate-300";
-    tr.innerHTML = `
-      <td class="p-4 pl-6">
-        <div class="font-bold text-slate-100 text-sm">${c.project}</div>
-        <div class="text-[11px] text-slate-500 mt-0.5">${c.name}</div>
-      </td>
-      <td class="p-4 font-mono text-xs text-slate-400">${c.phone}</td>
-      <td class="p-4 text-right font-bold text-slate-100">৳${c.budget.toLocaleString('en-IN')}</td>
-      <td class="p-4 text-right font-bold text-emerald-400">৳${localIncome.toLocaleString('en-IN')}</td>
-      <td class="p-4 text-right font-bold text-red-400">৳${localExpense.toLocaleString('en-IN')}</td>
-      <td class="p-4 text-right font-black ${cDue > 0 ? 'text-amber-500' : 'text-slate-500'}">৳${cDue.toLocaleString('en-IN')}</td>
-      <td class="p-4 pr-6 text-center">
-        <div class="flex justify-center items-center gap-2">
-          <button onclick="openDrawer('${c.id}')" class="bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-200 px-3 py-1.5 rounded-xl text-[11px] font-bold transition">Ledger</button>
-          <button onclick="deleteClient('${c.id}')" class="text-slate-600 hover:text-red-500 font-bold p-1 transition">✕</button>
-        </div>
-      </td>
-    `;
-    tableBody.appendChild(tr);
   });
 }
 
-function renderOfficeExpenses() {
-  if (!officeExpenseRows) return;
-  
-  let targetYear, targetMonth;
-  if (monthFilter && monthFilter.value) {
-    const parts = monthFilter.value.split('-');
-    targetYear = parseInt(parts[0]);
-    targetMonth = parseInt(parts[1]) - 1;
-  } else {
-    const now = new Date();
-    targetYear = now.getFullYear();
-    targetMonth = now.getMonth();
-  }
-  const startOfMonth = new Date(targetYear, targetMonth, 1);
-  const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
-
-  const localFilteredExpenses = officeExpenses.filter(oe => {
-    const d = new Date(oe.date);
-    return d >= startOfMonth && d <= endOfMonth;
-  });
-
-  if (localFilteredExpenses.length === 0) {
-    officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-500">${auth.currentUser ? 'No expenses logged for this month.' : 'Please login to track expenses.'}</td></tr>`;
-    return;
-  }
-
-  officeExpenseRows.innerHTML = '';
-  localFilteredExpenses.forEach(oe => {
-    const tr = document.createElement('tr');
-    tr.className = "border-b border-slate-800 last:border-none";
-    tr.innerHTML = `
-      <td class="p-3 pl-3 font-semibold text-slate-200">${oe.details} <span class="text-[9px] bg-red-950 text-red-400 px-1.5 py-0.5 rounded border border-red-900/50 font-bold">${oe.category}</span></td>
-      <td class="p-3 text-slate-500 font-mono text-[10px]">${oe.date}</td>
-      <td class="p-3 text-right font-bold text-red-400">৳${oe.amount.toLocaleString('en-IN')}</td>
-      <td class="p-3 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-600 hover:text-red-500 font-bold transition">✕</button></td>
-    `;
-    officeExpenseRows.appendChild(tr);
-  });
-}
-
-window.openDrawer = function(id) {
-  openLedgerId = id;
-  if (ledgerDrawer) {
-    ledgerDrawer.classList.remove('hidden');
-    refreshDrawer(id);
-    ledgerDrawer.scrollIntoView({ behavior: 'smooth' });
-  }
-}
-
-window.closeDrawer = function() {
-  openLedgerId = null;
-  if (ledgerDrawer) ledgerDrawer.classList.add('hidden');
-}
-
-function refreshDrawer(id) {
-  const client = farmData.find(c => c.id === id);
-  if(!client) return closeDrawer();
-
-  if (document.getElementById('drawer-title')) document.getElementById('drawer-title').innerText = `🏢 File: ${client.project} (${client.name})`;
-  if (document.getElementById('drawer-sub')) document.getElementById('drawer-sub').innerText = `Contact: ${client.phone} | Budget: ৳${client.budget.toLocaleString('en-IN')}`;
-
-  const dBody = document.getElementById('drawer-table-body');
-  if (!dBody) return;
-  dBody.innerHTML = (!client.history || client.history.length === 0) ? 
-    `<tr><td colspan="4" class="p-4 text-center text-slate-400 font-medium">No ledger accounts registered for this project.</td></tr>` : '';
-
-  client.history.forEach(t => {
-    const tr = document.createElement('tr');
-    tr.className = "border-b border-slate-800 last:border-none font-medium text-slate-300";
-    let typeText = t.type === 'income' ? '<span class="text-emerald-400 font-bold">📥 Debit</span>' : '<span class="text-red-400 font-bold">📤 Credit</span>';
-    let valColor = t.type === 'income' ? 'text-emerald-400' : 'text-red-400';
-
-    tr.innerHTML = `
-      <td class="p-3 text-slate-500 font-mono">${t.date}</td>
-      <td class="p-3 font-semibold text-slate-200">${t.details}</td>
-      <td class="p-3">${typeText}</td>
-      <td class="p-3 text-right font-black ${valColor}">৳${t.amount.toLocaleString('en-IN')}</td>
-    `;
-    dBody.appendChild(tr);
-  });
-}
-
-// Node Deletion Logic with Smart Password Modal Protection (No Alerts)
-window.deleteClient = function(id) {
-  if(!databasePathRef) return;
-  requestPasscode(() => {
-    databasePathRef.child('clients').child(id).remove();
-    if(openLedgerId === id) closeDrawer();
-  });
-}
-
-window.deleteOfficeExpense = function(id) {
-  if(!databasePathRef) return;
-  requestPasscode(() => {
-    databasePathRef.child('office_expenses').child(id).remove();
-  });
+// HELPER UTILS
+function escapeHtml(str) {
+  return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
