@@ -13,17 +13,17 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const rtdb = firebase.database();
 
-// Global Passcode
+// Passcode
 const SECURITY_PASSCODE = "1234";
 
-// State Variables
+// State
 let farmData = [];
 let officeExpenses = [];
 let databasePathRef = null;
 let openLedgerId = null;
-let activeClientFilter = 'none';
+let activeClientFilter = 'all'; // Default 'all' so dashboard loads data automatically
 
-// DOM Elements
+// DOM
 const loginBtn = document.getElementById('google-login-btn');
 const logoutBtn = document.getElementById('logout-btn');
 const profileTrigger = document.getElementById('profile-trigger');
@@ -43,7 +43,7 @@ const monthFilter = document.getElementById('month-filter');
 if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
 if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
 
-// Default Month
+// Set Month Filter Default to Current Month
 if (monthFilter) {
   const now = new Date();
   const year = now.getFullYear();
@@ -52,15 +52,11 @@ if (monthFilter) {
   monthFilter.addEventListener('change', uiUpdatePipeline);
 }
 
-// Search Handler
+// Search Listener
 if (searchInput) {
   searchInput.addEventListener('input', () => {
     switchTab('dashboard-view');
-    if(activeClientFilter === 'none') {
-      setClientFilter('all');
-    } else {
-      renderMasterTable();
-    }
+    renderMasterTable();
   });
 }
 
@@ -79,35 +75,23 @@ window.switchTab = function(tabId) {
   }
 }
 
-// Client Filters Control
+// Filter Control
 window.setClientFilter = function(filterType) {
   activeClientFilter = filterType;
   
-  const container = document.getElementById('master-table-container');
   const btnAll = document.getElementById('filter-btn-all');
   const btnNew = document.getElementById('filter-btn-new');
   const btnOld = document.getElementById('filter-btn-old');
   
   [btnAll, btnNew, btnOld].forEach(btn => {
-    if(btn) btn.className = "flex-1 sm:flex-none px-2.5 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white";
+    if(btn) btn.className = "flex-1 sm:flex-none px-3 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white";
   });
   
   const activeBtn = document.getElementById(`filter-btn-${filterType}`);
-  if(activeBtn) activeBtn.className = "flex-1 sm:flex-none px-2.5 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all bg-indigo-600 text-white shadow-sm";
-  
-  if(container) {
-    if(filterType === 'none') {
-      container.classList.add('hidden');
-    } else {
-      container.classList.remove('hidden');
-    }
-  }
+  if(activeBtn) activeBtn.className = "flex-1 sm:flex-none px-3 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all bg-indigo-600 text-white shadow-sm";
   
   renderMasterTable();
 }
-
-uiUpdatePipeline();
-setClientFilter('none');
 
 if (profileTrigger) {
   profileTrigger.addEventListener('click', (e) => {
@@ -133,7 +117,7 @@ if (logoutBtn) {
   });
 }
 
-// Auth Observer
+// Authentic Auth State Observer Fix
 auth.onAuthStateChanged(user => {
   if (user) {
     if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
@@ -166,9 +150,10 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// Database Stream Listeners
+// Database Stream Subscriptions
 function subscribeToCloudStreams() {
   if(!databasePathRef) return;
+  
   databasePathRef.child('clients').on('value', snapshot => {
     farmData = [];
     snapshot.forEach(childSnapshot => {
@@ -200,7 +185,7 @@ function uiUpdatePipeline() {
   if(openLedgerId) refreshDrawer(openLedgerId);
 }
 
-// Metrics Counter Calculation
+// Calculate Dashboard Metrics
 function calculateGlobalMetrics() {
   let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
   
@@ -254,7 +239,7 @@ function calculateGlobalMetrics() {
   if (document.getElementById('global-net')) document.getElementById('global-net').innerText = '৳' + netIncome.toLocaleString('en-IN');
 }
 
-// Passcode Modal Logic
+// Security Passcode Modal
 let pendingDeleteAction = null;
 function requestPasscodeAuth(onSuccess) {
   const modal = document.getElementById('securityModal');
@@ -292,7 +277,7 @@ function requestPasscodeAuth(onSuccess) {
   };
 }
 
-// Forms Submission
+// Form Handlers
 if (clientForm) {
   clientForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -366,7 +351,7 @@ if (officeExpenseForm) {
   });
 }
 
-// Dropdown Logic
+// Dropdown Setup
 function renderDropdown() {
   const trigger = document.getElementById('dropdown-trigger');
   const dropdownList = document.getElementById('custom-dropdown-list');
@@ -439,23 +424,20 @@ function renderDropdown() {
   }
 }
 
-// Responsive Table & Mobile Cards Renderer
+// Master Table & Responsive Mobile Cards Renderer
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
   const container = document.getElementById('master-table-container');
   const cardContainer = document.getElementById('master-card-container');
-  
-  if (!auth.currentUser) {
+
+  // Multi-check auth user state
+  const currentUser = firebase.auth().currentUser;
+
+  if (!currentUser) {
     if(container) container.classList.remove('hidden');
     tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Dashboard is blank. Please sign in with Google.</td></tr>`;
     if(cardContainer) cardContainer.innerHTML = `<div class="p-4 text-center text-amber-500 bg-slate-900/40 rounded-xl text-xs">⚠️ Please sign in with Google.</div>`;
-    return;
-  }
-
-  if (activeClientFilter === 'none') {
-    if(container) container.classList.add('hidden');
-    if(cardContainer) cardContainer.innerHTML = '';
     return;
   }
 
@@ -494,7 +476,7 @@ function renderMasterTable() {
     });
     let cDue = c.budget - localIncome;
 
-    // 1. DESKTOP ROW
+    // Desktop Row
     const tr = document.createElement('tr');
     tr.className = "hover:bg-slate-800/40 transition font-medium border-b border-slate-800 last:border-none text-slate-300";
     tr.innerHTML = `
@@ -516,7 +498,7 @@ function renderMasterTable() {
     `;
     tableBody.appendChild(tr);
 
-    // 2. MOBILE CARD (Responsive Layout)
+    // Mobile Card View
     if(cardContainer) {
       const card = document.createElement('div');
       card.className = "bg-[#181a22] border border-[#262936] rounded-xl p-3.5 shadow-sm space-y-2.5";
@@ -643,7 +625,7 @@ function refreshDrawer(id) {
   });
 }
 
-// Silent Deletes
+// Passcode Protected Deletions
 window.deleteClient = function(id) {
   if(!databasePathRef) return;
   requestPasscodeAuth(() => {
