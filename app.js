@@ -64,7 +64,7 @@ if (searchInput) {
   });
 }
 
-// PREMIUM TAB SYSTEM CONTROLLER
+// PREMIUM TAB SYSTEM CONTROLLER (Always accessible)
 window.switchTab = function(tabId) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
   const targetTab = document.getElementById(`tab-${tabId}`);
@@ -131,10 +131,8 @@ if (loginBtn) {
 
     try {
       if (isMobile) {
-        // মোবাইলের পপ-আপ ব্লকিং এড়াতে Redirect মেথড
         await auth.signInWithRedirect(provider);
       } else {
-        // পিসির জন্য Popup মেথড
         await auth.signInWithPopup(provider);
       }
     } catch (err) {
@@ -143,9 +141,10 @@ if (loginBtn) {
   });
 }
 
+// FIXED LOGOUT: Reload বন্ধ করা হয়েছে যাতে অ্যাপ খোলা থাকে
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
-    auth.signOut().then(() => window.location.reload());
+    auth.signOut();
   });
 }
 
@@ -172,13 +171,14 @@ auth.onAuthStateChanged(user => {
     databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
     subscribeToCloudStreams();
   } else {
+    // লগআউট অবস্থায় অ্যাপের কোনো ইন্টারফেস রিফ্রেশ বা বন্ধ হবে না
     if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
     if (profileTrigger) profileTrigger.classList.add('hidden');
     
     const indicator = document.getElementById('status-indicator');
     const text = document.getElementById('status-text');
     if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
-    if (text) text.innerText = "Offline / Guest Mode";
+    if (text) text.innerText = "Offline / Guest Mode (Login to submit data)";
     
     farmData = [];
     officeExpenses = [];
@@ -332,11 +332,14 @@ function requestPasscodeAuth(onSuccess) {
   };
 }
 
-// Form Submit Handlers
+// Form Submit Handlers with Login Check Protection
 if (clientForm) {
   clientForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    if(!databasePathRef) return;
+    if(!databasePathRef) {
+      alert("⚠️ ডেটা এন্ট্রি করতে অনুগ্রহ করে প্রথমে গুগলে লগইন করুন!");
+      return;
+    }
     const newClient = {
       name: document.getElementById('client-name').value,
       phone: document.getElementById('client-phone').value,
@@ -354,7 +357,10 @@ if (clientForm) {
 if (txForm) {
   txForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    if(!databasePathRef) return;
+    if(!databasePathRef) {
+      alert("⚠️ লেনদেন এন্ট্রি করতে অনুগ্রহ করে প্রথমে গুগলে লগইন করুন!");
+      return;
+    }
     const id = document.getElementById('tx-client-select').value;
     if(!id) return;
     
@@ -392,7 +398,10 @@ if (txForm) {
 if (officeExpenseForm) {
   officeExpenseForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    if(!databasePathRef) return;
+    if(!databasePathRef) {
+      alert("⚠️ খরচ এন্ট্রি করতে অনুগ্রহ করে প্রথমে গুগলে লগইন করুন!");
+      return;
+    }
     const newExpense = {
       category: document.getElementById('oe-category').value,
       amount: parseFloat(document.getElementById('oe-amount').value),
@@ -500,7 +509,7 @@ function renderMasterTable() {
   
   if (!auth.currentUser) {
     if(container) container.classList.remove('hidden');
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Dashboard is blank. Please sign in with Google from the top menu to view database files.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Guest Mode: Please login to create and view saved client records.</td></tr>`;
     return;
   }
 
@@ -654,7 +663,7 @@ function refreshDrawer(id) {
 
 // Passcode Protected Deletion Handlers
 window.deleteClient = function(id) {
-  if(!databasePathRef) return;
+  if(!databasePathRef) return alert("⚠️ ডিলিট করতে অনুগ্রহ করে গুগলে লগইন করুন!");
   requestPasscodeAuth(() => {
     databasePathRef.child('clients').child(id).remove()
       .then(() => {
@@ -664,14 +673,14 @@ window.deleteClient = function(id) {
 };
 
 window.deleteOfficeExpense = function(id) {
-  if(!databasePathRef) return;
+  if(!databasePathRef) return alert("⚠️ ডিলিট করতে অনুগ্রহ করে গুগলে লগইন করুন!");
   requestPasscodeAuth(() => {
     databasePathRef.child('office_expenses').child(id).remove();
   });
 };
 
 window.deleteTransaction = function(clientId, txId) {
-  if(!databasePathRef) return;
+  if(!databasePathRef) return alert("⚠️ ডিলিট করতে অনুগ্রহ করে গুগলে লগইন করুন!");
   const client = farmData.find(c => c.id === clientId);
   if(!client) return;
 
