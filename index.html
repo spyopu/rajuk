@@ -28,7 +28,7 @@
 
   <div id="erp-layout" class="min-h-screen flex flex-col md:flex-row w-full">
     
-    <!-- Navigation Header / Sidebar -->
+    <!-- Sidebar Navigation -->
     <aside class="w-full md:w-60 bg-[#14151c] flex flex-col border-b md:border-b-0 md:border-r border-[#1e202a] shrink-0">
       <div class="h-14 px-4 border-b border-[#1e202a] flex items-center justify-between bg-[#14151c]">
         <div class="flex items-center gap-2.5">
@@ -40,11 +40,11 @@
       
       <!-- Navigation Menu -->
       <div class="p-2 md:p-4 flex-1">
-        <div class="grid grid-cols-4 md:grid-cols-1 gap-1.5">
-          <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold px-2 py-2.5 rounded transition bg-indigo-600 text-white text-center md:text-left">
-            <span>📊</span> <span class="hidden sm:inline">Overview</span>
+        <div class="grid grid-cols-5 md:grid-cols-1 gap-1.5">
+          <button id="btn-home-view" onclick="switchTab('home-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold px-2 py-2.5 rounded transition bg-indigo-600 text-white text-center md:text-left">
+            <span>🏠</span> <span class="hidden sm:inline">Home</span>
           </button>
-          
+
           <button id="btn-client-view" onclick="switchTab('client-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold px-2 py-2.5 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left">
             <span>💼</span> <span class="hidden sm:inline">Registry</span>
           </button>
@@ -55,6 +55,10 @@
           
           <button id="btn-office-view" onclick="switchTab('office-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold px-2 py-2.5 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left">
             <span>🏢</span> <span class="hidden sm:inline">Overhead</span>
+          </button>
+
+          <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold px-2 py-2.5 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left">
+            <span>📊</span> <span class="hidden sm:inline">Overview</span>
           </button>
         </div>
       </div>
@@ -92,83 +96,42 @@
         </div>
       </header>
 
-      <!-- Content Container -->
+      <!-- Main Workspace Container -->
       <main class="flex-1 p-2.5 md:p-6 overflow-y-auto max-w-full md:max-w-6xl w-full mx-auto space-y-3 md:space-y-6">
 
-        <!-- TAB 1: OVERVIEW -->
-        <div id="tab-dashboard-view" class="tab-content space-y-3 md:space-y-4 w-full">
-          
-          <!-- Month Filter Header -->
-          <div class="flex items-center justify-between bg-[#14151c] p-2.5 md:p-3 rounded-lg border border-[#1e202a] w-full">
-            <span class="text-xs md:text-sm font-bold text-white">Metrics Overview</span>
-            <div class="flex items-center gap-1.5">
-              <input type="month" id="month-filter" class="bg-[#0f1015] border border-[#262835] text-indigo-400 font-bold font-mono text-xs rounded px-2 py-1 outline-none">
-            </div>
+        <!-- TAB DEFAULT: HOME WELCOME SCREEN -->
+        <div id="tab-home-view" class="tab-content space-y-4 w-full">
+          <!-- Hero Banner -->
+          <div class="bg-gradient-to-r from-indigo-950/50 via-[#14151c] to-[#14151c] border border-indigo-500/20 rounded-xl p-5 md:p-6 text-left">
+            <h2 class="text-lg md:text-xl font-bold text-white mb-1">Welcome to Rajuk ERP Suite 👋</h2>
+            <p class="text-xs md:text-sm text-slate-400 max-w-xl">Manage clients, register projects, post financial vouchers, and track overhead expense easily.</p>
           </div>
 
-          <!-- Metrics Grid -->
-          <div class="grid grid-cols-2 lg:grid-cols-5 gap-2 md:gap-3 w-full">
-            <div class="bg-[#14151c] border border-[#1e202a] p-2.5 md:p-3 rounded-lg">
-              <p class="text-[11px] md:text-xs font-bold uppercase tracking-wider text-slate-400">Volume</p>
-              <h3 id="global-budget" class="text-sm md:text-lg font-bold text-slate-100 mt-0.5 font-mono">৳0</h3>
-            </div>
-            <div class="bg-[#14151c] border border-emerald-500/20 p-2.5 md:p-3 rounded-lg">
-              <p class="text-[11px] md:text-xs font-bold uppercase tracking-wider text-emerald-400">Income</p>
-              <h3 id="global-income" class="text-sm md:text-lg font-bold text-emerald-400 mt-0.5 font-mono">৳0</h3>
-            </div>
-            <div class="bg-[#14151c] border border-rose-500/20 p-2.5 md:p-3 rounded-lg">
-              <p class="text-[11px] md:text-xs font-bold uppercase tracking-wider text-rose-400">Cost</p>
-              <h3 id="global-expense" class="text-sm md:text-lg font-bold text-rose-400 mt-0.5 font-mono">৳0</h3>
-            </div>
-            <div class="bg-[#14151c] border border-amber-500/20 p-2.5 md:p-3 rounded-lg">
-              <p class="text-[11px] md:text-xs font-bold uppercase tracking-wider text-amber-400">Due</p>
-              <h3 id="global-due" class="text-sm md:text-lg font-bold text-amber-400 mt-0.5 font-mono">৳0</h3>
-            </div>
-            <div class="bg-[#181922] border border-indigo-500/30 p-2.5 md:p-3 rounded-lg col-span-2 lg:col-span-1">
-              <p class="text-[11px] md:text-xs font-bold uppercase tracking-wider text-indigo-400">Net Balance</p>
-              <h3 id="global-net" class="text-base md:text-xl font-black text-white mt-0.5 font-mono">৳0</h3>
-            </div>
-          </div>
-          
-          <!-- Master Accounts Container -->
-          <div class="bg-[#14151c] border border-[#1e202a] rounded-lg overflow-hidden w-full">
-            
-            <!-- Search & Filter Header -->
-            <div class="p-2.5 md:p-3 border-b border-[#1e202a] bg-[#161720] flex flex-col sm:flex-row justify-between items-stretch gap-2">
-              
-              <div class="relative w-full sm:w-64">
-                <input type="text" id="search-input" placeholder="🔍 Search name, phone..." class="w-full border border-[#262835] rounded-lg px-3 py-1.5 text-xs bg-[#0f1015] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
-              </div>
+          <!-- Quick Action Cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <button onclick="switchTab('journal-view')" class="p-4 bg-[#14151c] border border-[#1e202a] hover:border-indigo-500/50 rounded-xl text-left transition group">
+              <div class="text-2xl mb-2">💸</div>
+              <h4 class="text-xs font-bold text-white group-hover:text-indigo-400">Post Voucher</h4>
+              <p class="text-[11px] text-slate-500 mt-0.5">Record Income or Cost</p>
+            </button>
 
-              <!-- Filter Pills -->
-              <div class="flex items-center gap-1 bg-[#0f1015] p-1 rounded-lg border border-[#262835]">
-                <button onclick="setClientFilter('all')" id="filter-btn-all" class="flex-1 sm:flex-none px-3 py-1 text-xs font-semibold rounded text-slate-400">All</button>
-                <button onclick="setClientFilter('new')" id="filter-btn-new" class="flex-1 sm:flex-none px-3 py-1 text-xs font-semibold rounded text-slate-400">New</button>
-                <button onclick="setClientFilter('old')" id="filter-btn-old" class="flex-1 sm:flex-none px-3 py-1 text-xs font-semibold rounded text-slate-400">Old</button>
-              </div>
-            </div>
+            <button onclick="switchTab('client-view')" class="p-4 bg-[#14151c] border border-[#1e202a] hover:border-indigo-500/50 rounded-xl text-left transition group">
+              <div class="text-2xl mb-2">💼</div>
+              <h4 class="text-xs font-bold text-white group-hover:text-indigo-400">Add Client</h4>
+              <p class="text-[11px] text-slate-500 mt-0.5">Register new workspace</p>
+            </button>
 
-            <!-- Desktop Table View -->
-            <div id="master-table-container" class="overflow-x-auto hidden sm:block">
-              <table class="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr class="bg-[#181922] text-slate-400 font-semibold text-xs uppercase tracking-wider border-b border-[#1e202a]">
-                    <th class="px-4 py-3">Workspace</th>
-                    <th class="px-3 py-3">Contact</th>
-                    <th class="px-3 py-3 text-right">Contract</th>
-                    <th class="px-3 py-3 text-right">Settled</th>
-                    <th class="px-3 py-3 text-right">Cost</th>
-                    <th class="px-3 py-3 text-right">Receivables</th>
-                    <th class="px-4 py-3 text-center">Action</th>
-                  </tr>
-                </thead>
-                <tbody id="clients-table-body" class="divide-y divide-[#1e202a] text-slate-200 font-medium"></tbody>
-              </table>
-            </div>
+            <button onclick="switchTab('office-view')" class="p-4 bg-[#14151c] border border-[#1e202a] hover:border-indigo-500/50 rounded-xl text-left transition group">
+              <div class="text-2xl mb-2">🏢</div>
+              <h4 class="text-xs font-bold text-white group-hover:text-indigo-400">Log Overhead</h4>
+              <p class="text-[11px] text-slate-500 mt-0.5">Salary, rent & utility</p>
+            </button>
 
-            <!-- Full Screen Readable Mobile Cards -->
-            <div id="master-card-container" class="p-2 space-y-2 sm:hidden w-full"></div>
-
+            <button onclick="switchTab('dashboard-view')" class="p-4 bg-[#14151c] border border-[#1e202a] hover:border-indigo-500/50 rounded-xl text-left transition group">
+              <div class="text-2xl mb-2">📊</div>
+              <h4 class="text-xs font-bold text-white group-hover:text-indigo-400">Full Overview</h4>
+              <p class="text-[11px] text-slate-500 mt-0.5">Metrics & Ledgers</p>
+            </button>
           </div>
         </div>
 
@@ -252,7 +215,84 @@
           </div>
         </div>
 
-        <!-- Mobile Full Screen / Desktop Drawer Overlay -->
+        <!-- TAB 5: OVERVIEW (LAST TAB) -->
+        <div id="tab-dashboard-view" class="tab-content space-y-3 md:space-y-4 hidden w-full">
+          
+          <!-- Month Filter Header -->
+          <div class="flex items-center justify-between bg-[#14151c] p-2.5 md:p-3 rounded-lg border border-[#1e202a] w-full">
+            <span class="text-xs md:text-sm font-bold text-white">Metrics Overview</span>
+            <div class="flex items-center gap-1.5">
+              <input type="month" id="month-filter" class="bg-[#0f1015] border border-[#262835] text-indigo-400 font-bold font-mono text-xs rounded px-2 py-1 outline-none">
+            </div>
+          </div>
+
+          <!-- Metrics Grid -->
+          <div class="grid grid-cols-2 lg:grid-cols-5 gap-2 md:gap-3 w-full">
+            <div class="bg-[#14151c] border border-[#1e202a] p-2.5 md:p-3 rounded-lg">
+              <p class="text-[11px] md:text-xs font-bold uppercase tracking-wider text-slate-400">Volume</p>
+              <h3 id="global-budget" class="text-sm md:text-lg font-bold text-slate-100 mt-0.5 font-mono">৳0</h3>
+            </div>
+            <div class="bg-[#14151c] border border-emerald-500/20 p-2.5 md:p-3 rounded-lg">
+              <p class="text-[11px] md:text-xs font-bold uppercase tracking-wider text-emerald-400">Income</p>
+              <h3 id="global-income" class="text-sm md:text-lg font-bold text-emerald-400 mt-0.5 font-mono">৳0</h3>
+            </div>
+            <div class="bg-[#14151c] border border-rose-500/20 p-2.5 md:p-3 rounded-lg">
+              <p class="text-[11px] md:text-xs font-bold uppercase tracking-wider text-rose-400">Cost</p>
+              <h3 id="global-expense" class="text-sm md:text-lg font-bold text-rose-400 mt-0.5 font-mono">৳0</h3>
+            </div>
+            <div class="bg-[#14151c] border border-amber-500/20 p-2.5 md:p-3 rounded-lg">
+              <p class="text-[11px] md:text-xs font-bold uppercase tracking-wider text-amber-400">Due</p>
+              <h3 id="global-due" class="text-sm md:text-lg font-bold text-amber-400 mt-0.5 font-mono">৳0</h3>
+            </div>
+            <div class="bg-[#181922] border border-indigo-500/30 p-2.5 md:p-3 rounded-lg col-span-2 lg:col-span-1">
+              <p class="text-[11px] md:text-xs font-bold uppercase tracking-wider text-indigo-400">Net Balance</p>
+              <h3 id="global-net" class="text-base md:text-xl font-black text-white mt-0.5 font-mono">৳0</h3>
+            </div>
+          </div>
+          
+          <!-- Master Accounts Container -->
+          <div class="bg-[#14151c] border border-[#1e202a] rounded-lg overflow-hidden w-full">
+            
+            <!-- Search & Filter Header -->
+            <div class="p-2.5 md:p-3 border-b border-[#1e202a] bg-[#161720] flex flex-col sm:flex-row justify-between items-stretch gap-2">
+              
+              <div class="relative w-full sm:w-64">
+                <input type="text" id="search-input" placeholder="🔍 Search name, phone..." class="w-full border border-[#262835] rounded-lg px-3 py-1.5 text-xs bg-[#0f1015] text-white placeholder-slate-500 outline-none focus:border-indigo-500">
+              </div>
+
+              <!-- Filter Pills -->
+              <div class="flex items-center gap-1 bg-[#0f1015] p-1 rounded-lg border border-[#262835]">
+                <button onclick="setClientFilter('all')" id="filter-btn-all" class="flex-1 sm:flex-none px-3 py-1 text-xs font-semibold rounded text-slate-400">All</button>
+                <button onclick="setClientFilter('new')" id="filter-btn-new" class="flex-1 sm:flex-none px-3 py-1 text-xs font-semibold rounded text-slate-400">New</button>
+                <button onclick="setClientFilter('old')" id="filter-btn-old" class="flex-1 sm:flex-none px-3 py-1 text-xs font-semibold rounded text-slate-400">Old</button>
+              </div>
+            </div>
+
+            <!-- Desktop Table View -->
+            <div id="master-table-container" class="overflow-x-auto hidden sm:block">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-[#181922] text-slate-400 font-semibold text-xs uppercase tracking-wider border-b border-[#1e202a]">
+                    <th class="px-4 py-3">Workspace</th>
+                    <th class="px-3 py-3">Contact</th>
+                    <th class="px-3 py-3 text-right">Contract</th>
+                    <th class="px-3 py-3 text-right">Settled</th>
+                    <th class="px-3 py-3 text-right">Cost</th>
+                    <th class="px-3 py-3 text-right">Receivables</th>
+                    <th class="px-4 py-3 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="clients-table-body" class="divide-y divide-[#1e202a] text-slate-200 font-medium"></tbody>
+              </table>
+            </div>
+
+            <!-- Full Screen Readable Mobile Cards -->
+            <div id="master-card-container" class="p-2 space-y-2 sm:hidden w-full"></div>
+
+          </div>
+        </div>
+
+        <!-- Ledger Drawer -->
         <div id="ledger-drawer" class="fixed inset-0 md:relative md:inset-auto bg-[#14151c] md:border border-indigo-500/30 md:rounded-lg p-4 md:p-5 hidden z-50 md:z-auto overflow-y-auto shadow-2xl transition-all">
           <div class="flex justify-between items-center border-b border-[#1e202a] pb-3">
             <div>
