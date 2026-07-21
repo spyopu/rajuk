@@ -1,4 +1,4 @@
-// 1. Firebase Initialization Configuration
+// 1. Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyD8kXy2rL9ptiPN4xEMg5h3o4RY_sPH79w",
   authDomain: "rajuk-bed98.firebaseapp.com",
@@ -9,7 +9,11 @@ const firebaseConfig = {
   appId: "1:367893646589:web:6c91f066dfb5143e204294"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Initialize Firebase safely
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
 const auth = firebase.auth();
 const rtdb = firebase.database();
 
@@ -23,7 +27,7 @@ let databasePathRef = null;
 let openLedgerId = null;
 let activeClientFilter = 'none';
 
-// Catch UI Reference Elements
+// DOM Elements
 const loginBtn = document.getElementById('google-login-btn');
 const logoutBtn = document.getElementById('logout-btn');
 const profileTrigger = document.getElementById('profile-trigger');
@@ -39,32 +43,7 @@ const ledgerDrawer = document.getElementById('ledger-drawer');
 const searchInput = document.getElementById('search-input');
 const monthFilter = document.getElementById('month-filter');
 
-// Initialize Today's Date Values Input fields
-if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
-if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
-
-// Initialize Default Value for Month Filter (Current Month)
-if (monthFilter) {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  monthFilter.value = `${year}-${month}`;
-  monthFilter.addEventListener('change', uiUpdatePipeline);
-}
-
-// Bind search bar trigger dynamically
-if (searchInput) {
-  searchInput.addEventListener('input', () => {
-    switchTab('dashboard-view');
-    if(activeClientFilter === 'none') {
-      setClientFilter('all');
-    } else {
-      renderMasterTable();
-    }
-  });
-}
-
-// PREMIUM TAB SYSTEM CONTROLLER (Always accessible)
+// Tab System (Always Accessible)
 window.switchTab = function(tabId) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
   const targetTab = document.getElementById(`tab-${tabId}`);
@@ -78,24 +57,22 @@ window.switchTab = function(tabId) {
   if(activeBtn) {
     activeBtn.className = "tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20";
   }
-}
+};
 
-// Control Table Visibility and Custom States
 window.setClientFilter = function(filterType) {
   activeClientFilter = filterType;
-  
   const container = document.getElementById('master-table-container');
   const btnAll = document.getElementById('filter-btn-all');
   const btnNew = document.getElementById('filter-btn-new');
   const btnOld = document.getElementById('filter-btn-old');
-  
+
   [btnAll, btnNew, btnOld].forEach(btn => {
     if(btn) btn.className = "px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white";
   });
-  
+
   const activeBtn = document.getElementById(`filter-btn-${filterType}`);
   if(activeBtn) activeBtn.className = "px-3 py-1.5 text-[11px] font-bold rounded-md transition-all bg-indigo-600 text-white shadow-sm";
-  
+
   if(container) {
     if(filterType === 'none') {
       container.classList.add('hidden');
@@ -103,13 +80,37 @@ window.setClientFilter = function(filterType) {
       container.classList.remove('hidden');
     }
   }
-  
-  renderMasterTable();
-}
 
-// Initialize System Pipelines
-uiUpdatePipeline();
-setClientFilter('none');
+  renderMasterTable();
+};
+
+// Initialization on DOM Ready
+document.addEventListener('DOMContentLoaded', () => {
+  if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
+  if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
+
+  if (monthFilter) {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    monthFilter.value = `${year}-${month}`;
+    monthFilter.addEventListener('change', uiUpdatePipeline);
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      switchTab('dashboard-view');
+      if(activeClientFilter === 'none') {
+        setClientFilter('all');
+      } else {
+        renderMasterTable();
+      }
+    });
+  }
+
+  setClientFilter('none');
+  uiUpdatePipeline();
+});
 
 // User Menu Events Handlers
 if (profileTrigger) {
@@ -123,40 +124,38 @@ document.addEventListener('click', () => {
   if (profileDropdown) profileDropdown.classList.add('hidden');
 });
 
-// SIMPLIFIED & FIXED GOOGLE LOGIN SYSTEM (Works everywhere)
+// Auth Event Listeners
 if (loginBtn) {
   loginBtn.addEventListener('click', async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
-    
     try {
       await auth.signInWithPopup(provider);
     } catch (err) {
       if (err.code !== 'auth/popup-closed-by-user') {
-        alert("Login failed: " + err.message);
+        alert("Login Error: " + err.message);
       }
     }
   });
 }
 
-// LOGOUT: Application stays open
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
     auth.signOut();
   });
 }
 
-// Firebase Auth Authentication State Realtime Observers
+// Authentication State Listener
 auth.onAuthStateChanged(user => {
   if (user) {
     if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
     if (profileTrigger) profileTrigger.classList.remove('hidden');
-    
+
     const indicator = document.getElementById('status-indicator');
     const text = document.getElementById('status-text');
     if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse";
     if (text) text.innerText = "Firebase Realtime Cloud (100% Secured)";
-    
+
     if (document.getElementById('user-display-name')) document.getElementById('user-display-name').innerText = user.displayName;
     if (document.getElementById('user-display-email')) document.getElementById('user-display-email').innerText = user.email;
     if (document.getElementById('user-avatar')) document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
@@ -164,15 +163,14 @@ auth.onAuthStateChanged(user => {
     databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
     subscribeToCloudStreams();
   } else {
-    // Guest Mode logic
     if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
     if (profileTrigger) profileTrigger.classList.add('hidden');
-    
+
     const indicator = document.getElementById('status-indicator');
     const text = document.getElementById('status-text');
     if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
     if (text) text.innerText = "Offline / Guest Mode (Login to submit data)";
-    
+
     farmData = [];
     officeExpenses = [];
     databasePathRef = null;
@@ -180,7 +178,6 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// Sync Stream listeners with Firebase Cloud Node 
 function subscribeToCloudStreams() {
   if(!databasePathRef) return;
   databasePathRef.child('clients').on('value', snapshot => {
@@ -214,10 +211,9 @@ function uiUpdatePipeline() {
   if(openLedgerId) refreshDrawer(openLedgerId);
 }
 
-// Calculate Dashboard Total Amounts
 function calculateGlobalMetrics() {
   let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
-  
+
   let targetYear, targetMonth;
   if (monthFilter && monthFilter.value) {
     const parts = monthFilter.value.split('-'); 
@@ -228,16 +224,16 @@ function calculateGlobalMetrics() {
     targetYear = now.getFullYear();
     targetMonth = now.getMonth();
   }
-  
+
   const startOfMonth = new Date(targetYear, targetMonth, 1);
   const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
   const monthLabel = startOfMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   farmData.forEach(c => {
-    budget += c.budget; 
+    budget += c.budget || 0; 
     let cIncome = 0;
-    
-    c.history.forEach(t => {
+
+    (c.history || []).forEach(t => {
       const tDate = new Date(t.date);
       const isSelectedMonth = (tDate >= startOfMonth && tDate <= endOfMonth);
 
@@ -249,7 +245,7 @@ function calculateGlobalMetrics() {
         prjExpense += t.amount; 
       }
     });
-    due += (c.budget - cIncome); 
+    due += ((c.budget || 0) - cIncome); 
   });
 
   officeExpenses.forEach(oe => {
@@ -263,21 +259,21 @@ function calculateGlobalMetrics() {
   let netIncome = income - grandTotalExpense;
 
   if (document.getElementById('global-budget')) document.getElementById('global-budget').innerText = '৳' + budget.toLocaleString('en-IN');
-  
+
   const incomeCard = document.getElementById('global-income');
   if (incomeCard) {
     incomeCard.innerText = '৳' + income.toLocaleString('en-IN');
     if(incomeCard.previousElementSibling) incomeCard.previousElementSibling.innerText = `Gross Income (${monthLabel})`;
   }
-  
+
   const expenseCard = document.getElementById('global-expense');
   if (expenseCard) {
     expenseCard.innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
     if(expenseCard.previousElementSibling) expenseCard.previousElementSibling.innerText = `Total Cost (${monthLabel})`;
   }
-  
+
   if (document.getElementById('global-due')) document.getElementById('global-due').innerText = '৳' + due.toLocaleString('en-IN');
-  
+
   const netCard = document.getElementById('global-net');
   if (netCard) {
     netCard.innerText = '৳' + netIncome.toLocaleString('en-IN');
@@ -285,7 +281,7 @@ function calculateGlobalMetrics() {
   }
 }
 
-// Passcode Modal Handler
+// Passcode Authorization Handler
 let pendingDeleteAction = null;
 
 function requestPasscodeAuth(onSuccess) {
@@ -294,13 +290,16 @@ function requestPasscodeAuth(onSuccess) {
   const confirmBtn = document.getElementById('modalConfirmBtn');
   const cancelBtn = document.getElementById('modalCancelBtn');
 
-  if (!modal || !passInput) return;
+  if (!modal || !passInput) {
+    if (confirm("কর্মটি সম্পাদন করতে অনুমতি দিচ্ছেন?")) onSuccess();
+    return;
+  }
 
   passInput.value = '';
   passInput.classList.remove('border-red-500');
   pendingDeleteAction = onSuccess;
   modal.classList.remove('hidden');
-  
+
   setTimeout(() => passInput.focus(), 50);
 
   passInput.onkeyup = function(e) {
@@ -308,8 +307,7 @@ function requestPasscodeAuth(onSuccess) {
   };
 
   confirmBtn.onclick = function() {
-    const enteredPass = passInput.value.trim();
-    if (enteredPass === SECURITY_PASSCODE) {
+    if (passInput.value.trim() === SECURITY_PASSCODE) {
       modal.classList.add('hidden');
       if (pendingDeleteAction) pendingDeleteAction();
     } else {
@@ -325,7 +323,7 @@ function requestPasscodeAuth(onSuccess) {
   };
 }
 
-// Form Submit Handlers with Login Protection
+// Form Handlers
 if (clientForm) {
   clientForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -337,7 +335,7 @@ if (clientForm) {
       name: document.getElementById('client-name').value,
       phone: document.getElementById('client-phone').value,
       project: document.getElementById('project-title').value,
-      budget: parseFloat(document.getElementById('project-budget').value),
+      budget: parseFloat(document.getElementById('project-budget').value) || 0,
       history: []
     };
     databasePathRef.child('clients').push(newClient);
@@ -356,25 +354,25 @@ if (txForm) {
     }
     const id = document.getElementById('tx-client-select').value;
     if(!id) return;
-    
+
     const client = farmData.find(c => c.id === id);
     if(client) {
       const updatedHistory = client.history || [];
       updatedHistory.push({
         id: 't_' + Date.now(),
         type: document.getElementById('tx-type').value,
-        amount: parseFloat(document.getElementById('tx-amount').value),
+        amount: parseFloat(document.getElementById('tx-amount').value) || 0,
         details: document.getElementById('tx-details').value,
         date: document.getElementById('tx-date').value
       });
       updatedHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
-      
+
       databasePathRef.child('clients').child(id).update({ history: updatedHistory });
-      
+
       document.getElementById('tx-amount').value = '';
       document.getElementById('tx-details').value = '';
       document.getElementById('tx-client-select').value = '';
-      
+
       const selectedText = document.getElementById('dropdown-selected-text');
       if (selectedText) {
         selectedText.innerText = 'Select Project Profile...';
@@ -397,7 +395,7 @@ if (officeExpenseForm) {
     }
     const newExpense = {
       category: document.getElementById('oe-category').value,
-      amount: parseFloat(document.getElementById('oe-amount').value),
+      amount: parseFloat(document.getElementById('oe-amount').value) || 0,
       details: document.getElementById('oe-details').value,
       date: document.getElementById('oe-date').value
     };
@@ -408,7 +406,7 @@ if (officeExpenseForm) {
   });
 }
 
-// Searchable Dropdown Logics
+// Dropdown Logic
 function renderDropdown() {
   const trigger = document.getElementById('dropdown-trigger');
   const dropdownList = document.getElementById('custom-dropdown-list');
@@ -429,20 +427,11 @@ function renderDropdown() {
     }
   };
 
-  document.onclick = function() {
-    dropdownList.classList.add('hidden');
-  };
-
-  dropdownList.onclick = function(e) {
-    e.stopPropagation();
-  };
-
   function filterDropdownItems(query) {
     itemsContainer.innerHTML = '';
-    
     const filtered = farmData.filter(c => 
-      c.project.toLowerCase().includes(query.toLowerCase()) || 
-      c.name.toLowerCase().includes(query.toLowerCase())
+      (c.project && c.project.toLowerCase().includes(query.toLowerCase())) || 
+      (c.name && c.name.toLowerCase().includes(query.toLowerCase()))
     );
 
     if (filtered.length === 0) {
@@ -454,14 +443,16 @@ function renderDropdown() {
       const item = document.createElement('div');
       item.className = "p-2.5 text-xs text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg cursor-pointer transition-all font-medium flex justify-between items-center";
       item.innerHTML = `<span>${c.project} <span class="text-[10px] text-slate-500">(${c.name})</span></span>`;
-      
+
       item.onclick = function() {
-        hiddenInput.value = c.id;
-        selectedText.innerText = `${c.project} (${c.name})`;
-        selectedText.className = "text-white font-semibold";
+        if(hiddenInput) hiddenInput.value = c.id;
+        if(selectedText) {
+          selectedText.innerText = `${c.project} (${c.name})`;
+          selectedText.className = "text-white font-semibold";
+        }
         dropdownList.classList.add('hidden');
       };
-      
+
       itemsContainer.appendChild(item);
     });
   }
@@ -473,33 +464,27 @@ function renderDropdown() {
   }
 
   if (farmData.length === 0) {
-    selectedText.innerText = "No Active Projects Available";
-    selectedText.className = "text-slate-500";
-    hiddenInput.value = "";
-  } else {
-    if(!hiddenInput.value) {
-      selectedText.innerText = "Select Project Profile...";
+    if(selectedText) {
+      selectedText.innerText = "No Active Projects Available";
       selectedText.className = "text-slate-500";
-    } else {
-      const current = farmData.find(c => c.id === hiddenInput.value);
-      if(current) {
-        selectedText.innerText = `${current.project} (${current.name})`;
-        selectedText.className = "text-white font-semibold";
-      } else {
+    }
+    if(hiddenInput) hiddenInput.value = "";
+  } else {
+    if(!hiddenInput || !hiddenInput.value) {
+      if(selectedText) {
         selectedText.innerText = "Select Project Profile...";
         selectedText.className = "text-slate-500";
-        hiddenInput.value = "";
       }
     }
   }
 }
 
-// Master Table Rendering
+// Table Render Logic
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
   const container = document.getElementById('master-table-container');
-  
+
   if (!auth.currentUser) {
     if(container) container.classList.remove('hidden');
     tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Guest Mode: Please login to create and view saved client records.</td></tr>`;
@@ -517,21 +502,15 @@ function renderMasterTable() {
   }
 
   let filteredData = farmData.filter(c => {
-    return c.name.toLowerCase().includes(query) || 
-           c.phone.includes(query) || 
-           c.project.toLowerCase().includes(query);
+    return (c.name && c.name.toLowerCase().includes(query)) || 
+           (c.phone && c.phone.includes(query)) || 
+           (c.project && c.project.toLowerCase().includes(query));
   });
 
   if (activeClientFilter === 'new') {
-    filteredData = filteredData.filter(c => {
-      const hasIncome = c.history.some(t => t.type === 'income');
-      return !hasIncome;
-    });
+    filteredData = filteredData.filter(c => !(c.history || []).some(t => t.type === 'income'));
   } else if (activeClientFilter === 'old') {
-    filteredData = filteredData.filter(c => {
-      const hasIncome = c.history.some(t => t.type === 'income');
-      return hasIncome;
-    });
+    filteredData = filteredData.filter(c => (c.history || []).some(t => t.type === 'income'));
   }
 
   tableBody.innerHTML = filteredData.length === 0 ? 
@@ -539,11 +518,11 @@ function renderMasterTable() {
 
   filteredData.forEach(c => {
     let localIncome = 0, localExpense = 0;
-    c.history.forEach(t => {
+    (c.history || []).forEach(t => {
       if(t.type === 'income') localIncome += t.amount;
       if(t.type === 'expense') localExpense += t.amount;
     });
-    let cDue = c.budget - localIncome;
+    let cDue = (c.budget || 0) - localIncome;
 
     const tr = document.createElement('tr');
     tr.className = "hover:bg-slate-800/40 transition font-medium border-b border-slate-800 last:border-none text-slate-300";
@@ -553,7 +532,7 @@ function renderMasterTable() {
         <div class="text-[11px] text-slate-500 mt-0.5">${c.name}</div>
       </td>
       <td class="p-4 font-mono text-xs text-slate-400">${c.phone}</td>
-      <td class="p-4 text-right font-bold text-slate-100">৳${c.budget.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-right font-bold text-slate-100">৳${(c.budget || 0).toLocaleString('en-IN')}</td>
       <td class="p-4 text-right font-bold text-emerald-400">৳${localIncome.toLocaleString('en-IN')}</td>
       <td class="p-4 text-right font-bold text-red-400">৳${localExpense.toLocaleString('en-IN')}</td>
       <td class="p-4 text-right font-black ${cDue > 0 ? 'text-amber-500' : 'text-slate-500'}">৳${cDue.toLocaleString('en-IN')}</td>
@@ -570,7 +549,7 @@ function renderMasterTable() {
 
 function renderOfficeExpenses() {
   if (!officeExpenseRows) return;
-  
+
   let targetYear, targetMonth;
   if (monthFilter && monthFilter.value) {
     const parts = monthFilter.value.split('-');
@@ -608,7 +587,7 @@ function renderOfficeExpenses() {
   });
 }
 
-// Drawer Sheet Controllers
+// Drawer Controller
 window.openDrawer = function(id) {
   openLedgerId = id;
   if (ledgerDrawer) {
@@ -616,26 +595,26 @@ window.openDrawer = function(id) {
     refreshDrawer(id);
     ledgerDrawer.scrollIntoView({ behavior: 'smooth' });
   }
-}
+};
 
 window.closeDrawer = function() {
   openLedgerId = null;
   if (ledgerDrawer) ledgerDrawer.classList.add('hidden');
-}
+};
 
 function refreshDrawer(id) {
   const client = farmData.find(c => c.id === id);
   if(!client) return closeDrawer();
 
   if (document.getElementById('drawer-title')) document.getElementById('drawer-title').innerText = `🏢 File: ${client.project} (${client.name})`;
-  if (document.getElementById('drawer-sub')) document.getElementById('drawer-sub').innerText = `Contact: ${client.phone} | Budget: ৳${client.budget.toLocaleString('en-IN')}`;
+  if (document.getElementById('drawer-sub')) document.getElementById('drawer-sub').innerText = `Contact: ${client.phone} | Budget: ৳${(client.budget || 0).toLocaleString('en-IN')}`;
 
   const dBody = document.getElementById('drawer-table-body');
   if (!dBody) return;
   dBody.innerHTML = (!client.history || client.history.length === 0) ? 
     `<tr><td colspan="5" class="p-4 text-center text-slate-400 font-medium">No ledger accounts registered for this project.</td></tr>` : '';
 
-  client.history.forEach(t => {
+  (client.history || []).forEach(t => {
     const tr = document.createElement('tr');
     tr.className = "border-b border-slate-800 last:border-none font-medium text-slate-300";
     let typeText = t.type === 'income' ? '<span class="text-emerald-400 font-bold">📥 Debit</span>' : '<span class="text-red-400 font-bold">📤 Credit</span>';
@@ -654,7 +633,7 @@ function refreshDrawer(id) {
   });
 }
 
-// Passcode Protected Deletion Handlers
+// Delete Handlers
 window.deleteClient = function(id) {
   if(!databasePathRef) return alert("⚠️ ডিলিট করতে অনুগ্রহ করে গুগলে লগইন করুন!");
   requestPasscodeAuth(() => {
