@@ -360,24 +360,17 @@
     </div>
   </div>
 
-  <!-- Custom Passcode Security Modal (Mobile Friendly & Hidden Passcode Input) -->
-  <div id="securityModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-      <div class="text-center mb-4">
-        <div class="w-12 h-12 bg-red-500/10 border border-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-        </div>
-        <h3 class="text-lg font-bold text-slate-100">Security Passcode Required</h3>
-        <p class="text-xs text-slate-400 mt-1">Confirm authorization to proceed with deletion.</p>
-      </div>
+  <!-- Compact & Ultra Simple Security Passcode Modal -->
+  <div id="securityModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#181a20] border border-[#2a2d37] rounded-xl p-5 w-full max-w-xs shadow-xl text-center">
+      <h3 class="text-sm font-semibold text-slate-200 mb-1">Enter Passcode</h3>
+      <p class="text-[11px] text-slate-400 mb-3">Enter code to confirm deletion</p>
 
-      <input type="password" id="modalPasscodeInput" autocomplete="off" placeholder="Enter Security Code" class="w-full bg-slate-950 border border-slate-800 focus:border-red-500 text-slate-100 rounded-xl px-4 py-3 text-center text-lg tracking-widest outline-none mb-4 font-mono transition">
+      <input type="password" id="modalPasscodeInput" autocomplete="off" placeholder="••••" class="w-full bg-[#111216] border border-[#2d303f] focus:border-red-500/80 text-white rounded-lg px-3 py-2 text-center text-base tracking-widest outline-none mb-3 font-mono">
       
-      <div class="flex gap-3">
-        <button id="modalCancelBtn" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 rounded-xl transition">Cancel</button>
-        <button id="modalConfirmBtn" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-semibold py-2.5 rounded-xl transition">Confirm Delete</button>
+      <div class="flex gap-2">
+        <button id="modalCancelBtn" class="flex-1 bg-[#222530] hover:bg-[#2b2f3e] text-slate-300 font-medium py-1.5 rounded-lg text-xs transition">Cancel</button>
+        <button id="modalConfirmBtn" class="flex-1 bg-red-600/90 hover:bg-red-600 text-white font-medium py-1.5 rounded-lg text-xs transition">Delete</button>
       </div>
     </div>
   </div>
