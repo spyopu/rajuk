@@ -1,336 +1,392 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="bn" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>রাজউক ট্যালি - ডিজিটাল ক্যাশ বুক</title>
+  <title>RAJUK ERP & Management System</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="style.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            darkBg: '#0f172a',
+            cardBg: '#1e293b'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen pb-20 font-sans">
+<body class="bg-[#0b0f19] text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
 
-  <!-- AUTH / LOGIN SECTION (অপ্রবেশযোগ্য অবস্থা) -->
-  <div id="auth-screen" class="fixed inset-0 bg-gray-900 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-sm text-center space-y-5 shadow-2xl">
-      <div class="h-16 w-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center font-bold text-3xl mx-auto shadow-sm">
-        ট
+  <!-- TOP APP BAR / HEADER -->
+  <header class="bg-[#131927] border-b border-slate-800 sticky top-0 z-30 px-4 py-3 shadow-lg">
+    <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
+      
+      <!-- Brand & Status -->
+      <div class="flex items-center gap-3">
+        <div class="bg-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-500/30">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-base tracking-wide text-white">RAJUK ERP</h1>
+          <div class="flex items-center gap-2">
+            <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span id="status-text" class="text-[11px] text-slate-400 font-medium">Guest Mode</span>
+          </div>
+        </div>
       </div>
-      <div>
-        <h1 class="text-xl font-bold text-gray-800">রাজউক ট্যালি</h1>
-        <p class="text-xs text-gray-500 mt-1">ডিজিটাল ক্যাশ বুক ও হিসাব খাতা</p>
+
+      <!-- Right Header Actions (Profile / Login) -->
+      <div class="flex items-center gap-3">
+        <!-- Auth Section for Guest -->
+        <div id="sidebar-auth-section">
+          <button id="google-login-btn" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition shadow-md">
+            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.761H12.545z"/></svg>
+            Google Login
+          </button>
+        </div>
+
+        <!-- Authenticated Profile Menu -->
+        <div id="profile-trigger" class="relative hidden">
+          <button class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 p-1.5 rounded-xl border border-slate-700 transition">
+            <img id="user-avatar" src="https://via.placeholder.com/150" alt="Avatar" class="w-6 h-6 rounded-lg object-cover">
+            <span id="user-display-name" class="text-xs font-bold text-slate-200 hidden sm:inline">User Name</span>
+          </button>
+
+          <!-- Dropdown -->
+          <div id="profile-dropdown" class="absolute right-0 mt-2 w-56 bg-[#182030] border border-slate-700 rounded-xl shadow-2xl p-3 hidden z-50">
+            <p id="user-display-email" class="text-[11px] text-slate-400 font-mono border-b border-slate-700/80 pb-2 mb-2 truncate">user@email.com</p>
+            <button id="logout-btn" class="w-full text-left text-xs font-bold text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+              Log Out
+            </button>
+          </div>
+        </div>
       </div>
 
-      <p class="text-xs text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100">
-        অ্যাপের হিসাব দেখতে এবং ব্যবহার করতে আপনার জিমেইল অ্যাকাউন্ট দিয়ে লগইন করুন।
-      </p>
-
-      <button id="btn-google-login" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-3">
-        <svg class="w-5 h-5" viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-        </svg>
-        <span class="text-xs">Google দিয়ে লগইন করুন</span>
-      </button>
     </div>
-  </div>
+  </header>
 
-  <!-- MAIN APP (লগইন করার পর প্রদর্শন হবে) -->
-  <div id="main-app" class="hidden">
-    <!-- Header -->
-    <header class="bg-red-600 text-white p-3.5 sticky top-0 z-30 shadow-md">
-      <div class="max-w-md mx-auto flex justify-between items-center">
-        <div class="flex items-center gap-2.5">
-          <img id="user-avatar" class="h-9 w-9 rounded-full border-2 border-white/80 object-cover hidden" alt="User">
-          <div id="user-avatar-placeholder" class="h-9 w-9 rounded-full bg-white text-red-600 flex items-center justify-center font-bold text-xl shadow">
-            ট
-          </div>
-          <div>
-            <h1 id="user-name-display" class="text-base font-bold leading-none">রাজউক ট্যালি</h1>
-            <p id="user-email-display" class="text-[10px] text-red-100 mt-0.5">ডিজিটাল হিসাব খাতা</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <button id="btn-top-report" class="text-xs bg-red-700 text-white font-medium px-2.5 py-1 rounded-lg border border-red-500 hover:bg-red-800 transition">
-            📊 রিপোর্ট
-          </button>
-          <button id="btn-logout" title="লগআউট" class="text-xs bg-red-800/80 hover:bg-red-900 text-white p-1.5 rounded-lg border border-red-500 transition">
-            🚪
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-md mx-auto p-3 space-y-3">
-
-      <!-- TAB 1: DASHBOARD & PROJECTS -->
-      <div id="tab-dashboard" class="tab-content space-y-3">
-        <!-- Overview Cards -->
-        <div class="grid grid-cols-3 gap-2 text-center">
-          <div class="bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm">
-            <p class="text-[10px] text-gray-500 font-medium">মোট বাজেট</p>
-            <p id="dash-budget" class="text-xs font-bold text-gray-800 mt-0.5">৳০</p>
-          </div>
-          <div class="bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm">
-            <p class="text-[10px] text-gray-500 font-medium">মোট জমা</p>
-            <p id="dash-received" class="text-xs font-bold text-emerald-600 mt-0.5">৳০</p>
-          </div>
-          <div class="bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm">
-            <p class="text-[10px] text-gray-500 font-medium">মোট বাকি</p>
-            <p id="dash-due" class="text-xs font-bold text-red-600 mt-0.5">৳০</p>
-          </div>
-        </div>
-
-        <!-- Action & Search -->
-        <div class="flex items-center gap-2">
-          <input type="text" id="search-input" placeholder="কাস্টমার বা প্রজেক্ট খুঁজুন..." class="flex-1 bg-white border border-gray-300 text-xs text-gray-800 rounded-xl px-3 py-2 focus:outline-none focus:border-red-500 shadow-sm">
-          <button id="btn-open-add-project" class="bg-red-600 text-white text-xs px-3.5 py-2 rounded-xl font-bold hover:bg-red-700 transition shrink-0 shadow-sm">
-            ➕ প্রজেক্ট
-          </button>
-        </div>
-
-        <!-- Projects List Container -->
-        <div id="projects-list-container" class="space-y-2">
-          <!-- Dynamic Projects Rendered Here -->
-        </div>
+  <!-- MAIN APP CONTAINER -->
+  <div class="max-w-7xl mx-auto w-full flex-1 grid grid-cols-1 md:grid-cols-12 gap-6 p-4 md:p-6">
+    
+    <!-- SIDEBAR / NAVIGATION -->
+    <aside class="md:col-span-3 space-y-4">
+      
+      <!-- Navigation Tabs -->
+      <div class="bg-[#131927] border border-slate-800/80 p-3 rounded-2xl space-y-1.5 shadow-md">
+        <button id="btn-dashboard-view" onclick="switchTab('dashboard-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+          Dashboard & Reports
+        </button>
+        <button id="btn-new-client-view" onclick="switchTab('new-client-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+          Add New Client
+        </button>
+        <button id="btn-new-tx-view" onclick="switchTab('new-tx-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          Client Transaction
+        </button>
+        <button id="btn-office-expense-view" onclick="switchTab('office-expense-view')" class="tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"></path></svg>
+          Office Expenses
+        </button>
       </div>
 
-      <!-- TAB 2: VOUCHER ENTRY -->
-      <div id="tab-voucher" class="tab-content hidden space-y-3">
-        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          <h2 class="text-xs font-bold text-gray-800 mb-3 border-b pb-2 border-gray-100 flex items-center gap-1.5">
-            <span class="text-red-600">📥</span> প্রজেক্ট ক্যাশ এন্ট্রি (ভাউচার)
+      <!-- Month Filter Card -->
+      <div class="bg-[#131927] border border-slate-800/80 p-4 rounded-2xl space-y-2 shadow-md">
+        <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Filter By Month</label>
+        <input type="month" id="month-filter" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-2.5 focus:outline-none focus:border-indigo-500">
+      </div>
+
+    </aside>
+
+    <!-- CONTENT BODY AREA -->
+    <main class="md:col-span-9 space-y-6">
+
+      <!-- TAB 1: DASHBOARD VIEW -->
+      <div id="tab-dashboard-view" class="tab-content space-y-6">
+        
+        <!-- Metrics Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+          <div class="bg-[#131927] border border-slate-800/80 p-3.5 rounded-2xl">
+            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">Total Budget</span>
+            <div id="global-budget" class="text-base md:text-lg font-black text-slate-100 mt-1">৳0</div>
+          </div>
+          <div class="bg-[#131927] border border-slate-800/80 p-3.5 rounded-2xl">
+            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">Gross Income</span>
+            <div id="global-income" class="text-base md:text-lg font-black text-emerald-400 mt-1">৳0</div>
+          </div>
+          <div class="bg-[#131927] border border-slate-800/80 p-3.5 rounded-2xl">
+            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">Total Cost</span>
+            <div id="global-expense" class="text-base md:text-lg font-black text-red-400 mt-1">৳0</div>
+          </div>
+          <div class="bg-[#131927] border border-slate-800/80 p-3.5 rounded-2xl">
+            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">Total Due</span>
+            <div id="global-due" class="text-base md:text-lg font-black text-amber-500 mt-1">৳0</div>
+          </div>
+          <div class="bg-[#131927] border border-slate-800/80 p-3.5 rounded-2xl col-span-2 lg:col-span-1">
+            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">Net Balance</span>
+            <div id="global-net" class="text-base md:text-lg font-black text-indigo-400 mt-1">৳0</div>
+          </div>
+        </div>
+
+        <!-- Controls & Search -->
+        <div class="bg-[#131927] border border-slate-800/80 p-4 rounded-2xl space-y-4 shadow-md">
+          <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+            
+            <!-- Filter Pills -->
+            <div class="flex items-center bg-[#0b0f19] p-1 rounded-xl border border-slate-800">
+              <button id="filter-btn-all" onclick="setClientFilter('all')" class="px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white">All Files</button>
+              <button id="filter-btn-new" onclick="setClientFilter('new')" class="px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white">New Clients</button>
+              <button id="filter-btn-old" onclick="setClientFilter('old')" class="px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white">Active Clients</button>
+            </div>
+
+            <!-- Search Field -->
+            <input type="text" id="search-input" placeholder="Search by Project, Name, Phone..." class="bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-medium rounded-xl px-3.5 py-2 focus:outline-none focus:border-indigo-500 sm:w-64">
+          </div>
+        </div>
+
+        <!-- Master Records Table -->
+        <div id="master-table-container" class="bg-[#131927] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-[#1a2336] text-slate-400 font-extrabold uppercase text-[10px] tracking-wider border-b border-slate-800">
+                <tr>
+                  <th class="p-4 pl-6">Project & Client Name</th>
+                  <th class="p-4">Contact</th>
+                  <th class="p-4 text-right">Budget</th>
+                  <th class="p-4 text-right">Total Paid</th>
+                  <th class="p-4 text-right">Prj Expense</th>
+                  <th class="p-4 text-right">Due</th>
+                  <th class="p-4 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="clients-table-body" class="divide-y divide-slate-800/50">
+                <!-- Javascript will inject rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TAB 2: ADD NEW CLIENT FORM -->
+      <div id="tab-new-client-view" class="tab-content hidden">
+        <div class="bg-[#131927] border border-slate-800/80 p-6 rounded-2xl shadow-md max-w-xl mx-auto space-y-4">
+          <h2 class="text-base font-extrabold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
+            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+            Register New Client File
           </h2>
-          <form id="form-project-tx" class="space-y-3 text-xs">
+          <form id="client-form" class="space-y-4">
             <div>
-              <label class="block text-gray-600 mb-1 font-medium">প্রজেক্ট নির্বাচন করুন</label>
-              <select id="tx-project-select" required class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-red-500">
-                <option value="">সিলেক্ট করুন...</option>
+              <label class="text-xs font-bold text-slate-400 block mb-1">Project Title</label>
+              <input type="text" id="project-title" required placeholder="e.g. Uttara Commercial Tower Approval" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-3 focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-400 block mb-1">Client Name</label>
+              <input type="text" id="client-name" required placeholder="e.g. Md. Alamgir Hossain" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-3 focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-400 block mb-1">Contact Phone</label>
+              <input type="tel" id="client-phone" required placeholder="01700000000" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-3 focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-400 block mb-1">Total Agreed Budget (BDT)</label>
+              <input type="number" id="project-budget" required placeholder="500000" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-3 focus:outline-none focus:border-indigo-500">
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 text-xs rounded-xl transition shadow-lg shadow-indigo-600/30">Save & Register Profile</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB 3: NEW CLIENT TRANSACTION -->
+      <div id="tab-new-tx-view" class="tab-content hidden">
+        <div class="bg-[#131927] border border-slate-800/80 p-6 rounded-2xl shadow-md max-w-xl mx-auto space-y-4">
+          <h2 class="text-base font-extrabold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
+            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Record Client Ledger Entry
+          </h2>
+          <form id="tx-form" class="space-y-4">
+            <!-- Custom Searchable Select -->
+            <div class="relative">
+              <label class="text-xs font-bold text-slate-400 block mb-1">Select Client / Project File</label>
+              <input type="hidden" id="tx-client-select" required>
+              <div id="dropdown-trigger" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-3 cursor-pointer flex justify-between items-center">
+                <span id="dropdown-selected-text" class="text-slate-500">Select Project Profile...</span>
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </div>
+
+              <!-- List Popup -->
+              <div id="custom-dropdown-list" class="absolute left-0 right-0 top-full mt-1 bg-[#182030] border border-slate-700 rounded-xl shadow-2xl p-2 hidden z-40 max-h-56 overflow-y-auto space-y-1">
+                <input type="text" id="dropdown-search-input" placeholder="Type to search..." class="w-full bg-[#0d121d] border border-slate-700 text-xs text-white p-2 rounded-lg mb-1 focus:outline-none">
+                <div id="dropdown-items-container" class="space-y-0.5"></div>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-bold text-slate-400 block mb-1">Transaction Type</label>
+              <select id="tx-type" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-3 focus:outline-none focus:border-indigo-500">
+                <option value="income">📥 Payment Received (Income)</option>
+                <option value="expense">📤 Project Expense (Cost)</option>
               </select>
             </div>
-            <div class="grid grid-cols-2 gap-2">
+
+            <div>
+              <label class="text-xs font-bold text-slate-400 block mb-1">Amount (BDT)</label>
+              <input type="number" id="tx-amount" required placeholder="0.00" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-3 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <div>
+              <label class="text-xs font-bold text-slate-400 block mb-1">Transaction Date</label>
+              <input type="date" id="tx-date" required class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-3 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <div>
+              <label class="text-xs font-bold text-slate-400 block mb-1">Particulars / Description</label>
+              <input type="text" id="tx-details" placeholder="e.g. 2nd Installment or File submission fee" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-3 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 text-xs rounded-xl transition shadow-lg shadow-emerald-600/30">Submit Transaction</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB 4: OFFICE EXPENSES -->
+      <div id="tab-office-expense-view" class="tab-content hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          
+          <!-- Expense Form -->
+          <div class="md:col-span-5 bg-[#131927] border border-slate-800/80 p-5 rounded-2xl shadow-md space-y-4">
+            <h2 class="text-sm font-extrabold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
+              <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+              Log Office / Administrative Cost
+            </h2>
+            <form id="office-expense-form" class="space-y-3.5">
               <div>
-                <label class="block text-gray-600 mb-1 font-medium">লেনদেনের ধরন</label>
-                <select id="tx-type" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-red-500">
-                  <option value="collection">📥 টাকা পেলাম (পাবো/Income)</option>
-                  <option value="cost">📤 প্রজেক্ট খরচ (দিল/Direct Cost)</option>
+                <label class="text-[11px] font-bold text-slate-400 block mb-1">Category</label>
+                <select id="oe-category" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-2.5 focus:outline-none focus:border-indigo-500">
+                  <option value="Rent">Office Rent</option>
+                  <option value="Electricity">Electricity / Utility</option>
+                  <option value="Salary">Staff Salary</option>
+                  <option value="Entertainment">Entertainment / Tea</option>
+                  <option value="Conveyance">Conveyance</option>
+                  <option value="Others">Others</option>
                 </select>
               </div>
+
               <div>
-                <label class="block text-gray-600 mb-1 font-medium">টাকার পরিমাণ (৳)</label>
-                <input type="number" id="tx-amount" placeholder="0" required min="1" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-red-500">
+                <label class="text-[11px] font-bold text-slate-400 block mb-1">Expense Date</label>
+                <input type="date" id="oe-date" required class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-2.5 focus:outline-none">
               </div>
+
+              <div>
+                <label class="text-[11px] font-bold text-slate-400 block mb-1">Amount (BDT)</label>
+                <input type="number" id="oe-amount" required placeholder="0.00" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-2.5 focus:outline-none">
+              </div>
+
+              <div>
+                <label class="text-[11px] font-bold text-slate-400 block mb-1">Details / Note</label>
+                <input type="text" id="oe-details" required placeholder="e.g. Snacks for meeting" class="w-full bg-[#1c2436] border border-slate-700/70 text-slate-200 text-xs font-bold rounded-xl p-2.5 focus:outline-none">
+              </div>
+
+              <button type="submit" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 text-xs rounded-xl transition shadow-lg shadow-red-600/30">Save Expense Record</button>
+            </form>
+          </div>
+
+          <!-- Office Expense Log Table -->
+          <div class="md:col-span-7 bg-[#131927] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+            <div class="p-3.5 border-b border-slate-800 bg-[#172032] font-bold text-xs text-slate-300">
+              Monthly Office Expenses Log
             </div>
-            <div>
-              <label class="block text-gray-600 mb-1 font-medium">তারিখ</label>
-              <input type="date" id="tx-date" required class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-red-500">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-[#1a2336] text-slate-400 font-extrabold uppercase text-[10px] border-b border-slate-800">
+                  <tr>
+                    <th class="p-3 pl-3">Details</th>
+                    <th class="p-3">Date</th>
+                    <th class="p-3 text-right">Amount</th>
+                    <th class="p-3 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="office-expense-rows" class="divide-y divide-slate-800/50">
+                  <!-- JS Injection -->
+                </tbody>
+              </table>
             </div>
-            <div>
-              <label class="block text-gray-600 mb-1 font-medium">বিবরণ / নোট</label>
-              <input type="text" id="tx-note" placeholder="যেমন: প্রথম কিস্তি / রড কেনা" required class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800 focus:outline-none focus:border-red-500">
-            </div>
-            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg transition shadow-sm mt-1">
-              সেভ ভাউচার
-            </button>
-          </form>
+          </div>
+
         </div>
       </div>
 
-      <!-- TAB 3: OFFICE EXPENSE & BOSS FUND -->
-      <div id="tab-other" class="tab-content hidden space-y-3">
-        <!-- Office Expenses -->
-        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
-          <h2 class="text-xs font-bold text-gray-800 border-b pb-2 border-gray-100 flex items-center gap-1.5">
-            <span class="text-red-600">🏢</span> সাধারণ অফিস খরচ
-          </h2>
-          <form id="form-office-expense" class="space-y-2 text-xs">
-            <div class="grid grid-cols-2 gap-2">
-              <input type="text" id="office-cat" placeholder="খাত (যেমন: ভাড়া/চা)" required class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-              <input type="number" id="office-amount" placeholder="পরিমাণ ৳" required min="1" class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <input type="date" id="office-date" required class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-              <input type="text" id="office-note" placeholder="নোট (ঐচ্ছিক)" class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-            </div>
-            <button type="submit" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-lg transition text-xs font-bold">
-              খরচ যুক্ত করুন
-            </button>
-          </form>
-          <div id="office-logs-list" class="divide-y divide-gray-100 text-xs max-h-40 overflow-y-auto"></div>
+      <!-- LEDGER DRAWER SHEET (Hidden by default) -->
+      <div id="ledger-drawer" class="bg-[#131927] border border-slate-800 rounded-2xl p-5 shadow-2xl space-y-4 hidden">
+        <div class="flex justify-between items-start border-b border-slate-800 pb-3">
+          <div>
+            <h3 id="drawer-title" class="font-extrabold text-sm text-white">Project File Ledger</h3>
+            <p id="drawer-sub" class="text-xs text-slate-400 mt-0.5">Contact Details</p>
+          </div>
+          <button onclick="closeDrawer()" class="bg-slate-800 hover:bg-slate-700 text-slate-400 px-3 py-1 rounded-lg text-xs font-bold">Close Drawer ✕</button>
         </div>
 
-        <!-- Boss Wallet -->
-        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
-          <div class="flex justify-between items-center border-b pb-2 border-gray-100">
-            <h2 class="text-xs font-bold text-gray-800 flex items-center gap-1.5">
-              <span class="text-red-600">👑</span> মালিকের পার্সোনাল ফান্ড
-            </h2>
-            <span id="boss-wallet-balance" class="text-xs font-bold text-red-600">৳০</span>
-          </div>
-          <p id="boss-wallet-status" class="text-[10px] text-gray-500">ব্যালেন্স হিসেব</p>
-          <form id="form-boss-tx" class="space-y-2 text-xs">
-            <div class="grid grid-cols-2 gap-2">
-              <select id="boss-tx-type" class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-                <option value="deposit">📥 বস ইনভেস্ট করেছেন</option>
-                <option value="withdraw">📤 বস ক্যাশ নিয়েছেন</option>
-              </select>
-              <input type="number" id="boss-amount" placeholder="পরিমাণ ৳" required min="1" class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <input type="date" id="boss-date" required class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-              <input type="text" id="boss-note" placeholder="কারণ / নোট" class="bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-            </div>
-            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition text-xs font-bold">
-              এন্ট্রি করুন
-            </button>
-          </form>
-          <div id="boss-logs-list" class="divide-y divide-gray-100 text-xs max-h-40 overflow-y-auto"></div>
-        </div>
-      </div>
-
-      <!-- TAB 4: REPORTS -->
-      <div id="tab-reports" class="tab-content hidden space-y-3">
-        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
-          <h2 class="text-xs font-bold text-gray-800 border-b pb-2 border-gray-100">📈 লাভ-ক্ষতি সামারি রিপোর্ট</h2>
-          <div class="space-y-2 text-xs">
-            <div class="flex justify-between text-gray-600">
-              <span>মোট কাস্টমার আয় (Collection):</span>
-              <span id="rpt-total-income" class="font-bold text-emerald-600">৳০</span>
-            </div>
-            <div class="flex justify-between text-gray-600">
-              <span>মোট প্রজেক্ট খরচ (Direct Cost):</span>
-              <span id="rpt-project-cost" class="font-bold text-red-600">৳০</span>
-            </div>
-            <div class="flex justify-between font-bold border-t border-gray-100 pt-1.5 text-gray-800">
-              <span>মোট গ্রস প্রফিট:</span>
-              <span id="rpt-gross-profit" class="text-gray-900">৳০</span>
-            </div>
-            <div class="flex justify-between text-gray-600">
-              <span>সাধারণ অফিস খরচ:</span>
-              <span id="rpt-office-cost" class="font-bold text-red-600">৳০</span>
-            </div>
-            <div class="flex justify-between text-sm font-bold border-t border-gray-200 pt-2 text-gray-900">
-              <span>নিট লাভ / ক্ষতি (Net Profit):</span>
-              <span id="rpt-net-profit" class="text-emerald-600">৳০</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
-          <h2 class="text-xs font-bold text-gray-800 border-b pb-2 border-gray-100">🏦 মালিকের মূলধন রিপোর্ট</h2>
-          <div class="space-y-2 text-xs">
-            <div class="flex justify-between text-gray-600">
-              <span>বসের দেওয়া মোট ফান্ড:</span>
-              <span id="rpt-boss-given" class="font-bold text-emerald-600">৳০</span>
-            </div>
-            <div class="flex justify-between text-gray-600">
-              <span>বসের উত্তোলন করা ক্যাশ:</span>
-              <span id="rpt-boss-taken" class="font-bold text-red-600">৳০</span>
-            </div>
-            <div class="flex justify-between text-xs font-bold border-t border-gray-100 pt-2 text-gray-900">
-              <span>নিট মালিকানার বর্তমান স্থিতি:</span>
-              <span id="rpt-boss-net" class="text-red-600">৳০</span>
-            </div>
-          </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-[#1a2336] text-slate-400 font-extrabold uppercase text-[10px] border-b border-slate-800">
+              <tr>
+                <th class="p-3">Date</th>
+                <th class="p-3">Particulars</th>
+                <th class="p-3">Type</th>
+                <th class="p-3 text-right">Amount</th>
+                <th class="p-3 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="drawer-table-body" class="divide-y divide-slate-800/50">
+              <!-- JS Injected Ledger Rows -->
+            </tbody>
+          </table>
         </div>
       </div>
 
     </main>
 
-    <!-- Navigation Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30 shadow-lg">
-      <div class="max-w-md mx-auto flex justify-around p-1.5 text-[10px]">
-        <button class="nav-btn flex flex-col items-center gap-0.5 text-red-600 font-bold" data-tab="tab-dashboard">
-          <span class="text-base">📁</span>
-          <span>প্রজেক্টসমূহ</span>
-        </button>
-        <button class="nav-btn flex flex-col items-center gap-0.5 text-gray-500" data-tab="tab-voucher">
-          <span class="text-base">📝</span>
-          <span>ভাউচার এন্ট্রি</span>
-        </button>
-        <button class="nav-btn flex flex-col items-center gap-0.5 text-gray-500" data-tab="tab-other">
-          <span class="text-base">🏢</span>
-          <span>অফিস ও বস</span>
-        </button>
-        <button class="nav-btn flex flex-col items-center gap-0.5 text-gray-500" data-tab="tab-reports">
-          <span class="text-base">📊</span>
-          <span>রিপোর্ট</span>
-        </button>
-      </div>
-    </nav>
   </div>
 
-  <!-- MODALS -->
-  <div id="modal-add-project" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white border border-gray-200 rounded-xl p-4 w-full max-w-sm space-y-3 shadow-xl">
-      <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-        <h3 class="text-xs font-bold text-gray-800">➕ নতুন প্রজেক্ট যুক্ত করুন</h3>
-        <button id="btn-close-add-project" class="text-gray-400 hover:text-gray-600">✕</button>
+  <!-- SECURITY PASSCODE MODAL -->
+  <div id="securityModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-[#131927] border border-slate-700 p-5 rounded-2xl max-w-xs w-full shadow-2xl space-y-4 text-center">
+      <div class="w-10 h-10 bg-red-500/10 text-red-400 rounded-full flex items-center justify-center mx-auto border border-red-500/20">
+        🔒
       </div>
-      <form id="form-add-project" class="space-y-2 text-xs">
-        <div>
-          <label class="block text-gray-600 mb-1">কাস্টমার / ক্লায়েন্টের নাম</label>
-          <input type="text" id="new-client-name" required placeholder="যেমন: রহিম সাহেব" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-        </div>
-        <div>
-          <label class="block text-gray-600 mb-1">মোবাইল নম্বর</label>
-          <input type="text" id="new-client-mobile" placeholder="017xxxxxxxx" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-        </div>
-        <div>
-          <label class="block text-gray-600 mb-1">প্রজেক্ট / কাজের নাম</label>
-          <input type="text" id="new-project-name" required placeholder="যেমন: ৩য় তলার প্ল্যানিং" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-        </div>
-        <div>
-          <label class="block text-gray-600 mb-1">চুক্তিকৃত বাজেট (৳)</label>
-          <input type="number" id="new-project-budget" required min="0" placeholder="0" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-800">
-        </div>
-        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition mt-2 shadow-sm">
-          সেভ করুন
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <div id="modal-project-ledger" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white border border-gray-200 rounded-xl p-4 w-full max-w-md max-h-[85vh] flex flex-col justify-between shadow-xl">
       <div>
-        <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-          <div>
-            <h3 id="ledger-client-title" class="text-xs font-bold text-gray-800">কাস্টমার খতিয়ান</h3>
-            <p id="ledger-client-sub" class="text-[10px] text-gray-500"></p>
-          </div>
-          <button id="btn-close-ledger" class="text-gray-400 hover:text-gray-600">✕</button>
-        </div>
-        
-        <div class="grid grid-cols-3 gap-2 text-center my-3">
-          <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
-            <p class="text-[9px] text-gray-500">বাজেট</p>
-            <p id="ledger-budget" class="text-xs font-bold text-gray-800 mt-0.5">৳০</p>
-          </div>
-          <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-100">
-            <p class="text-[9px] text-emerald-600">জমা</p>
-            <p id="ledger-collections" class="text-xs font-bold text-emerald-700 mt-0.5">৳০</p>
-          </div>
-          <div class="bg-red-50 p-2 rounded-lg border border-red-100">
-            <p class="text-[9px] text-red-600">বাকি</p>
-            <p id="ledger-due" class="text-xs font-bold text-red-700 mt-0.5">৳০</p>
-          </div>
-        </div>
-
-        <h4 class="text-[11px] font-bold text-gray-700 mb-2">লেনদেনের ইতিহাস:</h4>
-        <div id="ledger-tx-list" class="space-y-2 max-h-56 overflow-y-auto text-xs pr-1"></div>
+        <h4 class="font-bold text-sm text-white">Enter Security Passcode</h4>
+        <p class="text-[11px] text-slate-400 mt-1">কন্ট্রোল পাসকোডটি প্রবেশ করান (Default: 1234)</p>
+      </div>
+      <input type="password" id="modalPasscodeInput" maxlength="6" placeholder="Passcode" class="w-full bg-[#1c2436] border border-slate-700 text-center text-sm font-mono text-white p-2.5 rounded-xl focus:outline-none focus:border-indigo-500">
+      <div class="flex gap-2">
+        <button id="modalCancelBtn" class="w-1/2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 text-xs rounded-xl transition">Cancel</button>
+        <button id="modalConfirmBtn" class="w-1/2 bg-red-600 hover:bg-red-500 text-white font-bold py-2 text-xs rounded-xl transition shadow-lg">Confirm</button>
       </div>
     </div>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <!-- FIREBASE V8 SCRIPTS (CORRECT LOAD ORDER) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <!-- App Main Logic -->
+  <!-- YOUR APPLICATION LOGIC -->
   <script src="app.js"></script>
+
 </body>
 </html>
