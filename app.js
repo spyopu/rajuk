@@ -1,4 +1,4 @@
-// 1. Firebase Initialization Configuration
+// 1. Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyD8kXy2rL9ptiPN4xEMg5h3o4RY_sPH79w",
   authDomain: "rajuk-bed98.firebaseapp.com",
@@ -13,17 +13,17 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const rtdb = firebase.database();
 
-// Global Security Passcode
-const SECURITY_PASSCODE = "6219";
+// Global Passcode
+const SECURITY_PASSCODE = "1234";
 
-// State Memory Management Variables
+// State Variables
 let farmData = [];
 let officeExpenses = [];
 let databasePathRef = null;
 let openLedgerId = null;
 let activeClientFilter = 'none';
 
-// Catch UI Reference Elements
+// DOM Elements
 const loginBtn = document.getElementById('google-login-btn');
 const logoutBtn = document.getElementById('logout-btn');
 const profileTrigger = document.getElementById('profile-trigger');
@@ -39,11 +39,11 @@ const ledgerDrawer = document.getElementById('ledger-drawer');
 const searchInput = document.getElementById('search-input');
 const monthFilter = document.getElementById('month-filter');
 
-// Initialize Today's Date Values Input fields
+// Initialize Dates
 if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
 if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
 
-// Initialize Default Value for Month Filter (Current Month)
+// Default Month
 if (monthFilter) {
   const now = new Date();
   const year = now.getFullYear();
@@ -52,7 +52,7 @@ if (monthFilter) {
   monthFilter.addEventListener('change', uiUpdatePipeline);
 }
 
-// Bind search bar trigger dynamically
+// Search Handler
 if (searchInput) {
   searchInput.addEventListener('input', () => {
     switchTab('dashboard-view');
@@ -64,22 +64,22 @@ if (searchInput) {
   });
 }
 
-// PREMIUM TAB SYSTEM CONTROLLER
+// Tab Switcher
 window.switchTab = function(tabId) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
   document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.className = "tab-btn flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent w-full";
+    btn.className = "tab-btn w-full flex items-center gap-2 text-[11px] md:text-xs font-bold px-3 py-2 md:py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent";
   });
 
   const activeBtn = document.getElementById(`btn-${tabId}`);
   if(activeBtn) {
-    activeBtn.className = "tab-btn w-full flex items-center gap-2.5 text-xs font-bold px-3 py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20";
+    activeBtn.className = "tab-btn w-full flex items-center gap-2 text-[11px] md:text-xs font-bold px-3 py-2 md:py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20";
   }
 }
 
-// Control Table Visibility and Custom States
+// Client Filters Control
 window.setClientFilter = function(filterType) {
   activeClientFilter = filterType;
   
@@ -89,11 +89,11 @@ window.setClientFilter = function(filterType) {
   const btnOld = document.getElementById('filter-btn-old');
   
   [btnAll, btnNew, btnOld].forEach(btn => {
-    if(btn) btn.className = "px-3 py-1.5 text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white";
+    if(btn) btn.className = "flex-1 sm:flex-none px-2.5 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white";
   });
   
   const activeBtn = document.getElementById(`filter-btn-${filterType}`);
-  if(activeBtn) activeBtn.className = "px-3 py-1.5 text-[11px] font-bold rounded-md transition-all bg-indigo-600 text-white shadow-sm";
+  if(activeBtn) activeBtn.className = "flex-1 sm:flex-none px-2.5 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all bg-indigo-600 text-white shadow-sm";
   
   if(container) {
     if(filterType === 'none') {
@@ -106,11 +106,9 @@ window.setClientFilter = function(filterType) {
   renderMasterTable();
 }
 
-// Initialize System Pipelines
 uiUpdatePipeline();
 setClientFilter('none');
 
-// User Menu Events Handlers
 if (profileTrigger) {
   profileTrigger.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -135,7 +133,7 @@ if (logoutBtn) {
   });
 }
 
-// Firebase Auth Authentication State Realtime Observers
+// Auth Observer
 auth.onAuthStateChanged(user => {
   if (user) {
     if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
@@ -144,7 +142,7 @@ auth.onAuthStateChanged(user => {
     const indicator = document.getElementById('status-indicator');
     const text = document.getElementById('status-text');
     if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse";
-    if (text) text.innerText = "Firebase Realtime Cloud (100% Secured)";
+    if (text) text.innerText = "Firebase Cloud Secured";
     
     if (document.getElementById('user-display-name')) document.getElementById('user-display-name').innerText = user.displayName;
     if (document.getElementById('user-display-email')) document.getElementById('user-display-email').innerText = user.email;
@@ -159,7 +157,7 @@ auth.onAuthStateChanged(user => {
     const indicator = document.getElementById('status-indicator');
     const text = document.getElementById('status-text');
     if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
-    if (text) text.innerText = "Offline / Guest Mode";
+    if (text) text.innerText = "Guest Mode";
     
     farmData = [];
     officeExpenses = [];
@@ -168,7 +166,7 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// Sync Stream listeners with Firebase Cloud Node 
+// Database Stream Listeners
 function subscribeToCloudStreams() {
   if(!databasePathRef) return;
   databasePathRef.child('clients').on('value', snapshot => {
@@ -202,7 +200,7 @@ function uiUpdatePipeline() {
   if(openLedgerId) refreshDrawer(openLedgerId);
 }
 
-// Calculate Dashboard Total Amounts
+// Metrics Counter Calculation
 function calculateGlobalMetrics() {
   let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
   
@@ -219,7 +217,6 @@ function calculateGlobalMetrics() {
   
   const startOfMonth = new Date(targetYear, targetMonth, 1);
   const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
-  const monthLabel = startOfMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   farmData.forEach(c => {
     budget += c.budget; 
@@ -251,34 +248,14 @@ function calculateGlobalMetrics() {
   let netIncome = income - grandTotalExpense;
 
   if (document.getElementById('global-budget')) document.getElementById('global-budget').innerText = '৳' + budget.toLocaleString('en-IN');
-  
-  const incomeCard = document.getElementById('global-income');
-  if (incomeCard) {
-    incomeCard.innerText = '৳' + income.toLocaleString('en-IN');
-    incomeCard.previousElementSibling.innerText = `Gross Income (${monthLabel})`;
-  }
-  
-  const expenseCard = document.getElementById('global-expense');
-  if (expenseCard) {
-    expenseCard.innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
-    expenseCard.previousElementSibling.innerText = `Total Cost (${monthLabel})`;
-  }
-  
+  if (document.getElementById('global-income')) document.getElementById('global-income').innerText = '৳' + income.toLocaleString('en-IN');
+  if (document.getElementById('global-expense')) document.getElementById('global-expense').innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
   if (document.getElementById('global-due')) document.getElementById('global-due').innerText = '৳' + due.toLocaleString('en-IN');
-  
-  const netCard = document.getElementById('global-net');
-  if (netCard) {
-    netCard.innerText = '৳' + netIncome.toLocaleString('en-IN');
-    netCard.previousElementSibling.innerText = `Net Balance (${monthLabel})`;
-  }
+  if (document.getElementById('global-net')) document.getElementById('global-net').innerText = '৳' + netIncome.toLocaleString('en-IN');
 }
 
-
-// ==========================================
-// Compact Passcode Modal Handler
-// ==========================================
+// Passcode Modal Logic
 let pendingDeleteAction = null;
-
 function requestPasscodeAuth(onSuccess) {
   const modal = document.getElementById('securityModal');
   const passInput = document.getElementById('modalPasscodeInput');
@@ -294,14 +271,12 @@ function requestPasscodeAuth(onSuccess) {
   
   setTimeout(() => passInput.focus(), 50);
 
-  // Submit on Enter Key
   passInput.onkeyup = function(e) {
     if (e.key === 'Enter') confirmBtn.click();
   };
 
   confirmBtn.onclick = function() {
-    const enteredPass = passInput.value.trim();
-    if (enteredPass === SECURITY_PASSCODE) {
+    if (passInput.value.trim() === SECURITY_PASSCODE) {
       modal.classList.add('hidden');
       if (pendingDeleteAction) pendingDeleteAction();
     } else {
@@ -317,10 +292,7 @@ function requestPasscodeAuth(onSuccess) {
   };
 }
 
-
-// ==========================================
-// Silent Submit Handlers (No Alert Popups)
-// ==========================================
+// Forms Submission
 if (clientForm) {
   clientForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -394,8 +366,7 @@ if (officeExpenseForm) {
   });
 }
 
-
-// Searchable Dropdown Logics
+// Dropdown Logic
 function renderDropdown() {
   const trigger = document.getElementById('dropdown-trigger');
   const dropdownList = document.getElementById('custom-dropdown-list');
@@ -426,20 +397,19 @@ function renderDropdown() {
 
   function filterDropdownItems(query) {
     itemsContainer.innerHTML = '';
-    
     const filtered = farmData.filter(c => 
       c.project.toLowerCase().includes(query.toLowerCase()) || 
       c.name.toLowerCase().includes(query.toLowerCase())
     );
 
     if (filtered.length === 0) {
-      itemsContainer.innerHTML = `<div class="p-2.5 text-xs text-slate-500 text-center">No projects found</div>`;
+      itemsContainer.innerHTML = `<div class="p-2 text-xs text-slate-500 text-center">No projects found</div>`;
       return;
     }
 
     filtered.forEach(c => {
       const item = document.createElement('div');
-      item.className = "p-2.5 text-xs text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg cursor-pointer transition-all font-medium flex justify-between items-center";
+      item.className = "p-2 text-xs text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg cursor-pointer transition-all font-medium flex justify-between items-center";
       item.innerHTML = `<span>${c.project} <span class="text-[10px] text-slate-500">(${c.name})</span></span>`;
       
       item.onclick = function() {
@@ -463,43 +433,35 @@ function renderDropdown() {
     selectedText.innerText = "No Active Projects Available";
     selectedText.className = "text-slate-500";
     hiddenInput.value = "";
-  } else {
-    if(!hiddenInput.value) {
-      selectedText.innerText = "Select Project Profile...";
-      selectedText.className = "text-slate-500";
-    } else {
-      const current = farmData.find(c => c.id === hiddenInput.value);
-      if(current) {
-        selectedText.innerText = `${current.project} (${current.name})`;
-        selectedText.className = "text-white font-semibold";
-      } else {
-        selectedText.innerText = "Select Project Profile...";
-        selectedText.className = "text-slate-500";
-        hiddenInput.value = "";
-      }
-    }
+  } else if(!hiddenInput.value) {
+    selectedText.innerText = "Select Project Profile...";
+    selectedText.className = "text-slate-500";
   }
 }
 
-// Master Table Rendering
+// Responsive Table & Mobile Cards Renderer
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
   const container = document.getElementById('master-table-container');
+  const cardContainer = document.getElementById('master-card-container');
   
   if (!auth.currentUser) {
     if(container) container.classList.remove('hidden');
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Dashboard is blank. Please sign in with Google from the top menu to view database files.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Dashboard is blank. Please sign in with Google.</td></tr>`;
+    if(cardContainer) cardContainer.innerHTML = `<div class="p-4 text-center text-amber-500 bg-slate-900/40 rounded-xl text-xs">⚠️ Please sign in with Google.</div>`;
     return;
   }
 
   if (activeClientFilter === 'none') {
     if(container) container.classList.add('hidden');
+    if(cardContainer) cardContainer.innerHTML = '';
     return;
   }
 
   if (farmData.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No records found. Please add a client first.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No records found.</td></tr>`;
+    if(cardContainer) cardContainer.innerHTML = `<div class="p-4 text-center text-slate-500 text-xs">No records found.</div>`;
     return;
   }
 
@@ -510,19 +472,19 @@ function renderMasterTable() {
   });
 
   if (activeClientFilter === 'new') {
-    filteredData = filteredData.filter(c => {
-      const hasIncome = c.history.some(t => t.type === 'income');
-      return !hasIncome;
-    });
+    filteredData = filteredData.filter(c => !c.history.some(t => t.type === 'income'));
   } else if (activeClientFilter === 'old') {
-    filteredData = filteredData.filter(c => {
-      const hasIncome = c.history.some(t => t.type === 'income');
-      return hasIncome;
-    });
+    filteredData = filteredData.filter(c => c.history.some(t => t.type === 'income'));
   }
 
-  tableBody.innerHTML = filteredData.length === 0 ? 
-    `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No matching profiles found in this category.</td></tr>` : '';
+  tableBody.innerHTML = '';
+  if(cardContainer) cardContainer.innerHTML = '';
+
+  if (filteredData.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No matching profiles found.</td></tr>`;
+    if(cardContainer) cardContainer.innerHTML = `<div class="p-4 text-center text-slate-500 text-xs">No matching profiles found.</div>`;
+    return;
+  }
 
   filteredData.forEach(c => {
     let localIncome = 0, localExpense = 0;
@@ -532,6 +494,7 @@ function renderMasterTable() {
     });
     let cDue = c.budget - localIncome;
 
+    // 1. DESKTOP ROW
     const tr = document.createElement('tr');
     tr.className = "hover:bg-slate-800/40 transition font-medium border-b border-slate-800 last:border-none text-slate-300";
     tr.innerHTML = `
@@ -552,6 +515,45 @@ function renderMasterTable() {
       </td>
     `;
     tableBody.appendChild(tr);
+
+    // 2. MOBILE CARD (Responsive Layout)
+    if(cardContainer) {
+      const card = document.createElement('div');
+      card.className = "bg-[#181a22] border border-[#262936] rounded-xl p-3.5 shadow-sm space-y-2.5";
+      card.innerHTML = `
+        <div class="flex justify-between items-start border-b border-[#262936] pb-2">
+          <div>
+            <h4 class="font-bold text-white text-xs md:text-sm">${c.project}</h4>
+            <p class="text-[11px] text-slate-400 mt-0.5">${c.name} • <span class="font-mono">${c.phone}</span></p>
+          </div>
+          <button onclick="deleteClient('${c.id}')" class="text-slate-500 hover:text-red-400 font-bold p-1 text-xs">✕</button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+          <div class="bg-[#121319] p-2 rounded-lg border border-[#222430]">
+            <span class="text-[9px] text-slate-500 uppercase block font-sans font-bold">Budget</span>
+            <span class="font-bold text-slate-200">৳${c.budget.toLocaleString('en-IN')}</span>
+          </div>
+          <div class="bg-[#121319] p-2 rounded-lg border border-[#222430]">
+            <span class="text-[9px] text-emerald-500 uppercase block font-sans font-bold">Income</span>
+            <span class="font-bold text-emerald-400">৳${localIncome.toLocaleString('en-IN')}</span>
+          </div>
+          <div class="bg-[#121319] p-2 rounded-lg border border-[#222430]">
+            <span class="text-[9px] text-rose-500 uppercase block font-sans font-bold">Cost</span>
+            <span class="font-bold text-rose-400">৳${localExpense.toLocaleString('en-IN')}</span>
+          </div>
+          <div class="bg-[#121319] p-2 rounded-lg border border-[#222430]">
+            <span class="text-[9px] text-amber-500 uppercase block font-sans font-bold">Due</span>
+            <span class="font-bold ${cDue > 0 ? 'text-amber-400' : 'text-slate-400'}">৳${cDue.toLocaleString('en-IN')}</span>
+          </div>
+        </div>
+
+        <button onclick="openDrawer('${c.id}')" class="w-full bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white font-bold py-2 rounded-lg text-xs transition border border-indigo-500/30">
+          View Detailed Ledger
+        </button>
+      `;
+      cardContainer.appendChild(card);
+    }
   });
 }
 
@@ -577,7 +579,7 @@ function renderOfficeExpenses() {
   });
 
   if (localFilteredExpenses.length === 0) {
-    officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-500">${auth.currentUser ? 'No expenses logged for this month.' : 'Please login to track expenses.'}</td></tr>`;
+    officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-500 text-xs">No expenses logged for this month.</td></tr>`;
     return;
   }
 
@@ -586,16 +588,16 @@ function renderOfficeExpenses() {
     const tr = document.createElement('tr');
     tr.className = "border-b border-slate-800 last:border-none";
     tr.innerHTML = `
-      <td class="p-3 pl-3 font-semibold text-slate-200">${oe.details} <span class="text-[9px] bg-red-950 text-red-400 px-1.5 py-0.5 rounded border border-red-900/50 font-bold">${oe.category}</span></td>
-      <td class="p-3 text-slate-500 font-mono text-[10px]">${oe.date}</td>
-      <td class="p-3 text-right font-bold text-red-400">৳${oe.amount.toLocaleString('en-IN')}</td>
-      <td class="p-3 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-600 hover:text-red-500 font-bold transition">✕</button></td>
+      <td class="p-2.5 md:p-3 font-semibold text-slate-200">${oe.details} <span class="text-[9px] bg-red-950 text-red-400 px-1.5 py-0.5 rounded border border-red-900/50 font-bold block sm:inline mt-0.5 sm:mt-0">${oe.category}</span></td>
+      <td class="p-2.5 md:p-3 text-slate-500 font-mono text-[10px]">${oe.date}</td>
+      <td class="p-2.5 md:p-3 text-right font-bold text-red-400">৳${oe.amount.toLocaleString('en-IN')}</td>
+      <td class="p-2.5 md:p-3 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-600 hover:text-red-500 font-bold transition">✕</button></td>
     `;
     officeExpenseRows.appendChild(tr);
   });
 }
 
-// Drawer Drawer Sheet Controllers
+// Drawer Methods
 window.openDrawer = function(id) {
   openLedgerId = id;
   if (ledgerDrawer) {
@@ -620,7 +622,7 @@ function refreshDrawer(id) {
   const dBody = document.getElementById('drawer-table-body');
   if (!dBody) return;
   dBody.innerHTML = (!client.history || client.history.length === 0) ? 
-    `<tr><td colspan="5" class="p-4 text-center text-slate-400 font-medium">No ledger accounts registered for this project.</td></tr>` : '';
+    `<tr><td colspan="5" class="p-4 text-center text-slate-400 font-medium text-xs">No ledger accounts registered.</td></tr>` : '';
 
   client.history.forEach(t => {
     const tr = document.createElement('tr');
@@ -629,29 +631,24 @@ function refreshDrawer(id) {
     let valColor = t.type === 'income' ? 'text-emerald-400' : 'text-red-400';
 
     tr.innerHTML = `
-      <td class="p-3 text-slate-500 font-mono">${t.date}</td>
-      <td class="p-3 font-semibold text-slate-200">${t.details}</td>
-      <td class="p-3">${typeText}</td>
-      <td class="p-3 text-right font-black ${valColor}">৳${t.amount.toLocaleString('en-IN')}</td>
-      <td class="p-3 text-center">
-        <button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-600 hover:text-red-500 font-bold transition px-2">✕</button>
+      <td class="p-2.5 text-slate-500 font-mono">${t.date}</td>
+      <td class="p-2.5 font-semibold text-slate-200">${t.details}</td>
+      <td class="p-2.5">${typeText}</td>
+      <td class="p-2.5 text-right font-black ${valColor}">৳${t.amount.toLocaleString('en-IN')}</td>
+      <td class="p-2.5 text-center">
+        <button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-600 hover:text-red-500 font-bold transition px-1">✕</button>
       </td>
     `;
     dBody.appendChild(tr);
   });
 }
 
-
-// ==========================================
-// Silent Deletion Handlers (No Alerts)
-// ==========================================
+// Silent Deletes
 window.deleteClient = function(id) {
   if(!databasePathRef) return;
   requestPasscodeAuth(() => {
     databasePathRef.child('clients').child(id).remove()
-      .then(() => {
-        if(openLedgerId === id) closeDrawer();
-      });
+      .then(() => { if(openLedgerId === id) closeDrawer(); });
   });
 };
 
