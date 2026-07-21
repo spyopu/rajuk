@@ -13,17 +13,14 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const rtdb = firebase.database();
 
-// Passcode
 const SECURITY_PASSCODE = "1234";
 
-// State
 let farmData = [];
 let officeExpenses = [];
 let databasePathRef = null;
 let openLedgerId = null;
-let activeClientFilter = 'all'; // Default 'all' so dashboard loads data automatically
+let activeClientFilter = 'all';
 
-// DOM
 const loginBtn = document.getElementById('google-login-btn');
 const logoutBtn = document.getElementById('logout-btn');
 const profileTrigger = document.getElementById('profile-trigger');
@@ -39,20 +36,15 @@ const ledgerDrawer = document.getElementById('ledger-drawer');
 const searchInput = document.getElementById('search-input');
 const monthFilter = document.getElementById('month-filter');
 
-// Initialize Dates
 if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
 if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
 
-// Set Month Filter Default to Current Month
 if (monthFilter) {
   const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  monthFilter.value = `${year}-${month}`;
+  monthFilter.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   monthFilter.addEventListener('change', uiUpdatePipeline);
 }
 
-// Search Listener
 if (searchInput) {
   searchInput.addEventListener('input', () => {
     switchTab('dashboard-view');
@@ -60,22 +52,20 @@ if (searchInput) {
   });
 }
 
-// Tab Switcher
 window.switchTab = function(tabId) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
   document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.className = "tab-btn w-full flex items-center gap-2 text-[11px] md:text-xs font-bold px-3 py-2 md:py-2.5 rounded-lg transition text-slate-400 hover:text-white hover:bg-[#1e202b] text-left border border-transparent";
+    btn.className = "tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-[10px] md:text-xs font-semibold px-2 py-2 rounded transition text-slate-400 hover:text-white hover:bg-[#1a1c26] text-center md:text-left";
   });
 
   const activeBtn = document.getElementById(`btn-${tabId}`);
   if(activeBtn) {
-    activeBtn.className = "tab-btn w-full flex items-center gap-2 text-[11px] md:text-xs font-bold px-3 py-2 md:py-2.5 rounded-lg transition bg-indigo-600 text-white shadow-md text-left border border-indigo-500/20";
+    activeBtn.className = "tab-btn w-full flex items-center justify-center md:justify-start gap-2 text-[10px] md:text-xs font-semibold px-2 py-2 rounded transition bg-indigo-600 text-white text-center md:text-left";
   }
 }
 
-// Filter Control
 window.setClientFilter = function(filterType) {
   activeClientFilter = filterType;
   
@@ -84,11 +74,11 @@ window.setClientFilter = function(filterType) {
   const btnOld = document.getElementById('filter-btn-old');
   
   [btnAll, btnNew, btnOld].forEach(btn => {
-    if(btn) btn.className = "flex-1 sm:flex-none px-3 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all text-slate-400 hover:text-white";
+    if(btn) btn.className = "flex-1 sm:flex-none px-2.5 py-0.5 text-[10px] font-bold rounded text-slate-400 hover:text-white";
   });
   
   const activeBtn = document.getElementById(`filter-btn-${filterType}`);
-  if(activeBtn) activeBtn.className = "flex-1 sm:flex-none px-3 py-1 text-[10px] md:text-[11px] font-bold rounded-md transition-all bg-indigo-600 text-white shadow-sm";
+  if(activeBtn) activeBtn.className = "flex-1 sm:flex-none px-2.5 py-0.5 text-[10px] font-bold rounded bg-indigo-600 text-white";
   
   renderMasterTable();
 }
@@ -117,7 +107,6 @@ if (logoutBtn) {
   });
 }
 
-// Authentic Auth State Observer Fix
 auth.onAuthStateChanged(user => {
   if (user) {
     if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
@@ -125,11 +114,10 @@ auth.onAuthStateChanged(user => {
     
     const indicator = document.getElementById('status-indicator');
     const text = document.getElementById('status-text');
-    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse";
-    if (text) text.innerText = "Firebase Cloud Secured";
+    if (indicator) indicator.className = "inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse";
+    if (text) text.innerText = "Cloud Secured";
     
     if (document.getElementById('user-display-name')) document.getElementById('user-display-name').innerText = user.displayName;
-    if (document.getElementById('user-display-email')) document.getElementById('user-display-email').innerText = user.email;
     if (document.getElementById('user-avatar')) document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
 
     databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
@@ -140,7 +128,7 @@ auth.onAuthStateChanged(user => {
     
     const indicator = document.getElementById('status-indicator');
     const text = document.getElementById('status-text');
-    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
+    if (indicator) indicator.className = "inline-block h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse";
     if (text) text.innerText = "Guest Mode";
     
     farmData = [];
@@ -150,7 +138,6 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// Database Stream Subscriptions
 function subscribeToCloudStreams() {
   if(!databasePathRef) return;
   
@@ -185,7 +172,6 @@ function uiUpdatePipeline() {
   if(openLedgerId) refreshDrawer(openLedgerId);
 }
 
-// Calculate Dashboard Metrics
 function calculateGlobalMetrics() {
   let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
   
@@ -239,7 +225,6 @@ function calculateGlobalMetrics() {
   if (document.getElementById('global-net')) document.getElementById('global-net').innerText = '৳' + netIncome.toLocaleString('en-IN');
 }
 
-// Security Passcode Modal
 let pendingDeleteAction = null;
 function requestPasscodeAuth(onSuccess) {
   const modal = document.getElementById('securityModal');
@@ -250,22 +235,15 @@ function requestPasscodeAuth(onSuccess) {
   if (!modal || !passInput) return;
 
   passInput.value = '';
-  passInput.classList.remove('border-red-500');
   pendingDeleteAction = onSuccess;
   modal.classList.remove('hidden');
-  
   setTimeout(() => passInput.focus(), 50);
-
-  passInput.onkeyup = function(e) {
-    if (e.key === 'Enter') confirmBtn.click();
-  };
 
   confirmBtn.onclick = function() {
     if (passInput.value.trim() === SECURITY_PASSCODE) {
       modal.classList.add('hidden');
       if (pendingDeleteAction) pendingDeleteAction();
     } else {
-      passInput.classList.add('border-red-500');
       passInput.value = '';
       passInput.focus();
     }
@@ -277,7 +255,6 @@ function requestPasscodeAuth(onSuccess) {
   };
 }
 
-// Form Handlers
 if (clientForm) {
   clientForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -321,12 +298,6 @@ if (txForm) {
       document.getElementById('tx-details').value = '';
       document.getElementById('tx-client-select').value = '';
       
-      const selectedText = document.getElementById('dropdown-selected-text');
-      if (selectedText) {
-        selectedText.innerText = 'Select Project Profile...';
-        selectedText.className = 'text-slate-500';
-      }
-
       setClientFilter('all');
       uiUpdatePipeline();
       switchTab('dashboard-view');
@@ -351,7 +322,6 @@ if (officeExpenseForm) {
   });
 }
 
-// Dropdown Setup
 function renderDropdown() {
   const trigger = document.getElementById('dropdown-trigger');
   const dropdownList = document.getElementById('custom-dropdown-list');
@@ -372,13 +342,8 @@ function renderDropdown() {
     }
   };
 
-  document.onclick = function() {
-    dropdownList.classList.add('hidden');
-  };
-
-  dropdownList.onclick = function(e) {
-    e.stopPropagation();
-  };
+  document.onclick = function() { dropdownList.classList.add('hidden'); };
+  dropdownList.onclick = function(e) { e.stopPropagation(); };
 
   function filterDropdownItems(query) {
     itemsContainer.innerHTML = '';
@@ -388,62 +353,47 @@ function renderDropdown() {
     );
 
     if (filtered.length === 0) {
-      itemsContainer.innerHTML = `<div class="p-2 text-xs text-slate-500 text-center">No projects found</div>`;
+      itemsContainer.innerHTML = `<div class="p-1.5 text-[10px] text-slate-500 text-center">No projects</div>`;
       return;
     }
 
     filtered.forEach(c => {
       const item = document.createElement('div');
-      item.className = "p-2 text-xs text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg cursor-pointer transition-all font-medium flex justify-between items-center";
-      item.innerHTML = `<span>${c.project} <span class="text-[10px] text-slate-500">(${c.name})</span></span>`;
+      item.className = "p-1.5 text-[11px] text-slate-300 hover:bg-indigo-600 hover:text-white rounded cursor-pointer transition flex justify-between";
+      item.innerHTML = `<span>${c.project}</span> <span class="text-[9px] text-slate-500">${c.name}</span>`;
       
       item.onclick = function() {
         hiddenInput.value = c.id;
-        selectedText.innerText = `${c.project} (${c.name})`;
-        selectedText.className = "text-white font-semibold";
+        selectedText.innerText = `${c.project}`;
+        selectedText.className = "text-white font-medium";
         dropdownList.classList.add('hidden');
       };
-      
       itemsContainer.appendChild(item);
     });
   }
 
-  if (dropdownSearchInput) {
-    dropdownSearchInput.oninput = function() {
-      filterDropdownItems(this.value);
-    };
-  }
-
-  if (farmData.length === 0) {
-    selectedText.innerText = "No Active Projects Available";
-    selectedText.className = "text-slate-500";
-    hiddenInput.value = "";
-  } else if(!hiddenInput.value) {
-    selectedText.innerText = "Select Project Profile...";
-    selectedText.className = "text-slate-500";
-  }
+  if (dropdownSearchInput) dropdownSearchInput.oninput = function() { filterDropdownItems(this.value); };
 }
 
-// Master Table & Responsive Mobile Cards Renderer
+// ULTRA-MINIMAL MOBILE RENDERER
 function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
   const container = document.getElementById('master-table-container');
   const cardContainer = document.getElementById('master-card-container');
 
-  // Multi-check auth user state
   const currentUser = firebase.auth().currentUser;
 
   if (!currentUser) {
     if(container) container.classList.remove('hidden');
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-500 font-semibold bg-slate-900/40">⚠️ Dashboard is blank. Please sign in with Google.</td></tr>`;
-    if(cardContainer) cardContainer.innerHTML = `<div class="p-4 text-center text-amber-500 bg-slate-900/40 rounded-xl text-xs">⚠️ Please sign in with Google.</div>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-amber-500 text-xs">⚠️ Please sign in.</td></tr>`;
+    if(cardContainer) cardContainer.innerHTML = `<div class="p-3 text-center text-amber-500 text-[11px]">⚠️ Sign in with Google</div>`;
     return;
   }
 
   if (farmData.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No records found.</td></tr>`;
-    if(cardContainer) cardContainer.innerHTML = `<div class="p-4 text-center text-slate-500 text-xs">No records found.</div>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500 text-xs">No records.</td></tr>`;
+    if(cardContainer) cardContainer.innerHTML = `<div class="p-3 text-center text-slate-500 text-[11px]">No records found.</div>`;
     return;
   }
 
@@ -462,12 +412,6 @@ function renderMasterTable() {
   tableBody.innerHTML = '';
   if(cardContainer) cardContainer.innerHTML = '';
 
-  if (filteredData.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-medium bg-slate-900/40">No matching profiles found.</td></tr>`;
-    if(cardContainer) cardContainer.innerHTML = `<div class="p-4 text-center text-slate-500 text-xs">No matching profiles found.</div>`;
-    return;
-  }
-
   filteredData.forEach(c => {
     let localIncome = 0, localExpense = 0;
     c.history.forEach(t => {
@@ -478,60 +422,58 @@ function renderMasterTable() {
 
     // Desktop Row
     const tr = document.createElement('tr');
-    tr.className = "hover:bg-slate-800/40 transition font-medium border-b border-slate-800 last:border-none text-slate-300";
+    tr.className = "hover:bg-[#181a24] transition font-medium border-b border-[#1e202a] text-slate-300";
     tr.innerHTML = `
-      <td class="p-4 pl-6">
-        <div class="font-bold text-slate-100 text-sm">${c.project}</div>
-        <div class="text-[11px] text-slate-500 mt-0.5">${c.name}</div>
+      <td class="p-3 pl-4">
+        <div class="font-bold text-slate-100">${c.project}</div>
+        <div class="text-[10px] text-slate-500">${c.name}</div>
       </td>
-      <td class="p-4 font-mono text-xs text-slate-400">${c.phone}</td>
-      <td class="p-4 text-right font-bold text-slate-100">৳${c.budget.toLocaleString('en-IN')}</td>
-      <td class="p-4 text-right font-bold text-emerald-400">৳${localIncome.toLocaleString('en-IN')}</td>
-      <td class="p-4 text-right font-bold text-red-400">৳${localExpense.toLocaleString('en-IN')}</td>
-      <td class="p-4 text-right font-black ${cDue > 0 ? 'text-amber-500' : 'text-slate-500'}">৳${cDue.toLocaleString('en-IN')}</td>
-      <td class="p-4 pr-6 text-center">
-        <div class="flex justify-center items-center gap-2">
-          <button onclick="openDrawer('${c.id}')" class="bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-200 px-3 py-1.5 rounded-xl text-[11px] font-bold transition">Ledger</button>
-          <button onclick="deleteClient('${c.id}')" class="text-slate-600 hover:text-red-500 font-bold p-1 transition">✕</button>
-        </div>
+      <td class="p-3 font-mono text-[11px] text-slate-400">${c.phone}</td>
+      <td class="p-3 text-right font-bold text-slate-200">৳${c.budget.toLocaleString('en-IN')}</td>
+      <td class="p-3 text-right font-bold text-emerald-400">৳${localIncome.toLocaleString('en-IN')}</td>
+      <td class="p-3 text-right font-bold text-rose-400">৳${localExpense.toLocaleString('en-IN')}</td>
+      <td class="p-3 text-right font-bold ${cDue > 0 ? 'text-amber-400' : 'text-slate-500'}">৳${cDue.toLocaleString('en-IN')}</td>
+      <td class="p-3 pr-4 text-center">
+        <button onclick="openDrawer('${c.id}')" class="bg-[#1e202a] hover:bg-indigo-600 text-slate-200 hover:text-white px-2.5 py-1 rounded text-[10px] font-semibold transition">Ledger</button>
+        <button onclick="deleteClient('${c.id}')" class="text-slate-600 hover:text-red-400 font-bold ml-1.5">✕</button>
       </td>
     `;
     tableBody.appendChild(tr);
 
-    // Mobile Card View
+    // MINIMAL MOBILE CARD (Clutter-Free)
     if(cardContainer) {
       const card = document.createElement('div');
-      card.className = "bg-[#181a22] border border-[#262936] rounded-xl p-3.5 shadow-sm space-y-2.5";
+      card.className = "bg-[#14151c] border border-[#1e202a] rounded p-2.5 space-y-2";
       card.innerHTML = `
-        <div class="flex justify-between items-start border-b border-[#262936] pb-2">
+        <div class="flex justify-between items-center border-b border-[#1e202a] pb-1.5">
           <div>
-            <h4 class="font-bold text-white text-xs md:text-sm">${c.project}</h4>
-            <p class="text-[11px] text-slate-400 mt-0.5">${c.name} • <span class="font-mono">${c.phone}</span></p>
+            <h4 class="font-bold text-white text-xs">${c.project}</h4>
+            <p class="text-[10px] text-slate-400">${c.name} • <span class="font-mono text-slate-500">${c.phone}</span></p>
           </div>
-          <button onclick="deleteClient('${c.id}')" class="text-slate-500 hover:text-red-400 font-bold p-1 text-xs">✕</button>
+          <button onclick="deleteClient('${c.id}')" class="text-slate-600 hover:text-red-400 text-xs px-1">✕</button>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-          <div class="bg-[#121319] p-2 rounded-lg border border-[#222430]">
-            <span class="text-[9px] text-slate-500 uppercase block font-sans font-bold">Budget</span>
-            <span class="font-bold text-slate-200">৳${c.budget.toLocaleString('en-IN')}</span>
+        <div class="flex items-center justify-between text-[11px] font-mono pt-0.5">
+          <div>
+            <span class="text-[8px] text-slate-500 block uppercase font-sans">Budget</span>
+            <span class="font-semibold text-slate-200">৳${c.budget.toLocaleString('en-IN')}</span>
           </div>
-          <div class="bg-[#121319] p-2 rounded-lg border border-[#222430]">
-            <span class="text-[9px] text-emerald-500 uppercase block font-sans font-bold">Income</span>
-            <span class="font-bold text-emerald-400">৳${localIncome.toLocaleString('en-IN')}</span>
+          <div>
+            <span class="text-[8px] text-emerald-500 block uppercase font-sans">Income</span>
+            <span class="font-semibold text-emerald-400">৳${localIncome.toLocaleString('en-IN')}</span>
           </div>
-          <div class="bg-[#121319] p-2 rounded-lg border border-[#222430]">
-            <span class="text-[9px] text-rose-500 uppercase block font-sans font-bold">Cost</span>
-            <span class="font-bold text-rose-400">৳${localExpense.toLocaleString('en-IN')}</span>
+          <div>
+            <span class="text-[8px] text-rose-500 block uppercase font-sans">Cost</span>
+            <span class="font-semibold text-rose-400">৳${localExpense.toLocaleString('en-IN')}</span>
           </div>
-          <div class="bg-[#121319] p-2 rounded-lg border border-[#222430]">
-            <span class="text-[9px] text-amber-500 uppercase block font-sans font-bold">Due</span>
+          <div class="text-right">
+            <span class="text-[8px] text-amber-500 block uppercase font-sans">Due</span>
             <span class="font-bold ${cDue > 0 ? 'text-amber-400' : 'text-slate-400'}">৳${cDue.toLocaleString('en-IN')}</span>
           </div>
         </div>
 
-        <button onclick="openDrawer('${c.id}')" class="w-full bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white font-bold py-2 rounded-lg text-xs transition border border-indigo-500/30">
-          View Detailed Ledger
+        <button onclick="openDrawer('${c.id}')" class="w-full bg-[#1e202a] hover:bg-indigo-600 text-slate-300 hover:text-white font-semibold py-1 rounded text-[10px] transition">
+          View Ledger
         </button>
       `;
       cardContainer.appendChild(card);
@@ -541,45 +483,23 @@ function renderMasterTable() {
 
 function renderOfficeExpenses() {
   if (!officeExpenseRows) return;
-  
-  let targetYear, targetMonth;
-  if (monthFilter && monthFilter.value) {
-    const parts = monthFilter.value.split('-');
-    targetYear = parseInt(parts[0]);
-    targetMonth = parseInt(parts[1]) - 1;
-  } else {
-    const now = new Date();
-    targetYear = now.getFullYear();
-    targetMonth = now.getMonth();
-  }
-  const startOfMonth = new Date(targetYear, targetMonth, 1);
-  const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
-
-  const localFilteredExpenses = officeExpenses.filter(oe => {
-    const d = new Date(oe.date);
-    return d >= startOfMonth && d <= endOfMonth;
-  });
-
-  if (localFilteredExpenses.length === 0) {
-    officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-500 text-xs">No expenses logged for this month.</td></tr>`;
+  officeExpenseRows.innerHTML = '';
+  if(officeExpenses.length === 0) {
+    officeExpenseRows.innerHTML = `<tr><td class="p-2 text-center text-slate-500 text-[10px]">No records.</td></tr>`;
     return;
   }
-
-  officeExpenseRows.innerHTML = '';
-  localFilteredExpenses.forEach(oe => {
+  officeExpenses.forEach(oe => {
     const tr = document.createElement('tr');
-    tr.className = "border-b border-slate-800 last:border-none";
+    tr.className = "border-b border-[#1e202a]";
     tr.innerHTML = `
-      <td class="p-2.5 md:p-3 font-semibold text-slate-200">${oe.details} <span class="text-[9px] bg-red-950 text-red-400 px-1.5 py-0.5 rounded border border-red-900/50 font-bold block sm:inline mt-0.5 sm:mt-0">${oe.category}</span></td>
-      <td class="p-2.5 md:p-3 text-slate-500 font-mono text-[10px]">${oe.date}</td>
-      <td class="p-2.5 md:p-3 text-right font-bold text-red-400">৳${oe.amount.toLocaleString('en-IN')}</td>
-      <td class="p-2.5 md:p-3 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-600 hover:text-red-500 font-bold transition">✕</button></td>
+      <td class="p-2 font-medium text-slate-300 text-[11px]">${oe.details} <span class="text-[9px] text-slate-500 block">${oe.category} • ${oe.date}</span></td>
+      <td class="p-2 text-right font-bold text-rose-400 font-mono text-xs">৳${oe.amount.toLocaleString('en-IN')}</td>
+      <td class="p-2 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-600 hover:text-red-400 font-bold text-xs">✕</button></td>
     `;
     officeExpenseRows.appendChild(tr);
   });
 }
 
-// Drawer Methods
 window.openDrawer = function(id) {
   openLedgerId = id;
   if (ledgerDrawer) {
@@ -598,34 +518,29 @@ function refreshDrawer(id) {
   const client = farmData.find(c => c.id === id);
   if(!client) return closeDrawer();
 
-  if (document.getElementById('drawer-title')) document.getElementById('drawer-title').innerText = `🏢 File: ${client.project} (${client.name})`;
-  if (document.getElementById('drawer-sub')) document.getElementById('drawer-sub').innerText = `Contact: ${client.phone} | Budget: ৳${client.budget.toLocaleString('en-IN')}`;
+  if (document.getElementById('drawer-title')) document.getElementById('drawer-title').innerText = `${client.project}`;
+  if (document.getElementById('drawer-sub')) document.getElementById('drawer-sub').innerText = `${client.name} | Budget: ৳${client.budget.toLocaleString('en-IN')}`;
 
   const dBody = document.getElementById('drawer-table-body');
   if (!dBody) return;
   dBody.innerHTML = (!client.history || client.history.length === 0) ? 
-    `<tr><td colspan="5" class="p-4 text-center text-slate-400 font-medium text-xs">No ledger accounts registered.</td></tr>` : '';
+    `<tr><td class="p-3 text-center text-slate-500 text-[11px]">No transactions logged.</td></tr>` : '';
 
   client.history.forEach(t => {
     const tr = document.createElement('tr');
-    tr.className = "border-b border-slate-800 last:border-none font-medium text-slate-300";
-    let typeText = t.type === 'income' ? '<span class="text-emerald-400 font-bold">📥 Debit</span>' : '<span class="text-red-400 font-bold">📤 Credit</span>';
-    let valColor = t.type === 'income' ? 'text-emerald-400' : 'text-red-400';
+    tr.className = "border-b border-[#1e202a] text-[11px]";
+    let valColor = t.type === 'income' ? 'text-emerald-400' : 'text-rose-400';
 
     tr.innerHTML = `
-      <td class="p-2.5 text-slate-500 font-mono">${t.date}</td>
-      <td class="p-2.5 font-semibold text-slate-200">${t.details}</td>
-      <td class="p-2.5">${typeText}</td>
-      <td class="p-2.5 text-right font-black ${valColor}">৳${t.amount.toLocaleString('en-IN')}</td>
-      <td class="p-2.5 text-center">
-        <button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-600 hover:text-red-500 font-bold transition px-1">✕</button>
-      </td>
+      <td class="p-2 font-mono text-slate-500 text-[10px]">${t.date}</td>
+      <td class="p-2 font-medium text-slate-200">${t.details}</td>
+      <td class="p-2 text-right font-bold font-mono ${valColor}">৳${t.amount.toLocaleString('en-IN')}</td>
+      <td class="p-2 text-center"><button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-600 hover:text-red-400 font-bold text-xs">✕</button></td>
     `;
     dBody.appendChild(tr);
   });
 }
 
-// Passcode Protected Deletions
 window.deleteClient = function(id) {
   if(!databasePathRef) return;
   requestPasscodeAuth(() => {
