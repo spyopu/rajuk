@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ডিজিটাল খাতা ও ইআরপি সিস্টেম</title>
+  <title>ডিজিটাল খাতা</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter & Fira Code -->
@@ -113,11 +113,10 @@
             <button onclick="setClientFilter('old')" id="filter-btn-old" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">চলমান</button>
           </div>
 
-          <!-- মান্থ ফিল্টারের পাশে রিপোর্ট বাটন -->
+          <!-- মান্থ ফিল্টার এবং রিপোর্ট বাটন -->
           <div class="flex items-center gap-2">
             <input type="month" id="month-filter" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs md:text-sm rounded-xl px-3.5 py-3 outline-none focus:border-rose-600 transition shadow-2xs">
             
-            <!-- নতুন রিপোর্ট বাটন -->
             <button onclick="openMonthlyReportModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-3 rounded-xl text-xs md:text-sm transition shadow-sm flex items-center gap-1.5 whitespace-nowrap">
               <span>📊</span> রিপোর্ট
             </button>
