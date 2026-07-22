@@ -14,8 +14,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
-    body, button, input, select, textarea {
-      font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif !important;
+    body, button, input, select, textarea, th, td, span, h1, h2, h3, h4 {
+      font-family: 'Hind Siliguri', 'Plus Jakarta Sans', sans-serif !important;
     }
   </style>
 
@@ -35,7 +35,7 @@
       <div class="flex items-center gap-3">
         <div class="h-10 w-10 rounded-xl bg-white text-rose-600 flex items-center justify-center font-black text-base shadow-sm">DK</div>
         <div>
-          <h1 class="text-sm md:text-base font-black tracking-wide uppercase">ডিজিটাল খাতা</h1>
+          <h1 class="text-sm md:text-base font-black tracking-wide uppercase">Digital Khata</h1>
           <div class="flex items-center gap-1.5 mt-0.5">
             <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-300 animate-pulse"></span>
             <span id="status-text" class="text-[11px] text-rose-100 font-mono font-medium">Guest Mode</span>
@@ -45,8 +45,13 @@
 
       <div class="flex items-center gap-3">
         <div id="sidebar-auth-section">
-          <button id="google-login-btn" class="bg-white text-rose-600 hover:bg-rose-50 font-bold rounded-xl px-4 py-2 text-xs md:text-sm transition shadow-sm">
-            G
+          <button id="google-login-btn" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold rounded-xl p-2.5 transition shadow-sm flex items-center justify-center">
+            <svg class="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.14C3.15 21.3 7.22 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.18C.43 8.12 0 9.87 0 12s.43 3.88 1.18 5.38l4.09-3.14z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.7 1.18 6.62l4.09 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
+            </svg>
           </button>
         </div>
 
@@ -74,10 +79,10 @@
     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div class="hidden md:flex items-center bg-slate-100 p-1.5 rounded-xl border border-slate-200">
         <button onclick="switchTab('client-view')" id="btn-client-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">➕ নতুন গ্রাহক</button>
+        <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">📊 খাতা ও রিপোর্ট</button>
         <button onclick="switchTab('journal-view')" id="btn-journal-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">💸 লেনদেন</button>
         <button onclick="switchTab('office-view')" id="btn-office-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">🏢 অফিস খরচ</button>
         <button onclick="switchTab('owner-view')" id="btn-owner-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">💼 মালিকের ফান্ড</button>
-        <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">📊ড্যাশবোর্ড ও রিপোর্ট</button>
       </div>
 
       <div class="w-full md:w-auto text-xs font-bold text-slate-500">
@@ -103,16 +108,16 @@
             <input type="text" id="client-name" placeholder="যেমন: মো: আলমগীর" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition shadow-2xs font-medium text-slate-800">
           </div>
           <div>
-            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">মোবাইল নাম্বর</label>
+            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">মোবাইল নম্বর</label>
             <input type="text" id="client-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition font-mono shadow-2xs font-semibold text-slate-800">
           </div>
           <div>
-            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">প্রজেক্ট নাম</label>
+            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">প্রজেক্ট / কাজের নাম</label>
             <input type="text" id="project-title" placeholder="যেমন: উত্তরা বিল্ডিং ডিজাইন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition shadow-2xs font-medium text-slate-800">
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">মোট চুক্তি (৳)</label>
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">মোট চুক্তি বাজেট (৳)</label>
               <input type="number" id="project-budget" placeholder="50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition font-mono shadow-2xs font-bold text-slate-800">
             </div>
             <div>
@@ -135,7 +140,7 @@
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
           <div>
             <h3 class="text-xs md:text-sm font-bold text-slate-900 flex items-center gap-2">
-              <span>🔒</span> রিপোর্ট ও ড্যাশবোর্ড
+              <span>🔒</span> কনফিডেন্সিয়াল ফাইন্যান্সিয়াল রিপোর্ট ও ড্যাশবোর্ড
             </h3>
             <p class="text-[11px] text-slate-500 mt-0.5">গোপনীয়তা রক্ষার জন্য পাসকোড দিয়ে ড্যাশবোর্ড আনলক করতে হবে।</p>
           </div>
@@ -255,8 +260,8 @@
                 <thead>
                   <tr class="bg-slate-50/80 text-slate-500 font-bold uppercase text-[11px] border-b border-slate-200">
                     <th class="p-4 pl-5">গ্রাহক ও প্রজেক্ট</th>
-                    <th class="p-4">মোবাইল নাম্বার</th>
-                    <th class="p-4 text-right">চুক্তি</th>
+                    <th class="p-4">মোবাইল</th>
+                    <th class="p-4 text-right">চুক্তি (বাজেট)</th>
                     <th class="p-4 text-right">জমা</th>
                     <th class="p-4 text-right">খরচ</th>
                     <th class="p-4 text-right">বাকি</th>
@@ -297,8 +302,8 @@
           <div>
             <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">লেনদেনের ধরন</label>
             <select id="tx-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 font-bold shadow-2xs text-slate-800">
-              <option value="income">🟢 টাকা জমা নিলেন (Cash In/Debit)</option>
-              <option value="expense">🔴 প্রজেক্ট খরচ (Cash Out/Credit)</option>
+              <option value="income">🟢 টাকা জমা নিলেন (Cash In / Debit)</option>
+              <option value="expense">🔴 প্রজেক্ট খরচ (Cash Out / Credit)</option>
             </select>
           </div>
 
@@ -587,7 +592,7 @@
 
     uiUpdatePipeline();
     setClientFilter('all');
-    switchTab('client-view'); // Default tab set to Client form for privacy
+    switchTab('client-view');
 
     if (profileTrigger) {
       profileTrigger.addEventListener('click', (e) => {
@@ -737,8 +742,6 @@
       let netProfit = grossProfit - totalOfficeExpense;
       let ownerNetStatus = ownerInjection - ownerDrawing;
 
-      // Net Balance Calculation (Total Cash In = Customer Collection + Owner Injection)
-      // (Total Cash Out = Project Expense + Office Expense + Owner Drawing)
       let totalCashIn = collection + ownerInjection;
       let totalCashOut = prjExpense + totalOfficeExpense + ownerDrawing;
       let netBalance = totalCashIn - totalCashOut;
@@ -785,7 +788,6 @@
 
     window.handleReportUnlock = function() {
       if (isReportUnlocked) {
-        // Lock again
         isReportUnlocked = false;
         document.getElementById('report-content-body').classList.add('filter', 'blur-md', 'select-none', 'pointer-events-none');
         document.getElementById('report-btn-text').innerText = "ড্যাশবোর্ড আনলক করুন";
