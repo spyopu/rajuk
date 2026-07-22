@@ -438,13 +438,8 @@ function renderMasterTable() {
   if (!tableBody) return;
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-  if (!auth.currentUser) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-amber-600 font-bold bg-amber-50/50">⚠️ অনুগ্রহ করে ওপরের ডানপাশ থেকে Google Login করুন।</td></tr>`;
-    return;
-  }
-
   if (farmData.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400 font-semibold">কোনো হিসাব পাওয়া যায়নি। নতুন গ্রাহক যোগ করুন।</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400 font-semibold">কোনো হিসাব বা গ্রাহক পাওয়া যায়নি। নতুন গ্রাহক যোগ করুন।</td></tr>`;
     return;
   }
 
