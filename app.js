@@ -69,12 +69,12 @@ window.switchTab = function(tabId) {
   if(target) target.classList.remove('hidden');
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.className = "tab-btn flex-1 md:flex-none px-3 py-1.5 text-xs font-bold rounded-md transition text-slate-600 hover:text-rose-600";
+    btn.className = "tab-btn flex-1 md:flex-none px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
   });
 
   const activeBtn = document.getElementById(`btn-${tabId}`);
   if(activeBtn) {
-    activeBtn.className = "tab-btn flex-1 md:flex-none px-3 py-1.5 text-xs font-bold rounded-md transition bg-rose-600 text-white shadow-sm";
+    activeBtn.className = "tab-btn flex-1 md:flex-none px-3.5 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
   }
 }
 
@@ -87,11 +87,11 @@ window.setClientFilter = function(filterType) {
   const btnOld = document.getElementById('filter-btn-old');
   
   [btnAll, btnNew, btnOld].forEach(btn => {
-    if(btn) btn.className = "px-2.5 py-1 text-[11px] font-bold rounded transition text-slate-600 hover:text-rose-600";
+    if(btn) btn.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
   });
   
   const activeBtn = document.getElementById(`filter-btn-${filterType}`);
-  if(activeBtn) activeBtn.className = "px-2.5 py-1 text-[11px] font-bold rounded transition bg-rose-600 text-white shadow-sm";
+  if(activeBtn) activeBtn.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
   
   renderMasterTable();
 }
@@ -394,13 +394,13 @@ function renderDropdown() {
     );
 
     if (filtered.length === 0) {
-      itemsContainer.innerHTML = `<div class="p-2 text-xs text-slate-400 text-center">কোনো প্রজেক্ট পাওয়া যায়নি</div>`;
+      itemsContainer.innerHTML = `<div class="p-2.5 text-xs text-slate-400 text-center">কোনো প্রজেক্ট পাওয়া যায়নি</div>`;
       return;
     }
 
     filtered.forEach(c => {
       const item = document.createElement('div');
-      item.className = "p-2 text-xs hover:bg-rose-50 hover:text-rose-600 rounded-lg cursor-pointer transition font-medium flex justify-between items-center text-slate-700";
+      item.className = "p-2.5 text-xs hover:bg-rose-50 hover:text-rose-600 rounded-xl cursor-pointer transition font-medium flex justify-between items-center text-slate-700";
       item.innerHTML = `<span>${c.project} <span class="text-[10px] text-slate-400">(${c.name})</span></span>`;
       
       item.onclick = function() {
@@ -457,23 +457,23 @@ function renderMasterTable() {
     let cDue = c.budget - localIncome;
 
     const tr = document.createElement('tr');
-    tr.className = "hover:bg-slate-50 transition border-b border-slate-100 cursor-pointer";
+    tr.className = "hover:bg-slate-50/80 transition border-b border-slate-100 cursor-pointer";
     tr.onclick = () => openDrawer(c.id);
 
     tr.innerHTML = `
-      <td class="p-3 pl-4">
+      <td class="p-3.5 pl-4">
         <div class="font-bold text-slate-800">${c.project}</div>
         <div class="text-[11px] text-slate-500">${c.name}</div>
       </td>
-      <td class="p-3 font-mono text-slate-600">${c.phone}</td>
-      <td class="p-3 text-right font-bold text-slate-700">৳${c.budget.toLocaleString('en-IN')}</td>
-      <td class="p-3 text-right font-bold text-emerald-600">৳${localIncome.toLocaleString('en-IN')}</td>
-      <td class="p-3 text-right font-bold text-rose-600">৳${localExpense.toLocaleString('en-IN')}</td>
-      <td class="p-3 text-right font-bold ${cDue > 0 ? 'text-amber-600' : 'text-slate-400'}">৳${cDue.toLocaleString('en-IN')}</td>
-      <td class="p-3 text-center" onclick="event.stopPropagation()">
+      <td class="p-3.5 font-mono text-slate-600">${c.phone}</td>
+      <td class="p-3.5 text-right font-bold text-slate-700">৳${c.budget.toLocaleString('en-IN')}</td>
+      <td class="p-3.5 text-right font-bold text-emerald-600">৳${localIncome.toLocaleString('en-IN')}</td>
+      <td class="p-3.5 text-right font-bold text-rose-600">৳${localExpense.toLocaleString('en-IN')}</td>
+      <td class="p-3.5 text-right font-bold ${cDue > 0 ? 'text-amber-600' : 'text-slate-400'}">৳${cDue.toLocaleString('en-IN')}</td>
+      <td class="p-3.5 text-center" onclick="event.stopPropagation()">
         <div class="flex justify-center items-center gap-1.5">
-          <button onclick="openDrawer('${c.id}')" class="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 px-2.5 py-1 rounded text-[11px] font-bold transition">লেজার</button>
-          <button onclick="deleteClient('${c.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1">✕</button>
+          <button onclick="openDrawer('${c.id}')" class="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 px-3 py-1.5 rounded-lg text-[11px] font-bold transition shadow-2xs">লেজার</button>
+          <button onclick="deleteClient('${c.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5 transition">✕</button>
         </div>
       </td>
     `;
@@ -503,19 +503,19 @@ function renderOfficeExpenses() {
   });
 
   if (localFilteredExpenses.length === 0) {
-    officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">এই মাসে কোনো অফিস খরচ নেই</td></tr>`;
+    officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">এই মাসে কোনো অফিস খরচ নেই</td></tr>`;
     return;
   }
 
   officeExpenseRows.innerHTML = '';
   localFilteredExpenses.forEach(oe => {
     const tr = document.createElement('tr');
-    tr.className = "border-b border-slate-100 hover:bg-slate-50";
+    tr.className = "border-b border-slate-100 hover:bg-slate-50/80 transition";
     tr.innerHTML = `
-      <td class="p-2.5 pl-3 font-semibold text-slate-800">${oe.details} <span class="text-[9px] bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded font-bold">${oe.category}</span></td>
-      <td class="p-2.5 text-slate-500 font-mono text-[11px]">${oe.date}</td>
-      <td class="p-2.5 text-right font-bold text-rose-600">৳${oe.amount.toLocaleString('en-IN')}</td>
-      <td class="p-2.5 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-400 hover:text-rose-600 font-bold">✕</button></td>
+      <td class="p-3 pl-4 font-semibold text-slate-800">${oe.details} <span class="text-[9px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-md font-bold">${oe.category}</span></td>
+      <td class="p-3 text-slate-500 font-mono text-[11px]">${oe.date}</td>
+      <td class="p-3 text-right font-bold text-rose-600">৳${oe.amount.toLocaleString('en-IN')}</td>
+      <td class="p-3 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1">✕</button></td>
     `;
     officeExpenseRows.appendChild(tr);
   });
@@ -546,21 +546,21 @@ function refreshDrawer(id) {
   const dBody = document.getElementById('drawer-table-body');
   if (!dBody) return;
   dBody.innerHTML = (!client.history || client.history.length === 0) ? 
-    `<tr><td colspan="5" class="p-4 text-center text-slate-400">এই প্রজেক্টে কোনো লেনদেন হয়নি</td></tr>` : '';
+    `<tr><td colspan="5" class="p-6 text-center text-slate-400">এই প্রজেক্টে কোনো লেনদেন হয়নি</td></tr>` : '';
 
   client.history.forEach(t => {
     const tr = document.createElement('tr');
-    tr.className = "border-b border-slate-100 hover:bg-slate-50";
+    tr.className = "border-b border-slate-100 hover:bg-slate-50/80 transition";
     let typeText = t.type === 'income' ? '<span class="text-emerald-600 font-bold">জমা (Debit)</span>' : '<span class="text-rose-600 font-bold">খরচ (Credit)</span>';
     let valColor = t.type === 'income' ? 'text-emerald-600' : 'text-rose-600';
 
     tr.innerHTML = `
-      <td class="p-2.5 pl-3 text-slate-500 font-mono">${t.date}</td>
-      <td class="p-2.5 font-medium text-slate-800">${t.details}</td>
-      <td class="p-2.5">${typeText}</td>
-      <td class="p-2.5 text-right font-bold ${valColor}">${t.type === 'income' ? '+' : '-'}৳${t.amount.toLocaleString('en-IN')}</td>
-      <td class="p-2.5 text-center">
-        <button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-400 hover:text-rose-600 font-bold px-2">✕</button>
+      <td class="p-3 pl-4 text-slate-500 font-mono text-[11px]">${t.date}</td>
+      <td class="p-3 font-medium text-slate-800">${t.details}</td>
+      <td class="p-3">${typeText}</td>
+      <td class="p-3 text-right font-bold ${valColor}">${t.type === 'income' ? '+' : '-'}৳${t.amount.toLocaleString('en-IN')}</td>
+      <td class="p-3 text-center">
+        <button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1">✕</button>
       </td>
     `;
     dBody.appendChild(tr);
