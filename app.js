@@ -150,7 +150,8 @@ auth.onAuthStateChanged(user => {
     if (document.getElementById('user-display-name')) document.getElementById('user-display-name').innerText = user.displayName;
     if (document.getElementById('user-avatar')) document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
 
-    databasePathRef = rtdb.ref('digital_khata_data/' + user.uid);
+    // Updated to use rajuk_erp_data with user UID
+    databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
     subscribeToCloudStreams();
   } else {
     if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
