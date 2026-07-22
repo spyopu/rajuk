@@ -16,12 +16,13 @@ body {
   background: #d1d5db;
   border-radius: 4px;
 }
-input[type="month"] {
-  min-width: 160px;
-  box-sizing: border-box;
-}
 
-input[type="month"]::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  filter: invert(0.2);
+/* মাস ফিল্টার ইনপুটের সাইজ ও ডিসপ্লে ঠিক রাখার জন্য */
+input[type="month"] {
+  min-width: 175px !important;
+  width: auto !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding-left: 12px !important;
+  padding-right: 8px !important;
 }
