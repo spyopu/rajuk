@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ডিজিটাল খাতা</title>
+  <title>ডিজিটাল খাতা ও ইআরপি সিস্টেম</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter & Fira Code -->
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Hind Siliguri & Fira Code -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; }
+    body { font-family: 'Hind Siliguri', sans-serif; }
     .font-mono { font-family: 'Fira Code', monospace; }
   </style>
 </head>
@@ -360,6 +360,80 @@
         <button id="modalCancelBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition">বাতিল</button>
         <button id="modalConfirmBtn" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">নিশ্চিত করুন</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MONTHLY REPORT MODAL -->
+  <div id="monthlyReportModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl border border-slate-100 space-y-6 relative my-8">
+      
+      <!-- Header & Close Button -->
+      <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+        <div>
+          <h3 class="text-lg font-black text-slate-900">সার্বিক লাভ-ক্ষতির হিসাব</h3>
+          <p id="report-modal-subtitle" class="text-xs text-slate-500 font-medium mt-0.5">স্বচ্ছ ডিজিটাল আর্থিক প্রতিবেদন</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1">
+            <span>🖨️</span> প্রিন্ট
+          </button>
+          <button onclick="closeMonthlyReportModal()" class="bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-600 h-8 w-8 rounded-full flex items-center justify-center font-bold transition text-xs">✕</button>
+        </div>
+      </div>
+
+      <!-- Report Body Contents -->
+      <div class="space-y-4 text-xs md:text-sm font-semibold">
+        
+        <div class="flex justify-between items-center py-2.5 border-b border-dashed border-slate-200">
+          <span class="text-slate-600">(+) মোট প্রজেক্ট কালেকশন</span>
+          <span id="rep-total-income" class="font-mono font-bold text-emerald-600 text-sm md:text-base">৳0</span>
+        </div>
+
+        <div class="flex justify-between items-center py-2.5 border-b border-dashed border-slate-200">
+          <span class="text-slate-600">(-) প্রজেক্টের মেটেরিয়াল/কাজের খরচ</span>
+          <span id="rep-project-expense" class="font-mono font-bold text-rose-600 text-sm md:text-base">৳0</span>
+        </div>
+
+        <div class="flex justify-between items-center py-3 bg-slate-50 px-4 rounded-xl border border-slate-200">
+          <span class="text-slate-900 font-bold">(=) প্রজেক্ট নিট লাভ (Gross Margin)</span>
+          <span id="rep-gross-profit" class="font-mono font-black text-slate-900 text-sm md:text-base">৳0</span>
+        </div>
+
+        <div class="flex justify-between items-center py-2.5 border-b border-dashed border-slate-200">
+          <span class="text-slate-600">(-) সর্বমোট অফিস ও স্যালারি খরচ</span>
+          <span id="rep-office-expense" class="font-mono font-bold text-rose-600 text-sm md:text-base">৳0</span>
+        </div>
+
+        <!-- Net Profit Highlight Box -->
+        <div class="flex justify-between items-center py-3.5 px-4 bg-emerald-50 border border-emerald-200 rounded-2xl">
+          <span class="text-emerald-900 font-bold">প্রকৃত নিট লাভ (Net Profit)</span>
+          <span id="rep-net-profit" class="font-mono font-black text-emerald-700 text-base md:text-lg">৳0</span>
+        </div>
+
+        <!-- Boss Funding Summary Box -->
+        <div class="bg-amber-50/60 border border-amber-200/80 rounded-2xl p-4 space-y-3 mt-4">
+          <div class="font-bold text-amber-900 flex items-center gap-1.5 text-xs">
+            <span>👑</span> বসের ফান্ডিং সামারি (লাভ-ক্ষতির বাইরে):
+          </div>
+          <div class="flex justify-between items-center text-xs text-slate-700">
+            <span>বস মোট অফিসে দিয়েছেন:</span>
+            <span id="rep-boss-in" class="font-mono font-bold text-emerald-600">৳0</span>
+          </div>
+          <div class="flex justify-between items-center text-xs text-slate-700">
+            <span>বস অফিস থেকে তুলে নিয়েছেন:</span>
+            <span id="rep-boss-out" class="font-mono font-bold text-rose-600">৳0</span>
+          </div>
+          <div class="flex justify-between items-center text-xs pt-2 border-t border-amber-200/60 font-bold text-slate-900">
+            <span>কোম্পানির নিকট বসের পাওনা/দেনা:</span>
+            <span id="rep-boss-due" class="font-mono text-slate-900">৳0</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer Close Button -->
+      <button onclick="closeMonthlyReportModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition text-xs md:text-sm shadow-sm">বন্ধ করুন</button>
+
     </div>
   </div>
 
