@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RAJUK Digital Khata (TallyKhata Style)</title>
+  <title>Digital Khata</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,23 +21,23 @@
   <style>
     body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
     .font-mono { font-family: 'Geist Mono', monospace; }
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
   </style>
 </head>
-<body class="text-slate-800 antialiased selection:bg-rose-500 selection:text-white min-h-screen flex flex-col justify-between">
+<body class="text-slate-900 antialiased selection:bg-rose-500 selection:text-white min-h-screen flex flex-col justify-between pb-16 md:pb-6">
 
-  <!-- TOP HEADER (TallyKhata Red Theme) -->
+  <!-- TOP HEADER (Clean Brand Theme) -->
   <header class="bg-rose-600 text-white sticky top-0 z-45 shadow-md">
-    <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <div class="h-9 w-9 rounded-xl bg-white text-rose-600 flex items-center justify-center font-black text-sm shadow-sm">TK</div>
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-white text-rose-600 flex items-center justify-center font-black text-base shadow-sm">DK</div>
         <div>
-          <h1 class="text-xs font-black tracking-wide uppercase">RAJUK Digital Khata</h1>
+          <h1 class="text-sm md:text-base font-black tracking-wide uppercase">Digital Khata</h1>
           <div class="flex items-center gap-1.5 mt-0.5">
             <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-300 animate-pulse"></span>
-            <span id="status-text" class="text-[10px] text-rose-100 font-mono font-medium">Guest Mode</span>
+            <span id="status-text" class="text-[11px] text-rose-100 font-mono font-medium">Guest Mode</span>
           </div>
         </div>
       </div>
@@ -45,21 +45,21 @@
       <!-- Identity & Profile Section -->
       <div class="flex items-center gap-3">
         <div id="sidebar-auth-section">
-          <button id="google-login-btn" class="bg-white text-rose-600 hover:bg-rose-50 font-bold rounded-lg px-3 py-1.5 text-xs transition shadow-sm">
+          <button id="google-login-btn" class="bg-white text-rose-600 hover:bg-rose-50 font-bold rounded-xl px-4 py-2 text-xs md:text-sm transition shadow-sm">
             Google Login
           </button>
         </div>
 
         <div class="relative">
-          <div id="profile-trigger" class="flex items-center gap-2 cursor-pointer p-1 px-2.5 rounded-lg hover:bg-rose-700 transition select-none hidden">
+          <div id="profile-trigger" class="flex items-center gap-2.5 cursor-pointer p-1.5 px-3 rounded-xl hover:bg-rose-700 transition select-none hidden">
             <div class="text-right hidden sm:block">
               <p id="user-display-name" class="text-xs font-bold text-white">User Account</p>
             </div>
-            <img id="user-avatar" class="h-7 w-7 rounded-full border border-white/40 object-cover shadow-sm" src="" alt="avatar">
+            <img id="user-avatar" class="h-8 w-8 rounded-full border border-white/40 object-cover shadow-sm" src="" alt="avatar">
           </div>
 
-          <div id="profile-dropdown" class="absolute right-0 mt-2 w-40 bg-white border border-slate-200 rounded-xl shadow-xl p-1 hidden z-50">
-            <button id="logout-btn" class="w-full text-left flex items-center px-3 py-2 text-xs text-rose-600 hover:bg-rose-50 rounded-lg font-bold transition">
+          <div id="profile-dropdown" class="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl p-1.5 hidden z-50">
+            <button id="logout-btn" class="w-full text-left flex items-center px-3.5 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-lg transition">
               Log Out
             </button>
           </div>
@@ -68,171 +68,183 @@
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-6xl mx-auto w-full p-4 md:p-6 space-y-4 flex-1 mb-16">
+  <!-- MAIN CONTAINER (Expanded for PC, Optimized for Mobile) -->
+  <main class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6 flex-1">
     
     <!-- STATEMENT PERIOD CONTROL & SEARCH -->
-    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
-      <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 w-full md:w-auto">
-        <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view" class="tab-btn flex-1 md:flex-none px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">📊 খাতা ও রিপোর্ট</button>
-        <button onclick="switchTab('client-view')" id="btn-client-view" class="tab-btn flex-1 md:flex-none px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">➕ নতুন গ্রাহক</button>
-        <button onclick="switchTab('journal-view')" id="btn-journal-view" class="tab-btn flex-1 md:flex-none px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">💸 লেনদেন</button>
-        <button onclick="switchTab('office-view')" id="btn-office-view" class="tab-btn flex-1 md:flex-none px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">🏢 অফিস খরচ</button>
+    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      
+      <!-- Desktop Tab Controller -->
+      <div class="hidden md:flex items-center bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+        <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-pc" class="tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600">📊 খাতা ও রিপোর্ট</button>
+        <button onclick="switchTab('client-view')" id="btn-client-view-pc" class="tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600">➕ নতুন গ্রাহক</button>
+        <button onclick="switchTab('journal-view')" id="btn-journal-view-pc" class="tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600">💸 লেনদেন</button>
+        <button onclick="switchTab('office-view')" id="btn-office-view-pc" class="tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600">🏢 অফিস খরচ</button>
       </div>
 
-      <div class="flex items-center gap-2">
-        <input type="text" id="search-input" placeholder="গ্রাহক বা প্রজেক্ট খুঁজুন..." class="bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-xl px-3.5 py-2.5 outline-none focus:border-rose-600 transition w-full md:w-56 shadow-2xs">
-        <input type="month" id="month-filter" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs rounded-xl px-3 py-2.5 outline-none focus:border-rose-600 transition shadow-2xs">
+      <div class="w-full md:w-auto text-xs font-bold text-slate-500">
+        <span>হিাসাবের মাস ফিল্টার:</span>
+      </div>
+
+      <div class="flex items-center gap-3 w-full md:w-auto">
+        <input type="text" id="search-input" placeholder="গ্রাহক বা প্রজেক্ট খুঁজুন..." class="bg-slate-50 border border-slate-200 text-slate-900 text-xs md:text-sm rounded-xl px-4 py-3 outline-none focus:border-rose-600 transition w-full md:w-64 shadow-2xs">
+        <input type="month" id="month-filter" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs md:text-sm rounded-xl px-3.5 py-3 outline-none focus:border-rose-600 transition shadow-2xs">
       </div>
     </div>
 
     <!-- DYNAMIC TAB 1: DASHBOARD OVERVIEW -->
-    <div id="tab-dashboard-view" class="tab-content space-y-4">
+    <div id="tab-dashboard-view" class="tab-content space-y-6">
       <!-- Metrics Cards -->
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
-        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm hover:border-slate-300 transition">
-          <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">মোট বাজেট</p>
-          <h3 id="global-budget" class="text-sm md:text-base font-black text-slate-700 mt-1 font-mono">৳0</h3>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5 text-center">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">মোট বাজেট</p>
+          <h3 id="global-budget" class="text-base md:text-lg font-black text-slate-800 mt-1 font-mono">৳0</h3>
         </div>
-        <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200/80 shadow-sm">
-          <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">মোট জমা</p>
-          <h3 id="global-income" class="text-sm md:text-base font-black text-emerald-600 mt-1 font-mono">৳0</h3>
+        <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-200/80 shadow-sm">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">মোট জমা</p>
+          <h3 id="global-income" class="text-base md:text-lg font-black text-emerald-600 mt-1 font-mono">৳0</h3>
         </div>
-        <div class="bg-rose-50/70 p-3.5 rounded-xl border border-rose-200/80 shadow-sm">
-          <p class="text-[10px] font-bold uppercase tracking-wider text-rose-600">মোট খরচ</p>
-          <h3 id="global-expense" class="text-sm md:text-base font-black text-rose-600 mt-1 font-mono">৳0</h3>
+        <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-200/80 shadow-sm">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-rose-600">মোট খরচ</p>
+          <h3 id="global-expense" class="text-base md:text-lg font-black text-rose-600 mt-1 font-mono">৳0</h3>
         </div>
-        <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200/80 shadow-sm">
-          <p class="text-[10px] font-bold uppercase tracking-wider text-amber-600">মোট বাকি (Due)</p>
-          <h3 id="global-due" class="text-sm md:text-base font-black text-amber-600 mt-1 font-mono">৳0</h3>
+        <div class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200/80 shadow-sm">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-amber-600">মোট বাকি (Due)</p>
+          <h3 id="global-due" class="text-base md:text-lg font-black text-amber-600 mt-1 font-mono">৳0</h3>
         </div>
-        <div class="bg-rose-600 text-white p-3.5 rounded-xl shadow-md col-span-2 md:col-span-1">
-          <p class="text-[10px] font-bold uppercase tracking-wider text-rose-100">নেট ব্যালেন্স</p>
-          <h3 id="global-net" class="text-base font-black text-white mt-1 font-mono">৳0</h3>
+        <div class="bg-rose-600 text-white p-4 rounded-2xl shadow-md col-span-2 md:col-span-1">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-rose-100">নেট ব্যালেন্স</p>
+          <h3 id="global-net" class="text-base md:text-lg font-black text-white mt-1 font-mono">৳0</h3>
         </div>
       </div>
       
       <!-- Master Table Document -->
-      <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-        <div class="px-4 py-3.5 border-b border-slate-200 bg-slate-50/70 flex justify-between items-center">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">সকল গ্রাহক ও প্রজেক্ট খাতা</h3>
-          <div class="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
-            <button onclick="setClientFilter('all')" id="filter-btn-all" class="px-3 py-1 text-[11px] font-bold rounded-lg transition">সব</button>
-            <button onclick="setClientFilter('new')" id="filter-btn-new" class="px-3 py-1 text-[11px] font-bold rounded-lg transition">নতুন</button>
-            <button onclick="setClientFilter('old')" id="filter-btn-old" class="px-3 py-1 text-[11px] font-bold rounded-lg transition">চলমান</button>
+      <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+        <div class="px-5 py-4 border-b border-slate-200 bg-slate-50/70 flex justify-between items-center">
+          <h3 class="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-800">সকল গ্রাহক ও প্রজেক্ট খাতা</h3>
+          <div class="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+            <button onclick="setClientFilter('all')" id="filter-btn-all" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition">সব</button>
+            <button onclick="setClientFilter('new')" id="filter-btn-new" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition">নতুন</button>
+            <button onclick="setClientFilter('old')" id="filter-btn-old" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition">চলমান</button>
           </div>
         </div>
 
         <div id="master-table-container" class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs">
+          <table class="w-full text-left border-collapse text-xs md:text-sm">
             <thead>
-              <tr class="bg-slate-50/80 text-slate-500 font-bold uppercase text-[10px] border-b border-slate-200">
-                <th class="p-3.5 pl-4">গ্রাহক ও প্রজেক্ট</th>
-                <th class="p-3.5">মোবাইল</th>
-                <th class="p-3.5 text-right">চুক্তি (বাজেট)</th>
-                <th class="p-3.5 text-right">জমা</th>
-                <th class="p-3.5 text-right">খরচ</th>
-                <th class="p-3.5 text-right">বাকি</th>
-                <th class="p-3.5 text-center">অ্যাকশন</th>
+              <tr class="bg-slate-50/80 text-slate-500 font-bold uppercase text-[11px] border-b border-slate-200">
+                <th class="p-4 pl-5">গ্রাহক ও প্রজেক্ট</th>
+                <th class="p-4">মোবাইল</th>
+                <th class="p-4 text-right">চুক্তি (বাজেট)</th>
+                <th class="p-4 text-right">জমা</th>
+                <th class="p-4 text-right">খরচ</th>
+                <th class="p-4 text-right">বাকি</th>
+                <th class="p-4 text-center">অ্যাকশন</th>
               </tr>
             </thead>
-            <tbody id="clients-table-body" class="divide-y divide-slate-100 font-medium text-slate-700"></tbody>
+            <tbody id="clients-table-body" class="divide-y divide-slate-100 font-semibold text-slate-800"></tbody>
           </table>
         </div>
       </div>
     </div>
 
     <!-- DYNAMIC TAB 2: CLIENT REGISTRY -->
-    <div id="tab-client-view" class="tab-content space-y-4 hidden">
-      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm max-w-lg mx-auto">
-        <div class="flex items-center gap-2 border-b border-slate-200 pb-3 mb-4">
-          <div class="h-8 w-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold">➕</div>
-          <h3 class="text-sm font-bold text-slate-800">নতুন গ্রাহক বা প্রজেক্ট যোগ করুন</h3>
+    <div id="tab-client-view" class="tab-content space-y-6 hidden">
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm max-w-xl mx-auto">
+        <div class="flex items-center gap-3 border-b border-slate-200 pb-4 mb-5">
+          <div class="h-10 w-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-base">➕</div>
+          <h3 class="text-sm md:text-base font-bold text-slate-900">নতুন গ্রাহক বা প্রজেক্ট যোগ করুন</h3>
         </div>
-        <form id="client-form" class="space-y-3.5">
+        <form id="client-form" class="space-y-4">
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">গ্রাহকের নাম</label>
-            <input type="text" id="client-name" placeholder="যেমন: মো: আলমগীর" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-rose-600 transition shadow-2xs">
+            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">গ্রাহকের নাম</label>
+            <input type="text" id="client-name" placeholder="যেমন: মো: আলমগীর" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition shadow-2xs font-medium text-slate-800">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">মোবাইল নম্বর</label>
-            <input type="text" id="client-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-rose-600 transition font-mono shadow-2xs">
+            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">মোবাইল নম্বর</label>
+            <input type="text" id="client-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition font-mono shadow-2xs font-semibold text-slate-800">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">প্রজেক্ট / কাজের নাম</label>
-            <input type="text" id="project-title" placeholder="যেমন: উত্তরা বিল্ডিং ডিজাইন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-rose-600 transition shadow-2xs">
+            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">প্রজেক্ট / কাজের নাম</label>
+            <input type="text" id="project-title" placeholder="যেমন: উত্তরা বিল্ডিং ডিজাইন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition shadow-2xs font-medium text-slate-800">
           </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">মোট চুক্তি বাজেট (৳)</label>
-            <input type="number" id="project-budget" placeholder="50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-rose-600 transition font-mono shadow-2xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">মোট চুক্তি বাজেট (৳)</label>
+              <input type="number" id="project-budget" placeholder="50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition font-mono shadow-2xs font-bold text-slate-800">
+            </div>
+            <div>
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">তারিখ (Date)</label>
+              <input type="date" id="client-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition font-mono shadow-2xs font-bold text-slate-800">
+            </div>
           </div>
-          <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-3 text-xs transition shadow-md mt-2">প্রজেক্ট ফাইল সেভ করুন</button>
+          <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-3.5 text-xs md:text-sm transition shadow-md mt-3">প্রজেক্ট ফাইল সেভ করুন</button>
         </form>
       </div>
     </div>
 
     <!-- DYNAMIC TAB 3: JOURNAL POSTING -->
-    <div id="tab-journal-view" class="tab-content space-y-4 hidden">
-      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm max-w-lg mx-auto">
-        <div class="flex items-center gap-2 border-b border-slate-200 pb-3 mb-4">
-          <div class="h-8 w-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">💸</div>
-          <h3 class="text-sm font-bold text-slate-800">লেনদেন যুক্ত করুন (টাকা জমা বা খরচ)</h3>
+    <div id="tab-journal-view" class="tab-content space-y-6 hidden">
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm max-w-xl mx-auto">
+        <div class="flex items-center gap-3 border-b border-slate-200 pb-4 mb-5">
+          <div class="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-base">💸</div>
+          <h3 class="text-sm md:text-base font-bold text-slate-900">লেনদেন যুক্ত করুন (টাকা জমা বা খরচ)</h3>
         </div>
-        <form id="tx-form" class="space-y-3.5">
+        <form id="tx-form" class="space-y-4">
           <div class="relative">
-            <label class="block text-xs font-bold text-slate-600 mb-1">প্রজেক্ট সিলেক্ট করুন</label>
+            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">প্রজেক্ট সিলেক্ট করুন</label>
             <input type="hidden" id="tx-client-select" value="">
-            <div id="dropdown-trigger" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-500 flex justify-between items-center cursor-pointer shadow-2xs hover:border-slate-300 transition">
+            <div id="dropdown-trigger" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm text-slate-500 flex justify-between items-center cursor-pointer shadow-2xs hover:border-slate-300 transition">
               <span id="dropdown-selected-text">প্রজেক্ট সিলেক্ট করুন...</span>
               <span class="text-slate-400">▼</span>
             </div>
-            <div id="custom-dropdown-list" class="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl p-2.5 hidden z-50">
-              <input type="text" id="dropdown-search-input" placeholder="খুঁজুন..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs outline-none mb-2 focus:border-rose-600">
-              <div id="dropdown-items-container" class="max-h-44 overflow-y-auto space-y-1"></div>
+            <div id="custom-dropdown-list" class="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-2xl shadow-2xl p-3 hidden z-50">
+              <input type="text" id="dropdown-search-input" placeholder="খুঁজুন..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs md:text-sm outline-none mb-2.5 focus:border-rose-600">
+              <div id="dropdown-items-container" class="max-h-52 overflow-y-auto space-y-1"></div>
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">লেনদেনের ধরন</label>
-            <select id="tx-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-rose-600 font-bold shadow-2xs">
+            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">লেনদেনের ধরন</label>
+            <select id="tx-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 font-bold shadow-2xs text-slate-800">
               <option value="income">🟢 টাকা জমা নিলেন (Cash In / Debit)</option>
               <option value="expense">🔴 প্রজেক্ট খরচ (Cash Out / Credit)</option>
             </select>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">টাকার পরিমাণ (৳)</label>
-            <input type="number" id="tx-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-rose-600 transition font-mono shadow-2xs">
+            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">টাকার পরিমাণ (৳)</label>
+            <input type="number" id="tx-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition font-mono shadow-2xs font-bold text-slate-800">
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">তারিখ</label>
-              <input type="date" id="tx-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none font-mono shadow-2xs">
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">তারিখ</label>
+              <input type="date" id="tx-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none font-mono shadow-2xs font-bold text-slate-800">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">বিবরণ / নোট</label>
-              <input type="text" id="tx-details" placeholder="যেমন: প্রথম কিস্তি" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none shadow-2xs">
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">বিবরণ / নোট</label>
+              <input type="text" id="tx-details" placeholder="যেমন: প্রথম কিস্তি" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs font-medium text-slate-800">
             </div>
           </div>
 
-          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl py-3 text-xs transition shadow-md mt-2">লেনদেন সেভ করুন</button>
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl py-3.5 text-xs md:text-sm transition shadow-md mt-3">লেনদেন সেভ করুন</button>
         </form>
       </div>
     </div>
 
     <!-- DYNAMIC TAB 4: OFFICE OVERHEAD -->
-    <div id="tab-office-view" class="tab-content space-y-4 hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <div class="flex items-center gap-2 border-b border-slate-200 pb-3 mb-4">
-            <div class="h-8 w-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold">🏢</div>
-            <h3 class="text-xs font-bold uppercase text-slate-800">অফিস খরচ এন্ট্রি</h3>
+    <div id="tab-office-view" class="tab-content space-y-6 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <div class="flex items-center gap-3 border-b border-slate-200 pb-4 mb-4">
+            <div class="h-10 w-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-base">🏢</div>
+            <h3 class="text-xs md:text-sm font-bold uppercase text-slate-900">অফিস খরচ এন্ট্রি</h3>
           </div>
-          <form id="office-expense-form" class="space-y-3.5">
+          <form id="office-expense-form" class="space-y-4">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">ক্যাটাগরি</label>
-              <select id="oe-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none shadow-2xs">
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">ক্যাটাগরি</label>
+              <select id="oe-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs text-slate-800 font-semibold">
                 <option value="Staff Salary">Staff Salary</option>
                 <option value="Office Rent">Office Rent</option>
                 <option value="Utility Bill">Utility Bills</option>
@@ -241,34 +253,34 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">খরচের পরিমাণ (৳)</label>
-              <input type="number" id="oe-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none font-mono shadow-2xs">
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">খরচের পরিমাণ (৳)</label>
+              <input type="number" id="oe-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none font-mono shadow-2xs font-bold text-slate-800">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">বিবরণ</label>
-              <input type="text" id="oe-details" placeholder="খরচের বিবরণ" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none shadow-2xs">
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">বিবরণ</label>
+              <input type="text" id="oe-details" placeholder="খরচের বিবরণ" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs font-medium text-slate-800">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">তারিখ</label>
-              <input type="date" id="oe-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none font-mono shadow-2xs">
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">তারিখ</label>
+              <input type="date" id="oe-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none font-mono shadow-2xs font-bold text-slate-800">
             </div>
-            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-3 text-xs transition shadow-md mt-2">অফিস খরচ যোগ করুন</button>
+            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-3.5 text-xs md:text-sm transition shadow-md mt-2">অফিস খরচ যোগ করুন</button>
           </form>
         </div>
 
-        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-          <h4 class="text-xs font-bold text-slate-700 uppercase mb-3 border-b border-slate-200 pb-3">অফিস খরচের খাতা (নির্বাচিত মাস)</h4>
-          <div class="max-h-80 overflow-y-auto border border-slate-200 rounded-xl">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold sticky top-0">
+        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col">
+          <h4 class="text-xs md:text-sm font-bold text-slate-800 uppercase mb-4 border-b border-slate-200 pb-3">অফিস খরচের খাতা (নির্বাচিত মাস)</h4>
+          <div class="max-h-96 overflow-y-auto border border-slate-200 rounded-xl flex-1">
+            <table class="w-full text-left text-xs md:text-sm">
+              <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold uppercase text-[11px] sticky top-0">
                 <tr>
-                  <th class="p-3 pl-4">বিবরণ ও ক্যাটাগরি</th>
-                  <th class="p-3">তারিখ</th>
-                  <th class="p-3 text-right">পরিমাণ</th>
-                  <th class="p-3 text-center">মুছুন</th>
+                  <th class="p-3.5 pl-4">বিবরণ ও ক্যাটাগরি</th>
+                  <th class="p-3.5">তারিখ</th>
+                  <th class="p-3.5 text-right">পরিমাণ</th>
+                  <th class="p-3.5 text-center">মুছুন</th>
                 </tr>
               </thead>
-              <tbody id="office-expense-rows" class="divide-y divide-slate-100 text-slate-700"></tbody>
+              <tbody id="office-expense-rows" class="divide-y divide-slate-100 font-semibold text-slate-800"></tbody>
             </table>
           </div>
         </div>
@@ -276,47 +288,47 @@
     </div>
 
     <!-- LEDGER DRAWER -->
-    <div id="ledger-drawer" class="bg-white border border-rose-500/40 rounded-xl p-5 shadow-xl hidden space-y-4">
-      <div class="flex justify-between items-start border-b border-slate-200 pb-3">
+    <div id="ledger-drawer" class="bg-white border border-rose-500/40 rounded-2xl p-6 shadow-2xl hidden space-y-4">
+      <div class="flex justify-between items-start border-b border-slate-200 pb-4">
         <div>
-          <span class="text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-rose-100 text-rose-600">ব্যক্তিগত লেজার খাতা</span>
-          <h2 id="drawer-title" class="text-sm font-bold text-slate-800 mt-1">লেজার বিবরণ</h2>
-          <p id="drawer-sub" class="text-xs text-slate-500 mt-0.5"></p>
+          <span class="text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded-lg bg-rose-100 text-rose-600">ব্যক্তিগত লেজার খাতা</span>
+          <h2 id="drawer-title" class="text-base font-bold text-slate-900 mt-1.5">লেজার বিবরণ</h2>
+          <p id="drawer-sub" class="text-xs md:text-sm text-slate-600 mt-1 font-semibold"></p>
         </div>
-        <button onclick="closeDrawer()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-xl text-xs font-bold transition">বন্ধ করুন ✕</button>
+        <button onclick="closeDrawer()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs md:text-sm font-bold transition">বন্ধ করুন ✕</button>
       </div>
       <div class="overflow-x-auto border border-slate-200 rounded-xl">
-        <table class="w-full text-left border-collapse text-xs">
+        <table class="w-full text-left border-collapse text-xs md:text-sm">
           <thead>
-            <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] border-b border-slate-200">
-              <th class="p-3 pl-4">তারিখ</th>
-              <th class="p-3">বিবরণ</th>
-              <th class="p-3">টাইপ</th>
-              <th class="p-3 text-right">টাকা</th>
-              <th class="p-3 text-center">মুছুন</th>
+            <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[11px] border-b border-slate-200">
+              <th class="p-3.5 pl-4">তারিখ</th>
+              <th class="p-3.5">বিবরণ</th>
+              <th class="p-3.5">টাইপ</th>
+              <th class="p-3.5 text-right">টাকা</th>
+              <th class="p-3.5 text-center">মুছুন</th>
             </tr>
           </thead>
-          <tbody id="drawer-table-body" class="divide-y divide-slate-100 text-slate-700"></tbody>
+          <tbody id="drawer-table-body" class="divide-y divide-slate-100 font-semibold text-slate-800"></tbody>
         </table>
       </div>
     </div>
 
   </main>
 
-  <!-- BOTTOM NAVIGATION (TallyKhata Style Mobile Nav) -->
-  <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 z-40 shadow-lg md:hidden">
-    <div class="grid grid-cols-4 text-center py-2.5">
-      <button onclick="switchTab('dashboard-view')" class="flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold">
-        <span class="text-base">📊</span><span>রিপোর্ট</span>
+  <!-- BOTTOM NAVIGATION (Only Mobile Navigation) -->
+  <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 z-40 shadow-xl md:hidden">
+    <div class="grid grid-cols-4 text-center py-2">
+      <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
+        <span class="text-lg">📊</span><span>রিপোর্ট</span>
       </button>
-      <button onclick="switchTab('client-view')" class="flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold">
-        <span class="text-base">➕</span><span>গ্রাহক</span>
+      <button onclick="switchTab('client-view')" id="btn-client-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
+        <span class="text-lg">➕</span><span>গ্রাহক</span>
       </button>
-      <button onclick="switchTab('journal-view')" class="flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold">
-        <span class="text-base">💸</span><span>লেনদেন</span>
+      <button onclick="switchTab('journal-view')" id="btn-journal-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
+        <span class="text-lg">💸</span><span>লেনদেন</span>
       </button>
-      <button onclick="switchTab('office-view')" class="flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold">
-        <span class="text-base">🏢</span><span>অফিস</span>
+      <button onclick="switchTab('office-view')" id="btn-office-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
+        <span class="text-lg">🏢</span><span>অফিস</span>
       </button>
     </div>
   </nav>
@@ -324,15 +336,15 @@
   <!-- SECURITY PASSCODE MODAL -->
   <div id="securityModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-xs shadow-2xl text-center space-y-4">
-      <div class="h-10 w-10 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto font-bold text-lg">🔒</div>
+      <div class="h-12 w-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl">🔒</div>
       <div>
-        <h3 class="text-sm font-bold text-slate-800">পাসকোড দিন</h3>
-        <p class="text-[11px] text-slate-500 mt-0.5">নিরাপত্তার জন্য পাসকোড দিন</p>
+        <h3 class="text-base font-bold text-slate-900">পাসকোড দিন</h3>
+        <p class="text-xs text-slate-500 mt-1">নিরাপত্তার জন্য পাসকোড দিন</p>
       </div>
-      <input type="password" id="modalPasscodeInput" autocomplete="off" placeholder="••••" maxlength="4" class="w-full bg-slate-50 border border-slate-300 focus:border-rose-600 text-slate-800 rounded-xl p-3 text-center text-base tracking-widest outline-none font-mono">
-      <div class="flex gap-2.5">
-        <button id="modalCancelBtn" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-xl text-xs transition">বাতিল</button>
-        <button id="modalConfirmBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">নিশ্চিত</button>
+      <input type="password" id="modalPasscodeInput" autocomplete="off" placeholder="••••" maxlength="4" class="w-full bg-slate-50 border border-slate-300 focus:border-rose-600 text-slate-900 rounded-xl p-3 text-center text-lg tracking-widest outline-none font-mono">
+      <div class="flex gap-3">
+        <button id="modalCancelBtn" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs md:text-sm transition">বাতিল</button>
+        <button id="modalConfirmBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs md:text-sm transition shadow-sm">নিশ্চিত</button>
       </div>
     </div>
   </div>
