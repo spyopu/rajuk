@@ -1,541 +1,215 @@
-/* ==========================================
-   ডিজিটাল খাতা ও ইআরপি সিস্টেম - Main App Script
-   ========================================== */
-
-// Firebase Configuration & Initialization
-// (Ensure your firebase credentials are setup or loaded properly)
+// 1. Firebase Initialization Configuration
 const firebaseConfig = {
-  // Your config here or auto-connected via project setup
+  apiKey: "AIzaSyD8kXy2rL9ptiPN4xEMg5h3o4RY_sPH79w",
+  authDomain: "rajuk-bed98.firebaseapp.com",
+  databaseURL: "https://rajuk-bed98-default-rtdb.firebaseio.com",
+  projectId: "rajuk-bed98",
+  storageBucket: "rajuk-bed98.firebasestorage.app",
+  messagingSenderId: "367893646589",
+  appId: "1:367893646589:web:6c91f066dfb5143e204294"
 };
 
-// Initialize Firebase if not already initialized
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
-
 const auth = firebase.auth();
-const db = firebase.database();
+const rtdb = firebase.database();
 
-// Global App States
-let farmData = [];        // Clients & their project history
-let officeExpenses = [];  // Office & Boss expenses
-let currentFilter = 'all';
-let currentUser = null;
+// Global Security Passcode
+const SECURITY_PASSCODE = "6219";
 
-// DOM Elements
-const statusIndicator = document.getElementById('status-indicator');
-const statusText = document.getElementById('status-text');
-const googleLoginBtn = document.getElementById('google-login-btn');
+// State Memory Management Variables
+let farmData = [];
+let officeExpenses = [];
+let databasePathRef = null;
+let openLedgerId = null;
+let activeClientFilter = 'all';
+
+// Catch UI Reference Elements
+const loginBtn = document.getElementById('google-login-btn');
+const logoutBtn = document.getElementById('logout-btn');
 const profileTrigger = document.getElementById('profile-trigger');
 const profileDropdown = document.getElementById('profile-dropdown');
-const userAvatar = document.getElementById('user-avatar');
-const userDisplayName = document.getElementById('user-display-name');
-const logoutBtn = document.getElementById('logout-btn');
+const sidebarAuthSection = document.getElementById('sidebar-auth-section');
 
-const clientsTableBody = document.getElementById('clients-table-body');
+const clientForm = document.getElementById('client-form');
+const txForm = document.getElementById('tx-form');
+const officeExpenseForm = document.getElementById('office-expense-form');
+const tableBody = document.getElementById('clients-table-body');
+const officeExpenseRows = document.getElementById('office-expense-rows');
+const ledgerDrawer = document.getElementById('ledger-drawer');
 const searchInput = document.getElementById('search-input');
 const monthFilter = document.getElementById('month-filter');
 
-// Initialize App on DOM Load
-document.addEventListener('DOMContentLoaded', () => {
-  initAuth();
-  initNavigation();
-  initMonthDefault();
-  initEventListeners();
-  
-  // Set smooth touch actions for mobile UI (TallyKhata feel)
-  document.body.style.touchAction = 'manipulation';
-});
+// Initialize Today's Date Values Input fields
+if(document.getElementById('client-date')) document.getElementById('client-date').value = new Date().toISOString().substring(0, 10);
+if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
+if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
 
-// --- AUTHENTICATION & FIREBASE SYNC ---
-function initAuth() {
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      currentUser = user;
-      googleLoginBtn.classList.add('hidden');
-      profileTrigger.classList.remove('hidden');
-      if(user.photoURL) userAvatar.src = user.photoURL;
-      if(user.displayName) userDisplayName.innerText = user.displayName;
-      
-      statusIndicator.className = 'inline-block h-2 w-2 rounded-full bg-emerald-500';
-      statusText.innerText = 'অনলাইন ও সিঙ্কড';
-
-      loadFirebaseData();
-    } else {
-      currentUser = null;
-      googleLoginBtn.classList.remove('hidden');
-      profileTrigger.classList.add('hidden');
-      
-      statusIndicator.className = 'inline-block h-2 w-2 rounded-full bg-rose-500';
-      statusText.innerText = 'লগইন করুন';
-      
-      // Clear data on logout
-      farmData = [];
-      officeExpenses = [];
-      renderDashboard();
-    }
-  });
-
-  googleLoginBtn.addEventListener('click', () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(error => {
-      alert('লগইন ব্যর্থ হয়েছে: ' + error.message);
-    });
-  });
-
-  profileTrigger.addEventListener('click', () => {
-    profileDropdown.classList.toggle('hidden');
-  });
-
-  logoutBtn.addEventListener('click', () => {
-    auth.signOut();
-    profileDropdown.classList.add('hidden');
-  });
-}
-
-// --- LOAD DATA FROM FIREBASE ---
-function loadFirebaseData() {
-  if (!currentUser) return;
-  const uid = currentUser.uid;
-
-  // Load Projects/Clients Data
-  db.ref(`users/${uid}/clients`).on('value', snapshot => {
-    const data = snapshot.val();
-    farmData = [];
-    if (data) {
-      Object.keys(data).forEach(key => {
-        farmData.push({ id: key, ...data[key], history: data[key].history ? Object.values(data[key].history) : [] });
-      });
-    }
-    renderDashboard();
-    populateDropdownItems();
-  });
-
-  // Load Office Expenses Data
-  db.ref(`users/${uid}/officeExpenses`).on('value', snapshot => {
-    const data = snapshot.val();
-    officeExpenses = [];
-    if (data) {
-      Object.keys(data).forEach(key => {
-        officeExpenses.push({ id: key, ...data[key] });
-      });
-    }
-    renderOfficeExpenses();
-  });
-}
-
-// --- NAVIGATION & TABS ---
-function initNavigation() {
-  // Handled inline via switchTab
-}
-
-window.switchTab = function(tabId) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-  document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-
-  // Update Desktop Nav styles
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.className = 'tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600';
-  });
-  const pcBtn = document.getElementById(`btn-${tabId}-pc`);
-  if(pcBtn) pcBtn.className = 'tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition bg-rose-600 text-white shadow-sm';
-
-  // Update Mobile Nav styles
-  document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
-    btn.className = 'mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition';
-  });
-  const mobBtn = document.getElementById(`btn-${tabId}-mob`);
-  if(mobBtn) mobBtn.className = 'mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105';
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// --- DATE DEFAULTS ---
-function initMonthDefault() {
+// Initialize Default Value for Month Filter (Current Month)
+if (monthFilter) {
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
-  if(monthFilter) monthFilter.value = `${year}-${month}`;
+  monthFilter.value = `${year}-${month}`;
+  monthFilter.addEventListener('change', uiUpdatePipeline);
+}
 
-  const todayStr = now.toISOString().split('T')[0];
-  ['client-date', 'tx-date', 'oe-date'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = todayStr;
+// Bind search bar trigger dynamically
+if (searchInput) {
+  searchInput.addEventListener('input', () => {
+    switchTab('dashboard-view');
+    renderMasterTable();
   });
 }
 
-// --- EVENT LISTENERS & FORMS ---
-function initEventListeners() {
-  if(searchInput) searchInput.addEventListener('input', renderDashboard);
-  if(monthFilter) monthFilter.addEventListener('change', renderDashboard);
+// TAB SYSTEM CONTROLLER (Desktop & Mobile)
+window.switchTab = function(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  const target = document.getElementById(`tab-${tabId}`);
+  if(target) target.classList.remove('hidden');
 
-  // Client Form Submit
-  const clientForm = document.getElementById('client-form');
-  if(clientForm) {
-    clientForm.addEventListener('submit', e => {
-      e.preventDefault();
-      if(!currentUser) { alert('আগে লগইন করুন!'); return; }
-
-      const newClient = {
-        name: document.getElementById('client-name').value,
-        phone: document.getElementById('client-phone').value,
-        date: document.getElementById('client-date').value,
-        project: document.getElementById('project-title').value,
-        budget: parseFloat(document.getElementById('project-budget').value) || 0,
-        history: []
-      };
-
-      db.ref(`users/${currentUser.uid}/clients`).push(newClient).then(() => {
-        clientForm.reset();
-        initMonthDefault();
-        switchTab('dashboard-view');
-      });
-    });
+  // Desktop active buttons update
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.className = "tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
+  });
+  const activePCBtn = document.getElementById(`btn-${tabId}-pc`);
+  if(activePCBtn) {
+    activePCBtn.className = "tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
   }
 
-  // Transaction Form Submit
-  const txForm = document.getElementById('tx-form');
-  if(txForm) {
-    txForm.addEventListener('submit', e => {
-      e.preventDefault();
-      if(!currentUser) { alert('আগে লগইন করুন!'); return; }
-
-      const clientId = document.getElementById('tx-client-select').value;
-      if(!clientId) { alert('দয়া করে একটি প্রজেক্ট সিলেক্ট করুন'); return; }
-
-      const tx = {
-        date: document.getElementById('tx-date').value,
-        type: document.getElementById('tx-type').value,
-        amount: parseFloat(document.getElementById('tx-amount').value) || 0,
-        details: document.getElementById('tx-details').value
-      };
-
-      const clientRef = db.ref(`users/${currentUser.uid}/clients/${clientId}/history`);
-      clientRef.push(tx).then(() => {
-        txForm.reset();
-        initMonthDefault();
-        document.getElementById('dropdown-selected-text').innerText = 'প্রজেক্ট সিলেক্ট করুন...';
-        document.getElementById('dropdown-selected-text').className = 'text-slate-500';
-        switchTab('dashboard-view');
-      });
-    });
-  }
-
-  // Office Expense Form Submit
-  const oeForm = document.getElementById('office-expense-form');
-  if(oeForm) {
-    oeForm.addEventListener('submit', e => {
-      e.preventDefault();
-      if(!currentUser) { alert('আগে লগইন করুন!'); return; }
-
-      const oe = {
-        category: document.getElementById('oe-category').value,
-        date: document.getElementById('oe-date').value,
-        amount: parseFloat(document.getElementById('oe-amount').value) || 0,
-        details: document.getElementById('oe-details').value
-      };
-
-      db.ref(`users/${currentUser.uid}/officeExpenses`).push(oe).then(() => {
-        oeForm.reset();
-        initMonthDefault();
-      });
-    });
-  }
-
-  // Custom Searchable Dropdown Toggle
-  const dropdownTrigger = document.getElementById('dropdown-trigger');
-  const customDropdownList = document.getElementById('custom-dropdown-list');
-  const dropdownSearchInput = document.getElementById('dropdown-search-input');
-
-  if(dropdownTrigger && customDropdownList) {
-    dropdownTrigger.addEventListener('click', () => {
-      customDropdownList.classList.toggle('hidden');
-      if(!customDropdownList.classList.contains('hidden') && dropdownSearchInput) {
-        dropdownSearchInput.focus();
-      }
-    });
-
-    document.addEventListener('click', e => {
-      if(!dropdownTrigger.contains(e.target) && !customDropdownList.contains(e.target)) {
-        customDropdownList.classList.add('hidden');
-      }
-    });
-  }
-
-  if(dropdownSearchInput) {
-    dropdownSearchInput.addEventListener('input', populateDropdownItems);
+  // Mobile bottom tab active update
+  document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+    btn.className = "mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition";
+  });
+  const activeMobBtn = document.getElementById(`btn-${tabId}-mob`);
+  if(activeMobBtn) {
+    activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105";
   }
 }
 
-// --- POPULATE DROPDOWN ITEMS ---
-function populateDropdownItems() {
-  const container = document.getElementById('dropdown-items-container');
-  const searchInputVal = document.getElementById('dropdown-search-input').value.toLowerCase();
-  if(!container) return;
-
-  container.innerHTML = '';
-  const filtered = farmData.filter(c => c.name.toLowerCase().includes(searchInputVal) || c.project.toLowerCase().includes(searchInputVal));
-
-  if(filtered.length === 0) {
-    container.innerHTML = '<div class="p-3 text-xs text-slate-400 text-center">কোনো প্রজেক্ট পাওয়া যায়নি</div>';
-    return;
-  }
-
-  filtered.forEach(c => {
-    const item = document.createElement('div');
-    item.className = 'p-2.5 hover:bg-rose-50 rounded-xl cursor-pointer text-xs font-semibold flex justify-between items-center transition';
-    item.innerHTML = `<span>${c.name} - <span class="text-slate-500">${c.project}</span></span> <span class="font-mono text-rose-600">${c.phone}</span>`;
-    item.addEventListener('click', () => {
-      document.getElementById('tx-client-select').value = c.id;
-      const selText = document.getElementById('dropdown-selected-text');
-      selText.innerText = `${c.name} (${c.project})`;
-      selText.className = 'text-slate-900 font-bold';
-      document.getElementById('custom-dropdown-list').classList.add('hidden');
-    });
-    container.appendChild(item);
-  });
-}
-
-// --- FILTER & RENDER DASHBOARD ---
-window.setClientFilter = function(type) {
-  currentFilter = type;
-  ['all', 'new', 'old'].forEach(t => {
-    const btn = document.getElementById(`filter-btn-${t}`);
-    if(btn) {
-      if(t === type) {
-        btn.className = 'px-3.5 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm';
-      } else {
-        btn.className = 'px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600';
-      }
-    }
-  });
-  renderDashboard();
-}
-
-function renderDashboard() {
-  if(!clientsTableBody) return;
-
-  const searchText = searchInput ? searchInput.value.toLowerCase() : '';
-  const monthVal = monthFilter ? monthFilter.value : '';
-
-  let targetYear, targetMonth;
-  if(monthVal) {
-    const p = monthVal.split('-');
-    targetYear = parseInt(p[0]);
-    targetMonth = parseInt(p[1]) - 1;
-  }
-
-  clientsTableBody.innerHTML = '';
-
-  let gBudget = 0, gIncome = 0, gExpense = 0, gDue = 0;
-
-  // Filter Farm Data
-  let displayedClients = farmData.filter(c => {
-    const matchSearch = c.name.toLowerCase().includes(searchText) || c.phone.toLowerCase().includes(searchText) || c.project.toLowerCase().includes(searchText);
-    if(!matchSearch) return false;
-
-    if(currentFilter === 'new') {
-      // Created in selected month
-      if(monthVal) {
-        const cDate = new Date(c.date);
-        return cDate.getFullYear() === targetYear && cDate.getMonth() === targetMonth;
-      }
-    } else if(currentFilter === 'old') {
-      return true; // Ongoing or standard filter
-    }
-    return true;
-  });
-
-  if(displayedClients.length === 0) {
-    clientsTableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 text-xs">কোনো তথ্য পাওয়া যায়নি</td></tr>`;
-  }
-
-  displayedClients.forEach(c => {
-    let totalPaid = 0;
-    let totalProjExp = 0;
-
-    c.history.forEach(t => {
-      const tDate = new Date(t.date);
-      let inMonth = true;
-      if(monthVal) {
-        inMonth = (tDate.getFullYear() === targetYear && tDate.getMonth() === targetMonth);
-      }
-      if(inMonth) {
-        if(t.type === 'income') totalPaid += Number(t.amount || 0);
-        if(t.type === 'expense') totalProjExp += Number(t.amount || 0);
-      }
-    });
-
-    let due = c.budget - totalPaid;
-    gBudget += c.budget;
-    gIncome += totalPaid;
-    gExpense += totalProjExp;
-    gDue += due > 0 ? due : 0;
-
-    const tr = document.createElement('tr');
-    tr.className = 'hover:bg-slate-50/80 cursor-pointer transition border-b border-slate-100';
-    tr.innerHTML = `
-      <td class="p-4 pl-5">
-        <div class="font-bold text-slate-900">${c.name}</div>
-        <div class="text-[11px] text-slate-500 font-medium">${c.project}</div>
-      </td>
-      <td class="p-4 font-mono text-slate-600">${c.phone}</td>
-      <td class="p-4 text-right font-mono font-bold text-slate-900">৳${c.budget.toLocaleString('en-IN')}</td>
-      <td class="p-4 text-right font-mono font-bold text-emerald-600">৳${totalPaid.toLocaleString('en-IN')}</td>
-      <td class="p-4 text-right font-mono font-bold text-rose-600">৳${totalProjExp.toLocaleString('en-IN')}</td>
-      <td class="p-4 text-right font-mono font-bold text-amber-600">৳${due > 0 ? due.toLocaleString('en-IN') : 0}</td>
-      <td class="p-4 text-center">
-        <button onclick="event.stopPropagation(); deleteClient('${c.id}')" class="bg-slate-100 hover:bg-rose-100 hover:text-rose-600 text-slate-400 p-2 rounded-xl transition text-xs">🗑️</button>
-      </td>
-    `;
-    tr.addEventListener('click', () => openDrawer(c));
-    clientsTableBody.appendChild(tr);
-  });
-
-  let netProfit = gIncome - gExpense;
-
-  // Update Global Summary Cards
-  document.getElementById('global-budget').innerText = '৳' + gBudget.toLocaleString('en-IN');
-  document.getElementById('global-income').innerText = '৳' + gIncome.toLocaleString('en-IN');
-  document.getElementById('global-expense').innerText = '৳' + gExpense.toLocaleString('en-IN');
-  document.getElementById('global-due').innerText = '৳' + gDue.toLocaleString('en-IN');
+// Control Table Visibility and Custom States
+window.setClientFilter = function(filterType) {
+  activeClientFilter = filterType;
   
-  const netEl = document.getElementById('global-net');
-  netEl.innerText = '৳' + netProfit.toLocaleString('en-IN');
-  netEl.className = netProfit >= 0 ? 'text-lg md:text-2xl font-black text-emerald-400 mt-1' : 'text-lg md:text-2xl font-black text-rose-400 mt-1';
+  const btnAll = document.getElementById('filter-btn-all');
+  const btnNew = document.getElementById('filter-btn-new');
+  const btnOld = document.getElementById('filter-btn-old');
+  
+  [btnAll, btnNew, btnOld].forEach(btn => {
+    if(btn) btn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
+  });
+  
+  const activeBtn = document.getElementById(`filter-btn-${filterType}`);
+  if(activeBtn) activeBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
+  
+  renderMasterTable();
 }
 
-// --- LEDGER DRAWER SHEET ---
-function openDrawer(client) {
-  const drawer = document.getElementById('ledger-drawer');
-  drawer.classList.remove('hidden');
-  document.getElementById('drawer-title').innerText = client.name + ' - ' + client.project;
-  document.getElementById('drawer-sub').innerText = `মোবাইল: ${client.phone} | বাজেট: ৳${client.budget.toLocaleString('en-IN')}`;
+// Initialize System Pipelines
+uiUpdatePipeline();
+setClientFilter('all');
+switchTab('dashboard-view');
 
-  const tbody = document.getElementById('drawer-table-body');
-  tbody.innerHTML = '';
+// User Menu Events Handlers
+if (profileTrigger) {
+  profileTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (profileDropdown) profileDropdown.classList.toggle('hidden');
+  });
+}
 
-  if(!client.history || client.history.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">কোনো লেনদেন এন্ট্রি নেই</td></tr>`;
-    return;
+document.addEventListener('click', () => {
+  if (profileDropdown) profileDropdown.classList.add('hidden');
+});
+
+if (loginBtn) {
+  loginBtn.addEventListener('click', () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(err => alert("Login failed: " + err.message));
+  });
+}
+
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', () => {
+    auth.signOut().then(() => window.location.reload());
+  });
+}
+
+// Firebase Auth Authentication State Realtime Observers
+auth.onAuthStateChanged(user => {
+  if (user) {
+    if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
+    if (profileTrigger) profileTrigger.classList.remove('hidden');
+    
+    const indicator = document.getElementById('status-indicator');
+    const text = document.getElementById('status-text');
+    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse";
+    if (text) text.innerText = "Online (Live Sync)";
+    
+    if (document.getElementById('user-display-name')) document.getElementById('user-display-name').innerText = user.displayName;
+    if (document.getElementById('user-avatar')) document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
+
+    // Updated to use rajuk_erp_data with user UID
+    databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
+    subscribeToCloudStreams();
+  } else {
+    if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
+    if (profileTrigger) profileTrigger.classList.add('hidden');
+    
+    const indicator = document.getElementById('status-indicator');
+    const text = document.getElementById('status-text');
+    if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
+    if (text) text.innerText = "Guest Mode";
+    
+    farmData = [];
+    officeExpenses = [];
+    databasePathRef = null;
+    uiUpdatePipeline();
   }
+});
 
-  client.history.forEach((t, idx) => {
-    const isIncome = t.type === 'income';
-    const tr = document.createElement('tr');
-    tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
-    tr.innerHTML = `
-      <td class="p-3 pl-4 font-mono text-slate-600">${t.date}</td>
-      <td class="p-3 font-semibold text-slate-800">${t.details}</td>
-      <td class="p-3">
-        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${isIncome ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}">
-          ${isIncome ? 'টাকা জমা' : 'প্রজেক্ট খরচ'}
-        </span>
-      </td>
-      <td class="p-3 text-right font-mono font-bold ${isIncome ? 'text-emerald-600' : 'text-rose-600'}">
-        ${isIncome ? '+' : '-'}৳${Number(t.amount).toLocaleString('en-IN')}
-      </td>
-      <td class="p-3 text-center">
-        <button onclick="deleteTransaction('${client.id}', ${idx})" class="text-slate-400 hover:text-rose-600 transition text-xs">🗑️</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
+// Sync Stream listeners with Firebase Cloud Node 
+function subscribeToCloudStreams() {
+  if(!databasePathRef) return;
+  databasePathRef.child('clients').on('value', snapshot => {
+    farmData = [];
+    snapshot.forEach(childSnapshot => {
+      const val = childSnapshot.val();
+      if(!val.history) val.history = [];
+      else if(!Array.isArray(val.history)) {
+        val.history = Object.keys(val.history).map(k => val.history[k]);
+      }
+      farmData.push({ id: childSnapshot.key, ...val });
+    });
+    uiUpdatePipeline();
   });
 
-  drawer.scrollIntoView({ behavior: 'smooth' });
+  databasePathRef.child('office_expenses').on('value', snapshot => {
+    officeExpenses = [];
+    snapshot.forEach(childSnapshot => {
+      officeExpenses.push({ id: childSnapshot.key, ...childSnapshot.val() });
+    });
+    officeExpenses.sort((a,b) => new Date(b.date) - new Date(a.date));
+    uiUpdatePipeline();
+  });
 }
 
-window.closeDrawer = function() {
-  document.getElementById('ledger-drawer').classList.add('hidden');
+function uiUpdatePipeline() {
+  calculateGlobalMetrics();
+  renderDropdown();
+  renderMasterTable();
+  renderOfficeExpenses();
+  if(openLedgerId) refreshDrawer(openLedgerId);
 }
 
-// --- DELETE HANDLERS ---
-window.deleteClient = function(clientId) {
-  if(confirm('সত্যিই এই প্রজেক্ট এবং এর সকল লেনদেন মুছে ফেলতে চান?')) {
-    db.ref(`users/${currentUser.uid}/clients/${clientId}`).remove();
-    document.getElementById('ledger-drawer').classList.add('hidden');
-  }
-}
-
-window.deleteTransaction = function(clientId, txIndex) {
-  if(confirm('এই লেনদেনটি মুছে ফেলতে চান?')) {
-    const client = farmData.find(c => c.id === clientId);
-    if(client && client.history) {
-      client.history.splice(txIndex, 1);
-      db.ref(`users/${currentUser.uid}/clients/${clientId}/history`).set(client.history);
-      openDrawer(client);
-    }
-  }
-}
-
-// --- OFFICE EXPENSES RENDERING ---
-function renderOfficeExpenses() {
-  const tbody = document.getElementById('office-expense-rows');
-  if(!tbody) return;
-
-  const monthVal = monthFilter ? monthFilter.value : '';
+// Calculate Dashboard Total Amounts
+function calculateGlobalMetrics() {
+  let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
+  
   let targetYear, targetMonth;
-  if(monthVal) {
-    const p = monthVal.split('-');
-    targetYear = parseInt(p[0]);
-    targetMonth = parseInt(p[1]) - 1;
-  }
-
-  tbody.innerHTML = '';
-  let filtered = officeExpenses.filter(oe => {
-    if(!monthVal) return true;
-    const d = new Date(oe.date);
-    return d.getFullYear() === targetYear && d.getMonth() === targetMonth;
-  });
-
-  if(filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 text-xs">এই মাসের কোনো অফিস খরচ নেই</td></tr>`;
-    return;
-  }
-
-  filtered.forEach(oe => {
-    const tr = document.createElement('tr');
-    tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
-    tr.innerHTML = `
-      <td class="p-4 pl-5">
-        <div class="font-bold text-slate-900">${oe.details}</div>
-        <div class="text-[11px] text-rose-600 font-semibold">${oe.category}</div>
-      </td>
-      <td class="p-4 font-mono text-slate-600">${oe.date}</td>
-      <td class="p-4 text-right font-mono font-bold text-rose-600">৳${Number(oe.amount).toLocaleString('en-IN')}</td>
-      <td class="p-4 text-center">
-        <button onclick="deleteOfficeExpense('${oe.id}')" class="bg-slate-100 hover:bg-rose-100 hover:text-rose-600 text-slate-400 p-2 rounded-xl transition text-xs">🗑️</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-window.deleteOfficeExpense = function(id) {
-  if(confirm('এই খরচটি মুছে ফেলতে চান?')) {
-    db.ref(`users/${currentUser.uid}/officeExpenses/${id}`).remove();
-  }
-}
-
-// --- TALLYKHATA STYLE SMOOTH MONTHLY REPORT SYSTEM ---
-window.openMonthlyReportModal = function() {
-  const modal = document.getElementById('monthlyReportModal');
-  if(!modal) return;
-  calculateReportMetrics();
-  modal.classList.remove('hidden');
-}
-
-window.closeMonthlyReportModal = function() {
-  const modal = document.getElementById('monthlyReportModal');
-  if(modal) modal.classList.add('hidden');
-}
-
-function calculateReportMetrics() {
-  const monthInput = document.getElementById('month-filter');
-  let targetYear, targetMonth;
-
-  if (monthInput && monthInput.value) {
-    const parts = monthInput.value.split('-'); 
+  if (monthFilter && monthFilter.value) {
+    const parts = monthFilter.value.split('-'); 
     targetYear = parseInt(parts[0]);
     targetMonth = parseInt(parts[1]) - 1; 
   } else {
@@ -547,66 +221,387 @@ function calculateReportMetrics() {
   const startOfMonth = new Date(targetYear, targetMonth, 1);
   const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
-  let totalIncome = 0;
-  let projectExpense = 0;
-  let totalOfficeExpense = 0;
-  let bossIn = 0;
-  let bossOut = 0;
+  farmData.forEach(c => {
+    budget += c.budget; 
+    let cIncome = 0;
+    
+    c.history.forEach(t => {
+      const tDate = new Date(t.date);
+      const isSelectedMonth = (tDate >= startOfMonth && tDate <= endOfMonth);
 
-  if (typeof farmData !== 'undefined') {
-    farmData.forEach(c => {
-      if (c.history && Array.isArray(c.history)) {
-        c.history.forEach(t => {
-          const tDate = new Date(t.date);
-          if (tDate >= startOfMonth && tDate <= endOfMonth) {
-            if (t.type === 'income') totalIncome += Number(t.amount || 0);
-            if (t.type === 'expense') projectExpense += Number(t.amount || 0);
-          }
-        });
+      if (t.type === 'income') {
+        cIncome += t.amount; 
+        if (isSelectedMonth) income += t.amount; 
+      }
+      if (t.type === 'expense' && isSelectedMonth) {
+        prjExpense += t.amount; 
       }
     });
-  }
+    due += (c.budget - cIncome); 
+  });
 
-  if (typeof officeExpenses !== 'undefined') {
-    officeExpenses.forEach(oe => {
-      const oeDate = new Date(oe.date);
-      if (oeDate >= startOfMonth && oeDate <= endOfMonth) {
-        const amt = Number(oe.amount || 0);
-        totalOfficeExpense += amt;
-        if (oe.category === 'Boss Expense') {
-          bossOut += amt;
-        } else if (oe.category === 'Boss Fund') {
-          bossIn += amt;
-        }
-      }
-    });
-  }
+  officeExpenses.forEach(oe => {
+    const oeDate = new Date(oe.date);
+    if (oeDate >= startOfMonth && oeDate <= endOfMonth) {
+      totalOfficeExpense += oe.amount;
+    }
+  });
 
-  let grossProfit = totalIncome - projectExpense;
-  let netProfit = grossProfit - totalOfficeExpense;
-  let bossDue = bossIn - bossOut;
+  let grandTotalExpense = prjExpense + totalOfficeExpense;
+  let netIncome = income - grandTotalExpense;
 
-  const updateEl = (id, val) => {
-    const el = document.getElementById(id);
-    if(el) el.innerText = '৳' + val.toLocaleString('en-IN');
-  };
-
-  updateEl('rep-total-income', totalIncome);
-  updateEl('rep-project-expense', projectExpense);
-  updateEl('rep-gross-profit', grossProfit);
-  updateEl('rep-office-expense', totalOfficeExpense);
-  updateEl('rep-net-profit', netProfit);
-  updateEl('rep-boss-in', bossIn);
-  updateEl('rep-boss-out', bossOut);
-  updateEl('rep-boss-due', bossDue);
+  if (document.getElementById('global-budget')) document.getElementById('global-budget').innerText = '৳' + budget.toLocaleString('en-IN');
+  if (document.getElementById('global-income')) document.getElementById('global-income').innerText = '৳' + income.toLocaleString('en-IN');
+  if (document.getElementById('global-expense')) document.getElementById('global-expense').innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
+  if (document.getElementById('global-due')) document.getElementById('global-due').innerText = '৳' + due.toLocaleString('en-IN');
+  if (document.getElementById('global-net')) document.getElementById('global-net').innerText = '৳' + netIncome.toLocaleString('en-IN');
 }
 
-// Auto update report modal if open when filter changes
-if(monthFilter) {
-  monthFilter.addEventListener('change', () => {
-    const modal = document.getElementById('monthlyReportModal');
-    if(modal && !modal.classList.contains('hidden')) {
-      calculateReportMetrics();
+// Compact Passcode Modal Handler
+let pendingDeleteAction = null;
+function requestPasscodeAuth(onSuccess) {
+  const modal = document.getElementById('securityModal');
+  const passInput = document.getElementById('modalPasscodeInput');
+  const confirmBtn = document.getElementById('modalConfirmBtn');
+  const cancelBtn = document.getElementById('modalCancelBtn');
+
+  if (!modal || !passInput) return;
+
+  passInput.value = '';
+  passInput.classList.remove('border-rose-600');
+  pendingDeleteAction = onSuccess;
+  modal.classList.remove('hidden');
+  setTimeout(() => passInput.focus(), 50);
+
+  passInput.onkeyup = function(e) {
+    if (e.key === 'Enter') confirmBtn.click();
+  };
+
+  confirmBtn.onclick = function() {
+    if (passInput.value.trim() === SECURITY_PASSCODE) {
+      modal.classList.add('hidden');
+      if (pendingDeleteAction) pendingDeleteAction();
+    } else {
+      passInput.classList.add('border-rose-600');
+      passInput.value = '';
+      passInput.focus();
+    }
+  };
+
+  cancelBtn.onclick = function() {
+    modal.classList.add('hidden');
+    pendingDeleteAction = null;
+  };
+}
+
+// Form Submit Handlers
+if (clientForm) {
+  clientForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
+    
+    const clientDate = document.getElementById('client-date').value;
+    const newClient = {
+      name: document.getElementById('client-name').value,
+      phone: document.getElementById('client-phone').value,
+      project: document.getElementById('project-title').value,
+      budget: parseFloat(document.getElementById('project-budget').value),
+      date: clientDate,
+      history: []
+    };
+    
+    databasePathRef.child('clients').push(newClient);
+    clientForm.reset();
+    document.getElementById('client-date').value = new Date().toISOString().substring(0, 10);
+    setClientFilter('all');
+    switchTab('dashboard-view');
+  });
+}
+
+if (txForm) {
+  txForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
+    const id = document.getElementById('tx-client-select').value;
+    if(!id) { alert('প্রজেক্ট সিলেক্ট করুন!'); return; }
+    
+    const client = farmData.find(c => c.id === id);
+    if(client) {
+      const updatedHistory = client.history || [];
+      updatedHistory.push({
+        id: 't_' + Date.now(),
+        type: document.getElementById('tx-type').value,
+        amount: parseFloat(document.getElementById('tx-amount').value),
+        details: document.getElementById('tx-details').value,
+        date: document.getElementById('tx-date').value
+      });
+      updatedHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
+      
+      databasePathRef.child('clients').child(id).update({ history: updatedHistory });
+      
+      document.getElementById('tx-amount').value = '';
+      document.getElementById('tx-details').value = '';
+      document.getElementById('tx-client-select').value = '';
+      
+      const selectedText = document.getElementById('dropdown-selected-text');
+      if (selectedText) {
+        selectedText.innerText = 'প্রজেক্ট সিলেক্ট করুন...';
+        selectedText.className = 'text-slate-500';
+      }
+
+      setClientFilter('all');
+      uiUpdatePipeline();
+      switchTab('dashboard-view');
     }
   });
 }
+
+if (officeExpenseForm) {
+  officeExpenseForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
+    const newExpense = {
+      category: document.getElementById('oe-category').value,
+      amount: parseFloat(document.getElementById('oe-amount').value),
+      details: document.getElementById('oe-details').value,
+      date: document.getElementById('oe-date').value
+    };
+    databasePathRef.child('office_expenses').push(newExpense);
+    document.getElementById('oe-amount').value = '';
+    document.getElementById('oe-details').value = '';
+    uiUpdatePipeline();
+  });
+}
+
+// Searchable Dropdown Logics
+function renderDropdown() {
+  const trigger = document.getElementById('dropdown-trigger');
+  const dropdownList = document.getElementById('custom-dropdown-list');
+  const dropdownSearchInput = document.getElementById('dropdown-search-input');
+  const itemsContainer = document.getElementById('dropdown-items-container');
+  const hiddenInput = document.getElementById('tx-client-select');
+  const selectedText = document.getElementById('dropdown-selected-text');
+
+  if (!trigger || !dropdownList || !itemsContainer) return;
+
+  trigger.onclick = function(e) {
+    e.stopPropagation();
+    dropdownList.classList.toggle('hidden');
+    if (!dropdownList.classList.contains('hidden') && dropdownSearchInput) {
+      dropdownSearchInput.value = '';
+      filterDropdownItems('');
+      dropdownSearchInput.focus();
+    }
+  };
+
+  document.onclick = function() {
+    dropdownList.classList.add('hidden');
+  };
+
+  dropdownList.onclick = function(e) {
+    e.stopPropagation();
+  };
+
+  function filterDropdownItems(query) {
+    itemsContainer.innerHTML = '';
+    const filtered = farmData.filter(c => 
+      c.project.toLowerCase().includes(query.toLowerCase()) || 
+      c.name.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (filtered.length === 0) {
+      itemsContainer.innerHTML = `<div class="p-3 text-xs md:text-sm text-slate-400 text-center font-medium">কোনো প্রজেক্ট পাওয়া যায়নি</div>`;
+      return;
+    }
+
+    filtered.forEach(c => {
+      const item = document.createElement('div');
+      item.className = "p-3 text-xs md:text-sm hover:bg-rose-50 hover:text-rose-600 rounded-xl cursor-pointer transition font-semibold flex justify-between items-center text-slate-800";
+      item.innerHTML = `<span>${c.project} <span class="text-xs text-slate-400 font-normal">(${c.name})</span></span>`;
+      
+      item.onclick = function() {
+        hiddenInput.value = c.id;
+        selectedText.innerText = `${c.project} (${c.name})`;
+        selectedText.className = "text-slate-900 font-bold";
+        dropdownList.classList.add('hidden');
+      };
+      itemsContainer.appendChild(item);
+    });
+  }
+
+  if (dropdownSearchInput) {
+    dropdownSearchInput.oninput = function() { filterDropdownItems(this.value); };
+  }
+}
+
+// Master Table Rendering
+function renderMasterTable() {
+  if (!tableBody) return;
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+  if (farmData.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400 font-semibold">কোনো হিসাব বা গ্রাহক পাওয়া যায়নি। নতুন গ্রাহক যোগ করুন।</td></tr>`;
+    return;
+  }
+
+  let filteredData = farmData.filter(c => {
+    return c.name.toLowerCase().includes(query) || 
+           c.phone.includes(query) || 
+           c.project.toLowerCase().includes(query);
+  });
+
+  if (activeClientFilter === 'new') {
+    filteredData = filteredData.filter(c => !c.history.some(t => t.type === 'income'));
+  } else if (activeClientFilter === 'old') {
+    filteredData = filteredData.filter(c => c.history.some(t => t.type === 'income'));
+  }
+
+  tableBody.innerHTML = filteredData.length === 0 ? 
+    `<tr><td colspan="7" class="p-8 text-center text-slate-400 font-semibold">মিলযুক্ত কোনো প্রজেক্ট পাওয়া যায়নি</td></tr>` : '';
+
+  filteredData.forEach(c => {
+    let localIncome = 0, localExpense = 0;
+    c.history.forEach(t => {
+      if(t.type === 'income') localIncome += t.amount;
+      if(t.type === 'expense') localExpense += t.amount;
+    });
+    let cDue = c.budget - localIncome;
+
+    const tr = document.createElement('tr');
+    tr.className = "hover:bg-slate-50/90 transition border-b border-slate-100 cursor-pointer";
+    tr.onclick = () => openDrawer(c.id);
+
+    tr.innerHTML = `
+      <td class="p-4 pl-5">
+        <div class="font-bold text-slate-900 text-sm">${c.project}</div>
+        <div class="text-xs text-slate-500 font-medium mt-0.5">${c.name} ${c.date ? '<span class="text-slate-400">(' + c.date + ')</span>' : ''}</div>
+      </td>
+      <td class="p-4 font-mono text-slate-700 text-xs md:text-sm">${c.phone}</td>
+      <td class="p-4 text-right font-bold text-slate-800">৳${c.budget.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-right font-bold text-emerald-600">৳${localIncome.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-right font-bold text-rose-600">৳${localExpense.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-right font-bold ${cDue > 0 ? 'text-amber-600' : 'text-slate-400'}">৳${cDue.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-center" onclick="event.stopPropagation()">
+        <div class="flex justify-center items-center gap-2">
+          <button onclick="openDrawer('${c.id}')" class="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-2xs">লেজার</button>
+          <button onclick="deleteClient('${c.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5 transition">✕</button>
+        </div>
+      </td>
+    `;
+    tableBody.appendChild(tr);
+  });
+}
+
+function renderOfficeExpenses() {
+  if (!officeExpenseRows) return;
+  
+  let targetYear, targetMonth;
+  if (monthFilter && monthFilter.value) {
+    const parts = monthFilter.value.split('-');
+    targetYear = parseInt(parts[0]);
+    targetMonth = parseInt(parts[1]) - 1;
+  } else {
+    const now = new Date();
+    targetYear = now.getFullYear();
+    targetMonth = now.getMonth();
+  }
+  const startOfMonth = new Date(targetYear, targetMonth, 1);
+  const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
+
+  const localFilteredExpenses = officeExpenses.filter(oe => {
+    const d = new Date(oe.date);
+    return d >= startOfMonth && d <= endOfMonth;
+  });
+
+  if (localFilteredExpenses.length === 0) {
+    officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400 font-semibold">এই মাসে কোনো অফিস খরচ নেই</td></tr>`;
+    return;
+  }
+
+  officeExpenseRows.innerHTML = '';
+  localFilteredExpenses.forEach(oe => {
+    const tr = document.createElement('tr');
+    tr.className = "border-b border-slate-100 hover:bg-slate-50/90 transition";
+    tr.innerHTML = `
+      <td class="p-4 pl-5 font-bold text-slate-900">${oe.details} <span class="text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-md font-bold ml-1">${oe.category}</span></td>
+      <td class="p-4 text-slate-500 font-mono text-xs">${oe.date}</td>
+      <td class="p-4 text-right font-bold text-rose-600">৳${oe.amount.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5">✕</button></td>
+    `;
+    officeExpenseRows.appendChild(tr);
+  });
+}
+
+// Drawer Sheet Controllers
+window.openDrawer = function(id) {
+  openLedgerId = id;
+  if (ledgerDrawer) {
+    ledgerDrawer.classList.remove('hidden');
+    refreshDrawer(id);
+    ledgerDrawer.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+window.closeDrawer = function() {
+  openLedgerId = null;
+  if (ledgerDrawer) ledgerDrawer.classList.add('hidden');
+}
+
+function refreshDrawer(id) {
+  const client = farmData.find(c => c.id === id);
+  if(!client) return closeDrawer();
+
+  if (document.getElementById('drawer-title')) document.getElementById('drawer-title').innerText = `${client.project} (${client.name})`;
+  if (document.getElementById('drawer-sub')) document.getElementById('drawer-sub').innerText = `মোবাইল: ${client.phone} | মোট বাজেট: ৳${client.budget.toLocaleString('en-IN')} ${client.date ? '| শুরুর তারিখ: ' + client.date : ''}`;
+
+  const dBody = document.getElementById('drawer-table-body');
+  if (!dBody) return;
+  dBody.innerHTML = (!client.history || client.history.length === 0) ? 
+    `<tr><td colspan="5" class="p-8 text-center text-slate-400 font-semibold">এই প্রজেক্টে কোনো লেনদেন হয়নি</td></tr>` : '';
+
+  client.history.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.className = "border-b border-slate-100 hover:bg-slate-50/90 transition";
+    let typeText = t.type === 'income' ? '<span class="text-emerald-600 font-bold">জমা (Debit)</span>' : '<span class="text-rose-600 font-bold">খরচ (Credit)</span>';
+    let valColor = t.type === 'income' ? 'text-emerald-600' : 'text-rose-600';
+
+    tr.innerHTML = `
+      <td class="p-4 pl-5 text-slate-500 font-mono text-xs">${t.date}</td>
+      <td class="p-4 font-bold text-slate-900">${t.details}</td>
+      <td class="p-4">${typeText}</td>
+      <td class="p-4 text-right font-bold ${valColor}">${t.type === 'income' ? '+' : '-'}৳${t.amount.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-center">
+        <button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5">✕</button>
+      </td>
+    `;
+    dBody.appendChild(tr);
+  });
+}
+
+// Deletion Handlers
+window.deleteClient = function(id) {
+  if(!databasePathRef) return;
+  requestPasscodeAuth(() => {
+    databasePathRef.child('clients').child(id).remove().then(() => {
+      if(openLedgerId === id) closeDrawer();
+    });
+  });
+};
+
+window.deleteOfficeExpense = function(id) {
+  if(!databasePathRef) return;
+  requestPasscodeAuth(() => {
+    databasePathRef.child('office_expenses').child(id).remove();
+  });
+};
+
+window.deleteTransaction = function(clientId, txId) {
+  if(!databasePathRef) return;
+  const client = farmData.find(c => c.id === clientId);
+  if(!client) return;
+
+  requestPasscodeAuth(() => {
+    const updatedHistory = (client.history || []).filter(t => t.id !== txId);
+    databasePathRef.child('clients').child(clientId).update({ history: updatedHistory });
+  });
+};
