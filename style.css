@@ -16,3 +16,12 @@ body {
   background: #d1d5db;
   border-radius: 4px;
 }
+input[type="month"] {
+  min-width: 160px;
+  box-sizing: border-box;
+}
+
+input[type="month"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.2);
+}
