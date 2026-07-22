@@ -8,25 +8,24 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Fonts: Hind Siliguri replacement with Tallykhata style font (Inter & Tiro Bangla / SolaimanLipi / Atma fallback integration mimicking Tallykhata UI look) -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
-    /* Tallykhata UI Custom Font Theme Overrides */
     body, button, input, select, textarea {
       font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif !important;
     }
   </style>
-  
-  <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css">
 
-  <!-- == FIREBASE SDK v8 LIBRARIES == -->
+  <!-- Firebase SDK v8 LIBRARIES -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  
+  <!-- html2pdf Library for PDF Download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="text-slate-900 antialiased selection:bg-rose-500 selection:text-white min-h-screen flex flex-col justify-between pb-16 md:pb-6">
 
@@ -74,10 +73,11 @@
     
     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div class="hidden md:flex items-center bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-        <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-pc" class="tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600">📊 খাতা ও রিপোর্ট</button>
-        <button onclick="switchTab('client-view')" id="btn-client-view-pc" class="tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600">➕ নতুন গ্রাহক</button>
-        <button onclick="switchTab('journal-view')" id="btn-journal-view-pc" class="tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600">💸 লেনদেন</button>
-        <button onclick="switchTab('office-view')" id="btn-office-view-pc" class="tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600">🏢 অফিস খরচ</button>
+        <button onclick="switchTab('client-view')" id="btn-client-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">➕ নতুন গ্রাহক</button>
+        <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">📊 খাতা ও রিপোর্ট</button>
+        <button onclick="switchTab('journal-view')" id="btn-journal-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">💸 লেনদেন</button>
+        <button onclick="switchTab('office-view')" id="btn-office-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">🏢 অফিস খরচ</button>
+        <button onclick="switchTab('owner-view')" id="btn-owner-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">💼 মালিকের ফান্ড</button>
       </div>
 
       <div class="w-full md:w-auto text-xs font-bold text-slate-500">
@@ -90,117 +90,8 @@
       </div>
     </div>
 
-    <!-- TAB 1: DASHBOARD -->
-    <div id="tab-dashboard-view" class="tab-content space-y-6">
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5 text-center">
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">মোট বাজেট</p>
-          <h3 id="global-budget" class="text-base md:text-lg font-black text-slate-800 mt-1 font-mono">৳0</h3>
-        </div>
-        <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-200/80 shadow-sm">
-          <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">মোট জমা</p>
-          <h3 id="global-income" class="text-base md:text-lg font-black text-emerald-600 mt-1 font-mono">৳0</h3>
-        </div>
-        <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-200/80 shadow-sm">
-          <p class="text-[11px] font-bold uppercase tracking-wider text-rose-600">মোট খরচ</p>
-          <h3 id="global-expense" class="text-base md:text-lg font-black text-rose-600 mt-1 font-mono">৳0</h3>
-        </div>
-        <div class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200/80 shadow-sm">
-          <p class="text-[11px] font-bold uppercase tracking-wider text-amber-600">মোট বাকি (Due)</p>
-          <h3 id="global-due" class="text-base md:text-lg font-black text-amber-600 mt-1 font-mono">৳0</h3>
-        </div>
-        <!-- Net Balance Outline Card -->
-        <div class="bg-white p-4 rounded-2xl border-2 border-rose-600 shadow-xs col-span-2 md:col-span-1">
-          <p class="text-[11px] font-bold uppercase tracking-wider text-rose-600">নেট ব্যালেন্স</p>
-          <h3 id="global-net" class="text-base md:text-lg font-black text-rose-600 mt-1 font-mono">৳0</h3>
-        </div>
-      </div>
-
-      <!-- NEW REPORTS SECTION: মালিকের মূলধন রিপোর্ট & লাভ-ক্ষতি সামারি রিপোর্ট -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- মালিকের মূলধন রিপোর্ট -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h4 class="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
-              <span class="text-rose-600">💼</span> মালিকের মূলধন রিপোর্ট
-            </h4>
-            <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-lg">Capital Summary</span>
-          </div>
-          <div class="grid grid-cols-2 gap-3 pt-1">
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-              <p class="text-[10px] font-bold uppercase text-slate-400">প্রজেক্ট মোট বিনিয়োগ (বাজেট)</p>
-              <h5 id="report-total-budget" class="text-sm md:text-base font-black text-slate-800 mt-1 font-mono">৳0</h5>
-            </div>
-            <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
-              <p class="text-[10px] font-bold uppercase text-emerald-600">হাতে আসা মূলধন (জমা)</p>
-              <h5 id="report-total-capital-in" class="text-sm md:text-base font-black text-emerald-600 mt-1 font-mono">৳0</h5>
-            </div>
-          </div>
-          <div class="flex justify-between items-center text-xs px-2 pt-1 font-semibold text-slate-600">
-            <span>বকেয়া মূলধন বা পাওনা:</span>
-            <span id="report-total-capital-due" class="font-mono font-bold text-amber-600">৳0</span>
-          </div>
-        </div>
-
-        <!-- লাভ-ক্ষতি সামারি রিপোর্ট -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h4 class="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
-              <span class="text-rose-600">📈</span> লাভ-ক্ষতি সামারি রিপোর্ট
-            </h4>
-            <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-2.5 py-1 rounded-lg">P&L Statement</span>
-          </div>
-          <div class="grid grid-cols-3 gap-2.5 pt-1 text-center">
-            <div class="bg-emerald-50/60 p-2.5 rounded-xl border border-emerald-100">
-              <p class="text-[10px] font-bold uppercase text-emerald-600">মোট আয়</p>
-              <h5 id="report-pnl-income" class="text-xs md:text-sm font-black text-emerald-600 mt-1 font-mono">৳0</h5>
-            </div>
-            <div class="bg-rose-50/60 p-2.5 rounded-xl border border-rose-100">
-              <p class="text-[10px] font-bold uppercase text-rose-600">মোট খরচ</p>
-              <h5 id="report-pnl-expense" class="text-xs md:text-sm font-black text-rose-600 mt-1 font-mono">৳0</h5>
-            </div>
-            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-              <p id="report-pnl-label" class="text-[10px] font-bold uppercase text-slate-600">নিট লাভ/ক্ষতি</p>
-              <h5 id="report-pnl-net" class="text-xs md:text-sm font-black text-slate-800 mt-1 font-mono">৳0</h5>
-            </div>
-          </div>
-          <div class="text-[11px] text-slate-500 text-center font-medium pt-1">
-            * নির্বাচিত মাসের আয় ও সকল প্রজেক্ট/অফিস খরচের সামারি ভিত্তিক হিসাব।
-          </div>
-        </div>
-      </div>
-      
-      <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-        <div class="px-5 py-4 border-b border-slate-200 bg-slate-50/70 flex justify-between items-center">
-          <h3 class="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-800">সকল গ্রাহক ও প্রজেক্ট খাতা</h3>
-          <div class="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
-            <button onclick="setClientFilter('all')" id="filter-btn-all" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition">সব</button>
-            <button onclick="setClientFilter('new')" id="filter-btn-new" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition">নতুন</button>
-            <button onclick="setClientFilter('old')" id="filter-btn-old" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition">চলমান</button>
-          </div>
-        </div>
-
-        <div id="master-table-container" class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs md:text-sm">
-            <thead>
-              <tr class="bg-slate-50/80 text-slate-500 font-bold uppercase text-[11px] border-b border-slate-200">
-                <th class="p-4 pl-5">গ্রাহক ও প্রজেক্ট</th>
-                <th class="p-4">মোবাইল</th>
-                <th class="p-4 text-right">চুক্তি (বাজেট)</th>
-                <th class="p-4 text-right">জমা</th>
-                <th class="p-4 text-right">খরচ</th>
-                <th class="p-4 text-right">বাকি</th>
-                <th class="p-4 text-center">অ্যাকশন</th>
-              </tr>
-            </thead>
-            <tbody id="clients-table-body" class="divide-y divide-slate-100 font-semibold text-slate-800"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 2: CLIENT REGISTRY -->
-    <div id="tab-client-view" class="tab-content space-y-6 hidden">
+    <!-- TAB 1: CLIENT REGISTRY (Default Open) -->
+    <div id="tab-client-view" class="tab-content space-y-6">
       <div class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm max-w-xl mx-auto">
         <div class="flex items-center gap-3 border-b border-slate-200 pb-4 mb-5">
           <div class="h-10 w-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-base">➕</div>
@@ -234,6 +125,148 @@
       </div>
     </div>
 
+    <!-- TAB 2: DASHBOARD & REPORTS -->
+    <div id="tab-dashboard-view" class="tab-content space-y-6 hidden">
+      
+      <!-- TOP 5 METRIC CARDS -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5 text-center">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">মোট বাজেট</p>
+          <h3 id="global-budget" class="text-base md:text-lg font-black text-slate-800 mt-1 font-mono">৳0</h3>
+        </div>
+        <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-200/80 shadow-sm">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">মোট জমা</p>
+          <h3 id="global-income" class="text-base md:text-lg font-black text-emerald-600 mt-1 font-mono">৳0</h3>
+        </div>
+        <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-200/80 shadow-sm">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-rose-600">মোট খরচ</p>
+          <h3 id="global-expense" class="text-base md:text-lg font-black text-rose-600 mt-1 font-mono">৳0</h3>
+        </div>
+        <div class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200/80 shadow-sm">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-amber-600">মোট বাকি (Due)</p>
+          <h3 id="global-due" class="text-base md:text-lg font-black text-amber-600 mt-1 font-mono">৳0</h3>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border-2 border-rose-600 shadow-xs col-span-2 md:col-span-1">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-rose-600">নেট ব্যালেন্স</p>
+          <h3 id="global-net" class="text-base md:text-lg font-black text-rose-600 mt-1 font-mono">৳0</h3>
+        </div>
+      </div>
+
+      <!-- SECURE REPORT SECTION WITH LOCK & PDF BUTTON -->
+      <div id="pdf-report-container" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 md:p-6 space-y-6">
+        
+        <!-- SECURE HEADER & ACTIONS -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
+          <div>
+            <h3 class="text-xs md:text-sm font-bold text-slate-900 flex items-center gap-2">
+              <span>🔒</span> কনফিডেন্সিয়াল ফাইন্যান্সিয়াল রিপোর্ট
+            </h3>
+            <p class="text-[11px] text-slate-500 mt-0.5">গোপনীয়তা রক্ষার জন্য রিপোর্ট পাসকোড দিয়ে আনলক করতে হবে।</p>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button id="toggle-report-btn" onclick="handleReportUnlock()" class="flex-1 sm:flex-none bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5">
+              <span>👁️</span> <span id="report-btn-text">রিপোর্ট আনলক করুন</span>
+            </button>
+            <button id="download-pdf-btn" onclick="downloadPDFReport()" class="hidden flex-1 sm:flex-none bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5">
+              <span>📥</span> <span>PDF ডাউনলোড</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- REPORT CARDS (LOCKED / HIDDEN BY DEFAULT) -->
+        <div id="report-content-body" class="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-40 filter blur-xs pointer-events-none transition-all duration-300">
+          
+          <!-- ১. লাভ-ক্ষতি সামারি রিপোর্ট -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <span>📈</span> লাভ-ক্ষতি সামারি রিপোর্ট
+              </h4>
+              <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-lg">P&L Statement</span>
+            </div>
+            
+            <div class="space-y-3 text-xs md:text-sm font-semibold text-slate-700">
+              <div class="flex justify-between items-center py-1">
+                <span>মোট কাস্টমার আয় (Collection):</span>
+                <span id="report-collection" class="font-mono text-emerald-600">৳0</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-100 pb-2">
+                <span>মোট প্রজেক্ট খরচ (Direct Cost):</span>
+                <span id="report-project-cost" class="font-mono text-rose-600">৳0</span>
+              </div>
+              <div class="flex justify-between items-center py-1">
+                <span class="font-bold text-slate-900">মোট গ্রস প্রফিট:</span>
+                <span id="report-gross-profit" class="font-mono font-bold text-slate-900">৳0</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-100 pb-2">
+                <span>সাধারণ অফিস খরচ:</span>
+                <span id="report-office-expense" class="font-mono text-rose-600">৳0</span>
+              </div>
+              <div class="flex justify-between items-center py-1 pt-1">
+                <span id="net-profit-label" class="font-bold text-base text-slate-900">নিট লাভ / ক্ষতি (Net Profit):</span>
+                <span id="report-net-profit" class="font-mono font-black text-base text-emerald-600">৳0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ২. মালিকের মূলধন রিপোর্ট -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <span>🏦</span> মালিকের মূলধন রিপোর্ট
+              </h4>
+              <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-2.5 py-1 rounded-lg">Capital Summary</span>
+            </div>
+
+            <div class="space-y-3 text-xs md:text-sm font-semibold text-slate-700">
+              <div class="flex justify-between items-center py-1">
+                <span>বসের দেওয়া মোট ফান্ড (Injection):</span>
+                <span id="report-owner-in" class="font-mono text-emerald-600">৳0</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-100 pb-2">
+                <span>বসের উত্তোলন করা ক্যাশ (Drawings):</span>
+                <span id="report-owner-out" class="font-mono text-rose-600">৳0</span>
+              </div>
+              <div class="flex justify-between items-center py-1 pt-2">
+                <span class="font-bold text-base text-slate-900">নিট মালিকানার বর্তমান স্থিতি:</span>
+                <span id="report-owner-net" class="font-mono font-black text-base text-slate-800">৳0</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      
+      <!-- CLIENTS TABLE -->
+      <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+        <div class="px-5 py-4 border-b border-slate-200 bg-slate-50/70 flex justify-between items-center">
+          <h3 class="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-800">সকল গ্রাহক ও প্রজেক্ট খাতা</h3>
+          <div class="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+            <button onclick="setClientFilter('all')" id="filter-btn-all" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition">সব</button>
+            <button onclick="setClientFilter('new')" id="filter-btn-new" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition">নতুন</button>
+            <button onclick="setClientFilter('old')" id="filter-btn-old" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition">চলমান</button>
+          </div>
+        </div>
+
+        <div id="master-table-container" class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs md:text-sm">
+            <thead>
+              <tr class="bg-slate-50/80 text-slate-500 font-bold uppercase text-[11px] border-b border-slate-200">
+                <th class="p-4 pl-5">গ্রাহক ও প্রজেক্ট</th>
+                <th class="p-4">মোবাইল</th>
+                <th class="p-4 text-right">চুক্তি (বাজেট)</th>
+                <th class="p-4 text-right">জমা</th>
+                <th class="p-4 text-right">খরচ</th>
+                <th class="p-4 text-right">বাকি</th>
+                <th class="p-4 text-center">অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="clients-table-body" class="divide-y divide-slate-100 font-semibold text-slate-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- TAB 3: JOURNAL -->
     <div id="tab-journal-view" class="tab-content space-y-6 hidden">
       <div class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm max-w-xl mx-auto">
@@ -245,7 +278,7 @@
           <div class="relative">
             <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">প্রজেক্ট সিলেক্ট করুন</label>
             <input type="hidden" id="tx-client-select" value="">
-            <div id="dropdown-trigger" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm text-slate-500 flex justify-between items-center cursor-pointer shadow-2xs hover:border-slate-300 transition">
+            <div id="dropdown-trigger" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm text-slate-500 flex justify-between items-center cursor-pointer shadow-2xs">
               <span id="dropdown-selected-text">প্রজেক্ট সিলেক্ট করুন...</span>
               <span class="text-slate-400">▼</span>
             </div>
@@ -284,7 +317,7 @@
       </div>
     </div>
 
-    <!-- TAB 4: OFFICE -->
+    <!-- TAB 4: OFFICE EXPENSE -->
     <div id="tab-office-view" class="tab-content space-y-6 hidden">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
@@ -338,6 +371,57 @@
       </div>
     </div>
 
+    <!-- TAB 5: OWNER CAPITAL / FUND MANAGEMENT -->
+    <div id="tab-owner-view" class="tab-content space-y-6 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <div class="flex items-center gap-3 border-b border-slate-200 pb-4 mb-4">
+            <div class="h-10 w-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-base">💼</div>
+            <h3 class="text-xs md:text-sm font-bold uppercase text-slate-900">মালিকের ফান্ড এন্ট্রি</h3>
+          </div>
+          <form id="owner-tx-form" class="space-y-4">
+            <div>
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">লেনদেনের ধরন</label>
+              <select id="ow-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs text-slate-800 font-bold">
+                <option value="injection">🟢 ফান্ড ইনজেক্ট (বসের দেওয়া ফান্ড / ভর্তুকি)</option>
+                <option value="drawing">🔴 ক্যাশ উত্তোলন (বসের তোলা ক্যাশ)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">টাকার পরিমাণ (৳)</label>
+              <input type="number" id="ow-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none font-mono shadow-2xs font-bold text-slate-800">
+            </div>
+            <div>
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">বিবরণ / নোট</label>
+              <input type="text" id="ow-details" placeholder="যেমন: ব্যক্তিগত প্রয়োজনে ক্যাশ লোন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs font-medium text-slate-800">
+            </div>
+            <div>
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">তারিখ</label>
+              <input type="date" id="ow-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none font-mono shadow-2xs font-bold text-slate-800">
+            </div>
+            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl py-3.5 text-xs md:text-sm transition shadow-md mt-2">ফান্ড এন্ট্রি সেভ করুন</button>
+          </form>
+        </div>
+
+        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col">
+          <h4 class="text-xs md:text-sm font-bold text-slate-800 uppercase mb-4 border-b border-slate-200 pb-3">মালিকের লেনদেন খাতা (নির্বাচিত মাস)</h4>
+          <div class="max-h-96 overflow-y-auto border border-slate-200 rounded-xl flex-1">
+            <table class="w-full text-left text-xs md:text-sm">
+              <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold uppercase text-[11px] sticky top-0">
+                <tr>
+                  <th class="p-3.5 pl-4">বিবরণ ও ধরন</th>
+                  <th class="p-3.5">তারিখ</th>
+                  <th class="p-3.5 text-right">পরিমাণ</th>
+                  <th class="p-3.5 text-center">মুছুন</th>
+                </tr>
+              </thead>
+              <tbody id="owner-expense-rows" class="divide-y divide-slate-100 font-semibold text-slate-800"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- LEDGER DRAWER -->
     <div id="ledger-drawer" class="bg-white border border-rose-500/40 rounded-2xl p-6 shadow-2xl hidden space-y-4">
       <div class="flex justify-between items-start border-b border-slate-200 pb-4">
@@ -368,18 +452,21 @@
 
   <!-- BOTTOM NAVIGATION (Mobile Only) -->
   <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 z-40 shadow-xl md:hidden">
-    <div class="grid grid-cols-4 text-center py-2">
-      <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
-        <span class="text-lg">📊</span><span>রিপোর্ট</span>
+    <div class="grid grid-cols-5 text-center py-2">
+      <button onclick="switchTab('client-view')" id="btn-client-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[10px] font-bold py-1">
+        <span class="text-base">➕</span><span>গ্রাহক</span>
       </button>
-      <button onclick="switchTab('client-view')" id="btn-client-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
-        <span class="text-lg">➕</span><span>গ্রাহক</span>
+      <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[10px] font-bold py-1">
+        <span class="text-base">📊</span><span>রিপোর্ট</span>
       </button>
-      <button onclick="switchTab('journal-view')" id="btn-journal-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
-        <span class="text-lg">💸</span><span>লেনদেন</span>
+      <button onclick="switchTab('journal-view')" id="btn-journal-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[10px] font-bold py-1">
+        <span class="text-base">💸</span><span>লেনদেন</span>
       </button>
-      <button onclick="switchTab('office-view')" id="btn-office-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
-        <span class="text-lg">🏢</span><span>অফিস</span>
+      <button onclick="switchTab('office-view')" id="btn-office-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[10px] font-bold py-1">
+        <span class="text-base">🏢</span><span>অফিস</span>
+      </button>
+      <button onclick="switchTab('owner-view')" id="btn-owner-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[10px] font-bold py-1">
+        <span class="text-base">💼</span><span>মালিক</span>
       </button>
     </div>
   </nav>
@@ -401,7 +488,6 @@
   </div>
 
   <script>
-    // 1. Firebase Initialization Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyD8kXy2rL9ptiPN4xEMg5h3o4RY_sPH79w",
       authDomain: "rajuk-bed98.firebaseapp.com",
@@ -418,17 +504,16 @@
     const auth = firebase.auth();
     const rtdb = firebase.database();
 
-    // Global Security Passcode
     const SECURITY_PASSCODE = "6219";
 
-    // State Memory Management Variables
     let farmData = [];
     let officeExpenses = [];
+    let ownerTransactions = [];
     let databasePathRef = null;
     let openLedgerId = null;
     let activeClientFilter = 'all';
+    let isReportUnlocked = false;
 
-    // Catch UI Reference Elements
     const loginBtn = document.getElementById('google-login-btn');
     const logoutBtn = document.getElementById('logout-btn');
     const profileTrigger = document.getElementById('profile-trigger');
@@ -438,27 +523,26 @@
     const clientForm = document.getElementById('client-form');
     const txForm = document.getElementById('tx-form');
     const officeExpenseForm = document.getElementById('office-expense-form');
+    const ownerTxForm = document.getElementById('owner-tx-form');
+    
     const tableBody = document.getElementById('clients-table-body');
     const officeExpenseRows = document.getElementById('office-expense-rows');
+    const ownerExpenseRows = document.getElementById('owner-expense-rows');
     const ledgerDrawer = document.getElementById('ledger-drawer');
     const searchInput = document.getElementById('search-input');
     const monthFilter = document.getElementById('month-filter');
 
-    // Initialize Today's Date Values Input fields
     if(document.getElementById('client-date')) document.getElementById('client-date').value = new Date().toISOString().substring(0, 10);
     if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
     if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
+    if(document.getElementById('ow-date')) document.getElementById('ow-date').value = new Date().toISOString().substring(0, 10);
 
-    // Initialize Default Value for Month Filter (Current Month)
     if (monthFilter) {
       const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      monthFilter.value = `${year}-${month}`;
+      monthFilter.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
       monthFilter.addEventListener('change', uiUpdatePipeline);
     }
 
-    // Bind search bar trigger dynamically & auto-show table contents when searching
     if (searchInput) {
       searchInput.addEventListener('input', () => {
         switchTab('dashboard-view');
@@ -466,55 +550,39 @@
       });
     }
 
-    // TAB SYSTEM CONTROLLER (Desktop & Mobile)
     window.switchTab = function(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       const target = document.getElementById(`tab-${tabId}`);
       if(target) target.classList.remove('hidden');
 
-      // Desktop active buttons update
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.className = "tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
+        btn.className = "tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
       });
       const activePCBtn = document.getElementById(`btn-${tabId}-pc`);
-      if(activePCBtn) {
-        activePCBtn.className = "tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
-      }
+      if(activePCBtn) activePCBtn.className = "tab-btn px-3 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
 
-      // Mobile bottom tab active update
       document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
-        btn.className = "mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition";
+        btn.className = "mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[10px] font-bold py-1 transition";
       });
       const activeMobBtn = document.getElementById(`btn-${tabId}-mob`);
-      if(activeMobBtn) {
-        activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105";
-      }
+      if(activeMobBtn) activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[10px] font-bold py-1 transition scale-105";
     }
 
-    // Control Table Visibility and Custom States
     window.setClientFilter = function(filterType) {
       activeClientFilter = filterType;
-      
-      const btnAll = document.getElementById('filter-btn-all');
-      const btnNew = document.getElementById('filter-btn-new');
-      const btnOld = document.getElementById('filter-btn-old');
-      
-      [btnAll, btnNew, btnOld].forEach(btn => {
+      ['all', 'new', 'old'].forEach(type => {
+        const btn = document.getElementById(`filter-btn-${type}`);
         if(btn) btn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
       });
-      
       const activeBtn = document.getElementById(`filter-btn-${filterType}`);
       if(activeBtn) activeBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
-      
       renderMasterTable();
     }
 
-    // Initialize System Pipelines
     uiUpdatePipeline();
     setClientFilter('all');
-    switchTab('dashboard-view');
+    switchTab('client-view'); // Default set to Client tab for privacy
 
-    // User Menu Events Handlers
     if (profileTrigger) {
       profileTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -539,19 +607,15 @@
       });
     }
 
-    // Firebase Auth Authentication State Realtime Observers
     auth.onAuthStateChanged(user => {
       if (user) {
         if (sidebarAuthSection) sidebarAuthSection.classList.add('hidden');
         if (profileTrigger) profileTrigger.classList.remove('hidden');
         
-        const indicator = document.getElementById('status-indicator');
-        const text = document.getElementById('status-text');
-        if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse";
-        if (text) text.innerText = "Online (Live Sync)";
-        
-        if (document.getElementById('user-display-name')) document.getElementById('user-display-name').innerText = user.displayName;
-        if (document.getElementById('user-avatar')) document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
+        document.getElementById('status-indicator').className = "inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse";
+        document.getElementById('status-text').innerText = "Online (Live Sync)";
+        document.getElementById('user-display-name').innerText = user.displayName;
+        document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
 
         databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
         subscribeToCloudStreams();
@@ -559,19 +623,17 @@
         if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
         if (profileTrigger) profileTrigger.classList.add('hidden');
         
-        const indicator = document.getElementById('status-indicator');
-        const text = document.getElementById('status-text');
-        if (indicator) indicator.className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
-        if (text) text.innerText = "Guest Mode";
+        document.getElementById('status-indicator').className = "inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse";
+        document.getElementById('status-text').innerText = "Guest Mode";
         
         farmData = [];
         officeExpenses = [];
+        ownerTransactions = [];
         databasePathRef = null;
         uiUpdatePipeline();
       }
     });
 
-    // Sync Stream listeners with Firebase Cloud Node 
     function subscribeToCloudStreams() {
       if(!databasePathRef) return;
       databasePathRef.child('clients').on('value', snapshot => {
@@ -592,7 +654,14 @@
         snapshot.forEach(childSnapshot => {
           officeExpenses.push({ id: childSnapshot.key, ...childSnapshot.val() });
         });
-        officeExpenses.sort((a,b) => new Date(b.date) - new Date(a.date));
+        uiUpdatePipeline();
+      });
+
+      databasePathRef.child('owner_transactions').on('value', snapshot => {
+        ownerTransactions = [];
+        snapshot.forEach(childSnapshot => {
+          ownerTransactions.push({ id: childSnapshot.key, ...childSnapshot.val() });
+        });
         uiUpdatePipeline();
       });
     }
@@ -602,12 +671,13 @@
       renderDropdown();
       renderMasterTable();
       renderOfficeExpenses();
+      renderOwnerTransactions();
       if(openLedgerId) refreshDrawer(openLedgerId);
     }
 
-    // Calculate Dashboard Total Amounts & Reports (மালিকের মূলধন রিপোর্ট & লাভ-ক্ষতি সামারি রিপোর্ট)
     function calculateGlobalMetrics() {
-      let budget = 0, income = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
+      let budget = 0, collection = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
+      let ownerInjection = 0, ownerDrawing = 0;
       
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
@@ -623,8 +693,6 @@
       const startOfMonth = new Date(targetYear, targetMonth, 1);
       const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
-      let totalCapitalIn = 0;
-
       farmData.forEach(c => {
         budget += c.budget; 
         let cIncome = 0;
@@ -635,8 +703,7 @@
 
           if (t.type === 'income') {
             cIncome += t.amount; 
-            totalCapitalIn += t.amount;
-            if (isSelectedMonth) income += t.amount; 
+            if (isSelectedMonth) collection += t.amount; 
           }
           if (t.type === 'expense' && isSelectedMonth) {
             prjExpense += t.amount; 
@@ -652,42 +719,84 @@
         }
       });
 
-      let grandTotalExpense = prjExpense + totalOfficeExpense;
-      let netIncome = income - grandTotalExpense;
+      ownerTransactions.forEach(ow => {
+        const owDate = new Date(ow.date);
+        if (owDate >= startOfMonth && owDate <= endOfMonth) {
+          if (ow.type === 'injection') ownerInjection += ow.amount;
+          if (ow.type === 'drawing') ownerDrawing += ow.amount;
+        }
+      });
 
-      // Update Standard Global Metric Blocks
+      let grossProfit = collection - prjExpense;
+      let netProfit = grossProfit - totalOfficeExpense;
+      let ownerNetStatus = ownerInjection - ownerDrawing;
+      let grandTotalExpense = prjExpense + totalOfficeExpense;
+      let netBalance = collection - grandTotalExpense;
+
       if (document.getElementById('global-budget')) document.getElementById('global-budget').innerText = '৳' + budget.toLocaleString('en-IN');
-      if (document.getElementById('global-income')) document.getElementById('global-income').innerText = '৳' + income.toLocaleString('en-IN');
+      if (document.getElementById('global-income')) document.getElementById('global-income').innerText = '৳' + collection.toLocaleString('en-IN');
       if (document.getElementById('global-expense')) document.getElementById('global-expense').innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
       if (document.getElementById('global-due')) document.getElementById('global-due').innerText = '৳' + due.toLocaleString('en-IN');
-      if (document.getElementById('global-net')) document.getElementById('global-net').innerText = '৳' + netIncome.toLocaleString('en-IN');
+      if (document.getElementById('global-net')) document.getElementById('global-net').innerText = '৳' + netBalance.toLocaleString('en-IN');
 
-      // Update মালিকের মূলধন রিপোর্ট (Owner Capital Report)
-      let totalCapitalDue = budget - totalCapitalIn;
-      if (document.getElementById('report-total-budget')) document.getElementById('report-total-budget').innerText = '৳' + budget.toLocaleString('en-IN');
-      if (document.getElementById('report-total-capital-in')) document.getElementById('report-total-capital-in').innerText = '৳' + totalCapitalIn.toLocaleString('en-IN');
-      if (document.getElementById('report-total-capital-due')) document.getElementById('report-total-capital-due').innerText = '৳' + totalCapitalDue.toLocaleString('en-IN');
-
-      // Update লাভ-ক্ষতি সামারি রিপোর্ট (Profit & Loss Summary Report)
-      if (document.getElementById('report-pnl-income')) document.getElementById('report-pnl-income').innerText = '৳' + income.toLocaleString('en-IN');
-      if (document.getElementById('report-pnl-expense')) document.getElementById('report-pnl-expense').innerText = '৳' + grandTotalExpense.toLocaleString('en-IN');
+      if (document.getElementById('report-collection')) document.getElementById('report-collection').innerText = '৳' + collection.toLocaleString('en-IN');
+      if (document.getElementById('report-project-cost')) document.getElementById('report-project-cost').innerText = '৳' + prjExpense.toLocaleString('en-IN');
+      if (document.getElementById('report-gross-profit')) document.getElementById('report-gross-profit').innerText = '৳' + grossProfit.toLocaleString('en-IN');
+      if (document.getElementById('report-office-expense')) document.getElementById('report-office-expense').innerText = '৳' + totalOfficeExpense.toLocaleString('en-IN');
       
-      const pnlNetElem = document.getElementById('report-pnl-net');
-      const pnlLabelElem = document.getElementById('report-pnl-label');
-      if (pnlNetElem && pnlLabelElem) {
-        pnlNetElem.innerText = '৳' + Math.abs(netIncome).toLocaleString('en-IN');
-        if (netIncome >= 0) {
-          pnlLabelElem.innerText = "নিট লাভ (Profit)";
-          pnlNetElem.className = "text-xs md:text-sm font-black text-emerald-600 mt-1 font-mono";
+      const netProfitElem = document.getElementById('report-net-profit');
+      const netProfitLabel = document.getElementById('net-profit-label');
+      if (netProfitElem) {
+        netProfitElem.innerText = '৳' + Math.abs(netProfit).toLocaleString('en-IN');
+        if (netProfit >= 0) {
+          netProfitElem.className = "text-base font-black font-mono text-emerald-600";
+          if(netProfitLabel) netProfitLabel.innerText = "নিট লাভ (Net Profit):";
         } else {
-          pnlLabelElem.innerText = "নিট ক্ষতি (Loss)";
-          pnlNetElem.className = "text-xs md:text-sm font-black text-rose-600 mt-1 font-mono";
+          netProfitElem.className = "text-base font-black font-mono text-rose-600";
+          if(netProfitLabel) netProfitLabel.innerText = "নিট ক্ষতি (Net Loss):";
         }
+      }
+
+      if (document.getElementById('report-owner-in')) document.getElementById('report-owner-in').innerText = '৳' + ownerInjection.toLocaleString('en-IN');
+      if (document.getElementById('report-owner-out')) document.getElementById('report-owner-out').innerText = '৳' + ownerDrawing.toLocaleString('en-IN');
+      
+      const ownerNetElem = document.getElementById('report-owner-net');
+      if (ownerNetElem) {
+        ownerNetElem.innerText = '৳' + ownerNetStatus.toLocaleString('en-IN');
+        ownerNetElem.className = `text-base font-black font-mono ${ownerNetStatus >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
       }
     }
 
-    // Compact Passcode Modal Handler
-    let pendingDeleteAction = null;
+    window.handleReportUnlock = function() {
+      if (isReportUnlocked) {
+        // Lock again
+        isReportUnlocked = false;
+        document.getElementById('report-content-body').classList.add('opacity-40', 'filter', 'blur-xs', 'pointer-events-none');
+        document.getElementById('report-btn-text').innerText = "রিপোর্ট আনলক করুন";
+        document.getElementById('download-pdf-btn').classList.add('hidden');
+      } else {
+        requestPasscodeAuth(() => {
+          isReportUnlocked = true;
+          document.getElementById('report-content-body').classList.remove('opacity-40', 'filter', 'blur-xs', 'pointer-events-none');
+          document.getElementById('report-btn-text').innerText = "রিপোর্ট লক করুন";
+          document.getElementById('download-pdf-btn').classList.remove('hidden');
+        });
+      }
+    };
+
+    window.downloadPDFReport = function() {
+      if (!isReportUnlocked) { alert("আগে রিপোর্ট আনলক করুন!"); return; }
+      const element = document.getElementById('pdf-report-container');
+      const opt = {
+        margin:       10,
+        filename:     `Digital-Khata-Report-${monthFilter ? monthFilter.value : 'Summary'}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().from(element).set(opt).save();
+    };
+
     function requestPasscodeAuth(onSuccess) {
       const modal = document.getElementById('securityModal');
       const passInput = document.getElementById('modalPasscodeInput');
@@ -695,17 +804,13 @@
       const cancelBtn = document.getElementById('modalCancelBtn');
 
       if (!modal || !passInput) return;
-
       passInput.value = '';
       passInput.classList.remove('border-rose-600');
-      pendingDeleteAction = onSuccess;
+      let pendingDeleteAction = onSuccess;
       modal.classList.remove('hidden');
       setTimeout(() => passInput.focus(), 50);
 
-      passInput.onkeyup = function(e) {
-        if (e.key === 'Enter') confirmBtn.click();
-      };
-
+      passInput.onkeyup = function(e) { if (e.key === 'Enter') confirmBtn.click(); };
       confirmBtn.onclick = function() {
         if (passInput.value.trim() === SECURITY_PASSCODE) {
           modal.classList.add('hidden');
@@ -716,29 +821,21 @@
           passInput.focus();
         }
       };
-
-      cancelBtn.onclick = function() {
-        modal.classList.add('hidden');
-        pendingDeleteAction = null;
-      };
+      cancelBtn.onclick = function() { modal.classList.add('hidden'); };
     }
 
-    // Form Submit Handlers
     if (clientForm) {
       clientForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
-        
-        const clientDate = document.getElementById('client-date').value;
         const newClient = {
           name: document.getElementById('client-name').value,
           phone: document.getElementById('client-phone').value,
           project: document.getElementById('project-title').value,
           budget: parseFloat(document.getElementById('project-budget').value),
-          date: clientDate,
+          date: document.getElementById('client-date').value,
           history: []
         };
-        
         databasePathRef.child('clients').push(newClient);
         clientForm.reset();
         document.getElementById('client-date').value = new Date().toISOString().substring(0, 10);
@@ -765,19 +862,13 @@
             date: document.getElementById('tx-date').value
           });
           updatedHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
-          
           databasePathRef.child('clients').child(id).update({ history: updatedHistory });
           
           document.getElementById('tx-amount').value = '';
           document.getElementById('tx-details').value = '';
           document.getElementById('tx-client-select').value = '';
+          document.getElementById('dropdown-selected-text').innerText = 'প্রজেক্ট সিলেক্ট করুন...';
           
-          const selectedText = document.getElementById('dropdown-selected-text');
-          if (selectedText) {
-            selectedText.innerText = 'প্রজেক্ট সিলেক্ট করুন...';
-            selectedText.className = 'text-slate-500';
-          }
-
           setClientFilter('all');
           uiUpdatePipeline();
           switchTab('dashboard-view');
@@ -789,20 +880,34 @@
       officeExpenseForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
-        const newExpense = {
+        databasePathRef.child('office_expenses').push({
           category: document.getElementById('oe-category').value,
           amount: parseFloat(document.getElementById('oe-amount').value),
           details: document.getElementById('oe-details').value,
           date: document.getElementById('oe-date').value
-        };
-        databasePathRef.child('office_expenses').push(newExpense);
+        });
         document.getElementById('oe-amount').value = '';
         document.getElementById('oe-details').value = '';
         uiUpdatePipeline();
       });
     }
 
-    // Searchable Dropdown Logics
+    if (ownerTxForm) {
+      ownerTxForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
+        databasePathRef.child('owner_transactions').push({
+          type: document.getElementById('ow-type').value,
+          amount: parseFloat(document.getElementById('ow-amount').value),
+          details: document.getElementById('ow-details').value,
+          date: document.getElementById('ow-date').value
+        });
+        document.getElementById('ow-amount').value = '';
+        document.getElementById('ow-details').value = '';
+        uiUpdatePipeline();
+      });
+    }
+
     function renderDropdown() {
       const trigger = document.getElementById('dropdown-trigger');
       const dropdownList = document.getElementById('custom-dropdown-list');
@@ -823,13 +928,8 @@
         }
       };
 
-      document.onclick = function() {
-        dropdownList.classList.add('hidden');
-      };
-
-      dropdownList.onclick = function(e) {
-        e.stopPropagation();
-      };
+      document.onclick = function() { dropdownList.classList.add('hidden'); };
+      dropdownList.onclick = function(e) { e.stopPropagation(); };
 
       function filterDropdownItems(query) {
         itemsContainer.innerHTML = '';
@@ -847,7 +947,6 @@
           const item = document.createElement('div');
           item.className = "p-3 text-xs md:text-sm hover:bg-rose-50 hover:text-rose-600 rounded-xl cursor-pointer transition font-semibold flex justify-between items-center text-slate-800";
           item.innerHTML = `<span>${c.project} <span class="text-xs text-slate-400 font-normal">(${c.name})</span></span>`;
-          
           item.onclick = function() {
             hiddenInput.value = c.id;
             selectedText.innerText = `${c.project} (${c.name})`;
@@ -857,13 +956,9 @@
           itemsContainer.appendChild(item);
         });
       }
-
-      if (dropdownSearchInput) {
-        dropdownSearchInput.oninput = function() { filterDropdownItems(this.value); };
-      }
+      if (dropdownSearchInput) dropdownSearchInput.oninput = function() { filterDropdownItems(this.value); };
     }
 
-    // Master Table Rendering (Default Hidden unless searched or explicit interaction via requirement)
     function renderMasterTable() {
       if (!tableBody) return;
       const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -873,26 +968,11 @@
         return;
       }
 
-      // Requirement: সকল গ্রাহক ও প্রজেক্ট খাতা default vabe hidden thakbe ami button or search korlei kebol show korbe
-      if (query === '' && activeClientFilter === 'all') {
-        tableBody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400 font-medium">গ্রাহক ও প্রজেক্ট খাতা দেখতে উপরে সার্চ করুন অথবা ফিল্টার বাটন ব্যবহার করুন।</td></tr>`;
-        return;
-      }
+      let filteredData = farmData.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query) || c.project.toLowerCase().includes(query));
+      if (activeClientFilter === 'new') filteredData = filteredData.filter(c => !c.history.some(t => t.type === 'income'));
+      else if (activeClientFilter === 'old') filteredData = filteredData.filter(c => c.history.some(t => t.type === 'income'));
 
-      let filteredData = farmData.filter(c => {
-        return c.name.toLowerCase().includes(query) || 
-               c.phone.includes(query) || 
-               c.project.toLowerCase().includes(query);
-      });
-
-      if (activeClientFilter === 'new') {
-        filteredData = filteredData.filter(c => !c.history.some(t => t.type === 'income'));
-      } else if (activeClientFilter === 'old') {
-        filteredData = filteredData.filter(c => c.history.some(t => t.type === 'income'));
-      }
-
-      tableBody.innerHTML = filteredData.length === 0 ? 
-        `<tr><td colspan="7" class="p-8 text-center text-slate-400 font-semibold">মিলযুক্ত কোনো প্রজেক্ট পাওয়া যায়নি</td></tr>` : '';
+      tableBody.innerHTML = filteredData.length === 0 ? `<tr><td colspan="7" class="p-8 text-center text-slate-400 font-semibold">মিলযুক্ত কোনো প্রজেক্ট পাওয়া যায়নি</td></tr>` : '';
 
       filteredData.forEach(c => {
         let localIncome = 0, localExpense = 0;
@@ -929,32 +1009,24 @@
 
     function renderOfficeExpenses() {
       if (!officeExpenseRows) return;
-      
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
         const parts = monthFilter.value.split('-');
-        targetYear = parseInt(parts[0]);
-        targetMonth = parseInt(parts[1]) - 1;
+        targetYear = parseInt(parts[0]); targetMonth = parseInt(parts[1]) - 1;
       } else {
         const now = new Date();
-        targetYear = now.getFullYear();
-        targetMonth = now.getMonth();
+        targetYear = now.getFullYear(); targetMonth = now.getMonth();
       }
       const startOfMonth = new Date(targetYear, targetMonth, 1);
       const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
-      const localFilteredExpenses = officeExpenses.filter(oe => {
+      const filtered = officeExpenses.filter(oe => {
         const d = new Date(oe.date);
         return d >= startOfMonth && d <= endOfMonth;
       });
 
-      if (localFilteredExpenses.length === 0) {
-        officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400 font-semibold">এই মাসে কোনো অফিস খরচ নেই</td></tr>`;
-        return;
-      }
-
-      officeExpenseRows.innerHTML = '';
-      localFilteredExpenses.forEach(oe => {
+      officeExpenseRows.innerHTML = filtered.length === 0 ? `<tr><td colspan="4" class="p-8 text-center text-slate-400 font-semibold">এই মাসে কোনো অফিস খরচ নেই</td></tr>` : '';
+      filtered.forEach(oe => {
         const tr = document.createElement('tr');
         tr.className = "border-b border-slate-100 hover:bg-slate-50/90 transition";
         tr.innerHTML = `
@@ -967,7 +1039,42 @@
       });
     }
 
-    // Drawer Sheet Controllers
+    function renderOwnerTransactions() {
+      if (!ownerExpenseRows) return;
+      let targetYear, targetMonth;
+      if (monthFilter && monthFilter.value) {
+        const parts = monthFilter.value.split('-');
+        targetYear = parseInt(parts[0]); targetMonth = parseInt(parts[1]) - 1;
+      } else {
+        const now = new Date();
+        targetYear = now.getFullYear(); targetMonth = now.getMonth();
+      }
+      const startOfMonth = new Date(targetYear, targetMonth, 1);
+      const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
+
+      const filtered = ownerTransactions.filter(ow => {
+        const d = new Date(ow.date);
+        return d >= startOfMonth && d <= endOfMonth;
+      });
+
+      ownerExpenseRows.innerHTML = filtered.length === 0 ? `<tr><td colspan="4" class="p-8 text-center text-slate-400 font-semibold">এই মাসে মালিকের কোনো ফান্ড লেনদেন নেই</td></tr>` : '';
+      filtered.forEach(ow => {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-slate-100 hover:bg-slate-50/90 transition";
+        const typeBadge = ow.type === 'injection' ? 
+          '<span class="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md font-bold ml-1">ফান্ড ইনজেক্ট</span>' : 
+          '<span class="text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-md font-bold ml-1">ক্যাশ উত্তোলন</span>';
+        
+        tr.innerHTML = `
+          <td class="p-4 pl-5 font-bold text-slate-900">${ow.details} ${typeBadge}</td>
+          <td class="p-4 text-slate-500 font-mono text-xs">${ow.date}</td>
+          <td class="p-4 text-right font-bold ${ow.type === 'injection' ? 'text-emerald-600' : 'text-rose-600'}">${ow.type === 'injection' ? '+' : '-'}৳${ow.amount.toLocaleString('en-IN')}</td>
+          <td class="p-4 text-center"><button onclick="deleteOwnerTx('${ow.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5">✕</button></td>
+        `;
+        ownerExpenseRows.appendChild(tr);
+      });
+    }
+
     window.openDrawer = function(id) {
       openLedgerId = id;
       if (ledgerDrawer) {
@@ -986,55 +1093,47 @@
       const client = farmData.find(c => c.id === id);
       if(!client) return closeDrawer();
 
-      if (document.getElementById('drawer-title')) document.getElementById('drawer-title').innerText = `${client.project} (${client.name})`;
-      if (document.getElementById('drawer-sub')) document.getElementById('drawer-sub').innerText = `মোবাইল: ${client.phone} | মোট বাজেট: ৳${client.budget.toLocaleString('en-IN')} ${client.date ? '| শুরুর তারিখ: ' + client.date : ''}`;
+      document.getElementById('drawer-title').innerText = `${client.project} (${client.name})`;
+      document.getElementById('drawer-sub').innerText = `মোবাইল: ${client.phone} | মোট বাজেট: ৳${client.budget.toLocaleString('en-IN')}`;
 
       const dBody = document.getElementById('drawer-table-body');
-      if (!dBody) return;
-      dBody.innerHTML = (!client.history || client.history.length === 0) ? 
-        `<tr><td colspan="5" class="p-8 text-center text-slate-400 font-semibold">এই প্রজেক্টে কোনো লেনদেন হয়নি</td></tr>` : '';
+      dBody.innerHTML = (!client.history || client.history.length === 0) ? `<tr><td colspan="5" class="p-8 text-center text-slate-400 font-semibold">এই প্রজেক্টে কোনো লেনদেন হয়নি</td></tr>` : '';
 
       client.history.forEach(t => {
         const tr = document.createElement('tr');
         tr.className = "border-b border-slate-100 hover:bg-slate-50/90 transition";
-        let typeText = t.type === 'income' ? '<span class="text-emerald-600 font-bold">জমা (Debit)</span>' : '<span class="text-rose-600 font-bold">খরচ (Credit)</span>';
-        let valColor = t.type === 'income' ? 'text-emerald-600' : 'text-rose-600';
-
         tr.innerHTML = `
           <td class="p-4 pl-5 text-slate-500 font-mono text-xs">${t.date}</td>
           <td class="p-4 font-bold text-slate-900">${t.details}</td>
-          <td class="p-4">${typeText}</td>
-          <td class="p-4 text-right font-bold ${valColor}">${t.type === 'income' ? '+' : '-'}৳${t.amount.toLocaleString('en-IN')}</td>
-          <td class="p-4 text-center">
-            <button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5">✕</button>
-          </td>
+          <td class="p-4">${t.type === 'income' ? '<span class="text-emerald-600 font-bold">জমা</span>' : '<span class="text-rose-600 font-bold">খরচ</span>'}</td>
+          <td class="p-4 text-right font-bold ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">${t.type === 'income' ? '+' : '-'}৳${t.amount.toLocaleString('en-IN')}</td>
+          <td class="p-4 text-center"><button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5">✕</button></td>
         `;
         dBody.appendChild(tr);
       });
     }
 
-    // Deletion Handlers
     window.deleteClient = function(id) {
       if(!databasePathRef) return;
       requestPasscodeAuth(() => {
-        databasePathRef.child('clients').child(id).remove().then(() => {
-          if(openLedgerId === id) closeDrawer();
-        });
+        databasePathRef.child('clients').child(id).remove().then(() => { if(openLedgerId === id) closeDrawer(); });
       });
     };
 
     window.deleteOfficeExpense = function(id) {
       if(!databasePathRef) return;
-      requestPasscodeAuth(() => {
-        databasePathRef.child('office_expenses').child(id).remove();
-      });
+      requestPasscodeAuth(() => { databasePathRef.child('office_expenses').child(id).remove(); });
+    };
+
+    window.deleteOwnerTx = function(id) {
+      if(!databasePathRef) return;
+      requestPasscodeAuth(() => { databasePathRef.child('owner_transactions').child(id).remove(); });
     };
 
     window.deleteTransaction = function(clientId, txId) {
       if(!databasePathRef) return;
       const client = farmData.find(c => c.id === clientId);
       if(!client) return;
-
       requestPasscodeAuth(() => {
         const updatedHistory = (client.history || []).filter(t => t.id !== txId);
         databasePathRef.child('clients').child(clientId).update({ history: updatedHistory });
