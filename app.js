@@ -42,6 +42,7 @@ const searchInput = document.getElementById('search-input');
 const monthFilter = document.getElementById('month-filter');
 
 // Initialize Today's Date Values Input fields
+if(document.getElementById('client-date')) document.getElementById('client-date').value = new Date().toISOString().substring(0, 10);
 if(document.getElementById('tx-date')) document.getElementById('tx-date').value = new Date().toISOString().substring(0, 10);
 if(document.getElementById('oe-date')) document.getElementById('oe-date').value = new Date().toISOString().substring(0, 10);
 
@@ -62,19 +63,28 @@ if (searchInput) {
   });
 }
 
-// TALLYKHATA STYLE TAB SYSTEM CONTROLLER
+// TAB SYSTEM CONTROLLER (Desktop & Mobile)
 window.switchTab = function(tabId) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
   const target = document.getElementById(`tab-${tabId}`);
   if(target) target.classList.remove('hidden');
 
+  // Desktop active buttons update
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.className = "tab-btn flex-1 md:flex-none px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
+    btn.className = "tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
   });
+  const activePCBtn = document.getElementById(`btn-${tabId}-pc`);
+  if(activePCBtn) {
+    activePCBtn.className = "tab-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
+  }
 
-  const activeBtn = document.getElementById(`btn-${tabId}`);
-  if(activeBtn) {
-    activeBtn.className = "tab-btn flex-1 md:flex-none px-3.5 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
+  // Mobile bottom tab active update
+  document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+    btn.className = "mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition";
+  });
+  const activeMobBtn = document.getElementById(`btn-${tabId}-mob`);
+  if(activeMobBtn) {
+    activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105";
   }
 }
 
@@ -87,11 +97,11 @@ window.setClientFilter = function(filterType) {
   const btnOld = document.getElementById('filter-btn-old');
   
   [btnAll, btnNew, btnOld].forEach(btn => {
-    if(btn) btn.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
+    if(btn) btn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
   });
   
   const activeBtn = document.getElementById(`filter-btn-${filterType}`);
-  if(activeBtn) activeBtn.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
+  if(activeBtn) activeBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
   
   renderMasterTable();
 }
@@ -140,7 +150,7 @@ auth.onAuthStateChanged(user => {
     if (document.getElementById('user-display-name')) document.getElementById('user-display-name').innerText = user.displayName;
     if (document.getElementById('user-avatar')) document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
 
-    databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
+    databasePathRef = rtdb.ref('digital_khata_data/' + user.uid);
     subscribeToCloudStreams();
   } else {
     if (sidebarAuthSection) sidebarAuthSection.classList.remove('hidden');
@@ -288,15 +298,20 @@ if (clientForm) {
   clientForm.addEventListener('submit', (e) => {
     e.preventDefault();
     if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
+    
+    const clientDate = document.getElementById('client-date').value;
     const newClient = {
       name: document.getElementById('client-name').value,
       phone: document.getElementById('client-phone').value,
       project: document.getElementById('project-title').value,
       budget: parseFloat(document.getElementById('project-budget').value),
+      date: clientDate,
       history: []
     };
+    
     databasePathRef.child('clients').push(newClient);
     clientForm.reset();
+    document.getElementById('client-date').value = new Date().toISOString().substring(0, 10);
     setClientFilter('all');
     switchTab('dashboard-view');
   });
@@ -394,19 +409,19 @@ function renderDropdown() {
     );
 
     if (filtered.length === 0) {
-      itemsContainer.innerHTML = `<div class="p-2.5 text-xs text-slate-400 text-center">কোনো প্রজেক্ট পাওয়া যায়নি</div>`;
+      itemsContainer.innerHTML = `<div class="p-3 text-xs md:text-sm text-slate-400 text-center font-medium">কোনো প্রজেক্ট পাওয়া যায়নি</div>`;
       return;
     }
 
     filtered.forEach(c => {
       const item = document.createElement('div');
-      item.className = "p-2.5 text-xs hover:bg-rose-50 hover:text-rose-600 rounded-xl cursor-pointer transition font-medium flex justify-between items-center text-slate-700";
-      item.innerHTML = `<span>${c.project} <span class="text-[10px] text-slate-400">(${c.name})</span></span>`;
+      item.className = "p-3 text-xs md:text-sm hover:bg-rose-50 hover:text-rose-600 rounded-xl cursor-pointer transition font-semibold flex justify-between items-center text-slate-800";
+      item.innerHTML = `<span>${c.project} <span class="text-xs text-slate-400 font-normal">(${c.name})</span></span>`;
       
       item.onclick = function() {
         hiddenInput.value = c.id;
         selectedText.innerText = `${c.project} (${c.name})`;
-        selectedText.className = "text-slate-800 font-bold";
+        selectedText.className = "text-slate-900 font-bold";
         dropdownList.classList.add('hidden');
       };
       itemsContainer.appendChild(item);
@@ -424,12 +439,12 @@ function renderMasterTable() {
   const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
   if (!auth.currentUser) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-amber-600 font-semibold bg-amber-50/50">⚠️ অনুগ্রহ করে ওপরের ডানপাশ থেকে Google Login করুন।</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-amber-600 font-bold bg-amber-50/50">⚠️ অনুগ্রহ করে ওপরের ডানপাশ থেকে Google Login করুন।</td></tr>`;
     return;
   }
 
   if (farmData.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 font-medium">কোনো হিসাব পাওয়া যায়নি। নতুন গ্রাহক যোগ করুন।</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400 font-semibold">কোনো হিসাব পাওয়া যায়নি। নতুন গ্রাহক যোগ করুন।</td></tr>`;
     return;
   }
 
@@ -446,7 +461,7 @@ function renderMasterTable() {
   }
 
   tableBody.innerHTML = filteredData.length === 0 ? 
-    `<tr><td colspan="7" class="p-6 text-center text-slate-400 font-medium">মিলযুক্ত কোনো প্রজেক্ট পাওয়া যায়নি</td></tr>` : '';
+    `<tr><td colspan="7" class="p-8 text-center text-slate-400 font-semibold">মিলযুক্ত কোনো প্রজেক্ট পাওয়া যায়নি</td></tr>` : '';
 
   filteredData.forEach(c => {
     let localIncome = 0, localExpense = 0;
@@ -457,22 +472,22 @@ function renderMasterTable() {
     let cDue = c.budget - localIncome;
 
     const tr = document.createElement('tr');
-    tr.className = "hover:bg-slate-50/80 transition border-b border-slate-100 cursor-pointer";
+    tr.className = "hover:bg-slate-50/90 transition border-b border-slate-100 cursor-pointer";
     tr.onclick = () => openDrawer(c.id);
 
     tr.innerHTML = `
-      <td class="p-3.5 pl-4">
-        <div class="font-bold text-slate-800">${c.project}</div>
-        <div class="text-[11px] text-slate-500">${c.name}</div>
+      <td class="p-4 pl-5">
+        <div class="font-bold text-slate-900 text-sm">${c.project}</div>
+        <div class="text-xs text-slate-500 font-medium mt-0.5">${c.name} ${c.date ? '<span class="text-slate-400">(' + c.date + ')</span>' : ''}</div>
       </td>
-      <td class="p-3.5 font-mono text-slate-600">${c.phone}</td>
-      <td class="p-3.5 text-right font-bold text-slate-700">৳${c.budget.toLocaleString('en-IN')}</td>
-      <td class="p-3.5 text-right font-bold text-emerald-600">৳${localIncome.toLocaleString('en-IN')}</td>
-      <td class="p-3.5 text-right font-bold text-rose-600">৳${localExpense.toLocaleString('en-IN')}</td>
-      <td class="p-3.5 text-right font-bold ${cDue > 0 ? 'text-amber-600' : 'text-slate-400'}">৳${cDue.toLocaleString('en-IN')}</td>
-      <td class="p-3.5 text-center" onclick="event.stopPropagation()">
-        <div class="flex justify-center items-center gap-1.5">
-          <button onclick="openDrawer('${c.id}')" class="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 px-3 py-1.5 rounded-lg text-[11px] font-bold transition shadow-2xs">লেজার</button>
+      <td class="p-4 font-mono text-slate-700 text-xs md:text-sm">${c.phone}</td>
+      <td class="p-4 text-right font-bold text-slate-800">৳${c.budget.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-right font-bold text-emerald-600">৳${localIncome.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-right font-bold text-rose-600">৳${localExpense.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-right font-bold ${cDue > 0 ? 'text-amber-600' : 'text-slate-400'}">৳${cDue.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-center" onclick="event.stopPropagation()">
+        <div class="flex justify-center items-center gap-2">
+          <button onclick="openDrawer('${c.id}')" class="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-2xs">লেজার</button>
           <button onclick="deleteClient('${c.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5 transition">✕</button>
         </div>
       </td>
@@ -503,19 +518,19 @@ function renderOfficeExpenses() {
   });
 
   if (localFilteredExpenses.length === 0) {
-    officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">এই মাসে কোনো অফিস খরচ নেই</td></tr>`;
+    officeExpenseRows.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400 font-semibold">এই মাসে কোনো অফিস খরচ নেই</td></tr>`;
     return;
   }
 
   officeExpenseRows.innerHTML = '';
   localFilteredExpenses.forEach(oe => {
     const tr = document.createElement('tr');
-    tr.className = "border-b border-slate-100 hover:bg-slate-50/80 transition";
+    tr.className = "border-b border-slate-100 hover:bg-slate-50/90 transition";
     tr.innerHTML = `
-      <td class="p-3 pl-4 font-semibold text-slate-800">${oe.details} <span class="text-[9px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-md font-bold">${oe.category}</span></td>
-      <td class="p-3 text-slate-500 font-mono text-[11px]">${oe.date}</td>
-      <td class="p-3 text-right font-bold text-rose-600">৳${oe.amount.toLocaleString('en-IN')}</td>
-      <td class="p-3 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1">✕</button></td>
+      <td class="p-4 pl-5 font-bold text-slate-900">${oe.details} <span class="text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-md font-bold ml-1">${oe.category}</span></td>
+      <td class="p-4 text-slate-500 font-mono text-xs">${oe.date}</td>
+      <td class="p-4 text-right font-bold text-rose-600">৳${oe.amount.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5">✕</button></td>
     `;
     officeExpenseRows.appendChild(tr);
   });
@@ -541,26 +556,26 @@ function refreshDrawer(id) {
   if(!client) return closeDrawer();
 
   if (document.getElementById('drawer-title')) document.getElementById('drawer-title').innerText = `${client.project} (${client.name})`;
-  if (document.getElementById('drawer-sub')) document.getElementById('drawer-sub').innerText = `মোবাইল: ${client.phone} | মোট বাজেট: ৳${client.budget.toLocaleString('en-IN')}`;
+  if (document.getElementById('drawer-sub')) document.getElementById('drawer-sub').innerText = `মোবাইল: ${client.phone} | মোট বাজেট: ৳${client.budget.toLocaleString('en-IN')} ${client.date ? '| শুরুর তারিখ: ' + client.date : ''}`;
 
   const dBody = document.getElementById('drawer-table-body');
   if (!dBody) return;
   dBody.innerHTML = (!client.history || client.history.length === 0) ? 
-    `<tr><td colspan="5" class="p-6 text-center text-slate-400">এই প্রজেক্টে কোনো লেনদেন হয়নি</td></tr>` : '';
+    `<tr><td colspan="5" class="p-8 text-center text-slate-400 font-semibold">এই প্রজেক্টে কোনো লেনদেন হয়নি</td></tr>` : '';
 
   client.history.forEach(t => {
     const tr = document.createElement('tr');
-    tr.className = "border-b border-slate-100 hover:bg-slate-50/80 transition";
+    tr.className = "border-b border-slate-100 hover:bg-slate-50/90 transition";
     let typeText = t.type === 'income' ? '<span class="text-emerald-600 font-bold">জমা (Debit)</span>' : '<span class="text-rose-600 font-bold">খরচ (Credit)</span>';
     let valColor = t.type === 'income' ? 'text-emerald-600' : 'text-rose-600';
 
     tr.innerHTML = `
-      <td class="p-3 pl-4 text-slate-500 font-mono text-[11px]">${t.date}</td>
-      <td class="p-3 font-medium text-slate-800">${t.details}</td>
-      <td class="p-3">${typeText}</td>
-      <td class="p-3 text-right font-bold ${valColor}">${t.type === 'income' ? '+' : '-'}৳${t.amount.toLocaleString('en-IN')}</td>
-      <td class="p-3 text-center">
-        <button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1">✕</button>
+      <td class="p-4 pl-5 text-slate-500 font-mono text-xs">${t.date}</td>
+      <td class="p-4 font-bold text-slate-900">${t.details}</td>
+      <td class="p-4">${typeText}</td>
+      <td class="p-4 text-right font-bold ${valColor}">${t.type === 'income' ? '+' : '-'}৳${t.amount.toLocaleString('en-IN')}</td>
+      <td class="p-4 text-center">
+        <button onclick="deleteTransaction('${client.id}', '${t.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5">✕</button>
       </td>
     `;
     dBody.appendChild(tr);
