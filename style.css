@@ -17,7 +17,7 @@ body {
   border-radius: 4px;
 }
 
-/* মাস ফিল্টার ইনপুটের সাইজ ও ডিসপ্লে ঠিক রাখার জন্য */
+/* Fix month filter width so year text doesn't get cut off */
 input[type="month"] {
   min-width: 175px !important;
   width: auto !important;
