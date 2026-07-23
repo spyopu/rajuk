@@ -21,15 +21,22 @@
     
   <style>
     body {
-  font-family: 'Inter', 'Plus Jakarta Sans', sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400; /* নরমাল টেক্সট একদম চিকন ও পরিষ্কার রাখবে */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* হেডিং বা বোল্ড টেক্সটের জন্য Plus Jakarta Sans ব্যবহার করতে পারেন */
+/* হেডিং বা বোল্ড টেক্সটগুলোকেও স্লিক ও চিকন রাখার জন্য ফন্ট ওয়েট কমিয়ে দেওয়া হলো */
 h1, h2, h3, h4, h5, h6, .font-bold, .font-semibold {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
-  letter-spacing: -0.01em; /* টেক্সটগুলোকে আরেকটু টাইট ও প্রিমিয়াম লুক দিতে */
+  font-family: 'Inter', 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 500 !important; /* আগের মতো অতিরিক্ত মোটা দেখাবে না, ট্যালিখাতার মতো চিকন ও প্রিমিয়াম লাগবে */
+  letter-spacing: -0.02em; 
+}
+
+/* ছোট লেখা বা লেবেলের জন্য আরও হালকা লুক */
+small, span, p, label {
+  font-weight: 400;
 }
   </style>
 
