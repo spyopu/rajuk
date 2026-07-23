@@ -21,23 +21,23 @@
     
   <style>
     body {
-  font-family: 'Inter', sans-serif !important;
-  font-weight: 400; /* নরমাল টেক্সট একদম চিকন ও পরিষ্কার রাখবে */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* হেডিং বা বোল্ড টেক্সটগুলোকেও স্লিক ও চিকন রাখার জন্য ফন্ট ওয়েট কমিয়ে দেওয়া হলো */
-h1, h2, h3, h4, h5, h6, .font-bold, .font-semibold {
-  font-family: 'Inter', 'Plus Jakarta Sans', sans-serif !important;
-  font-weight: 500 !important; /* আগের মতো অতিরিক্ত মোটা দেখাবে না, ট্যালিখাতার মতো চিকন ও প্রিমিয়াম লাগবে */
-  letter-spacing: -0.02em; 
-}
-
-/* ছোট লেখা বা লেবেলের জন্য আরও হালকা লুক */
-small, span, p, label {
-  font-weight: 400;
-}
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 400; /* নরমাল টেক্সট একদম চিকন ও পরিষ্কার রাখবে */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* হেডিং বা বোল্ড টেক্সটগুলোকেও স্লিক ও চিকন রাখার জন্য ফন্ট ওয়েট কমিয়ে দেওয়া হলো */
+    h1, h2, h3, h4, h5, h6, .font-bold, .font-semibold {
+      font-family: 'Inter', 'Plus Jakarta Sans', sans-serif !important;
+      font-weight: 500 !important; /* আগের মতো অতিরিক্ত মোটা দেখাবে না, ট্যালিখাতার মতো চিকন ও প্রিমিয়াম লাগবে */
+      letter-spacing: -0.02em; 
+    }
+    
+    /* ছোট লেখা বা লেবেলের জন্য আরও হালকা লুক */
+    small, span, p, label {
+      font-weight: 400;
+    }
   </style>
 
   <!-- Firebase SDK v8 LIBRARIES -->
@@ -60,14 +60,14 @@ small, span, p, label {
           <path d="M15 35 L22 40 L35 22" fill="none" stroke="#E11D48" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M15 20 H25" fill="none" stroke="#E11D48" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
           <path d="M15 27 H21" fill="none" stroke="#E11D48" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
-          <text x="62" y="32" font-family="'Plus Jakarta Sans', 'Hind Siliguri', sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">Digital<tspan fill="#FDE047">Khata</tspan></text>
+          <text x="62" y="32" font-family="'Plus Jakarta Sans', 'Hind Siliguri', sans-serif" font-size="20" font-weight="800" fill="#FFFFFF">ডিজিটাল<tspan fill="#FDE047">খাতা</tspan></text>
           <text x="63" y="45" font-family="'Plus Jakarta Sans', 'Hind Siliguri', sans-serif" font-size="10" font-weight="600" fill="#FEE2E2" letter-spacing="1">SMART LEDGER</text>
         </svg>
         
         <div>
           <div class="flex items-center gap-1.5 mt-0.5">
             <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-300 animate-pulse"></span>
-            <span id="status-text" class="text-[11px] text-rose-100 font-mono font-medium">Guest Mode</span>
+            <span id="status-text" class="text-[11px] text-rose-100 font-mono font-medium">গেস্ট মোড</span>
           </div>
         </div>
       </div>
@@ -134,10 +134,10 @@ small, span, p, label {
         <form id="client-form" class="space-y-4">
           <div>
             <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">গ্রাহকের নাম</label>
-            <input type="text" id="client-name" placeholder="যেমন: মো: আলমগীর" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition shadow-2xs font-medium text-slate-800">
+            <input type="text" id="client-name" placeholder="যেমন: আব্দুল্লাহ" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition shadow-2xs font-medium text-slate-800">
           </div>
           <div>
-            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">মোবাইল নম্বর</label>
+            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">মোবাইল নাম্বার</label>
             <input type="text" id="client-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition font-mono shadow-2xs font-semibold text-slate-800">
           </div>
           <div>
@@ -178,7 +178,7 @@ small, span, p, label {
               <span>👁️</span> <span id="report-btn-text">ড্যাশবোর্ড আনলক করুন</span>
             </button>
             <button id="download-pdf-btn" onclick="downloadPDFReport()" class="hidden flex-1 sm:flex-none bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5">
-              <span>📥</span> <span>PDF ডাউনলোড</span>
+              <span>📥</span> <span>রিপোর্ট ডাউনলোড</span>
             </button>
           </div>
         </div>
@@ -250,22 +250,22 @@ small, span, p, label {
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
               <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                  <span>🏦</span> মালিকের মূলধন রিপোর্ট
+                  <span>🏦</span> মূলধন রিপোর্ট
                 </h4>
                 <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-2.5 py-1 rounded-lg">Capital Summary</span>
               </div>
 
               <div class="space-y-3 text-xs md:text-sm font-semibold text-slate-700">
                 <div class="flex justify-between items-center py-1">
-                  <span>বসের দেওয়া মোট ফান্ড (Injection):</span>
+                  <span>ভাই দিয়েছে (Cash In):</span>
                   <span id="report-owner-in" class="font-mono text-emerald-600">৳0</span>
                 </div>
                 <div class="flex justify-between items-center py-1 border-b border-slate-100 pb-2">
-                  <span>বসের উত্তোলন করা ক্যাশ (Drawings):</span>
+                  <span>ভাই নিয়েছে (Cash Out):</span>
                   <span id="report-owner-out" class="font-mono text-rose-600">৳0</span>
                 </div>
                 <div class="flex justify-between items-center py-1 pt-2">
-                  <span class="font-bold text-base text-slate-900">নিট মালিকানার বর্তমান স্থিতি:</span>
+                  <span class="font-bold text-base text-slate-900"> মূলধন সামারি:</span>
                   <span id="report-owner-net" class="font-mono font-black text-base text-slate-800">৳0</span>
                 </div>
               </div>
@@ -289,8 +289,8 @@ small, span, p, label {
                 <thead>
                   <tr class="bg-slate-50/80 text-slate-500 font-bold uppercase text-[11px] border-b border-slate-200">
                     <th class="p-4 pl-5">গ্রাহক ও প্রজেক্ট</th>
-                    <th class="p-4">মোবাইল</th>
-                    <th class="p-4 text-right">চুক্তি (বাজেট)</th>
+                    <th class="p-4">মোবাইল নাম্বার</th>
+                    <th class="p-4 text-right">চুক্তি</th>
                     <th class="p-4 text-right">জমা</th>
                     <th class="p-4 text-right">খরচ</th>
                     <th class="p-4 text-right">বাকি</th>
@@ -331,8 +331,8 @@ small, span, p, label {
           <div>
             <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">লেনদেনের ধরন</label>
             <select id="tx-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 font-bold shadow-2xs text-slate-800">
-              <option value="income">🟢 টাকা জমা নিলেন (Cash In / Debit)</option>
-              <option value="expense">🔴 প্রজেক্ট খরচ (Cash Out / Credit)</option>
+              <option value="income">🟢 টাকা জমা (Cash In/Debit)</option>
+              <option value="expense">🔴 প্রজেক্ট খরচ (Cash Out/Credit)</option>
             </select>
           </div>
 
@@ -347,7 +347,7 @@ small, span, p, label {
               <input type="date" id="tx-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none font-mono shadow-2xs font-bold text-slate-800">
             </div>
             <div>
-              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">বিবরণ / নোট</label>
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">বিবরণ/নোট</label>
               <input type="text" id="tx-details" placeholder="যেমন: প্রথম কিস্তি" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs font-medium text-slate-800">
             </div>
           </div>
@@ -417,7 +417,7 @@ small, span, p, label {
         <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <div class="flex items-center gap-3 border-b border-slate-200 pb-4 mb-4">
             <div class="h-10 w-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-base">💼</div>
-            <h3 class="text-xs md:text-sm font-bold uppercase text-slate-900">মালিকের ফান্ড এন্ট্রি</h3>
+            <h3 class="text-xs md:text-sm font-bold uppercase text-slate-900">মূলধন এন্ট্রি</h3>
           </div>
           <form id="owner-tx-form" class="space-y-4">
             <div>
@@ -503,10 +503,10 @@ small, span, p, label {
         <span class="text-base">💸</span><span>লেনদেন</span>
       </button>
       <button onclick="switchTab('office-view')" id="btn-office-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[10px] font-bold py-1">
-        <span class="text-base">🏢</span><span>অফিস</span>
+        <span class="text-base">🏢</span><span>খরচ</span>
       </button>
       <button onclick="switchTab('owner-view')" id="btn-owner-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[10px] font-bold py-1">
-        <span class="text-base">💼</span><span>মালিক</span>
+        <span class="text-base">💼</span><span>মূলধন</span>
       </button>
     </div>
   </nav>
