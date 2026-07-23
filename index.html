@@ -114,39 +114,39 @@
   </div>
 
 </div>
- <!-- TOP HEADER (App Inside) -->
-<header class="bg-[#e11d48] text-white sticky top-0 z-40 shadow-md">
+ <!-- TOP HEADER -->
+<header class="bg-rose-600 text-white sticky top-0 z-45 shadow-md">
   <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
     
-    <!-- Left Side: Updated Logo & Brand Name -->
+    <!-- Left Side: Logo & Status -->
     <div class="flex items-center gap-3">
-      <!-- Rounded White Logo Box -->
-      <div class="bg-white text-[#e11d48] p-2 rounded-xl shadow-sm flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
+      <!-- আইকনিক বই লোগো ও ব্র্যান্ড নাম -->
+      <div class="flex items-center gap-2.5">
+        <div class="bg-white text-rose-600 p-2 rounded-xl shadow-sm flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl font-extrabold tracking-tight leading-none">ডিজিটাল<span class="text-yellow-300">খাতা</span></span>
+          <span class="text-[10px] text-rose-100 font-semibold tracking-wider uppercase mt-1">SMART LEDGER</span>
+        </div>
       </div>
-
-      <!-- Text Container -->
-      <div class="flex flex-col">
-        <span class="text-xl font-extrabold tracking-tight leading-none">Digital<span class="text-rose-100">Khata</span></span>
-        <span class="text-[10px] text-rose-100/90 font-medium tracking-wider uppercase mt-1">SMART LEDGER</span>
-      </div>
-
-      <!-- Sync Status Badge -->
-      <div class="hidden sm:flex items-center gap-1.5 ml-2 bg-rose-700/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-rose-400/30 text-[11px] font-medium text-white">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </span>
-        <span id="status-text">Cloud Synced</span>
+      
+      <!-- স্ট্যাটাস ইন্ডিকেটর -->
+      <div>
+        <div class="flex items-center gap-1.5 mt-0.5 ml-2">
+          <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-300 animate-pulse"></span>
+          <span id="status-text" class="text-[11px] text-rose-100 font-mono font-medium">গেস্ট মোড</span>
+        </div>
       </div>
     </div>
 
-    <!-- Right Side: Auth & Profile Section -->
+    <!-- Right Side: Auth & Profile -->
     <div class="flex items-center gap-3">
+      
+      <!-- গুগল লগইন বাটন (ছোট সাইজ + সম্পূর্ণ গোল) -->
       <div id="sidebar-auth-section">
-        <!-- Smaller Google Login Icon Button -->
         <button id="google-login-btn" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold rounded-full p-2 transition shadow-sm flex items-center justify-center">
           <svg class="w-4 h-4" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
@@ -157,6 +157,7 @@
         </button>
       </div>
 
+      <!-- প্রোফাইল ট্রিগার ও ড্রপডাউন -->
       <div class="relative">
         <div id="profile-trigger" class="flex items-center gap-2.5 cursor-pointer p-1.5 px-3 rounded-xl hover:bg-rose-700 transition select-none hidden">
           <div class="text-right hidden sm:block">
@@ -171,8 +172,8 @@
           </button>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 </header>
   
