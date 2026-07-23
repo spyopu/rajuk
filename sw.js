@@ -1,6 +1,7 @@
 const CACHE_NAME = 'digital-khata-v1';
 const assetsToCache = [
-  '/',
+  '/rajuk/',
+  '/rajuk/index.html',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap'
 ];
