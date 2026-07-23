@@ -1,4 +1,4 @@
-const CACHE_NAME = 'digital-khata-v3';
+const CACHE_NAME = 'digital-khata-v4';
 const assetsToCache = [
   '/rajuk/',
   '/rajuk/index.html',
@@ -6,7 +6,7 @@ const assetsToCache = [
   'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap'
 ];
 
-// Install Event: ক্যাশ ফাইলগুলো স্টোর করা
+// Install Event
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -16,7 +16,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate Event: পুরানো ক্যাশ ক্লিনআপ করা
+// Activate Event
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -32,16 +32,26 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event: আইকন বা সরাসরি অ্যাপ ওপেন করলে 404 রোধ করা
+// Fetch Event (Network First, falling back to cache and index.html)
 self.addEventListener('fetch', (event) => {
+  // শুধুমাত্র GET রিকোয়েস্টগুলোর জন্য সার্ভিস ওয়ার্কার কাজ করবে
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).catch(() => {
-        return caches.match('/rajuk/index.html');
-      });
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        // নেটওয়ার্ক থেকে সফলভাবে রেসপন্স পেলে সেটি রিটার্ন করুন
+        return networkResponse;
+      })
+      .catch(() => {
+        // ইন্টারনেট না থাকলে বা ফেইল করলে ক্যাশ থেকে খোঁজার চেষ্টা করুন
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          // ক্যাশেও না পেলে সরাসরি মূল পেজ বা ইনডেক্স ফাইলে পাঠিয়ে দিন
+          return caches.match('/rajuk/index.html');
+        });
+      })
   );
 });
