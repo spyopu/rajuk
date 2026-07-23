@@ -1,14 +1,14 @@
 {
   "name": "Digital Khata",
   "short_name": "Khata",
-  "start_url": "/rajuk/",
-  "scope": "/rajuk/",
+  "start_url": "https://spyopu.github.io/rajuk/",
+  "scope": "https://spyopu.github.io/rajuk/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#e11d48",
   "icons": [
     {
-      "src": "/rajuk/favicon.svg",
+      "src": "favicon.svg",
       "sizes": "512x512",
       "type": "image/svg+xml"
     }
