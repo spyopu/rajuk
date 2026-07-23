@@ -22,19 +22,17 @@
   <style>
     body {
       font-family: 'Inter', sans-serif !important;
-      font-weight: 400; /* নরমাল টেক্সট একদম চিকন ও পরিষ্কার রাখবে */
+      font-weight: 400;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
     
-    /* হেডিং বা বোল্ড টেক্সটগুলোকেও স্লিক ও চিকন রাখার জন্য ফন্ট ওয়েট কমিয়ে দেওয়া হলো */
     h1, h2, h3, h4, h5, h6, .font-bold, .font-semibold {
       font-family: 'Inter', 'Plus Jakarta Sans', sans-serif !important;
-      font-weight: 500 !important; /* আগের মতো অতিরিক্ত মোটা দেখাবে না, ট্যালিখাতার মতো চিকন ও প্রিমিয়াম লাগবে */
+      font-weight: 500 !important;
       letter-spacing: -0.02em; 
     }
     
-    /* ছোট লেখা বা লেবেলের জন্য আরও হালকা লুক */
     small, span, p, label {
       font-weight: 400;
     }
@@ -49,132 +47,128 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="text-slate-900 antialiased selection:bg-rose-500 selection:text-white min-h-screen flex flex-col justify-between pb-16 md:pb-6">
+
   <!-- Passcode Lock Screen Overlay -->
-<div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col justify-between items-center py-6 px-4 select-none font-sans overflow-y-auto">
-  
-  <!-- Top Header Section (Logo Top, Text Bottom) -->
-  <div class="flex flex-col items-center mt-4 md:mt-8 mb-2">
-    <!-- Rounded Soft SVG Book Logo -->
-    <div class="w-16 h-16 bg-[#e11d48] text-white rounded-2xl shadow-md flex items-center justify-center mb-3">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-      </svg>
-    </div>
-
-    <!-- Title Text -->
-    <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight leading-none mb-1.5">
-      Digital<span class="text-[#e11d48]">Khata</span>
-    </h1>
-
-    <!-- Subtitle Text -->
-    <p class="text-xs text-gray-500 font-medium tracking-wide">
-      স্মার্ট ডিজিটাল হিসাব খাতা
-    </p>
-  </div>
-
-  <!-- Middle PIN Section -->
-  <div class="flex flex-col items-center w-full max-w-xs my-auto py-4">
-    <p id="pinStatusText" class="text-sm font-semibold text-gray-700 mb-5 transition-all duration-200">PIN দিয়ে লগইন করুন</p>
+  <div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col justify-between items-center py-6 px-4 select-none font-sans overflow-y-auto">
     
-    <!-- PIN Circles -->
-    <div class="flex justify-center items-center gap-5 mb-6">
-      <div id="dot-0" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
-      <div id="dot-1" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
-      <div id="dot-2" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
-      <div id="dot-3" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
+    <!-- Top Header Section -->
+    <div class="flex flex-col items-center mt-4 md:mt-8 mb-2">
+      <div class="w-16 h-16 bg-[#e11d48] text-white rounded-2xl shadow-md flex items-center justify-center mb-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      </div>
+
+      <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight leading-none mb-1.5">
+        Digital<span class="text-[#e11d48]">Khata</span>
+      </h1>
+
+      <p class="text-xs text-gray-500 font-medium tracking-wide">
+        স্মার্ট ডিজিটাল হিসাব খাতা
+      </p>
     </div>
 
-    <!-- Forgot PIN Button -->
-    <button onclick="alert('পাসকোড রিসেট করতে অ্যাডমিনের সাথে যোগাযোগ করুন অথবা ডাটা ক্লিয়ার করুন।')" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 px-4 py-2 rounded-full text-xs font-medium transition-all duration-150">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 0121 9z" />
-      </svg>
-      PIN ভুলে গেছেন?
-    </button>
-  </div>
-
-  <!-- Bottom Ultra-Smooth Keypad Section -->
-  <div class="w-full max-w-xs grid grid-cols-3 gap-3 mb-2">
-    <button onclick="pressKey('1')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">1</button>
-    <button onclick="pressKey('2')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">2</button>
-    <button onclick="pressKey('3')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">3</button>
-    <button onclick="pressKey('4')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">4</button>
-    <button onclick="pressKey('5')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">5</button>
-    <button onclick="pressKey('6')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">6</button>
-    <button onclick="pressKey('7')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">7</button>
-    <button onclick="pressKey('8')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">8</button>
-    <button onclick="pressKey('9')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">9</button>
-    <div></div>
-    <button onclick="pressKey('0')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">0</button>
-    <button onclick="deleteKey()" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-700 rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414-6.414a2 2 0 011.414-.586H19a2 2 0 012 2v12a2 2 0 01-2 2H10.828a2 2 0 01-1.414-.586L3 12z" />
-      </svg>
-    </button>
-  </div>
-
-</div>
- <!-- TOP HEADER -->
-<header class="bg-rose-600 text-white sticky top-0 z-45 shadow-md">
-  <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-    
-    <!-- Left Side: Logo & Status -->
-    <div class="flex items-center gap-3">
-      <!-- আইকনিক বই লোগো ও ব্র্যান্ড নাম -->
-      <div class="flex items-center gap-2.5">
-        <div class="bg-white text-rose-600 p-2 rounded-xl shadow-sm flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-        </div>
-        <div class="flex flex-col">
-          <span class="text-l font-extrabold tracking-tight leading-none">Digital<span class="text-yellow-300">Khata</span></span>
-          <span class="text-[10px] text-rose-100 font-semibold tracking-wider uppercase mt-1">Smart Ledger</span>
-        </div>
-      </div>
+    <!-- Middle PIN Section -->
+    <div class="flex flex-col items-center w-full max-w-xs my-auto py-4">
+      <p id="pinStatusText" class="text-sm font-semibold text-gray-700 mb-5 transition-all duration-200">PIN দিয়ে লগইন করুন</p>
       
-      <!-- স্ট্যাটাস ইন্ডিকেটর -->
-      <div>
-        <div class="flex items-center gap-1.5 mt-0.5 ml-2">
-          <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-300 animate-pulse"></span>
-          <span id="status-text" class="text-[11px] text-rose-100 font-mono font-medium">গেস্ট মোড</span>
-        </div>
+      <!-- PIN Circles -->
+      <div class="flex justify-center items-center gap-5 mb-6">
+        <div id="dot-0" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
+        <div id="dot-1" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
+        <div id="dot-2" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
+        <div id="dot-3" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
       </div>
+
+      <!-- Forgot PIN Button -->
+      <button onclick="alert('পাসকোড রিসেট করতে অ্যাডমিনের সাথে যোগাযোগ করুন অথবা ডাটা ক্লিয়ার করুন।')" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 px-4 py-2 rounded-full text-xs font-medium transition-all duration-150">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 0121 9z" />
+        </svg>
+        PIN ভুলে গেছেন?
+      </button>
     </div>
 
-    <!-- Right Side: Auth & Profile -->
-    <div class="flex items-center gap-3">
-      
-      <!-- গুগল লগইন বাটন (ছোট সাইজ + সম্পূর্ণ গোল) -->
-      <div id="sidebar-auth-section">
-        <button id="google-login-btn" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold rounded-full p-2 transition shadow-sm flex items-center justify-center">
-          <svg class="w-4 h-4" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.14C3.15 21.3 7.22 24 12 24z"/>
-            <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.18C.43 8.12 0 9.87 0 12s.43 3.88 1.18 5.38l4.09-3.14z"/>
-            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.7 1.18 6.62l4.09 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
-          </svg>
-        </button>
-      </div>
+    <!-- Keypad Section -->
+    <div class="w-full max-w-xs grid grid-cols-3 gap-3 mb-2">
+      <button onclick="pressKey('1')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">1</button>
+      <button onclick="pressKey('2')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">2</button>
+      <button onclick="pressKey('3')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">3</button>
+      <button onclick="pressKey('4')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">4</button>
+      <button onclick="pressKey('5')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">5</button>
+      <button onclick="pressKey('6')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">6</button>
+      <button onclick="pressKey('7')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">7</button>
+      <button onclick="pressKey('8')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">8</button>
+      <button onclick="pressKey('9')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">9</button>
+      <div></div>
+      <button onclick="pressKey('0')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">0</button>
+      <button onclick="deleteKey()" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-700 rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414-6.414a2 2 0 011.414-.586H19a2 2 0 012 2v12a2 2 0 01-2 2H10.828a2 2 0 01-1.414-.586L3 12z" />
+        </svg>
+      </button>
+    </div>
 
-      <!-- প্রোফাইল ট্রিগার ও ড্রপডাউন -->
-      <div class="relative">
-        <div id="profile-trigger" class="flex items-center gap-2.5 cursor-pointer p-1.5 px-3 rounded-xl hover:bg-rose-700 transition select-none hidden">
-          <div class="text-right hidden sm:block">
-            <p id="user-display-name" class="text-xs font-bold text-white">User Account</p>
+  </div>
+
+  <!-- TOP HEADER -->
+  <header class="bg-rose-600 text-white sticky top-0 z-45 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      
+      <!-- Left Side: Logo & Status -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2.5">
+          <div class="bg-white text-rose-600 p-2 rounded-xl shadow-sm flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
           </div>
-          <img id="user-avatar" class="h-8 w-8 rounded-full border border-white/40 object-cover shadow-sm" src="" alt="avatar">
+          <div class="flex flex-col">
+            <span class="text-xl font-extrabold tracking-tight leading-none">ডিজিটাল<span class="text-yellow-300">খাতা</span></span>
+            <span class="text-[10px] text-rose-100 font-semibold tracking-wider uppercase mt-1">SMART LEDGER</span>
+          </div>
         </div>
+        
+        <!-- Status Indicator -->
+        <div>
+          <div class="flex items-center gap-1.5 mt-0.5 ml-2">
+            <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-300 animate-pulse"></span>
+            <span id="status-text" class="text-[11px] text-rose-100 font-mono font-medium">গেস্ট মোড</span>
+          </div>
+        </div>
+      </div>
 
-        <div id="profile-dropdown" class="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl p-1.5 hidden z-50">
-          <button id="logout-btn" class="w-full text-left flex items-center px-3.5 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-lg transition">
-             লগ আউট
+      <!-- Right Side: Auth & Profile -->
+      <div class="flex items-center gap-3">
+        <div id="sidebar-auth-section">
+          <button id="google-login-btn" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold rounded-full p-2 transition shadow-sm flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.14C3.15 21.3 7.22 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.18C.43 8.12 0 9.87 0 12s.43 3.88 1.18 5.38l4.09-3.14z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.7 1.18 6.62l4.09 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
+            </svg>
           </button>
         </div>
+
+        <div class="relative">
+          <div id="profile-trigger" class="flex items-center gap-2.5 cursor-pointer p-1.5 px-3 rounded-xl hover:bg-rose-700 transition select-none hidden">
+            <div class="text-right hidden sm:block">
+              <p id="user-display-name" class="text-xs font-bold text-white">User Account</p>
+            </div>
+            <img id="user-avatar" class="h-8 w-8 rounded-full border border-white/40 object-cover shadow-sm" src="" alt="avatar">
+          </div>
+
+          <div id="profile-dropdown" class="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl p-1.5 hidden z-50">
+            <button id="logout-btn" class="w-full text-left flex items-center px-3.5 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-lg transition">
+               লগ আউট
+            </button>
+          </div>
+        </div>
       </div>
+
     </div>
-  </div>
-</header>
+  </header>
   
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6 flex-1">
@@ -188,15 +182,13 @@
         <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">📊 ড্যাশবোর্ড ও রিপোর্ট</button>
       </div>
 
-      
-
       <div class="flex items-center gap-3 w-full md:w-auto">
         <input type="text" id="search-input" placeholder="গ্রাহক বা প্রজেক্ট খুঁজুন..." class="bg-slate-50 border border-slate-200 text-slate-900 text-xs md:text-sm rounded-xl px-4 py-3 outline-none focus:border-rose-600 transition w-full md:w-64 shadow-2xs">
         <input type="month" id="month-filter" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs md:text-sm rounded-xl px-3.5 py-3 outline-none focus:border-rose-600 transition shadow-2xs">
       </div>
     </div>
 
-    <!-- TAB 1: CLIENT REGISTRY (Default Open) -->
+    <!-- TAB 1: CLIENT REGISTRY -->
     <div id="tab-client-view" class="tab-content space-y-6">
       <div class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm max-w-xl mx-auto">
         <div class="flex items-center gap-3 border-b border-slate-200 pb-4 mb-5">
@@ -222,7 +214,7 @@
               <input type="number" id="project-budget" placeholder="50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition font-mono shadow-2xs font-bold text-slate-800">
             </div>
             <div>
-              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">তারিখ</label>
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">তারিখ (Date)</label>
               <input type="date" id="client-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition font-mono shadow-2xs font-bold text-slate-800">
             </div>
           </div>
@@ -233,8 +225,6 @@
 
     <!-- TAB 2: DASHBOARD & REPORTS -->
     <div id="tab-dashboard-view" class="tab-content space-y-6 hidden">
-      
-      <!-- SECURE REPORT & DASHBOARD WRAPPER (Locked/Blurred by default) -->
       <div id="pdf-report-container" class="space-y-6">
         
         <!-- SECURE HEADER & ACTIONS -->
@@ -258,7 +248,7 @@
         <!-- MAIN LOCKABLE CONTENT BODY -->
         <div id="report-content-body" class="space-y-6 filter blur-md select-none pointer-events-none transition-all duration-300">
           
-          <!-- TOP 5 METRIC CARDS -->
+          <!-- METRIC CARDS -->
           <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5 text-center">
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
               <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">মোট বাজেট</p>
@@ -285,7 +275,6 @@
           <!-- REPORT CARDS -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            <!-- ১. লাভ-ক্ষতি সামারি রিপোর্ট -->
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
               <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -312,13 +301,12 @@
                   <span id="report-office-expense" class="font-mono text-rose-600">৳0</span>
                 </div>
                 <div class="flex justify-between items-center py-1 pt-1">
-                  <span id="net-profit-label" class="font-bold text-base text-slate-900">নিট লাভ/ক্ষতি (Net Profit):</span>
+                  <span id="net-profit-label" class="font-bold text-base text-slate-900">নিট লাভ / ক্ষতি (Net Profit):</span>
                   <span id="report-net-profit" class="font-mono font-black text-base text-emerald-600">৳0</span>
                 </div>
               </div>
             </div>
 
-            <!-- ২. মালিকের মূলধন রিপোর্ট -->
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
               <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -329,15 +317,15 @@
 
               <div class="space-y-3 text-xs md:text-sm font-semibold text-slate-700">
                 <div class="flex justify-between items-center py-1">
-                  <span>ভাই দিয়েছে (Cash In):</span>
+                  <span>ফান্ড ইনজেক্ট (Cash In):</span>
                   <span id="report-owner-in" class="font-mono text-emerald-600">৳0</span>
                 </div>
                 <div class="flex justify-between items-center py-1 border-b border-slate-100 pb-2">
-                  <span>ভাই নিয়েছে (Cash Out):</span>
+                  <span>ক্যাশ উত্তোলন (Cash Out):</span>
                   <span id="report-owner-out" class="font-mono text-rose-600">৳0</span>
                 </div>
                 <div class="flex justify-between items-center py-1 pt-2">
-                  <span class="font-bold text-base text-slate-900"> মূলধন সামারি:</span>
+                  <span class="font-bold text-base text-slate-900">মূলধন সামারি:</span>
                   <span id="report-owner-net" class="font-mono font-black text-base text-slate-800">৳0</span>
                 </div>
               </div>
@@ -376,7 +364,6 @@
 
         </div>
       </div>
-      
     </div>
 
     <!-- TAB 3: JOURNAL -->
@@ -403,8 +390,8 @@
           <div>
             <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">লেনদেনের ধরন</label>
             <select id="tx-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 font-bold shadow-2xs text-slate-800">
-              <option value="income">🟢 টাকা জমা (Debit)</option>
-              <option value="expense">🔴 প্রজেক্ট খরচ (Credit)</option>
+              <option value="income">🟢 টাকা জমা (Cash In/Debit)</option>
+              <option value="expense">🔴 প্রজেক্ট খরচ (Cash Out/Credit)</option>
             </select>
           </div>
 
@@ -444,7 +431,7 @@
                 <option value="Staff Salary">Staff Salary</option>
                 <option value="Office Rent">Office Rent</option>
                 <option value="Utility Bill">Utility Bills</option>
-                <option value="Conveyance">Conveyance/ Logistics</option>
+                <option value="Conveyance">Conveyance / Logistics</option>
                 <option value="Others">Miscellaneous Expense</option>
               </select>
             </div>
@@ -483,7 +470,7 @@
       </div>
     </div>
 
-    <!-- TAB 5: OWNER CAPITAL / FUND MANAGEMENT -->
+    <!-- TAB 5: OWNER CAPITAL -->
     <div id="tab-owner-view" class="tab-content space-y-6 hidden">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
@@ -495,8 +482,8 @@
             <div>
               <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">লেনদেনের ধরন</label>
               <select id="ow-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs text-slate-800 font-bold">
-                <option value="injection">🟢 ক্যাশ জমা </option>
-                <option value="drawing">🔴 ক্যাশ উত্তোলন </option>
+                <option value="injection">🟢 ফান্ড ইনজেক্ট (ফান্ড / ভর্তুকি)</option>
+                <option value="drawing">🔴 ক্যাশ উত্তোলন (তোলা ক্যাশ)</option>
               </select>
             </div>
             <div>
@@ -504,8 +491,8 @@
               <input type="number" id="ow-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none font-mono shadow-2xs font-bold text-slate-800">
             </div>
             <div>
-              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">বিবরণ/নোট</label>
-              <input type="text" id="ow-details" placeholder="যেমন: ব্যক্তিগত প্রয়োজনে ক্যাশ লোন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs font-medium text-slate-800">
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">বিবরণ / নোট</label>
+              <input type="text" id="ow-details" placeholder="যেমন: লোন বা ক্যাশ ড্র" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs font-medium text-slate-800">
             </div>
             <div>
               <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">তারিখ</label>
@@ -617,6 +604,8 @@
     const rtdb = firebase.database();
 
     const SECURITY_PASSCODE = "6219";
+    const CORRECT_PIN = "6219"; 
+    let enteredPin = "";
 
     let farmData = [];
     let officeExpenses = [];
@@ -662,6 +651,61 @@
       });
     }
 
+    // PIN Pad Functions
+    window.pressKey = function(num) {
+      if (enteredPin.length < 4) {
+        enteredPin += num;
+        updateDots();
+        if (enteredPin.length === 4) {
+          setTimeout(verifyPin, 150);
+        }
+      }
+    };
+
+    window.deleteKey = function() {
+      if (enteredPin.length > 0) {
+        enteredPin = enteredPin.slice(0, -1);
+        updateDots();
+      }
+    };
+
+    function updateDots() {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (dot) {
+          if (i < enteredPin.length) {
+            dot.className = "w-4 h-4 rounded-full bg-rose-600 border-2 border-rose-600 scale-110 transition-all duration-200";
+          } else {
+            dot.className = "w-4 h-4 rounded-full border-2 border-gray-400 transition-all duration-200";
+          }
+        }
+      }
+    }
+
+    function verifyPin() {
+      const statusText = document.getElementById('pinStatusText');
+      if (enteredPin === CORRECT_PIN) {
+        const lockScreen = document.getElementById('pinLockScreen');
+        lockScreen.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        lockScreen.style.opacity = '0';
+        lockScreen.style.transform = 'scale(0.95)';
+        setTimeout(() => { lockScreen.style.display = 'none'; }, 300);
+      } else {
+        if(statusText) {
+          statusText.innerText = "ভুল PIN! আবার চেষ্টা করুন";
+          statusText.className = "text-sm font-semibold text-rose-600 mb-6 animate-bounce";
+        }
+        enteredPin = "";
+        setTimeout(() => {
+          updateDots();
+          if(statusText) {
+            statusText.className = "text-sm font-semibold text-gray-700 mb-6";
+            statusText.innerText = "PIN দিয়ে লগইন করুন";
+          }
+        }, 1000);
+      }
+    }
+
     window.switchTab = function(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       const target = document.getElementById(`tab-${tabId}`);
@@ -678,7 +722,7 @@
       });
       const activeMobBtn = document.getElementById(`btn-${tabId}-mob`);
       if(activeMobBtn) activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[10px] font-bold py-1 transition scale-105";
-    }
+    };
 
     window.setClientFilter = function(filterType) {
       activeClientFilter = filterType;
@@ -689,7 +733,7 @@
       const activeBtn = document.getElementById(`filter-btn-${filterType}`);
       if(activeBtn) activeBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
       renderMasterTable();
-    }
+    };
 
     uiUpdatePipeline();
     setClientFilter('all');
@@ -1201,12 +1245,12 @@
         refreshDrawer(id);
         ledgerDrawer.scrollIntoView({ behavior: 'smooth' });
       }
-    }
+    };
 
     window.closeDrawer = function() {
       openLedgerId = null;
       if (ledgerDrawer) ledgerDrawer.classList.add('hidden');
-    }
+    };
 
     function refreshDrawer(id) {
       const client = farmData.find(c => c.id === id);
@@ -1258,71 +1302,8 @@
         databasePathRef.child('clients').child(clientId).update({ history: updatedHistory });
       });
     };
-    
-    // আপনার ডিফল্ট পাসকোড (প্রয়োজনে পরিবর্তন করে নিতে পারেন)
-const CORRECT_PIN = "6219"; 
-let enteredPin = "";
-
-function pressKey(num) {
-  if (enteredPin.length < 4) {
-    enteredPin += num;
-    updateDots();
-    
-    // ৪ ডিজিট ইনপুট হয়ে গেলে পিন ভেরিফাই করবে
-    if (enteredPin.length === 4) {
-      setTimeout(verifyPin, 150);
-    }
-  }
-}
-
-function deleteKey() {
-  if (enteredPin.length > 0) {
-    enteredPin = enteredPin.slice(0, -1);
-    updateDots();
-  }
-}
-
-function updateDots() {
-  for (let i = 0; i < 4; i++) {
-    const dot = document.getElementById(`dot-${i}`);
-    if (i < enteredPin.length) {
-      // ফিল্ড ডট (বোল্ড কালার)
-      dot.className = "w-4 h-4 rounded-full bg-rose-600 border-2 border-rose-600 scale-110 transition-all duration-200";
-    } else {
-      // খালি ডট
-      dot.className = "w-4 h-4 rounded-full border-2 border-gray-400 transition-all duration-200";
-    }
-  }
-}
-
-function verifyPin() {
-  const statusText = document.getElementById('pinStatusText');
-  
-  if (enteredPin === CORRECT_PIN) {
-    // পিন সঠিক হলে স্মুথলি স্ক্রিন হাইড হবে
-    const lockScreen = document.getElementById('pinLockScreen');
-    lockScreen.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    lockScreen.style.opacity = '0';
-    lockScreen.style.transform = 'scale(0.95)';
-    
-    setTimeout(() => {
-      lockScreen.style.display = 'none';
-    }, 300);
-  } else {
-    // পিন ভুল হলে লাল কালার ও এরর বার্তা দেখাবে
-    statusText.innerText = "ভুল PIN! আবার চেষ্টা করুন";
-    statusText.className = "text-sm font-semibold text-rose-600 mb-6 animate-bounce";
-    
-    // ডটগুলো রিসেট করবে
-    enteredPin = "";
-    setTimeout(() => {
-      updateDots();
-      statusText.className = "text-sm font-semibold text-gray-700 mb-6";
-      statusText.innerText = "PIN দিয়ে লগইন করুন";
-    }, 1000);
-  }
-}
   </script>
+  
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
