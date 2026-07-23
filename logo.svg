@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Background Red Rounded Box -->
+  <rect width="512" height="512" rx="120" fill="#e11d48"/>
+  
+  <!-- White Book Icon -->
+  <path d="M256 160v220m0-220c-25-16.5-58.8-24-96-24s-71 7.5-96 24v220c25-16.5 58.8-24 96-24s71 7.5 96 24m0-220c25-16.5 58.8-24 96-24s71 7.5 96 24v220c-25-16.5-58.8-24-96-24s-71 7.5-96 24" 
+        fill="none" 
+        stroke="#ffffff" 
+        stroke-width="32" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+</svg>
