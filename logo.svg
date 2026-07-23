@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
-  <rect x="0" y="5" width="50" height="50" rx="14" fill="#E11D48" />
-  <path d="M15 35 L22 40 L35 22" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M15 20 H25" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
-  <path d="M15 27 H21" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
-  <text x="62" y="32" font-family="'Plus Jakarta Sans', 'Hind Siliguri', sans-serif" font-size="20" font-weight="800" fill="#0F172A">Digital<tspan fill="#E11D48">Khata</tspan></text>
-  <text x="63" y="45" font-family="'Plus Jakarta Sans', 'Hind Siliguri', sans-serif" font-size="10" font-weight="600" fill="#64748B" letter-spacing="1">SMART LEDGER</text>
-</svg>
