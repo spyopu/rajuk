@@ -50,29 +50,21 @@
 
   <!-- Passcode Lock Screen Overlay -->
   <div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col justify-between items-center py-6 px-4 select-none font-sans overflow-y-auto">
-    
-    <!-- Top Header Section -->
     <div class="flex flex-col items-center mt-4 md:mt-8 mb-2">
       <div class="w-16 h-16 bg-[#e11d48] text-white rounded-2xl shadow-md flex items-center justify-center mb-3">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
       </div>
-
       <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight leading-none mb-1.5">
         Digital<span class="text-[#e11d48]">Khata</span>
       </h1>
-
-      <p class="text-xs text-gray-500 font-medium tracking-wide">
-        স্মার্ট ডিজিটাল হিসাব খাতা
-      </p>
+      <p class="text-xs text-gray-500 font-medium tracking-wide">স্মার্ট ডিজিটাল হিসাব খাতা</p>
     </div>
 
-    <!-- Middle PIN Section -->
     <div class="flex flex-col items-center w-full max-w-xs my-auto py-4">
       <p id="pinStatusText" class="text-sm font-semibold text-gray-700 mb-5 transition-all duration-200">PIN দিয়ে লগইন করুন</p>
       
-      <!-- PIN Circles -->
       <div class="flex justify-center items-center gap-5 mb-6">
         <div id="dot-0" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
         <div id="dot-1" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
@@ -80,7 +72,6 @@
         <div id="dot-3" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
       </div>
 
-      <!-- Forgot PIN Button -->
       <button onclick="alert('পাসকোড রিসেট করতে অ্যাডমিনের সাথে যোগাযোগ করুন অথবা ডাটা ক্লিয়ার করুন।')" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 px-4 py-2 rounded-full text-xs font-medium transition-all duration-150">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 0121 9z" />
@@ -89,7 +80,6 @@
       </button>
     </div>
 
-    <!-- Keypad Section -->
     <div class="w-full max-w-xs grid grid-cols-3 gap-3 mb-2">
       <button onclick="pressKey('1')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">1</button>
       <button onclick="pressKey('2')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center">2</button>
@@ -108,14 +98,11 @@
         </svg>
       </button>
     </div>
-
   </div>
 
   <!-- TOP HEADER -->
   <header class="bg-rose-600 text-white sticky top-0 z-45 shadow-md">
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-      
-      <!-- Left Side: Logo & Status -->
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-2.5">
           <div class="bg-white text-rose-600 p-2 rounded-xl shadow-sm flex items-center justify-center">
@@ -124,12 +111,11 @@
             </svg>
           </div>
           <div class="flex flex-col">
-            <span class="text-xl font-extrabold tracking-tight leading-none">ডিজিটাল<span class="text-yellow-300">খাতা</span></span>
-            <span class="text-[10px] text-rose-100 font-semibold tracking-wider uppercase mt-1">SMART LEDGER</span>
+            <span class="text-l font-extrabold tracking-tight leading-none">Digital<span class="text-yellow-300">Khata</span></span>
+            <span class="text-[10px] text-rose-100 font-semibold tracking-wider uppercase mt-1">Smart Ledger</span>
           </div>
         </div>
         
-        <!-- Status Indicator -->
         <div>
           <div class="flex items-center gap-1.5 mt-0.5 ml-2">
             <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-300 animate-pulse"></span>
@@ -138,7 +124,6 @@
         </div>
       </div>
 
-      <!-- Right Side: Auth & Profile -->
       <div class="flex items-center gap-3">
         <div id="sidebar-auth-section">
           <button id="google-login-btn" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold rounded-full p-2 transition shadow-sm flex items-center justify-center">
@@ -166,7 +151,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </header>
   
@@ -180,6 +164,7 @@
         <button onclick="switchTab('office-view')" id="btn-office-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">🏢 অফিস খরচ</button>
         <button onclick="switchTab('owner-view')" id="btn-owner-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">💼 মূলধন সামারি</button>
         <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">📊 ড্যাশবোর্ড ও রিপোর্ট</button>
+        <button onclick="switchTab('trash-view')" id="btn-trash-view-pc" class="tab-btn px-3 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">🗑️ ট্র্যাশ (Trash)</button>
       </div>
 
       <div class="flex items-center gap-3 w-full md:w-auto">
@@ -214,7 +199,7 @@
               <input type="number" id="project-budget" placeholder="50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition font-mono shadow-2xs font-bold text-slate-800">
             </div>
             <div>
-              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">তারিখ (Date)</label>
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">তারিখ</label>
               <input type="date" id="client-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 transition font-mono shadow-2xs font-bold text-slate-800">
             </div>
           </div>
@@ -226,8 +211,6 @@
     <!-- TAB 2: DASHBOARD & REPORTS -->
     <div id="tab-dashboard-view" class="tab-content space-y-6 hidden">
       <div id="pdf-report-container" class="space-y-6">
-        
-        <!-- SECURE HEADER & ACTIONS -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
           <div>
             <h3 class="text-xs md:text-sm font-bold text-slate-900 flex items-center gap-2">
@@ -245,10 +228,7 @@
           </div>
         </div>
 
-        <!-- MAIN LOCKABLE CONTENT BODY -->
         <div id="report-content-body" class="space-y-6 filter blur-md select-none pointer-events-none transition-all duration-300">
-          
-          <!-- METRIC CARDS -->
           <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5 text-center">
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
               <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">মোট বাজেট</p>
@@ -272,9 +252,7 @@
             </div>
           </div>
 
-          <!-- REPORT CARDS -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
               <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -301,7 +279,7 @@
                   <span id="report-office-expense" class="font-mono text-rose-600">৳0</span>
                 </div>
                 <div class="flex justify-between items-center py-1 pt-1">
-                  <span id="net-profit-label" class="font-bold text-base text-slate-900">নিট লাভ / ক্ষতি (Net Profit):</span>
+                  <span id="net-profit-label" class="font-bold text-base text-slate-900">নিট লাভ/ক্ষতি (Net Profit):</span>
                   <span id="report-net-profit" class="font-mono font-black text-base text-emerald-600">৳0</span>
                 </div>
               </div>
@@ -317,23 +295,21 @@
 
               <div class="space-y-3 text-xs md:text-sm font-semibold text-slate-700">
                 <div class="flex justify-between items-center py-1">
-                  <span>ফান্ড ইনজেক্ট (Cash In):</span>
+                  <span>ভাই দিয়েছে (Cash In):</span>
                   <span id="report-owner-in" class="font-mono text-emerald-600">৳0</span>
                 </div>
                 <div class="flex justify-between items-center py-1 border-b border-slate-100 pb-2">
-                  <span>ক্যাশ উত্তোলন (Cash Out):</span>
+                  <span>ভাই নিয়েছে (Cash Out):</span>
                   <span id="report-owner-out" class="font-mono text-rose-600">৳0</span>
                 </div>
                 <div class="flex justify-between items-center py-1 pt-2">
-                  <span class="font-bold text-base text-slate-900">মূলধন সামারি:</span>
+                  <span class="font-bold text-base text-slate-900"> মূলধন সামারি:</span>
                   <span id="report-owner-net" class="font-mono font-black text-base text-slate-800">৳0</span>
                 </div>
               </div>
             </div>
-
           </div>
           
-          <!-- CLIENTS TABLE -->
           <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             <div class="px-5 py-4 border-b border-slate-200 bg-slate-50/70 flex justify-between items-center">
               <h3 class="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-800">সকল গ্রাহক ও প্রজেক্ট খাতা</h3>
@@ -361,7 +337,6 @@
               </table>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -390,8 +365,8 @@
           <div>
             <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">লেনদেনের ধরন</label>
             <select id="tx-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none focus:border-rose-600 font-bold shadow-2xs text-slate-800">
-              <option value="income">🟢 টাকা জমা (Cash In/Debit)</option>
-              <option value="expense">🔴 প্রজেক্ট খরচ (Cash Out/Credit)</option>
+              <option value="income">🟢 টাকা জমা (Debit)</option>
+              <option value="expense">🔴 প্রজেক্ট খরচ (Credit)</option>
             </select>
           </div>
 
@@ -431,7 +406,7 @@
                 <option value="Staff Salary">Staff Salary</option>
                 <option value="Office Rent">Office Rent</option>
                 <option value="Utility Bill">Utility Bills</option>
-                <option value="Conveyance">Conveyance / Logistics</option>
+                <option value="Conveyance">Conveyance/ Logistics</option>
                 <option value="Others">Miscellaneous Expense</option>
               </select>
             </div>
@@ -482,8 +457,8 @@
             <div>
               <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">লেনদেনের ধরন</label>
               <select id="ow-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs text-slate-800 font-bold">
-                <option value="injection">🟢 ফান্ড ইনজেক্ট (ফান্ড / ভর্তুকি)</option>
-                <option value="drawing">🔴 ক্যাশ উত্তোলন (তোলা ক্যাশ)</option>
+                <option value="injection">🟢 ক্যাশ জমা </option>
+                <option value="drawing">🔴 ক্যাশ উত্তোলন </option>
               </select>
             </div>
             <div>
@@ -491,8 +466,8 @@
               <input type="number" id="ow-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none font-mono shadow-2xs font-bold text-slate-800">
             </div>
             <div>
-              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">বিবরণ / নোট</label>
-              <input type="text" id="ow-details" placeholder="যেমন: লোন বা ক্যাশ ড্র" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs font-medium text-slate-800">
+              <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">বিবরণ/নোট</label>
+              <input type="text" id="ow-details" placeholder="যেমন: ব্যক্তিগত প্রয়োজনে ক্যাশ লোন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs md:text-sm outline-none shadow-2xs font-medium text-slate-800">
             </div>
             <div>
               <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">তারিখ</label>
@@ -517,6 +492,37 @@
               <tbody id="owner-expense-rows" class="divide-y divide-slate-100 font-semibold text-slate-800"></tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: TRASH / RESTORE TAB (নতুন যুক্ত করা হয়েছে) -->
+    <div id="tab-trash-view" class="tab-content space-y-6 hidden">
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-base">🗑️</div>
+            <div>
+              <h3 class="text-sm md:text-base font-bold text-slate-900">ট্র্যাশ বিন (Trash)</h3>
+              <p class="text-xs text-slate-500">ডিলিট হওয়া কাস্টমারদের তথ্য এখান থেকে ফেরত (Restore) অথবা চিরতরে মুছে (Permanently Delete) ফেলতে পারবেন।</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+          <table class="w-full text-left border-collapse text-xs md:text-sm">
+            <thead>
+              <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[11px] border-b border-slate-200">
+                <th class="p-4 pl-5">গ্রাহক ও প্রজেক্ট</th>
+                <th class="p-4">মোবাইল</th>
+                <th class="p-4 text-right">চুক্তি</th>
+                <th class="p-4 text-center">অ্যাকশন (Restore / Permanent Delete)</th>
+              </tr>
+            </thead>
+            <tbody id="trash-table-body" class="divide-y divide-slate-100 font-semibold text-slate-800">
+              <!-- JS dynamic render -->
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -551,7 +557,7 @@
 
   <!-- BOTTOM NAVIGATION (Mobile Only) -->
   <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 z-40 shadow-xl md:hidden">
-    <div class="grid grid-cols-5 text-center py-2">
+    <div class="grid grid-cols-6 text-center py-2">
       <button onclick="switchTab('client-view')" id="btn-client-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[10px] font-bold py-1">
         <span class="text-base">➕</span><span>গ্রাহক</span>
       </button>
@@ -566,6 +572,9 @@
       </button>
       <button onclick="switchTab('owner-view')" id="btn-owner-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[10px] font-bold py-1">
         <span class="text-base">💼</span><span>মূলধন</span>
+      </button>
+      <button onclick="switchTab('trash-view')" id="btn-trash-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[10px] font-bold py-1">
+        <span class="text-base">🗑️</span><span>ট্র্যাশ</span>
       </button>
     </div>
   </nav>
@@ -604,8 +613,6 @@
     const rtdb = firebase.database();
 
     const SECURITY_PASSCODE = "6219";
-    const CORRECT_PIN = "6219"; 
-    let enteredPin = "";
 
     let farmData = [];
     let officeExpenses = [];
@@ -627,6 +634,7 @@
     const ownerTxForm = document.getElementById('owner-tx-form');
     
     const tableBody = document.getElementById('clients-table-body');
+    const trashTableBody = document.getElementById('trash-table-body');
     const officeExpenseRows = document.getElementById('office-expense-rows');
     const ownerExpenseRows = document.getElementById('owner-expense-rows');
     const ledgerDrawer = document.getElementById('ledger-drawer');
@@ -651,61 +659,6 @@
       });
     }
 
-    // PIN Pad Functions
-    window.pressKey = function(num) {
-      if (enteredPin.length < 4) {
-        enteredPin += num;
-        updateDots();
-        if (enteredPin.length === 4) {
-          setTimeout(verifyPin, 150);
-        }
-      }
-    };
-
-    window.deleteKey = function() {
-      if (enteredPin.length > 0) {
-        enteredPin = enteredPin.slice(0, -1);
-        updateDots();
-      }
-    };
-
-    function updateDots() {
-      for (let i = 0; i < 4; i++) {
-        const dot = document.getElementById(`dot-${i}`);
-        if (dot) {
-          if (i < enteredPin.length) {
-            dot.className = "w-4 h-4 rounded-full bg-rose-600 border-2 border-rose-600 scale-110 transition-all duration-200";
-          } else {
-            dot.className = "w-4 h-4 rounded-full border-2 border-gray-400 transition-all duration-200";
-          }
-        }
-      }
-    }
-
-    function verifyPin() {
-      const statusText = document.getElementById('pinStatusText');
-      if (enteredPin === CORRECT_PIN) {
-        const lockScreen = document.getElementById('pinLockScreen');
-        lockScreen.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        lockScreen.style.opacity = '0';
-        lockScreen.style.transform = 'scale(0.95)';
-        setTimeout(() => { lockScreen.style.display = 'none'; }, 300);
-      } else {
-        if(statusText) {
-          statusText.innerText = "ভুল PIN! আবার চেষ্টা করুন";
-          statusText.className = "text-sm font-semibold text-rose-600 mb-6 animate-bounce";
-        }
-        enteredPin = "";
-        setTimeout(() => {
-          updateDots();
-          if(statusText) {
-            statusText.className = "text-sm font-semibold text-gray-700 mb-6";
-            statusText.innerText = "PIN দিয়ে লগইন করুন";
-          }
-        }, 1000);
-      }
-    }
-
     window.switchTab = function(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       const target = document.getElementById(`tab-${tabId}`);
@@ -722,7 +675,7 @@
       });
       const activeMobBtn = document.getElementById(`btn-${tabId}-mob`);
       if(activeMobBtn) activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[10px] font-bold py-1 transition scale-105";
-    };
+    }
 
     window.setClientFilter = function(filterType) {
       activeClientFilter = filterType;
@@ -733,7 +686,7 @@
       const activeBtn = document.getElementById(`filter-btn-${filterType}`);
       if(activeBtn) activeBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
       renderMasterTable();
-    };
+    }
 
     uiUpdatePipeline();
     setClientFilter('all');
@@ -772,6 +725,15 @@
         document.getElementById('status-text').innerText = "Online (Live Sync)";
         document.getElementById('user-display-name').innerText = user.displayName;
         document.getElementById('user-avatar').src = user.photoURL || "https://via.placeholder.com/150";
+
+        // ১. ইউজারের প্রফাইল ডাটাবেজে সেভ/আপডেট করা (Gmail ID, Email, Name)
+        rtdb.ref('users/' + user.uid).update({
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          lastLogin: new Date().toISOString()
+        });
 
         databasePathRef = rtdb.ref('rajuk_erp_data/' + user.uid);
         subscribeToCloudStreams();
@@ -826,6 +788,7 @@
       calculateGlobalMetrics();
       renderDropdown();
       renderMasterTable();
+      renderTrashTable();
       renderOfficeExpenses();
       renderOwnerTransactions();
       if(openLedgerId) refreshDrawer(openLedgerId);
@@ -849,7 +812,8 @@
       const startOfMonth = new Date(targetYear, targetMonth, 1);
       const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
-      farmData.forEach(c => {
+      // শুধুমাত্র Active (isTrashed: true না থাকা) ক্লায়েন্টদের মেট্রিক্স হিসাব করবে
+      farmData.filter(c => !c.isTrashed).forEach(c => {
         budget += c.budget; 
         let cIncome = 0;
         
@@ -997,6 +961,7 @@
           project: document.getElementById('project-title').value,
           budget: parseFloat(document.getElementById('project-budget').value),
           date: document.getElementById('client-date').value,
+          isTrashed: false,
           history: []
         };
         databasePathRef.child('clients').push(newClient);
@@ -1096,10 +1061,11 @@
 
       function filterDropdownItems(query) {
         itemsContainer.innerHTML = '';
-        const filtered = farmData.filter(c => 
+        // শুধুমাত্র Active প্রজেক্ট ড ড্রপডাউনে দেখাবে
+        const filtered = farmData.filter(c => !c.isTrashed && (
           c.project.toLowerCase().includes(query.toLowerCase()) || 
           c.name.toLowerCase().includes(query.toLowerCase())
-        );
+        ));
 
         if (filtered.length === 0) {
           itemsContainer.innerHTML = `<div class="p-3 text-xs md:text-sm text-slate-400 text-center font-medium">কোনো প্রজেক্ট পাওয়া যায়নি</div>`;
@@ -1126,12 +1092,15 @@
       if (!tableBody) return;
       const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-      if (farmData.length === 0) {
+      // শুধুমাত্র সক্রিয় ক্লায়েন্ট দেখাবে (isTrashed: false/undefined)
+      let activeClients = farmData.filter(c => !c.isTrashed);
+
+      if (activeClients.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400 font-semibold">কোনো হিসাব বা গ্রাহক পাওয়া যায়নি। নতুন গ্রাহক যোগ করুন।</td></tr>`;
         return;
       }
 
-      let filteredData = farmData.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query) || c.project.toLowerCase().includes(query));
+      let filteredData = activeClients.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query) || c.project.toLowerCase().includes(query));
       if (activeClientFilter === 'new') filteredData = filteredData.filter(c => !c.history.some(t => t.type === 'income'));
       else if (activeClientFilter === 'old') filteredData = filteredData.filter(c => c.history.some(t => t.type === 'income'));
 
@@ -1162,11 +1131,43 @@
           <td class="p-4 text-center" onclick="event.stopPropagation()">
             <div class="flex justify-center items-center gap-2">
               <button onclick="openDrawer('${c.id}')" class="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-2xs">লেজার</button>
-              <button onclick="deleteClient('${c.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5 transition">✕</button>
+              <button onclick="trashClient('${c.id}')" title="ট্র্যাশ এ পাঠান" class="text-slate-400 hover:text-rose-600 font-bold p-1.5 transition">🗑️</button>
             </div>
           </td>
         `;
         tableBody.appendChild(tr);
+      });
+    }
+
+    // ট্র্যাশ টেবিল রেন্ডার করার ফাংশন
+    function renderTrashTable() {
+      if (!trashTableBody) return;
+      let trashedClients = farmData.filter(c => c.isTrashed);
+
+      if (trashedClients.length === 0) {
+        trashTableBody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400 font-semibold">ট্র্যাশে কোনো ডিলিট হওয়া গ্রাহক নেই।</td></tr>`;
+        return;
+      }
+
+      trashTableBody.innerHTML = '';
+      trashedClients.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50/90 transition border-b border-slate-100";
+        tr.innerHTML = `
+          <td class="p-4 pl-5">
+            <div class="font-bold text-slate-900 text-sm">${c.project}</div>
+            <div class="text-xs text-slate-500 font-medium mt-0.5">${c.name}</div>
+          </td>
+          <td class="p-4 font-mono text-slate-700 text-xs md:text-sm">${c.phone}</td>
+          <td class="p-4 text-right font-bold text-slate-800">৳${c.budget.toLocaleString('en-IN')}</td>
+          <td class="p-4 text-center">
+            <div class="flex justify-center items-center gap-2">
+              <button onclick="restoreClient('${c.id}')" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-2xs">♻️ Restore</button>
+              <button onclick="deleteClientPermanently('${c.id}')" class="bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-2xs">❌ Delete Permanent</button>
+            </div>
+          </td>
+        `;
+        trashTableBody.appendChild(tr);
       });
     }
 
@@ -1245,12 +1246,12 @@
         refreshDrawer(id);
         ledgerDrawer.scrollIntoView({ behavior: 'smooth' });
       }
-    };
+    }
 
     window.closeDrawer = function() {
       openLedgerId = null;
       if (ledgerDrawer) ledgerDrawer.classList.add('hidden');
-    };
+    }
 
     function refreshDrawer(id) {
       const client = farmData.find(c => c.id === id);
@@ -1276,10 +1277,27 @@
       });
     }
 
-    window.deleteClient = function(id) {
+    // Soft Delete (Trash)
+    window.trashClient = function(id) {
       if(!databasePathRef) return;
       requestPasscodeAuth(() => {
-        databasePathRef.child('clients').child(id).remove().then(() => { if(openLedgerId === id) closeDrawer(); });
+        databasePathRef.child('clients').child(id).update({ isTrashed: true }).then(() => {
+          if(openLedgerId === id) closeDrawer();
+        });
+      });
+    };
+
+    // Restore From Trash
+    window.restoreClient = function(id) {
+      if(!databasePathRef) return;
+      databasePathRef.child('clients').child(id).update({ isTrashed: false });
+    };
+
+    // Permanent Delete From Database
+    window.deleteClientPermanently = function(id) {
+      if(!databasePathRef) return;
+      requestPasscodeAuth(() => {
+        databasePathRef.child('clients').child(id).remove();
       });
     };
 
@@ -1302,8 +1320,64 @@
         databasePathRef.child('clients').child(clientId).update({ history: updatedHistory });
       });
     };
+
+    const CORRECT_PIN = "6219"; 
+    let enteredPin = "";
+
+    function pressKey(num) {
+      if (enteredPin.length < 4) {
+        enteredPin += num;
+        updateDots();
+        
+        if (enteredPin.length === 4) {
+          setTimeout(verifyPin, 150);
+        }
+      }
+    }
+
+    function deleteKey() {
+      if (enteredPin.length > 0) {
+        enteredPin = enteredPin.slice(0, -1);
+        updateDots();
+      }
+    }
+
+    function updateDots() {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (i < enteredPin.length) {
+          dot.className = "w-4 h-4 rounded-full bg-rose-600 border-2 border-rose-600 scale-110 transition-all duration-200";
+        } else {
+          dot.className = "w-4 h-4 rounded-full border-2 border-gray-400 transition-all duration-200";
+        }
+      }
+    }
+
+    function verifyPin() {
+      const statusText = document.getElementById('pinStatusText');
+      
+      if (enteredPin === CORRECT_PIN) {
+        const lockScreen = document.getElementById('pinLockScreen');
+        lockScreen.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        lockScreen.style.opacity = '0';
+        lockScreen.style.transform = 'scale(0.95)';
+        
+        setTimeout(() => {
+          lockScreen.style.display = 'none';
+        }, 300);
+      } else {
+        statusText.innerText = "ভুল PIN! আবার চেষ্টা করুন";
+        statusText.className = "text-sm font-semibold text-rose-600 mb-6 animate-bounce";
+        
+        enteredPin = "";
+        setTimeout(() => {
+          updateDots();
+          statusText.className = "text-sm font-semibold text-gray-700 mb-6";
+          statusText.innerText = "PIN দিয়ে লগইন করুন";
+        }, 1000);
+      }
+    }
   </script>
-  
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
