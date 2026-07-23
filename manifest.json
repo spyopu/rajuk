@@ -1,13 +1,14 @@
 {
   "name": "Digital Khata",
   "short_name": "Khata",
-  "start_url": "/",
+  "start_url": "/rajuk/",
+  "scope": "/rajuk/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#e11d48",
   "icons": [
     {
-      "src": "logo.svg",
+      "src": "/rajuk/favicon.svg",
       "sizes": "512x512",
       "type": "image/svg+xml"
     }
