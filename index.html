@@ -49,7 +49,65 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="text-slate-900 antialiased selection:bg-rose-500 selection:text-white min-h-screen flex flex-col justify-between pb-16 md:pb-6">
+  <!-- Passcode Lock Screen Overlay -->
+<div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col justify-between items-center py-8 px-6 select-none font-sans">
+  
+  <!-- Top Header Section -->
+  <div class="flex flex-col items-center mt-6">
+    <!-- App Logo / Title -->
+    <div class="flex items-center gap-2 mb-1">
+      <div class="bg-rose-600 text-white p-2 rounded-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      </div>
+      <span class="text-2xl font-bold text-gray-800 tracking-tight">Digital<span class="text-rose-600">Khata</span></span>
+    </div>
+    <p class="text-xs text-gray-500 font-medium">স্মার্ট ডিজিটাল হিসাব খাতা</p>
+  </div>
 
+  <!-- Middle PIN Section -->
+  <div class="flex flex-col items-center w-full max-w-xs">
+    <p id="pinStatusText" class="text-sm font-semibold text-gray-700 mb-6">PIN দিয়ে লগইন করুন</p>
+    
+    <!-- PIN Circles -->
+    <div class="flex justify-center items-center gap-5 mb-8">
+      <div id="dot-0" class="w-4 h-4 rounded-full border-2 border-gray-400 transition-all duration-200"></div>
+      <div id="dot-1" class="w-4 h-4 rounded-full border-2 border-gray-400 transition-all duration-200"></div>
+      <div id="dot-2" class="w-4 h-4 rounded-full border-2 border-gray-400 transition-all duration-200"></div>
+      <div id="dot-3" class="w-4 h-4 rounded-full border-2 border-gray-400 transition-all duration-200"></div>
+    </div>
+
+    <!-- Forgot PIN Button -->
+    <button onclick="alert('পাসকোড রিসেট করতে অ্যাডমিনের সাথে যোগাযোগ করুন অথবা ডাটা ক্লিয়ার করুন।')" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-full text-xs font-medium transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 0121 9z" />
+      </svg>
+      PIN ভুলে গেছেন?
+    </button>
+  </div>
+
+  <!-- Bottom Keypad Section -->
+  <div class="w-full max-w-xs grid grid-cols-3 gap-3 mb-4">
+    <button onclick="pressKey('1')" class="py-3.5 bg-gray-50 active:bg-gray-200 text-gray-800 text-xl font-semibold rounded-xl shadow-sm transition flex justify-center items-center">1</button>
+    <button onclick="pressKey('2')" class="py-3.5 bg-gray-50 active:bg-gray-200 text-gray-800 text-xl font-semibold rounded-xl shadow-sm transition flex justify-center items-center">2</button>
+    <button onclick="pressKey('3')" class="py-3.5 bg-gray-50 active:bg-gray-200 text-gray-800 text-xl font-semibold rounded-xl shadow-sm transition flex justify-center items-center">3</button>
+    <button onclick="pressKey('4')" class="py-3.5 bg-gray-50 active:bg-gray-200 text-gray-800 text-xl font-semibold rounded-xl shadow-sm transition flex justify-center items-center">4</button>
+    <button onclick="pressKey('5')" class="py-3.5 bg-gray-50 active:bg-gray-200 text-gray-800 text-xl font-semibold rounded-xl shadow-sm transition flex justify-center items-center">5</button>
+    <button onclick="pressKey('6')" class="py-3.5 bg-gray-50 active:bg-gray-200 text-gray-800 text-xl font-semibold rounded-xl shadow-sm transition flex justify-center items-center">6</button>
+    <button onclick="pressKey('7')" class="py-3.5 bg-gray-50 active:bg-gray-200 text-gray-800 text-xl font-semibold rounded-xl shadow-sm transition flex justify-center items-center">7</button>
+    <button onclick="pressKey('8')" class="py-3.5 bg-gray-50 active:bg-gray-200 text-gray-800 text-xl font-semibold rounded-xl shadow-sm transition flex justify-center items-center">8</button>
+    <button onclick="pressKey('9')" class="py-3.5 bg-gray-50 active:bg-gray-200 text-gray-800 text-xl font-semibold rounded-xl shadow-sm transition flex justify-center items-center">9</button>
+    <div></div>
+    <button onclick="pressKey('0')" class="py-3.5 bg-gray-50 active:bg-gray-200 text-gray-800 text-xl font-semibold rounded-xl shadow-sm transition flex justify-center items-center">0</button>
+    <button onclick="deleteKey()" class="py-3.5 bg-gray-50 active:bg-gray-200 text-gray-700 rounded-xl shadow-sm transition flex justify-center items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414-6.414a2 2 0 011.414-.586H19a2 2 0 012 2v12a2 2 0 01-2 2H10.828a2 2 0 01-1.414-.586L3 12z" />
+      </svg>
+    </button>
+  </div>
+
+</div>
   <!-- TOP HEADER -->
   <header class="bg-rose-600 text-white sticky top-0 z-45 shadow-md">
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -1184,6 +1242,69 @@
         databasePathRef.child('clients').child(clientId).update({ history: updatedHistory });
       });
     };
+    // আপনার ডিফল্ট পাসকোড (প্রয়োজনে পরিবর্তন করে নিতে পারেন)
+const CORRECT_PIN = "1234"; 
+let enteredPin = "";
+
+function pressKey(num) {
+  if (enteredPin.length < 4) {
+    enteredPin += num;
+    updateDots();
+    
+    // ৪ ডিজিট ইনপুট হয়ে গেলে পিন ভেরিফাই করবে
+    if (enteredPin.length === 4) {
+      setTimeout(verifyPin, 150);
+    }
+  }
+}
+
+function deleteKey() {
+  if (enteredPin.length > 0) {
+    enteredPin = enteredPin.slice(0, -1);
+    updateDots();
+  }
+}
+
+function updateDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    if (i < enteredPin.length) {
+      // ফিল্ড ডট (বোল্ড কালার)
+      dot.className = "w-4 h-4 rounded-full bg-rose-600 border-2 border-rose-600 scale-110 transition-all duration-200";
+    } else {
+      // খালি ডট
+      dot.className = "w-4 h-4 rounded-full border-2 border-gray-400 transition-all duration-200";
+    }
+  }
+}
+
+function verifyPin() {
+  const statusText = document.getElementById('pinStatusText');
+  
+  if (enteredPin === CORRECT_PIN) {
+    // পিন সঠিক হলে স্মুথলি স্ক্রিন হাইড হবে
+    const lockScreen = document.getElementById('pinLockScreen');
+    lockScreen.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    lockScreen.style.opacity = '0';
+    lockScreen.style.transform = 'scale(0.95)';
+    
+    setTimeout(() => {
+      lockScreen.style.display = 'none';
+    }, 300);
+  } else {
+    // পিন ভুল হলে লাল কালার ও এরর বার্তা দেখাবে
+    statusText.innerText = "ভুল PIN! আবার চেষ্টা করুন";
+    statusText.className = "text-sm font-semibold text-rose-600 mb-6 animate-bounce";
+    
+    // ডটগুলো রিসেট করবে
+    enteredPin = "";
+    setTimeout(() => {
+      updateDots();
+      statusText.className = "text-sm font-semibold text-gray-700 mb-6";
+      statusText.innerText = "PIN দিয়ে লগইন করুন";
+    }, 1000);
+  }
+}
   </script>
   <script>
     if ('serviceWorker' in navigator) {
