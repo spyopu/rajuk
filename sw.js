@@ -1,4 +1,4 @@
-const CACHE_NAME = 'digital-khata-v4';
+const CACHE_NAME = 'digital-khata-v5';
 const assetsToCache = [
   '/rajuk/',
   '/rajuk/index.html',
@@ -6,7 +6,6 @@ const assetsToCache = [
   'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap'
 ];
 
-// Install Event
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -16,7 +15,6 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate Event
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -32,26 +30,23 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event (Network First, falling back to cache and index.html)
 self.addEventListener('fetch', (event) => {
-  // শুধুমাত্র GET রিকোয়েস্টগুলোর জন্য সার্ভিস ওয়ার্কার কাজ করবে
-  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+
+  // যদি রিকোয়েস্টটি রুট বা rajuk ফোল্ডারের হয়, তবে সরাসরি index.html সার্ভ করবে
+  if (url.pathname === '/rajuk' || url.pathname === '/rajuk/') {
+    event.respondWith(caches.match('/rajuk/index.html'));
+    return;
+  }
 
   event.respondWith(
-    fetch(event.request)
-      .then((networkResponse) => {
-        // নেটওয়ার্ক থেকে সফলভাবে রেসপন্স পেলে সেটি রিটার্ন করুন
-        return networkResponse;
-      })
-      .catch(() => {
-        // ইন্টারনেট না থাকলে বা ফেইল করলে ক্যাশ থেকে খোঁজার চেষ্টা করুন
-        return caches.match(event.request).then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          // ক্যাশেও না পেলে সরাসরি মূল পেজ বা ইনডেক্স ফাইলে পাঠিয়ে দিন
-          return caches.match('/rajuk/index.html');
-        });
-      })
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(event.request).catch(() => {
+        return caches.match('/rajuk/index.html');
+      });
+    })
   );
 });
