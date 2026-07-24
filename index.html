@@ -59,9 +59,68 @@
   <div class="flex flex-col items-center mt-4 md:mt-8 mb-2">
     <!-- Rounded Soft SVG Book Logo -->
     <div class="w-16 h-16 bg-[#e11d48] text-white rounded-2xl shadow-md flex items-center justify-center mb-3">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- গোল্ডেন নিব টিপ (উজ্জ্বলতার জন্য সামান্য অ্যাডজাস্ট করা) -->
+    <linearGradient id="nibGoldLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF8E1"/>
+      <stop offset="100%" stop-color="#FFD700"/>
+    </linearGradient>
+
+    <!-- ফ্যাভিকন শ্যাডো (সাদা বর্ডারে ডেপথের জন্য) -->
+    <filter id="whiteLogoShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- লাল ব্যাকগ্রাউন্ডের জন্য ইনভার্টেড লোগো গ্রুপ -->
+  <g id="white-notepenn-d" filter="url(#whiteLogoShadow)">
+    
+    <!-- ১. মূল 'D' বডি - এখন সম্পূর্ণ সাদা -->
+    <path d="M 106 60 
+             L 286 60 
+             C 374 60, 446 148, 446 256 
+             C 446 352, 380 430, 286 430 
+             L 216 430 
+             C 216 430, 226 385, 226 370 
+             L 286 370 
+             C 330 370, 366 318, 366 256 
+             C 366 194, 330 140, 286 140 
+             L 166 140 
+             L 166 350 
+             L 86 350 
+             L 86 80 
+             C 86 69, 95 60, 106 60 Z" 
+          fill="#FFFFFF"/>
+
+    <!-- ২. শার্প পেন নিব - সাদা বডি -->
+    <path d="M 86 350 
+             L 166 350 
+             Q 156 410, 126 455 
+             Q 96 410, 86 350 Z" 
+          fill="#FFFFFF"/>
+
+    <!-- ৩. গোল্ডেন নিব টিপ - এটি লাল ব্যাকগ্রাউন্ডে চমৎকার ফুটবে -->
+    <path d="M 110 420 L 142 420 L 126 455 Z" fill="url(#nibGoldLight)"/>
+
+    <!-- নিব স্প্লিট ও হার্ট হোল (ব্যাকগ্রাউন্ডের লালের সাথে ম্যাচ করা) -->
+    <circle cx="126" cy="380" r="5" fill="#E21829"/> <!-- ব্যাকগ্রাউন্ডের লাল কালার -->
+    <line x1="126" y1="385" x2="126" y2="435" stroke="#E21829" stroke-width="3.5" stroke-linecap="round"/>
+
+    <!-- ৪. ওপরের ক্যাপ শাইন ডিটেইল (সাদার সাথে সামান্য শাইন) -->
+    <rect x="96" y="85" width="60" height="10" rx="5" fill="#E21829" opacity="0.1"/>
+
+    <!-- ৫. 'D' এর মাঝখানের খাতার অনুভূমিক লাইনসমূহ (হালকা লাল/ধূসর ভিজিবিলিটি) -->
+    <g id="horizontal-lines" opacity="0.2">
+      <line x1="180" y1="185" x2="310" y2="185" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="220" x2="335" y2="220" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="255" x2="340" y2="255" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="290" x2="335" y2="290" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="325" x2="310" y2="325" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>
+
     </div>
 
     <!-- Title Text -->
@@ -89,9 +148,68 @@
 
     <!-- Forgot PIN Button -->
     <button onclick="alert('পাসকোড রিসেট করতে অ্যাডমিনের সাথে যোগাযোগ করুন অথবা ডাটা ক্লিয়ার করুন।')" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 px-4 py-2 rounded-full text-xs font-medium transition-all duration-150">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 0121 9z" />
-      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- গোল্ডেন নিব টিপ (উজ্জ্বলতার জন্য সামান্য অ্যাডজাস্ট করা) -->
+    <linearGradient id="nibGoldLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF8E1"/>
+      <stop offset="100%" stop-color="#FFD700"/>
+    </linearGradient>
+
+    <!-- ফ্যাভিকন শ্যাডো (সাদা বর্ডারে ডেপথের জন্য) -->
+    <filter id="whiteLogoShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- লাল ব্যাকগ্রাউন্ডের জন্য ইনভার্টেড লোগো গ্রুপ -->
+  <g id="white-notepenn-d" filter="url(#whiteLogoShadow)">
+    
+    <!-- ১. মূল 'D' বডি - এখন সম্পূর্ণ সাদা -->
+    <path d="M 106 60 
+             L 286 60 
+             C 374 60, 446 148, 446 256 
+             C 446 352, 380 430, 286 430 
+             L 216 430 
+             C 216 430, 226 385, 226 370 
+             L 286 370 
+             C 330 370, 366 318, 366 256 
+             C 366 194, 330 140, 286 140 
+             L 166 140 
+             L 166 350 
+             L 86 350 
+             L 86 80 
+             C 86 69, 95 60, 106 60 Z" 
+          fill="#FFFFFF"/>
+
+    <!-- ২. শার্প পেন নিব - সাদা বডি -->
+    <path d="M 86 350 
+             L 166 350 
+             Q 156 410, 126 455 
+             Q 96 410, 86 350 Z" 
+          fill="#FFFFFF"/>
+
+    <!-- ৩. গোল্ডেন নিব টিপ - এটি লাল ব্যাকগ্রাউন্ডে চমৎকার ফুটবে -->
+    <path d="M 110 420 L 142 420 L 126 455 Z" fill="url(#nibGoldLight)"/>
+
+    <!-- নিব স্প্লিট ও হার্ট হোল (ব্যাকগ্রাউন্ডের লালের সাথে ম্যাচ করা) -->
+    <circle cx="126" cy="380" r="5" fill="#E21829"/> <!-- ব্যাকগ্রাউন্ডের লাল কালার -->
+    <line x1="126" y1="385" x2="126" y2="435" stroke="#E21829" stroke-width="3.5" stroke-linecap="round"/>
+
+    <!-- ৪. ওপরের ক্যাপ শাইন ডিটেইল (সাদার সাথে সামান্য শাইন) -->
+    <rect x="96" y="85" width="60" height="10" rx="5" fill="#E21829" opacity="0.1"/>
+
+    <!-- ৫. 'D' এর মাঝখানের খাতার অনুভূমিক লাইনসমূহ (হালকা লাল/ধূসর ভিজিবিলিটি) -->
+    <g id="horizontal-lines" opacity="0.2">
+      <line x1="180" y1="185" x2="310" y2="185" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="220" x2="335" y2="220" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="255" x2="340" y2="255" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="290" x2="335" y2="290" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="325" x2="310" y2="325" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>
+
       PIN ভুলে গেছেন?
     </button>
   </div>
