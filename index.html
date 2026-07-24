@@ -62,10 +62,15 @@
         display: none !important;
       }
       /* Hide elements not required in print output */
-      #pinLockScreen, header, nav, #securityModal {
+      #pinLockScreen, header, nav, #securityModal, #editModal {
         display: none !important;
       }
-      .accordion-content {
+      
+      /* Hide accordion contents during print IF they have the 'hidden' class */
+      .accordion-content.hidden {
+        display: none !important;
+      }
+      .accordion-content:not(.hidden) {
         display: block !important;
       }
     }
@@ -81,10 +86,7 @@
   
   <!-- Passcode Lock Screen Overlay -->
   <div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center gap-6 py-6 px-4 select-none font-sans overflow-y-auto">
-    
-    <!-- Login / Passcode Header -->
     <div class="flex flex-col items-center">
-      <!-- Red Pen-D Logo -->
       <div class="w-16 h-16 flex items-center justify-center mb-1">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
           <defs>
@@ -115,8 +117,6 @@
           </g>
         </svg>
       </div>
-
-      <!-- Brand Name Text -->
       <div class="text-center">
         <h1 class="text-2xl font-bold tracking-tight text-slate-800">
           Digital<span class="text-[#E21829]">Khata</span>
@@ -125,19 +125,14 @@
       </div>
     </div>
 
-    <!-- Middle PIN Section -->
     <div class="flex flex-col items-center w-full max-w-xs">
       <p id="pinStatusText" class="text-xs font-semibold text-gray-700 mb-2.5">PIN দিয়ে লগইন করুন</p>
-      
-      <!-- PIN Circles -->
       <div class="flex justify-center items-center gap-4 mb-3">
         <div id="dot-0" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
         <div id="dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
         <div id="dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
         <div id="dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
       </div>
-
-      <!-- Forgot PIN Button -->
       <button onclick="alert('পাসকোড রিসেট করতে অ্যাডমিনের সাথে যোগাযোগ করুন অথবা ডাটা ক্লিয়ার করুন।')" class="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all duration-150">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 0121 9z" />
@@ -146,7 +141,6 @@
       </button>
     </div>
 
-    <!-- Bottom Keypad Section -->
     <div class="w-full max-w-xs grid grid-cols-3 gap-2.5 mb-2">
       <button onpointerdown="pressKey('1')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">1</button>
       <button onpointerdown="pressKey('2')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">2</button>
@@ -170,10 +164,7 @@
   <!-- TOP HEADER -->
   <header class="bg-rose-600 text-white sticky top-0 z-45 shadow-md">
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-      
-      <!-- Left Side: Logo & Status -->
       <div class="flex items-center gap-3">
-        <!-- Clean App Icon Style Logo -->
         <div class="flex items-center gap-2.5">
           <div class="bg-white text-rose-600 w-9 h-9 rounded-xl shadow-sm flex items-center justify-center font-black text-lg tracking-tighter">
             <span class="text-amber-500 text-m">✍️</span>
@@ -183,8 +174,6 @@
             <span class="text-[10px] text-rose-100 font-semibold tracking-wider uppercase mt-1">Smart Ledger</span>
           </div>
         </div>
-        
-        <!-- স্ট্যাটাস ইন্ডিকেটর -->
         <div>
           <div class="flex items-center gap-1.5 mt-0.5 ml-2">
             <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-300 animate-pulse"></span>
@@ -193,10 +182,7 @@
         </div>
       </div>
 
-      <!-- Right Side: Auth & Profile -->
       <div class="flex items-center gap-3">
-        
-        <!-- গুগল লগইন বাটন -->
         <div id="sidebar-auth-section">
           <button id="google-login-btn" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold rounded-full p-2 transition shadow-sm flex items-center justify-center">
             <svg class="w-4 h-4" viewBox="0 0 24 24">
@@ -208,7 +194,6 @@
           </button>
         </div>
 
-        <!-- প্রোফাইল ট্রিগার ও ড্রপডাউন -->
         <div class="relative">
           <div id="profile-trigger" class="flex items-center gap-2.5 cursor-pointer p-1.5 px-3 rounded-xl hover:bg-rose-700 transition select-none hidden">
             <div class="text-right hidden sm:block">
@@ -282,11 +267,7 @@
 
     <!-- TAB 2: DASHBOARD & REPORTS -->
     <div id="tab-dashboard-view" class="tab-content space-y-6 hidden">
-      
-      <!-- SECURE REPORT & DASHBOARD WRAPPER -->
       <div id="pdf-report-container" class="space-y-6">
-        
-        <!-- SECURE HEADER & ACTIONS -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-2xs no-print">
           <div>
             <h3 class="text-xs md:text-sm font-bold text-slate-900 flex items-center gap-2">
@@ -304,10 +285,7 @@
           </div>
         </div>
 
-        <!-- MAIN LOCKABLE CONTENT BODY -->
         <div id="report-content-body" class="space-y-6 filter blur-md select-none pointer-events-none transition-all duration-300">
-          
-          <!-- TOP 5 METRIC CARDS -->
           <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5 text-center">
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
               <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">মোট বাজেট</p>
@@ -331,9 +309,7 @@
             </div>
           </div>
 
-          <!-- REPORT CARDS -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
             <!-- ১. লাভ-ক্ষতি সামারি রিপোর্ট (Accordion Enabled) -->
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
               <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -359,9 +335,7 @@
                     <span id="report-project-cost" class="font-mono text-rose-600 font-bold">৳0</span>
                   </div>
                   <div id="acc-project-cost" class="accordion-content hidden bg-white p-3 border-t border-slate-100 text-xs space-y-1.5 max-h-48 overflow-y-auto">
-                    <div id="acc-project-cost-list" class="space-y-1 text-slate-600">
-                      <!-- Dynamic items inserted via JS -->
-                    </div>
+                    <div id="acc-project-cost-list" class="space-y-1 text-slate-600"></div>
                   </div>
                 </div>
 
@@ -380,9 +354,7 @@
                     <span id="report-office-expense" class="font-mono text-rose-600 font-bold">৳0</span>
                   </div>
                   <div id="acc-office-cost" class="accordion-content hidden bg-white p-3 border-t border-slate-100 text-xs space-y-1.5 max-h-48 overflow-y-auto">
-                    <div id="acc-office-cost-list" class="space-y-1 text-slate-600">
-                      <!-- Dynamic items inserted via JS -->
-                    </div>
+                    <div id="acc-office-cost-list" class="space-y-1 text-slate-600"></div>
                   </div>
                 </div>
 
@@ -408,7 +380,7 @@
                   <span id="report-owner-in" class="font-mono text-emerald-600 font-bold">৳0</span>
                 </div>
 
-                <!-- ACCORDION 3: OWNER DRAWING (নেওয়া টাকা) -->
+                <!-- ACCORDION 3: OWNER DRAWING -->
                 <div class="border border-slate-200 rounded-xl overflow-hidden">
                   <div onclick="toggleAccordion('acc-owner-drawing')" class="flex justify-between items-center py-2.5 px-3 bg-slate-50 hover:bg-slate-100 cursor-pointer transition select-none">
                     <span class="flex items-center gap-1.5">
@@ -418,9 +390,7 @@
                     <span id="report-owner-out" class="font-mono text-rose-600 font-bold">৳0</span>
                   </div>
                   <div id="acc-owner-drawing" class="accordion-content hidden bg-white p-3 border-t border-slate-100 text-xs space-y-1.5 max-h-48 overflow-y-auto">
-                    <div id="acc-owner-drawing-list" class="space-y-1 text-slate-600">
-                      <!-- Dynamic items inserted via JS -->
-                    </div>
+                    <div id="acc-owner-drawing-list" class="space-y-1 text-slate-600"></div>
                   </div>
                 </div>
 
@@ -430,7 +400,6 @@
                 </div>
               </div>
             </div>
-
           </div>
           
           <!-- CLIENTS TABLE -->
@@ -464,7 +433,6 @@
 
         </div>
       </div>
-      
     </div>
 
     <!-- TAB 3: JOURNAL -->
@@ -561,7 +529,7 @@
                   <th class="p-3.5 pl-4">বিবরণ ও ক্যাটাগরি</th>
                   <th class="p-3.5">তারিখ</th>
                   <th class="p-3.5 text-right">পরিমাণ</th>
-                  <th class="p-3.5 text-center">মুছুন</th>
+                  <th class="p-3.5 text-center">অ্যাকশন</th>
                 </tr>
               </thead>
               <tbody id="office-expense-rows" class="divide-y divide-slate-100 font-semibold text-slate-800"></tbody>
@@ -612,7 +580,7 @@
                   <th class="p-3.5 pl-4">বিবরণ ও ধরন</th>
                   <th class="p-3.5">তারিখ</th>
                   <th class="p-3.5 text-right">পরিমাণ</th>
-                  <th class="p-3.5 text-center">মুছুন</th>
+                  <th class="p-3.5 text-center">অ্যাকশন</th>
                 </tr>
               </thead>
               <tbody id="owner-expense-rows" class="divide-y divide-slate-100 font-semibold text-slate-800"></tbody>
@@ -687,6 +655,61 @@
     </div>
   </div>
 
+  <!-- EDIT DATA MODAL (FOR OFFICE COST & OWNER CAPITAL EDIT) -->
+  <div id="editModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+        <h3 id="editModalTitle" class="text-sm font-bold text-slate-900">ডাটা এডিট করুন</h3>
+        <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+      </div>
+
+      <!-- EDIT FORM -->
+      <form id="genericEditForm" class="space-y-3">
+        <input type="hidden" id="edit-item-id">
+        <input type="hidden" id="edit-item-type"> <!-- 'office' or 'owner' -->
+
+        <div id="editCategoryGroup" class="hidden">
+          <label class="block text-xs font-bold text-slate-700 mb-1">ক্যাটাগরি</label>
+          <select id="edit-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none shadow-2xs text-slate-800 font-semibold">
+            <option value="Staff Salary">Staff Salary</option>
+            <option value="Office Rent">Office Rent</option>
+            <option value="Utility Bill">Utility Bills</option>
+            <option value="Conveyance">Conveyance/ Logistics</option>
+            <option value="Others">Miscellaneous Expense</option>
+          </select>
+        </div>
+
+        <div id="editTypeGroup" class="hidden">
+          <label class="block text-xs font-bold text-slate-700 mb-1">লেনদেনের ধরন</label>
+          <select id="edit-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none shadow-2xs text-slate-800 font-bold">
+            <option value="injection">🟢 ক্যাশ জমা (Injection)</option>
+            <option value="drawing">🔴 ক্যাশ উত্তোলন (Drawing)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">টাকার পরিমাণ (৳)</label>
+          <input type="number" id="edit-amount" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none font-mono font-bold text-slate-800">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">বিবরণ</label>
+          <input type="text" id="edit-details" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none font-medium text-slate-800">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">তারিখ</label>
+          <input type="date" id="edit-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none font-mono font-bold text-slate-800">
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeEditModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition">বাতিল</button>
+          <button type="submit" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">আপডেট করুন</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyD8kXy2rL9ptiPN4xEMg5h3o4RY_sPH79w",
@@ -724,6 +747,7 @@
     const txForm = document.getElementById('tx-form');
     const officeExpenseForm = document.getElementById('office-expense-form');
     const ownerTxForm = document.getElementById('owner-tx-form');
+    const genericEditForm = document.getElementById('genericEditForm');
     
     const tableBody = document.getElementById('clients-table-body');
     const officeExpenseRows = document.getElementById('office-expense-rows');
@@ -1176,6 +1200,81 @@
       });
     }
 
+    // GENERIC EDIT FORM SUBMISSION
+    if (genericEditForm) {
+      genericEditForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
+
+        const id = document.getElementById('edit-item-id').value;
+        const type = document.getElementById('edit-item-type').value;
+
+        if (type === 'office') {
+          const updateData = {
+            category: document.getElementById('edit-category').value,
+            amount: parseFloat(document.getElementById('edit-amount').value),
+            details: document.getElementById('edit-details').value,
+            date: document.getElementById('edit-date').value
+          };
+          databasePathRef.child('office_expenses').child(id).update(updateData);
+        } else if (type === 'owner') {
+          const updateData = {
+            type: document.getElementById('edit-type').value,
+            amount: parseFloat(document.getElementById('edit-amount').value),
+            details: document.getElementById('edit-details').value,
+            date: document.getElementById('edit-date').value
+          };
+          databasePathRef.child('owner_transactions').child(id).update(updateData);
+        }
+
+        closeEditModal();
+        uiUpdatePipeline();
+      });
+    }
+
+    // EDIT MODAL HANDLERS
+    window.openEditOfficeModal = function(id) {
+      const item = officeExpenses.find(oe => oe.id === id);
+      if (!item) return;
+
+      document.getElementById('editModalTitle').innerText = 'অফিস খরচ সম্পাদন (Edit)';
+      document.getElementById('edit-item-id').value = id;
+      document.getElementById('edit-item-type').value = 'office';
+
+      document.getElementById('editCategoryGroup').classList.remove('hidden');
+      document.getElementById('editTypeGroup').classList.add('hidden');
+
+      document.getElementById('edit-category').value = item.category || 'Staff Salary';
+      document.getElementById('edit-amount').value = item.amount;
+      document.getElementById('edit-details').value = item.details;
+      document.getElementById('edit-date').value = item.date;
+
+      document.getElementById('editModal').classList.remove('hidden');
+    };
+
+    window.openEditOwnerModal = function(id) {
+      const item = ownerTransactions.find(ow => ow.id === id);
+      if (!item) return;
+
+      document.getElementById('editModalTitle').innerText = 'মূলধন লেনদেন সম্পাদন (Edit)';
+      document.getElementById('edit-item-id').value = id;
+      document.getElementById('edit-item-type').value = 'owner';
+
+      document.getElementById('editCategoryGroup').classList.add('hidden');
+      document.getElementById('editTypeGroup').classList.remove('hidden');
+
+      document.getElementById('edit-type').value = item.type || 'injection';
+      document.getElementById('edit-amount').value = item.amount;
+      document.getElementById('edit-details').value = item.details;
+      document.getElementById('edit-date').value = item.date;
+
+      document.getElementById('editModal').classList.remove('hidden');
+    };
+
+    window.closeEditModal = function() {
+      document.getElementById('editModal').classList.add('hidden');
+    };
+
     function renderDropdown() {
       const trigger = document.getElementById('dropdown-trigger');
       const dropdownList = document.getElementById('custom-dropdown-list');
@@ -1301,7 +1400,12 @@
           <td class="p-4 pl-5 font-bold text-slate-900">${oe.details} <span class="text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-md font-bold ml-1">${oe.category}</span></td>
           <td class="p-4 text-slate-500 font-mono text-xs">${oe.date}</td>
           <td class="p-4 text-right font-bold text-rose-600">৳${oe.amount.toLocaleString('en-IN')}</td>
-          <td class="p-4 text-center"><button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5">✕</button></td>
+          <td class="p-4 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="openEditOfficeModal('${oe.id}')" class="text-slate-500 hover:text-rose-600 font-bold text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded-lg transition">✏️ এডিট</button>
+              <button onclick="deleteOfficeExpense('${oe.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5">✕</button>
+            </div>
+          </td>
         `;
         officeExpenseRows.appendChild(tr);
       });
@@ -1337,7 +1441,12 @@
           <td class="p-4 pl-5 font-bold text-slate-900">${ow.details} ${typeBadge}</td>
           <td class="p-4 text-slate-500 font-mono text-xs">${ow.date}</td>
           <td class="p-4 text-right font-bold ${ow.type === 'injection' ? 'text-emerald-600' : 'text-rose-600'}">${ow.type === 'injection' ? '+' : '-'}৳${ow.amount.toLocaleString('en-IN')}</td>
-          <td class="p-4 text-center"><button onclick="deleteOwnerTx('${ow.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5">✕</button></td>
+          <td class="p-4 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="openEditOwnerModal('${ow.id}')" class="text-slate-500 hover:text-amber-600 font-bold text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded-lg transition">✏️ এডিট</button>
+              <button onclick="deleteOwnerTx('${ow.id}')" class="text-slate-400 hover:text-rose-600 font-bold p-1.5">✕</button>
+            </div>
+          </td>
         `;
         ownerExpenseRows.appendChild(tr);
       });
