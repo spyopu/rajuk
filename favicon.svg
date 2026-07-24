@@ -1,12 +1,73 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <!-- Background Red Rounded Box -->
-  <rect width="512" height="512" rx="120" fill="#e11d48"/>
+  <defs>
+    <!-- টালিখাতার সিগনেচার রেড গ্রেডিয়েন্ট -->
+    <linearGradient id="tkRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF2A3B"/>
+      <stop offset="50%" stop-color="#E21829"/>
+      <stop offset="100%" stop-color="#8B000C"/>
+    </linearGradient>
+
+    <!-- গোল্ডেন নিব টিপ -->
+    <linearGradient id="nibGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE57F"/>
+      <stop offset="100%" stop-color="#FFAB00"/>
+    </linearGradient>
+
+    <!-- ফ্যাভিকন শ্যাডো -->
+    <filter id="favShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- মেইন 'D' পেন লোগো গ্রুপ -->
+  <g id="favicon-notebook-pen-d">
+    <!-- ১. মূল রেড 'D' বডি -->
+    <path d="M 106 60 
+             L 286 60 
+             C 374 60, 446 148, 446 256 
+             C 446 352, 380 430, 286 430 
+             L 216 430 
+             C 216 430, 226 385, 226 370 
+             L 286 370 
+             C 330 370, 366 318, 366 256 
+             C 366 194, 330 140, 286 140 
+             L 166 140 
+             L 166 350 
+             L 86 350 
+             L 86 80 
+             C 86 69, 95 60, 106 60 Z" 
+          fill="url(#tkRedGrad)"/>
+
+    <!-- ২. শার্প পেন নিব -->
+    <path d="M 86 350 
+             L 166 350 
+             Q 156 410, 126 455 
+             Q 96 410, 86 350 Z" 
+          fill="url(#tkRedGrad)"/>
+
+    <!-- গোল্ডেন নিব টিপ -->
+    <path d="M 110 420 L 142 420 L 126 455 Z" fill="url(#nibGold)"/>
+
+    <!-- নিব স্প্লিট ও হার্ট হোল -->
+    <circle cx="126" cy="380" r="5" fill="#FFFFFF"/>
+    <line x1="126" y1="385" x2="126" y2="435" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
+
+    <!-- ওপরের ক্যাপ শাইন ডিটেইল -->
+    <rect x="96" y="85" width="60" height="10" rx="5" fill="#FFFFFF" opacity="0.4"/>
+
+    <!-- ৩. 'D' এর মাঝখানের খাতার অনুভূমিক লাইনসমূহ -->
+    <g id="horizontal-lines" opacity="0.45">
+      <line x1="180" y1="185" x2="310" y2="185" stroke="#0055FF" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="220" x2="335" y2="220" stroke="#0055FF" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="255" x2="340" y2="255" stroke="#0055FF" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="290" x2="335" y2="290" stroke="#0055FF" stroke-width="5" stroke-linecap="round"/>
+      <line x1="180" y1="325" x2="310" y2="325" stroke="#0055FF" stroke-width="5" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- ৪. বোল্ড সাদা আউটলাইন (White Sticker Border) -->
+  <use href="#favicon-notebook-pen-d" stroke="#FFFFFF" stroke-width="26" stroke-linejoin="round" stroke-linecap="round" filter="url(#favShadow)"/>
   
-  <!-- White Book Icon -->
-  <path d="M256 160v220m0-220c-25-16.5-58.8-24-96-24s-71 7.5-96 24v220c25-16.5 58.8-24 96-24s71 7.5 96 24m0-220c25-16.5 58.8-24 96-24s71 7.5 96 24v220c-25-16.5-58.8-24-96-24s-71 7.5-96 24" 
-        fill="none" 
-        stroke="#ffffff" 
-        stroke-width="32" 
-        stroke-linecap="round" 
-        stroke-linejoin="round"/>
+  <!-- ৫. মূল রঙিন লোগোটি উপরে রেন্ডার -->
+  <use href="#favicon-notebook-pen-d" />
 </svg>
