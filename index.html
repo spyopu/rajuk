@@ -144,30 +144,29 @@
 <header class="bg-rose-600 text-white sticky top-0 z-45 shadow-md">
   <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
     
-    <!-- Left Side: Logo & Status -->
-    <div class="flex items-center gap-3">
-      <!-- Red Pen-D Logo (For White Page) -->
-  <div class="w-16 h-16 bg-white rounded-2xl shadow-md p-2.5 flex items-center justify-center mb-3 border border-slate-100">
+    <!-- Top Navbar Brand Section -->
+<div class="flex items-center gap-3">
+  
+  <!-- White Pen-D Logo Icon (For Red Navbar) -->
+  <div class="w-10 h-10 flex-shrink-0">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
       <defs>
-        <linearGradient id="tkRedGradMain" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#FF2A3B"/>
-          <stop offset="50%" stop-color="#E21829"/>
-          <stop offset="100%" stop-color="#8B000C"/>
-        </linearGradient>
-        <linearGradient id="nibGoldMain" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id="navNibGold" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stop-color="#FFE57F"/>
           <stop offset="100%" stop-color="#FFAB00"/>
         </linearGradient>
       </defs>
-      <g id="main-red-logo">
-        <path d="M 106 60 L 286 60 C 374 60, 446 148, 446 256 C 446 352, 380 430, 286 430 L 216 430 C 216 430, 226 385, 226 370 L 286 370 C 330 370, 366 318, 366 256 C 366 194, 330 140, 286 140 L 166 140 L 166 350 L 86 350 L 86 80 C 86 69, 95 60, 106 60 Z" fill="url(#tkRedGradMain)"/>
-        <path d="M 86 350 L 166 350 Q 156 410, 126 455 Q 96 410, 86 350 Z" fill="url(#tkRedGradMain)"/>
-        <path d="M 110 420 L 142 420 L 126 455 Z" fill="url(#nibGoldMain)"/>
-        <circle cx="126" cy="380" r="5" fill="#FFFFFF"/>
-        <line x1="126" y1="385" x2="126" y2="435" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
-        <rect x="96" y="85" width="60" height="10" rx="5" fill="#FFFFFF" opacity="0.4"/>
-        <g opacity="0.4">
+      <g id="nav-white-logo">
+        <!-- White 'D' Body & Pen Nib -->
+        <path d="M 106 60 L 286 60 C 374 60, 446 148, 446 256 C 446 352, 380 430, 286 430 L 216 430 C 216 430, 226 385, 226 370 L 286 370 C 330 370, 366 318, 366 256 C 366 194, 330 140, 286 140 L 166 140 L 166 350 L 86 350 L 86 80 C 86 69, 95 60, 106 60 Z" fill="#FFFFFF"/>
+        <path d="M 86 350 L 166 350 Q 156 410, 126 455 Q 96 410, 86 350 Z" fill="#FFFFFF"/>
+        <path d="M 110 420 L 142 420 L 126 455 Z" fill="url(#navNibGold)"/>
+        
+        <circle cx="126" cy="380" r="5" fill="#E21829"/>
+        <line x1="126" y1="385" x2="126" y2="435" stroke="#E21829" stroke-width="3.5" stroke-linecap="round"/>
+        <rect x="96" y="85" width="60" height="10" rx="5" fill="#E21829" opacity="0.15"/>
+        
+        <g opacity="0.25">
           <line x1="180" y1="185" x2="310" y2="185" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
           <line x1="180" y1="220" x2="335" y2="220" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
           <line x1="180" y1="255" x2="340" y2="255" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
@@ -178,13 +177,15 @@
     </svg>
   </div>
 
-  <!-- Brand Name Text -->
-  <div class="text-center">
-    <h1 class="text-2xl font-bold tracking-tight text-slate-800">
-      Digital<span class="text-[#E21829]">Khata</span>
-    </h1>
-    <p class="text-xs text-slate-500 font-medium mt-0.5">স্মার্ট ডিজিটাল হিসাব খাতা</p>
+  <!-- White Title Text -->
+  <div class="flex flex-col">
+    <div class="text-xl font-bold text-white leading-none">
+      Digital<span class="text-slate-100 font-extrabold">Khata</span>
+    </div>
+    <span class="text-[10px] text-red-100 font-medium tracking-wide">SMART LEDGER</span>
   </div>
+
+</div>
       
       <!-- স্ট্যাটাস ইন্ডিকেটর -->
       <div>
