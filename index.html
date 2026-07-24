@@ -52,12 +52,12 @@
 <body class="text-slate-900 antialiased selection:bg-rose-500 selection:text-white min-h-screen flex flex-col justify-between pb-16 md:pb-6">
   
   <!-- Passcode Lock Screen Overlay -->
-<div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center gap-6 py-6 px-4 select-none font-sans overflow-y-auto">
+<div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col justify-between items-center py-6 px-4 select-none font-sans overflow-y-auto">
   
-  <!-- Login / Passcode Header (Untouched) -->
-  <div class="flex flex-col items-center">
+  <!-- Login / Passcode Header (Original Top Position) -->
+  <div class="flex flex-col items-center mb-4">
     <!-- Red Pen-D Logo -->
-    <div class="w-16 h-16 flex items-center justify-center mb-1">
+    <div class="w-16 h-16 flex items-center justify-center mb-0">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
         <defs>
           <linearGradient id="tkRedGradMain" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -88,25 +88,25 @@
       </svg>
     </div>
 
-    <!-- Brand Name Text -->
+    <!-- Brand Name Text (Font Weight Reduced) -->
     <div class="text-center">
-      <h1 class="text-2xl font-bold tracking-tight text-slate-800">
+      <h1 class="text-xl font-medium tracking-tight text-slate-800">
         Digital<span class="text-[#E21829]">Khata</span>
       </h1>
-      <p class="text-xs text-slate-500 font-medium mt-0.5">স্মার্ট ডিজিটাল হিসাব খাতা</p>
+      <p class="text-[11px] text-slate-400 font-normal mt-0.5">স্মার্ট ডিজিটাল হিসাব খাতা</p>
     </div>
   </div>
 
-  <!-- Middle PIN Section (Spacing Reduced) -->
-  <div class="flex flex-col items-center w-full max-w-xs">
-    <p id="pinStatusText" class="text-xs font-semibold text-gray-700 mb-2.5">PIN দিয়ে লগইন করুন</p>
+  <!-- Middle PIN Section (Reduced space between dots and keypad) -->
+  <div class="flex flex-col items-center w-full max-w-xs my-auto py-2">
+    <p id="pinStatusText" class="text-xs font-medium text-gray-600 mb-3">PIN দিয়ে লগইন করুন</p>
     
-    <!-- PIN Circles -->
-    <div class="flex justify-center items-center gap-4 mb-3">
-      <div id="dot-0" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
-      <div id="dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
-      <div id="dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
-      <div id="dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
+    <!-- PIN Circles (Black Outline & Black Active Dots) -->
+    <div class="flex justify-center items-center gap-4 mb-4">
+      <div id="dot-0" class="w-3.5 h-3.5 rounded-full border-2 border-black transition-all duration-200"></div>
+      <div id="dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-black transition-all duration-200"></div>
+      <div id="dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-black transition-all duration-200"></div>
+      <div id="dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-black transition-all duration-200"></div>
     </div>
 
     <!-- Forgot PIN Button -->
@@ -119,7 +119,7 @@
   </div>
 
   <!-- Bottom Keypad Section -->
-  <div class="w-full max-w-xs grid grid-cols-3 gap-2.5">
+  <div class="w-full max-w-xs grid grid-cols-3 gap-2.5 mb-2">
     <button onpointerdown="pressKey('1')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">1</button>
     <button onpointerdown="pressKey('2')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">2</button>
     <button onpointerdown="pressKey('3')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">3</button>
