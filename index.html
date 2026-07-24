@@ -144,48 +144,33 @@
 <header class="bg-rose-600 text-white sticky top-0 z-45 shadow-md">
   <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
     
-    <!-- Top Navbar Brand Section -->
-<div class="flex items-center gap-3">
-  
-  <!-- White Pen-D Logo Icon (For Red Navbar) -->
-  <div class="w-10 h-10 flex-shrink-0">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-      <defs>
-        <linearGradient id="navNibGold" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#FFE57F"/>
-          <stop offset="100%" stop-color="#FFAB00"/>
-        </linearGradient>
-      </defs>
-      <g id="nav-white-logo">
-        <!-- White 'D' Body & Pen Nib -->
-        <path d="M 106 60 L 286 60 C 374 60, 446 148, 446 256 C 446 352, 380 430, 286 430 L 216 430 C 216 430, 226 385, 226 370 L 286 370 C 330 370, 366 318, 366 256 C 366 194, 330 140, 286 140 L 166 140 L 166 350 L 86 350 L 86 80 C 86 69, 95 60, 106 60 Z" fill="#FFFFFF"/>
-        <path d="M 86 350 L 166 350 Q 156 410, 126 455 Q 96 410, 86 350 Z" fill="#FFFFFF"/>
-        <path d="M 110 420 L 142 420 L 126 455 Z" fill="url(#navNibGold)"/>
-        
-        <circle cx="126" cy="380" r="5" fill="#E21829"/>
-        <line x1="126" y1="385" x2="126" y2="435" stroke="#E21829" stroke-width="3.5" stroke-linecap="round"/>
-        <rect x="96" y="85" width="60" height="10" rx="5" fill="#E21829" opacity="0.15"/>
-        
-        <g opacity="0.25">
-          <line x1="180" y1="185" x2="310" y2="185" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
-          <line x1="180" y1="220" x2="335" y2="220" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
-          <line x1="180" y1="255" x2="340" y2="255" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
-          <line x1="180" y1="290" x2="335" y2="290" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
-          <line x1="180" y1="325" x2="310" y2="325" stroke="#E21829" stroke-width="5" stroke-linecap="round"/>
-        </g>
-      </g>
-    </svg>
-  </div>
-
-  <!-- White Title Text -->
-  <div class="flex flex-col">
-    <div class="text-xl font-bold text-white leading-none">
-      Digital<span class="text-slate-100 font-extrabold">Khata</span>
-    </div>
-    <span class="text-[10px] text-red-100 font-medium tracking-wide">SMART LEDGER</span>
-  </div>
-
-</div>
+    <!-- Left Side: Logo & Status -->
+    <div class="flex items-center gap-3">
+      <!-- Pen-D লোগো ও ব্র্যান্ড নাম -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+            <defs>
+              <linearGradient id="headerNibGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FFE57F"/>
+                <stop offset="100%" stop-color="#FFAB00"/>
+              </linearGradient>
+            </defs>
+            <g id="header-white-logo">
+              <path d="M 106 60 L 286 60 C 374 60, 446 148, 446 256 C 446 352, 380 430, 286 430 L 216 430 C 216 430, 226 385, 226 370 L 286 370 C 330 370, 366 318, 366 256 C 366 194, 330 140, 286 140 L 166 140 L 166 350 L 86 350 L 86 80 C 86 69, 95 60, 106 60 Z" fill="#FFFFFF"/>
+              <path d="M 86 350 L 166 350 Q 156 410, 126 455 Q 96 410, 86 350 Z" fill="#FFFFFF"/>
+              <path d="M 110 420 L 142 420 L 126 455 Z" fill="url(#headerNibGold)"/>
+              <circle cx="126" cy="380" r="5" fill="#E21829"/>
+              <line x1="126" y1="385" x2="126" y2="435" stroke="#E21829" stroke-width="3.5" stroke-linecap="round"/>
+              <rect x="96" y="85" width="60" height="10" rx="5" fill="#E21829" opacity="0.15"/>
+            </g>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-base font-extrabold tracking-tight leading-none">Digital<span class="text-yellow-300">Khata</span></span>
+          <span class="text-[10px] text-rose-100 font-semibold tracking-wider uppercase mt-1">Smart Ledger</span>
+        </div>
+      </div>
       
       <!-- স্ট্যাটাস ইন্ডিকেটর -->
       <div>
@@ -222,7 +207,7 @@
 
         <div id="profile-dropdown" class="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl p-1.5 hidden z-50">
           <button id="logout-btn" class="w-full text-left flex items-center px-3.5 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-lg transition">
-             লগ আউট
+              লগ আউট
           </button>
         </div>
       </div>
