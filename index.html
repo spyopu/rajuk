@@ -7,7 +7,7 @@
   <title>Digital Khata</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   
-  <!-- PWA -->
+  <!-- PWA --> 
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#e11d48">
   
@@ -144,42 +144,27 @@
 <header class="bg-rose-600 text-white sticky top-0 z-45 shadow-md">
   <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
     
-    <!-- Left Side: Logo & Status -->
-    <div class="flex items-center gap-3">
-      <!-- Pen-D লোগো ও ব্র্যান্ড নাম -->
-      <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-            <defs>
-              <linearGradient id="headerNibGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#FFE57F"/>
-                <stop offset="100%" stop-color="#FFAB00"/>
-              </linearGradient>
-            </defs>
-            <g id="header-white-logo">
-              <path d="M 106 60 L 286 60 C 374 60, 446 148, 446 256 C 446 352, 380 430, 286 430 L 216 430 C 216 430, 226 385, 226 370 L 286 370 C 330 370, 366 318, 366 256 C 366 194, 330 140, 286 140 L 166 140 L 166 350 L 86 350 L 86 80 C 86 69, 95 60, 106 60 Z" fill="#FFFFFF"/>
-              <path d="M 86 350 L 166 350 Q 156 410, 126 455 Q 96 410, 86 350 Z" fill="#FFFFFF"/>
-              <path d="M 110 420 L 142 420 L 126 455 Z" fill="url(#headerNibGold)"/>
-              <circle cx="126" cy="380" r="5" fill="#E21829"/>
-              <line x1="126" y1="385" x2="126" y2="435" stroke="#E21829" stroke-width="3.5" stroke-linecap="round"/>
-              <rect x="96" y="85" width="60" height="10" rx="5" fill="#E21829" opacity="0.15"/>
-            </g>
-          </svg>
-        </div>
-        <div class="flex flex-col">
-          <span class="text-base font-extrabold tracking-tight leading-none">Digital<span class="text-yellow-300">Khata</span></span>
-          <span class="text-[10px] text-rose-100 font-semibold tracking-wider uppercase mt-1">Smart Ledger</span>
-        </div>
-      </div>
-      
-      <!-- স্ট্যাটাস ইন্ডিকেটর -->
-      <div>
-        <div class="flex items-center gap-1.5 mt-0.5 ml-2">
-          <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-300 animate-pulse"></span>
-          <span id="status-text" class="text-[11px] text-rose-100 font-mono font-medium">গেস্ট মোড</span>
-        </div>
-      </div>
+   <!-- Left Side: Logo & Status -->
+<div class="flex items-center gap-3">
+  <!-- Clean App Icon Style Logo -->
+  <div class="flex items-center gap-2.5">
+    <div class="bg-white text-rose-600 w-9 h-9 rounded-xl shadow-sm flex items-center justify-center font-black text-lg tracking-tighter">
+      D<span class="text-amber-500 text-xs">✍️</span>
     </div>
+    <div class="flex flex-col">
+      <span class="text-base font-extrabold tracking-tight leading-none">Digital<span class="text-yellow-300">Khata</span></span>
+      <span class="text-[10px] text-rose-100 font-semibold tracking-wider uppercase mt-1">Smart Ledger</span>
+    </div>
+  </div>
+  
+  <!-- স্ট্যাটাস ইন্ডিকেটর -->
+  <div>
+    <div class="flex items-center gap-1.5 mt-0.5 ml-2">
+      <span id="status-indicator" class="inline-block h-2 w-2 rounded-full bg-amber-300 animate-pulse"></span>
+      <span id="status-text" class="text-[11px] text-rose-100 font-mono font-medium">গেস্ট মোড</span>
+    </div>
+  </div>
+</div>
 
     <!-- Right Side: Auth & Profile -->
     <div class="flex items-center gap-3">
