@@ -52,12 +52,12 @@
 <body class="text-slate-900 antialiased selection:bg-rose-500 selection:text-white min-h-screen flex flex-col justify-between pb-16 md:pb-6">
   
   <!-- Passcode Lock Screen Overlay -->
-<div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col justify-between items-center py-6 px-4 select-none font-sans overflow-y-auto">
+<div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center py-6 px-4 select-none font-sans overflow-y-auto">
   
-  <!-- Login / Passcode Header (Spacing Optimized) -->
-  <div class="flex flex-col items-center mb-2">
+  <!-- Login / Passcode Header -->
+  <div class="flex flex-col items-center mb-4">
     <!-- Red Pen-D Logo -->
-    <div class="w-16 h-16 flex items-center justify-center mb-1">
+    <div class="w-14 h-14 flex items-center justify-center mb-0">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
         <defs>
           <linearGradient id="tkRedGradMain" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -90,55 +90,55 @@
 
     <!-- Brand Name Text -->
     <div class="text-center">
-      <h1 class="text-2xl font-bold tracking-tight text-slate-800">
+      <h1 class="text-xl font-bold tracking-tight text-slate-800">
         Digital<span class="text-[#E21829]">Khata</span>
       </h1>
-      <p class="text-xs text-slate-500 font-medium mt-0.5">স্মার্ট ডিজিটাল হিসাব খাতা</p>
+      <p class="text-[11px] text-slate-500 font-medium mt-0.5">স্মার্ট ডিজিটাল হিসাব খাতা</p>
     </div>
   </div>
 
   <!-- Middle PIN Section -->
-  <div class="flex flex-col items-center w-full max-w-xs my-auto py-2">
-    <p id="pinStatusText" class="text-sm font-semibold text-gray-700 mb-4 transition-all duration-200">PIN দিয়ে লগইন করুন</p>
+  <div class="flex flex-col items-center w-full max-w-xs mb-6">
+    <p id="pinStatusText" class="text-xs font-semibold text-gray-700 mb-3">PIN দিয়ে লগইন করুন</p>
     
     <!-- PIN Circles -->
-    <div class="flex justify-center items-center gap-5 mb-5">
-      <div id="dot-0" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
-      <div id="dot-1" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
-      <div id="dot-2" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
-      <div id="dot-3" class="w-4 h-4 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
+    <div class="flex justify-center items-center gap-4 mb-4">
+      <div id="dot-0" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
+      <div id="dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
+      <div id="dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
+      <div id="dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200"></div>
     </div>
 
     <!-- Forgot PIN Button -->
-    <button onclick="alert('পাসকোড রিসেট করতে অ্যাডমিনের সাথে যোগাযোগ করুন অথবা ডাটা ক্লিয়ার করুন।')" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 px-4 py-2 rounded-full text-xs font-medium transition-all duration-150">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <button onclick="alert('পাসকোড রিসেট করতে অ্যাডমিনের সাথে যোগাযোগ করুন অথবা ডাটা ক্লিয়ার করুন।')" class="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-600 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all duration-150">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 0121 9z" />
       </svg>
       PIN ভুলে গেছেন?
     </button>
   </div>
 
-  <!-- Bottom Ultra-Smooth Keypad Section (Using pointerdown for zero touch delay) -->
-  <div class="w-full max-w-xs grid grid-cols-3 gap-3 mb-2">
-    <button onpointerdown="pressKey('1')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">1</button>
-    <button onpointerdown="pressKey('2')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">2</button>
-    <button onpointerdown="pressKey('3')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">3</button>
-    <button onpointerdown="pressKey('4')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">4</button>
-    <button onpointerdown="pressKey('5')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">5</button>
-    <button onpointerdown="pressKey('6')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">6</button>
-    <button onpointerdown="pressKey('7')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">7</button>
-    <button onpointerdown="pressKey('8')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">8</button>
-    <button onpointerdown="pressKey('9')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">9</button>
+  <!-- Bottom Keypad Section -->
+  <div class="w-full max-w-xs grid grid-cols-3 gap-2.5">
+    <button onpointerdown="pressKey('1')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">1</button>
+    <button onpointerdown="pressKey('2')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">2</button>
+    <button onpointerdown="pressKey('3')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">3</button>
+    <button onpointerdown="pressKey('4')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">4</button>
+    <button onpointerdown="pressKey('5')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">5</button>
+    <button onpointerdown="pressKey('6')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">6</button>
+    <button onpointerdown="pressKey('7')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">7</button>
+    <button onpointerdown="pressKey('8')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">8</button>
+    <button onpointerdown="pressKey('9')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">9</button>
     <div></div>
-    <button onpointerdown="pressKey('0')" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-xl font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">0</button>
-    <button onpointerdown="deleteKey()" class="py-3.5 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-700 rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <button onpointerdown="pressKey('0')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">0</button>
+    <button onpointerdown="deleteKey()" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-700 rounded-2xl shadow-sm transition-all duration-150 flex justify-center items-center cursor-pointer">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414-6.414a2 2 0 011.414-.586H19a2 2 0 012 2v12a2 2 0 01-2 2H10.828a2 2 0 01-1.414-.586L3 12z" />
       </svg>
     </button>
   </div>
-
 </div>
+  
  <!-- TOP HEADER -->
 <header class="bg-rose-600 text-white sticky top-0 z-45 shadow-md">
   <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
