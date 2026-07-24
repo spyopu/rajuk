@@ -41,6 +41,21 @@
       #report-content-body { filter: none !important; pointer-events: auto !important; user-select: auto !important; }
       .no-print, button, input[type="month"], nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal { display: none !important; }
     }
+
+    /* লক আইকন লুকিয়ে ফেলার জন্য */
+    .lock-icon-class {
+      display: none !important;
+    }
+
+    .card {
+      display: grid;
+      /* কলাম ১: ইউজার আইকন (auto)
+         কলাম ২: ক্লায়েন্টের নাম ও ঠিকানা (1fr - বাকী সব খালি জায়গা নেবে)
+         কলাম ৩, ৪, ৫: চুক্তি, জমা, বাকি (প্রতিটির ফিক্সড ১০০px) */
+      grid-template-columns: auto 1fr repeat(3, 100px);
+      align-items: center;
+      gap: 16px;
+    }
   </style>
 
   <!-- Firebase SDK v8 LIBRARIES -->
