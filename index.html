@@ -33,6 +33,7 @@
       letter-spacing: -0.02em; 
     }
 
+    /* Visual Hide Utility without breaking backend JS references */
     .visually-hidden-field {
       display: none !important;
     }
@@ -40,21 +41,13 @@
     /* Print Styles */
     @media print {
       body * { visibility: hidden; }
-      #printable-area, #printable-area * { visibility: visible; }
-      #printable-area { 
-        position: absolute; 
-        left: 0; 
-        top: 0; 
-        width: 100%; 
-        padding: 20px; 
-        margin: 0; 
-        background: white; 
-      }
-      .no-print, button, input, select, nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal, #summaryModal, .fab-btn { 
-        display: none !important; 
-      }
+      #pdf-report-container, #pdf-report-container * { visibility: visible; }
+      #pdf-report-container { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; }
+      #report-content-body { filter: none !important; pointer-events: auto !important; user-select: auto !important; }
+      .no-print, button, input[type="month"], nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal, #summaryModal { display: none !important; }
     }
 	
+	/* ১. প্রিন্ট বাটনের পাশের ছোট সামারি বাটনের স্টাইল */
 	.btn-summary-mini {
 		display: inline-flex;
 		align-items: center;
@@ -81,6 +74,7 @@
 		color: #2563eb;
 	}
 
+	/* ২. ছোট ও প্রফেশনাল ফ্লোটিং প্লাস বাটন */
 	.fab-btn {
 		position: fixed;
 		bottom: 80px;
@@ -262,7 +256,7 @@
       <!-- SEARCH, CATEGORY, STATUS DROPDOWN & PRINT BAR -->
 		<div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
 		  
-		  <!-- ১. সার্চ ইনপুট -->
+		  <!-- ১. সার্চ ইনপুট (বামে বড় জায়গা জুড়ে) -->
 		  <div class="relative flex-1">
 			<span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
 			  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -272,8 +266,10 @@
 			<input type="text" id="main-search-input" placeholder="গ্রাহক, মোবাইল, প্রজেক্ট বা বিবরণ খুঁজুন..." class="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-medium rounded-lg pl-10 pr-3.5 py-2.5 outline-none focus:border-rose-500 transition w-full">
 		  </div>
 
-		  <!-- ২. ক্যাটাগরি, স্ট্যাটাস ড্রপডাউন এবং প্রিন্ট বাটন -->
+		  <!-- ২. ক্যাটাগরি ড্রপডাউন, স্ট্যাটাস ড্রপডাউন এবং প্রিন্ট বাটন (ডানে) -->
 		  <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+			
+			<!-- ক্যাটাগরি ড্রপডাউন -->
 			<select id="category-dropdown" onchange="applyFiltersAndRender()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg px-3 py-2.5 outline-none focus:border-rose-500 cursor-pointer">
 			  <option value="all">সব ইতিহাস</option>
 			  <option value="client">ক্লায়েন্ট লেনদেন</option>
@@ -281,12 +277,14 @@
 			  <option value="muldhon">মূলধন</option>
 			</select>
 
+			<!-- স্ট্যাটাস ড্রপডাউন (সব, বাকি, পরিশোধ) -->
 			<select id="status-dropdown" onchange="applyFiltersAndRender()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg px-3 py-2.5 outline-none focus:border-rose-500 cursor-pointer">
 			  <option value="all">সব স্ট্যাটাস</option>
 			  <option value="due">বাকি</option>
 			  <option value="paid">পরিশোধ</option>
 			</select>
 
+			<!-- প্রিন্ট বাটন -->
 			<button onclick="printFilteredData()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-medium px-3.5 py-2.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer shadow-2xs whitespace-nowrap">
 			  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -321,15 +319,20 @@
 			<p class="text-[11px] text-slate-500 mt-0.5">গোপনীয়তা রক্ষার জন্য পাসকোড দিয়ে ড্যাশবোর্ড আনলক করতে হবে।</p>
 		  </div>
 		  
+		  <!-- বাটন গ্রূপ -->
 		  <div class="flex items-center gap-2 w-full sm:w-auto">
+			
+			<!-- বাটন ১ -->
 			<button id="toggle-report-btn" onclick="handleReportUnlock()" class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
 			  <span>👁️</span> <span id="report-btn-text">ড্যাশবোর্ড আনলক করুন</span>
 			</button>
 			
+			<!-- বাটন ২ -->
 			<button id="print-report-btn" onclick="printReport()" class="hidden flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
 			  <span>🖨️</span> <span>প্রিন্ট</span>
 			</button>
 			
+			<!-- বাটন ৩ (সামারি বাটন) -->
 			<button class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5" onclick="openSummaryModal()">
 			  <span>📋</span> <span>সামারি</span>
 			</button>
@@ -367,6 +370,7 @@
                 <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                   <span>📈</span> লাভ-ক্ষতি সামারি রিপোর্ট
                 </h4>
+                <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-lg"></span>
               </div>
               
               <div class="space-y-2 text-xs md:text-sm font-semibold text-slate-700">
@@ -449,8 +453,9 @@
             </div>
           </div>
 
-          <!-- TABLES: OFFICE EXPENSE & OWNER CAPITAL HISTORY -->
+          <!-- TABLES: OFFICE EXPENSE & OWNER CAPITAL HISTORY IN DASHBOARD -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Office Expense History Table -->
             <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col">
               <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
                 <h4 class="text-xs md:text-sm font-bold text-slate-800 uppercase flex items-center gap-2">🏢 অফিস খরচের খাতা</h4>
@@ -470,6 +475,7 @@
               </div>
             </div>
 
+            <!-- Owner Capital History Table -->
             <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col">
               <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
                 <h4 class="text-xs md:text-sm font-bold text-slate-800 uppercase flex items-center gap-2">💼 মূলধন লেনদেন খাতা</h4>
@@ -513,9 +519,6 @@
     </div>
   </nav>
 
-  <!-- PRINTABLE HIDDEN AREA FOR GLOBAL PRINT LOGIC -->
-  <div id="printable-area" class="hidden"></div>
-
   <!-- SUMMARY POPUP MODAL -->
   <div id="summaryModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
@@ -546,12 +549,14 @@
         <button onclick="closeQuickModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
       </div>
 
+      <!-- 3-Way Option Switcher -->
       <div class="grid grid-cols-3 gap-1 border border-slate-200 rounded-xl p-1 bg-slate-50 text-center">
         <button type="button" id="tab-opt-client" onclick="switchQuickForm('client')" class="py-1.5 text-[11px] font-bold rounded-lg transition bg-rose-600 text-white">👤 গ্রাহক</button>
         <button type="button" id="tab-opt-tx" onclick="switchQuickForm('tx')" class="py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600">💸 লেনদেন</button>
         <button type="button" id="tab-opt-office" onclick="switchQuickForm('office')" class="py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600">🏢 অফিস খরচ</button>
       </div>
 
+      <!-- 1. Quick Client Form -->
       <form id="quick-client-form" class="space-y-3">
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">গ্রাহকের নাম</label>
@@ -578,10 +583,12 @@
         <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-3 text-xs transition shadow-md mt-2">গ্রাহক সেভ করুন</button>
       </form>
 
+      <!-- 2. Quick Transaction Form -->
       <form id="quick-tx-form" class="space-y-3 hidden">
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">প্রজেক্ট সিলেক্ট করুন</label>
           <select id="qt-client-select" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 outline-none">
+            <!-- Dynamic list -->
           </select>
         </div>
         <div>
@@ -608,7 +615,8 @@
             <label class="block text-xs font-bold text-slate-700 mb-1">তারিখ</label>
             <input type="date" id="qt-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono font-bold outline-none">
           </div>
-          <div>
+          <!-- Notes input visually hidden but functionally retained -->
+          <div class="visually-hidden-field">
             <label class="block text-xs font-bold text-slate-700 mb-1">বিবরণ (নোট)</label>
             <input type="text" id="qt-details" value="লেনদেন" placeholder="নোট" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none">
           </div>
@@ -616,6 +624,7 @@
         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl py-3 text-xs transition shadow-md mt-2">লেনদেন সেভ করুন</button>
       </form>
 
+      <!-- 3. Quick Office & Owner Cost Form -->
       <form id="quick-office-form" class="space-y-3 hidden">
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">এন্ট্রির ধরন</label>
@@ -647,7 +656,8 @@
             <label class="block text-xs font-bold text-slate-700 mb-1">তারিখ</label>
             <input type="date" id="qo-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono font-bold outline-none">
           </div>
-          <div>
+          <!-- Notes input visually hidden but functionally retained -->
+          <div class="visually-hidden-field">
             <label class="block text-xs font-bold text-slate-700 mb-1">বিবরণ (নোট)</label>
             <input type="text" id="qo-details" value="অফিস খরচ" placeholder="বিবরণ" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none">
           </div>
@@ -661,10 +671,10 @@
   <!-- SECURITY PASSCODE MODAL FOR PIN VALIDATION -->
   <div id="securityModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-xs shadow-2xl text-center space-y-4">
-      <div class="h-12 w-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl">🔒</div>
+      <div class="h-12 w-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl visually-hidden-field">🔒</div>
       <div>
         <h3 class="text-base font-bold text-slate-900">পাসকোড দিন</h3>
-        <p class="text-xs text-slate-500 mt-1">তথ্য পরিচালনা করতে সিকিউরিটি PIN দিন</p>
+        <p class="text-xs text-slate-500 mt-1">ক্লায়েন্ট লেজার দেখতে বা এডিট করতে PIN দিন</p>
       </div>
       <input type="password" id="modalPasscodeInput" autocomplete="off" placeholder="••••" maxlength="4" class="w-full bg-slate-50 border border-slate-300 focus:border-rose-600 text-slate-900 rounded-xl p-3 text-center text-lg tracking-widest outline-none font-mono">
       <div class="flex gap-3">
@@ -732,7 +742,8 @@
             <label class="block text-xs font-bold text-amber-700 mb-1">ডিসকাউন্ট/ছাড় (৳)</label>
             <input type="number" id="action-discount" class="w-full bg-amber-50/50 border border-amber-200 text-amber-900 rounded-xl p-2.5 text-xs outline-none font-mono font-bold">
           </div>
-          <div>
+          <!-- Notes hidden visually -->
+          <div class="visually-hidden-field">
             <label class="block text-xs font-bold text-slate-700 mb-1">বিবরণ (নোট)</label>
             <input type="text" id="action-details" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none font-medium text-slate-800">
           </div>
@@ -791,10 +802,12 @@
     const actionForm = document.getElementById('actionForm');
     const officeExpenseRows = document.getElementById('office-expense-rows');
     const ownerExpenseRows = document.getElementById('owner-expense-rows');
-    const mainSearchInput = document.getElementById('main-search-input');
-    const categoryDropdown = document.getElementById('category-dropdown');
-    const statusDropdown = document.getElementById('status-dropdown');
+    
+    // Correct IDs fetched from HTML
+    const searchInput = document.getElementById('main-search-input');
     const monthFilter = document.getElementById('month-filter');
+    const categoryFilter = document.getElementById('category-dropdown');
+    const statusDropdown = document.getElementById('status-dropdown');
 
     if(document.getElementById('qc-date')) document.getElementById('qc-date').value = new Date().toISOString().substring(0, 10);
     if(document.getElementById('qt-date')) document.getElementById('qt-date').value = new Date().toISOString().substring(0, 10);
@@ -806,15 +819,22 @@
       monthFilter.addEventListener('change', uiUpdatePipeline);
     }
 
-    if (mainSearchInput) {
-      mainSearchInput.addEventListener('input', applyFiltersAndRender);
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        applyFiltersAndRender();
+      });
     }
 
-    function applyFiltersAndRender() {
+    /* GLOBAL FILTER & PRINT HANDLERS */
+    window.applyFiltersAndRender = function() {
       renderClientCards();
       renderOfficeExpenses();
       renderOwnerTransactions();
-    }
+    };
+
+    window.printFilteredData = function() {
+      window.print();
+    };
 
     /* SUMMARY GENERATOR LOGIC FOR WHATSAPP & CLIPBOARD */
     function generateMonthSummaryText() {
@@ -1009,7 +1029,9 @@
 
     function uiUpdatePipeline() {
       calculateGlobalMetrics();
-      applyFiltersAndRender();
+      renderClientCards();
+      renderOfficeExpenses();
+      renderOwnerTransactions();
       populateQuickTxDropdown();
     }
 
@@ -1174,32 +1196,31 @@
       }
     }
 
-    /* RENDER CLIENT CARDS WITH FULL SEARCH AND SCREENSHOT MATCHED DESIGN */
+    /* RENDER CLIENT CARDS WITH SEARCH AND CATEGORY FILTERS */
     function renderClientCards() {
       const container = document.getElementById('client-cards-container');
       if (!container) return;
 
-      const query = mainSearchInput ? mainSearchInput.value.toLowerCase().trim() : '';
-      const catVal = categoryDropdown ? categoryDropdown.value : 'all';
+      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const catVal = categoryFilter ? categoryFilter.value : 'all';
       const statusVal = statusDropdown ? statusDropdown.value : 'all';
 
-      if (catVal === 'office' || catVal === 'muldhon') {
-        container.innerHTML = `<div class="bg-white p-6 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold text-xs">অফিস বা মূলধন ফিল্টারে ক্লায়েন্ট তালিকা লুকানো থাকে। নিচের সেকশনে সরাসরি দেখুন।</div>`;
-        return;
-      }
-
       if (farmData.length === 0) {
-        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold text-xs">কোনো গ্রাহক পাওয়া যায়নি। নতুন এন্ট্রি দিন।</div>`;
+        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold">কোনো গ্রাহক পাওয়া যায়নি। নতুন এন্ট্রি দিন।</div>`;
         return;
       }
 
-      let filtered = farmData.filter(c => {
-        const nameMatch = c.name.toLowerCase().includes(query);
-        const phoneMatch = c.phone.includes(query);
-        const projectMatch = c.project.toLowerCase().includes(query);
-        const historyMatch = (c.history || []).some(t => (t.details || '').toLowerCase().includes(query));
-        return nameMatch || phoneMatch || projectMatch || historyMatch;
-      });
+      // Hide Client view if explicit Office or Capital selected in category
+      if (catVal === 'office' || catVal === 'muldhon') {
+        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold">ক্যাটাগরি ফিল্টারে "অফিস খরচ" বা "মূলধন" সিলেক্ট করা আছে। ড্যাশবোর্ডে গিয়ে এই খাতা দেখতে পাবেন।</div>`;
+        return;
+      }
+
+      let filtered = farmData.filter(c => 
+        c.name.toLowerCase().includes(query) || 
+        c.phone.includes(query) || 
+        c.project.toLowerCase().includes(query)
+      );
 
       filtered = filtered.filter(c => {
         let totalPaid = c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
@@ -1211,7 +1232,7 @@
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold text-xs">ফিল্টার বা সার্চ অনুযায়ী কোনো গ্রাহক মিল পাওয়া যায়নি।</div>`;
+        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold">ফিল্টার বা কীওয়ার্ড অনুযায়ী কোনো গ্রাহক মিলেনি।</div>`;
         return;
       }
 
@@ -1224,27 +1245,21 @@
         let isUnlocked = unlockedCards[c.id];
 
         const card = document.createElement('div');
-        card.className = "bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden transition hover:border-slate-300";
+        card.className = "bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden transition hover:border-slate-300";
 
-        /* SCREENSHOT MATCHED TRANSACTION CARD ITEM LAYOUT */
         let historyListHtml = '';
         if (c.history && c.history.length > 0) {
           historyListHtml = c.history.map(t => `
-            <div onclick="openActionModal('ledger', '${c.id}', '${t.id}')" class="flex justify-between items-center py-2.5 px-3 bg-white border border-slate-100 rounded-xl hover:bg-slate-50 transition cursor-pointer shadow-2xs">
-              <div class="flex items-center gap-2">
-                <div>
-                  <span class="text-xs font-semibold text-slate-800 block leading-snug">${t.details || (t.type === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ')}</span>
-                  <div class="flex items-center gap-1.5 mt-0.5">
-                    <span class="text-[10px] font-mono text-slate-400">${t.date}</span>
-                    ${t.discount ? `<span class="text-[9px] border border-amber-300 bg-amber-50 text-amber-700 px-1 py-0.2 rounded font-bold">ছাড়: ৳${t.discount}</span>` : ''}
-                  </div>
-                </div>
+            <div class="flex justify-between items-center py-2.5 px-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition cursor-pointer" onclick="openActionModal('ledger', '${c.id}', '${t.id}')">
+              <div>
+                <span class="text-xs font-bold text-slate-800 block">${t.details || (t.type === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ')}</span>
+                <span class="text-[10px] font-mono text-slate-400">${t.date} ${t.discount ? `<span class="text-amber-600 font-bold ml-1">(ছাড়: ৳${t.discount})</span>` : ''}</span>
               </div>
               <div class="text-right">
                 <span class="text-xs font-bold font-mono ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
                   ${t.type === 'income' ? '+' : '-'}৳${t.amount.toLocaleString('en-IN')}
                 </span>
-                <span class="text-[9px] text-slate-400 font-medium block">${t.type === 'income' ? 'জমা' : 'খরচ'}</span>
+                <span class="text-[10px] text-slate-400 block">${t.type === 'income' ? 'জমা' : 'খরচ'}</span>
               </div>
             </div>
           `).join('');
@@ -1253,6 +1268,7 @@
         }
 
         card.innerHTML = `
+          <!-- Card Header / Summary -->
           <div onclick="toggleClientCard('${c.id}')" class="p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3 cursor-pointer select-none">
             <div class="flex items-start justify-between md:justify-start gap-3">
               <div class="h-10 w-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-base flex-shrink-0">
@@ -1264,6 +1280,7 @@
               </div>
             </div>
 
+            <!-- Financial Quick Stats -->
             <div class="grid grid-cols-3 gap-2 text-center bg-slate-50 p-2.5 rounded-xl border border-slate-100 md:bg-transparent md:border-none md:p-0">
               <div>
                 <span class="text-[10px] font-bold text-slate-400 uppercase block">চুক্তি</span>
@@ -1279,9 +1296,10 @@
               </div>
             </div>
 
+            <!-- Unlock Arrow / Visually Clean Lock Handler -->
             <div class="flex items-center justify-between md:justify-end gap-2 border-t md:border-none pt-2 md:pt-0 border-slate-100">
               <span class="text-[11px] font-bold text-rose-600 md:hidden flex items-center gap-1">
-                ${isUnlocked ? 'হিস্ট্রি দেখুন' : 'পিন দিয়ে আনলক করুন'}
+                ${isUnlocked ? 'হিস্ট্রি দেখুন' : 'পিন দিয়ে আনলক করুন'}
               </span>
               <span id="acc-client-${c.id}-arrow" class="text-slate-400 transition-transform">
                 ▶
@@ -1289,7 +1307,9 @@
             </div>
           </div>
 
+          <!-- Accordion Content -->
           <div id="acc-client-${c.id}" class="accordion-content hidden border-t border-slate-100 p-4 bg-slate-50/50 space-y-4">
+            <!-- Quick Action Buttons Inside Accordion -->
             <div class="flex gap-2">
               <button onclick="openQuickTxForClient('${c.id}', 'income')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition shadow-xs flex items-center justify-center gap-1">
                 <span>➕</span> <span>টাকা জমা</span>
@@ -1302,6 +1322,7 @@
               </button>
             </div>
 
+            <!-- Full Ledger History -->
             <div class="space-y-2">
               <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">লেনদেন ইতিহাস (ক্লিক করে এডিট করুন)</p>
               <div class="space-y-1.5 max-h-56 overflow-y-auto">
@@ -1313,100 +1334,6 @@
         container.appendChild(card);
       });
     }
-
-    /* GLOBAL PRINT FUNCTION FOR FILTERED SEARCH RESULTS */
-    window.printFilteredData = function() {
-      const printableArea = document.getElementById('printable-area');
-      const query = mainSearchInput ? mainSearchInput.value.trim() : '';
-      const catVal = categoryDropdown ? categoryDropdown.value : 'all';
-
-      let printHtml = `
-        <div style="font-family: sans-serif; padding: 20px;">
-          <h2 style="text-align: center; color: #e11d48; margin-bottom: 5px;">ডিজিটাল খাতা - লেনদেন রিপোর্ট</h2>
-          <p style="text-align: center; font-size: 12px; color: #64748b; margin-bottom: 20px;">ফিল্টার: ক্যাটাগরি (${catVal}) | কীওয়ার্ড: "${query || 'সব'}"</p>
-          <table style="width: 100%; border-collapse: collapse; font-size: 12px;" border="1" cellpadding="8">
-            <thead>
-              <tr style="background-color: #f8fafc;">
-                <th>তারিখ</th>
-                <th>গ্রাহক/প্রজেক্ট/বিবরণ</th>
-                <th>টাইপ</th>
-                <th>পরিমাণ</th>
-              </tr>
-            </thead>
-            <tbody>
-      `;
-
-      let hasData = false;
-
-      if (catVal === 'all' || catVal === 'client') {
-        farmData.forEach(c => {
-          (c.history || []).forEach(t => {
-            const matchesQuery = !query || 
-              c.name.toLowerCase().includes(query.toLowerCase()) || 
-              c.project.toLowerCase().includes(query.toLowerCase()) || 
-              (t.details || '').toLowerCase().includes(query.toLowerCase());
-
-            if (matchesQuery) {
-              hasData = true;
-              printHtml += `
-                <tr>
-                  <td>${t.date}</td>
-                  <td><b>${c.project}</b> (${c.name}) - ${t.details || ''}</td>
-                  <td style="color: ${t.type === 'income' ? 'green' : 'red'};">${t.type === 'income' ? 'জমা' : 'খরচ'}</td>
-                  <td>৳${t.amount.toLocaleString('en-IN')}</td>
-                </tr>
-              `;
-            }
-          });
-        });
-      }
-
-      if (catVal === 'all' || catVal === 'office') {
-        officeExpenses.forEach(o => {
-          const matchesQuery = !query || (o.details || '').toLowerCase().includes(query.toLowerCase()) || (o.category || '').toLowerCase().includes(query.toLowerCase());
-          if (matchesQuery) {
-            hasData = true;
-            printHtml += `
-              <tr>
-                <td>${o.date}</td>
-                <td>অফিস খরচ: <b>${o.category}</b> - ${o.details || ''}</td>
-                <td style="color: red;">খরচ</td>
-                <td>৳${o.amount.toLocaleString('en-IN')}</td>
-              </tr>
-            `;
-          }
-        });
-      }
-
-      if (catVal === 'all' || catVal === 'muldhon') {
-        ownerTransactions.forEach(ow => {
-          const matchesQuery = !query || (ow.details || '').toLowerCase().includes(query.toLowerCase());
-          if (matchesQuery) {
-            hasData = true;
-            printHtml += `
-              <tr>
-                <td>${ow.date}</td>
-                <td>মূলধন লেনদেন: ${ow.details || ''}</td>
-                <td style="color: ${ow.type === 'injection' ? 'green' : 'red'};">${ow.type === 'injection' ? 'ক্যাশ জমা' : 'উত্তোলন'}</td>
-                <td>৳${ow.amount.toLocaleString('en-IN')}</td>
-              </tr>
-            `;
-          }
-        });
-      }
-
-      if (!hasData) {
-        printHtml += `<tr><td colspan="4" style="text-align: center;">কোনো তথ্য পাওয়া যায়নি</td></tr>`;
-      }
-
-      printHtml += `</tbody></table></div>`;
-
-      printableArea.innerHTML = printHtml;
-      printableArea.classList.remove('hidden');
-      window.print();
-      printableArea.classList.add('hidden');
-      printableArea.innerHTML = '';
-    };
 
     /* UNIFIED QUICK MODAL HANDLERS */
     window.openQuickModal = function(defaultForm = 'client') {
@@ -1623,86 +1550,84 @@
 
     /* ACTION MODAL LOGIC FOR EDIT/DELETE */
     window.openActionModal = function(type, itemId, subId = null) {
-      requestPasscodeAuth(() => {
-        document.getElementById('action-item-type').value = type;
-        document.getElementById('action-item-id').value = itemId;
-        document.getElementById('action-sub-id').value = subId || '';
+      document.getElementById('action-item-type').value = type;
+      document.getElementById('action-item-id').value = itemId;
+      document.getElementById('action-sub-id').value = subId || '';
 
-        const groupClient = document.getElementById('group-client-fields');
-        const groupCat = document.getElementById('group-category');
-        const groupType = document.getElementById('group-type');
-        const groupGeneric = document.getElementById('group-generic-fields');
-        const actionDiscountWrapper = document.getElementById('action-discount-wrapper');
-        const typeSelect = document.getElementById('action-type');
+      const groupClient = document.getElementById('group-client-fields');
+      const groupCat = document.getElementById('group-category');
+      const groupType = document.getElementById('group-type');
+      const groupGeneric = document.getElementById('group-generic-fields');
+      const actionDiscountWrapper = document.getElementById('action-discount-wrapper');
+      const typeSelect = document.getElementById('action-type');
 
-        groupClient.classList.add('hidden');
-        groupCat.classList.add('hidden');
-        groupType.classList.add('hidden');
-        groupGeneric.classList.remove('hidden');
-        actionDiscountWrapper.classList.add('hidden');
+      groupClient.classList.add('hidden');
+      groupCat.classList.add('hidden');
+      groupType.classList.add('hidden');
+      groupGeneric.classList.remove('hidden');
+      actionDiscountWrapper.classList.add('hidden');
 
-        if (type === 'client') {
-          const item = farmData.find(c => c.id === itemId);
-          if (!item) return;
-          document.getElementById('actionModalTitle').innerText = 'গ্রাহক ফাইল এডিট ও অপশন';
-          groupClient.classList.remove('hidden');
-          groupGeneric.classList.add('hidden');
+      if (type === 'client') {
+        const item = farmData.find(c => c.id === itemId);
+        if (!item) return;
+        document.getElementById('actionModalTitle').innerText = 'গ্রাহক ফাইল এডিট ও অপশন';
+        groupClient.classList.remove('hidden');
+        groupGeneric.classList.add('hidden');
 
-          document.getElementById('action-client-name').value = item.name;
-          document.getElementById('action-client-phone').value = item.phone;
-          document.getElementById('action-client-project').value = item.project;
-          document.getElementById('action-client-budget').value = item.budget;
+        document.getElementById('action-client-name').value = item.name;
+        document.getElementById('action-client-phone').value = item.phone;
+        document.getElementById('action-client-project').value = item.project;
+        document.getElementById('action-client-budget').value = item.budget;
 
-        } else if (type === 'office') {
-          const item = officeExpenses.find(o => o.id === itemId);
-          if (!item) return;
-          document.getElementById('actionModalTitle').innerText = 'অফিস খরচ এডিট';
-          groupCat.classList.remove('hidden');
+      } else if (type === 'office') {
+        const item = officeExpenses.find(o => o.id === itemId);
+        if (!item) return;
+        document.getElementById('actionModalTitle').innerText = 'অফিস খরচ এডিট';
+        groupCat.classList.remove('hidden');
 
-          document.getElementById('action-category').value = item.category || 'Staff Salary';
-          document.getElementById('action-amount').value = item.amount;
-          document.getElementById('action-details').value = item.details || '';
-          document.getElementById('action-date').value = item.date;
+        document.getElementById('action-category').value = item.category || 'Staff Salary';
+        document.getElementById('action-amount').value = item.amount;
+        document.getElementById('action-details').value = item.details || '';
+        document.getElementById('action-date').value = item.date;
 
-        } else if (type === 'owner') {
-          const item = ownerTransactions.find(o => o.id === itemId);
-          if (!item) return;
-          document.getElementById('actionModalTitle').innerText = 'মূলধন লেনদেন এডিট';
-          groupType.classList.remove('hidden');
-          typeSelect.innerHTML = `
-            <option value="injection">🟢 ক্যাশ জমা (Injection)</option>
-            <option value="drawing">🔴 ক্যাশ উত্তোলন (Drawing)</option>
-          `;
-          typeSelect.value = item.type || 'injection';
-          document.getElementById('action-amount').value = item.amount;
-          document.getElementById('action-details').value = item.details || '';
-          document.getElementById('action-date').value = item.date;
+      } else if (type === 'owner') {
+        const item = ownerTransactions.find(o => o.id === itemId);
+        if (!item) return;
+        document.getElementById('actionModalTitle').innerText = 'মূলধন লেনদেন এডিট';
+        groupType.classList.remove('hidden');
+        typeSelect.innerHTML = `
+          <option value="injection">🟢 ক্যাশ জমা (Injection)</option>
+          <option value="drawing">🔴 ক্যাশ উত্তোলন (Drawing)</option>
+        `;
+        typeSelect.value = item.type || 'injection';
+        document.getElementById('action-amount').value = item.amount;
+        document.getElementById('action-details').value = item.details || '';
+        document.getElementById('action-date').value = item.date;
 
-        } else if (type === 'ledger') {
-          const client = farmData.find(c => c.id === itemId);
-          if (!client) return;
-          const tx = (client.history || []).find(t => t.id === subId);
-          if (!tx) return;
+      } else if (type === 'ledger') {
+        const client = farmData.find(c => c.id === itemId);
+        if (!client) return;
+        const tx = (client.history || []).find(t => t.id === subId);
+        if (!tx) return;
 
-          document.getElementById('actionModalTitle').innerText = 'লেজার লেনদেন এডিট';
-          groupType.classList.remove('hidden');
-          typeSelect.innerHTML = `
-            <option value="income">🟢 টাকা জমা (Debit)</option>
-            <option value="expense">🔴 প্রজেক্ট খরচ (Credit)</option>
-          `;
-          typeSelect.value = tx.type;
-          document.getElementById('action-amount').value = tx.amount;
-          document.getElementById('action-details').value = tx.details || '';
-          document.getElementById('action-date').value = tx.date;
+        document.getElementById('actionModalTitle').innerText = 'লেজার লেনদেন এডিট';
+        groupType.classList.remove('hidden');
+        typeSelect.innerHTML = `
+          <option value="income">🟢 টাকা জমা (Debit)</option>
+          <option value="expense">🔴 প্রজেক্ট খরচ (Credit)</option>
+        `;
+        typeSelect.value = tx.type;
+        document.getElementById('action-amount').value = tx.amount;
+        document.getElementById('action-details').value = tx.details || '';
+        document.getElementById('action-date').value = tx.date;
 
-          if (tx.type === 'income') {
-            actionDiscountWrapper.classList.remove('hidden');
-            document.getElementById('action-discount').value = tx.discount || 0;
-          }
+        if (tx.type === 'income') {
+          actionDiscountWrapper.classList.remove('hidden');
+          document.getElementById('action-discount').value = tx.discount || 0;
         }
+      }
 
-        document.getElementById('actionModal').classList.remove('hidden');
-      });
+      document.getElementById('actionModal').classList.remove('hidden');
     };
 
     window.closeActionModal = function() {
@@ -1714,65 +1639,67 @@
         e.preventDefault();
         if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
 
-        const type = document.getElementById('action-item-type').value;
-        const itemId = document.getElementById('action-item-id').value;
-        const subId = document.getElementById('action-sub-id').value;
+        requestPasscodeAuth(() => {
+          const type = document.getElementById('action-item-type').value;
+          const itemId = document.getElementById('action-item-id').value;
+          const subId = document.getElementById('action-sub-id').value;
 
-        if (type === 'client') {
-          databasePathRef.child('clients').child(itemId).update({
-            name: document.getElementById('action-client-name').value,
-            phone: document.getElementById('action-client-phone').value,
-            project: document.getElementById('action-client-project').value,
-            budget: parseFloat(document.getElementById('action-client-budget').value)
-          });
-        } else if (type === 'office') {
-          databasePathRef.child('office_expenses').child(itemId).update({
-            category: document.getElementById('action-category').value,
-            amount: parseFloat(document.getElementById('action-amount').value),
-            details: document.getElementById('action-details').value || 'অফিস খরচ',
-            date: document.getElementById('action-date').value
-          });
-        } else if (type === 'owner') {
-          databasePathRef.child('owner_transactions').child(itemId).update({
-            type: document.getElementById('action-type').value,
-            amount: parseFloat(document.getElementById('action-amount').value),
-            details: document.getElementById('action-details').value || 'মূলধন লেনদেন',
-            date: document.getElementById('action-date').value
-          });
-        } else if (type === 'ledger') {
-          const client = farmData.find(c => c.id === itemId);
-          if (client) {
-            const updatedHistory = (client.history || []).map(t => {
-              if (t.id === subId) {
-                const updatedType = document.getElementById('action-type').value;
-                return {
-                  id: t.id,
-                  type: updatedType,
-                  amount: parseFloat(document.getElementById('action-amount').value),
-                  discount: updatedType === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
-                  details: document.getElementById('action-details').value || (updatedType === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ'),
-                  date: document.getElementById('action-date').value
-                };
-              }
-              return t;
+          if (type === 'client') {
+            databasePathRef.child('clients').child(itemId).update({
+              name: document.getElementById('action-client-name').value,
+              phone: document.getElementById('action-client-phone').value,
+              project: document.getElementById('action-client-project').value,
+              budget: parseFloat(document.getElementById('action-client-budget').value)
             });
-            databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
+          } else if (type === 'office') {
+            databasePathRef.child('office_expenses').child(itemId).update({
+              category: document.getElementById('action-category').value,
+              amount: parseFloat(document.getElementById('action-amount').value),
+              details: document.getElementById('action-details').value || 'অফিস খরচ',
+              date: document.getElementById('action-date').value
+            });
+          } else if (type === 'owner') {
+            databasePathRef.child('owner_transactions').child(itemId).update({
+              type: document.getElementById('action-type').value,
+              amount: parseFloat(document.getElementById('action-amount').value),
+              details: document.getElementById('action-details').value || 'মূলধন লেনদেন',
+              date: document.getElementById('action-date').value
+            });
+          } else if (type === 'ledger') {
+            const client = farmData.find(c => c.id === itemId);
+            if (client) {
+              const updatedHistory = (client.history || []).map(t => {
+                if (t.id === subId) {
+                  const updatedType = document.getElementById('action-type').value;
+                  return {
+                    id: t.id,
+                    type: updatedType,
+                    amount: parseFloat(document.getElementById('action-amount').value),
+                    discount: updatedType === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
+                    details: document.getElementById('action-details').value || (updatedType === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ'),
+                    date: document.getElementById('action-date').value
+                  };
+                }
+                return t;
+              });
+              databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
+            }
           }
-        }
 
-        closeActionModal();
-        uiUpdatePipeline();
+          closeActionModal();
+          uiUpdatePipeline();
+        });
       });
     }
 
     window.executeDeleteAction = function() {
       if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
 
-      const type = document.getElementById('action-item-type').value;
-      const itemId = document.getElementById('action-item-id').value;
-      const subId = document.getElementById('action-sub-id').value;
+      requestPasscodeAuth(() => {
+        const type = document.getElementById('action-item-type').value;
+        const itemId = document.getElementById('action-item-id').value;
+        const subId = document.getElementById('action-sub-id').value;
 
-      if (confirm("আপনি কি নিশ্চিত যে এই রেকর্ডটি ডিলিট করতে চান?")) {
         if (type === 'client') {
           databasePathRef.child('clients').child(itemId).remove();
         } else if (type === 'office') {
@@ -1789,13 +1716,13 @@
 
         closeActionModal();
         uiUpdatePipeline();
-      }
+      });
     };
 
-    /* RENDER OFFICE EXPENSES */
+    /* 💡 রেন্ডার অফিস খরচ */
     function renderOfficeExpenses() {
       if (!officeExpenseRows) return;
-      const query = mainSearchInput ? mainSearchInput.value.toLowerCase().trim() : '';
+      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
@@ -1835,10 +1762,10 @@
       });
     }
 
-    /* RENDER OWNER TRANSACTIONS */
+    /* 💡 রেন্ডার ওনার ট্রানজ্যাকশন */
     function renderOwnerTransactions() {
       if (!ownerExpenseRows) return;
-      const query = mainSearchInput ? mainSearchInput.value.toLowerCase().trim() : '';
+      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
