@@ -40,8 +40,13 @@
 
 	/* আপনার Security Lock Modal এর CSS-এ এই z-index যোগ করুন */
 	#lockModal, .lock-modal-overlay {
-	  z-index: 99999 !important; /* Action Modal-এর চেয়ে z-index অনেক বেশি */
-	}
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999 !important; /* Action Modal-এর থেকে অনেক বেশি */
+}
 
 
     /* Print Styles */
