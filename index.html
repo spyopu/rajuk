@@ -14,23 +14,23 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script> 
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Hind Siliguri (TallyKhata App Font) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
   <style>
+    * {
+      font-family: 'Hind Siliguri', 'Inter', sans-serif !important;
+    }
+
     body {
-      font-family: 'Inter', sans-serif !important;
       font-weight: 400;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
     
-    h1, h2, h3, h4, h5, h6, .font-bold, .font-semibold {
-      font-family: 'Inter', 'Plus Jakarta Sans', sans-serif !important;
-      font-weight: 500 !important;
-      letter-spacing: -0.02em; 
+    .font-mono {
+      font-family: 'Inter', monospace !important;
     }
 
     /* Visual Hide Utility without breaking backend JS references */
@@ -38,73 +38,82 @@
       display: none !important;
     }
 
-    /* Print Styles */
+    /* Print Styles Fix - Eliminates Blank Page Issue */
     @media print {
-      body * { visibility: hidden; }
-      #pdf-report-container, #pdf-report-container * { visibility: visible; }
-      #pdf-report-container { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; }
-      #report-content-body { filter: none !important; pointer-events: auto !important; user-select: auto !important; }
-      .no-print, button, input[type="month"], nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal, #summaryModal { display: none !important; }
+      body * {
+        visibility: hidden !important;
+      }
+      #printable-report-area, #printable-report-area *, #tab-journal-view, #tab-journal-view * {
+        visibility: visible !important;
+      }
+      #tab-journal-view, #printable-report-area {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        padding: 10px !important;
+        margin: 0 !important;
+        filter: none !important;
+        opacity: 1 !important;
+      }
+      .no-print, button, input, select, header, nav, #pinLockScreen, #securityModal, #actionModal, #quickModal, .fab-btn {
+        display: none !important;
+      }
     }
-	
-	/* ১. প্রিন্ট বাটনের পাশের ছোট সামারি বাটনের স্টাইল */
-	.btn-summary-mini {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		padding: 6px 12px;
-		font-size: 13px;
-		font-weight: 500;
-		color: #0f172a;
-		background-color: #f1f5f9;
-		border: 1px solid #cbd5e1;
-		border-radius: 6px;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
 
-	.btn-summary-mini:hover {
-		background-color: #e2e8f0;
-		border-color: #94a3b8;
-		color: #1e293b;
-	}
+    /* ১. প্রিন্ট বাটনের পাশের ছোট সামারি বাটনের স্টাইল */
+    .btn-summary-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #0f172a;
+      background-color: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
 
-	.btn-summary-mini i {
-		font-size: 14px;
-		color: #2563eb;
-	}
+    .btn-summary-mini:hover {
+      background-color: #e2e8f0;
+      border-color: #94a3b8;
+      color: #1e293b;
+    }
 
-	/* ২. ছোট ও প্রফেশনাল ফ্লোটিং প্লাস বাটন */
-	.fab-btn {
-		position: fixed;
-		bottom: 80px;
-		right: 20px;
-		width: 52px;
-		height: 52px;
-		border-radius: 50%;
-		background-color: #e11d48;
-		color: #ffffff;
-		border: none;
-		box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 22px;
-		cursor: pointer;
-		transition: transform 0.2s ease, box-shadow 0.2s ease;
-		z-index: 45;
-	}
+    /* ২. ছোট ও প্রফেশনাল ফ্লোটিং প্লাস বাটন */
+    .fab-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: #e11d48;
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      z-index: 45;
+    }
 
-	.fab-btn:hover {
-		transform: scale(1.05);
-		box-shadow: 0 6px 18px rgba(225, 29, 72, 0.5);
-	}
-	@media (min-width: 768px) {
-		.fab-btn {
-			bottom: 30px;
-			right: 30px;
-		}
-	}
+    .fab-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 18px rgba(225, 29, 72, 0.5);
+    }
+    @media (min-width: 768px) {
+      .fab-btn {
+        bottom: 30px;
+        right: 30px;
+      }
+    }
   </style>
 
   <!-- Firebase SDK v8 LIBRARIES -->
@@ -186,7 +195,7 @@
   </div>
   
   <!-- TOP HEADER WITH BKASH-STYLE BALANCE TAB -->
-  <header class="bg-rose-600 text-white sticky top-0 z-40 shadow-md">
+  <header class="bg-rose-600 text-white sticky top-0 z-40 shadow-md no-print">
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
       <div class="flex items-center gap-2 sm:gap-3">
         <div class="flex items-center gap-2">
@@ -238,7 +247,7 @@
   <main class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6 flex-1">
     
     <!-- NAVIGATION TABS & MONTH SELECTOR -->
-    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
       <div class="hidden md:flex items-center bg-slate-100 p-1.5 rounded-xl border border-slate-200">
         <button onclick="switchTab('journal-view')" id="btn-journal-view-pc" class="tab-btn px-5 py-2.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">💸 গ্রাহক ও লেনদেন</button>
         <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-pc" class="tab-btn px-5 py-2.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">📊 ড্যাশবোর্ড ও রিপোর্ট</button>
@@ -254,48 +263,48 @@
     <div id="tab-journal-view" class="tab-content space-y-4">
       
       <!-- SEARCH, CATEGORY, STATUS DROPDOWN & PRINT BAR -->
-		<div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-		  
-		  <!-- ১. সার্চ ইনপুট (বামে বড় জায়গা জুড়ে) -->
-		  <div class="relative flex-1">
-			<span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-			  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-			  </svg>
-			</span>
-			<input type="text" id="main-search-input" placeholder="গ্রাহক, মোবাইল, প্রজেক্ট বা বিবরণ খুঁজুন..." class="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-medium rounded-lg pl-10 pr-3.5 py-2.5 outline-none focus:border-rose-500 transition w-full">
-		  </div>
+      <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 no-print">
+        
+        <!-- ১. সার্চ ইনপুট (বামে বড় জায়গা জুড়ে) -->
+        <div class="relative flex-1">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </span>
+          <input type="text" id="main-search-input" oninput="applyFiltersAndRender()" placeholder="গ্রাহক, মোবাইল, প্রজেক্ট বা বিবরণ খুঁজুন..." class="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-medium rounded-lg pl-10 pr-3.5 py-2.5 outline-none focus:border-rose-500 transition w-full">
+        </div>
 
-		  <!-- ২. ক্যাটাগরি ড্রপডাউন, স্ট্যাটাস ড্রপডাউন এবং প্রিন্ট বাটন (ডানে) -->
-		  <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-			
-			<!-- ক্যাটাগরি ড্রপডাউন -->
-			<select id="category-dropdown" onchange="applyFiltersAndRender()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg px-3 py-2.5 outline-none focus:border-rose-500 cursor-pointer">
-			  <option value="all">সব ইতিহাস</option>
-			  <option value="client">ক্লায়েন্ট লেনদেন</option>
-			  <option value="office">অফিস খরচ</option>
-			  <option value="muldhon">মূলধন</option>
-			</select>
+        <!-- ২. ক্যাটাগরি ড্রপডাউন, স্ট্যাটাস ড্রপডাউন এবং প্রিন্ট বাটন (ডানে) -->
+        <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          
+          <!-- ক্যাটাগরি ড্রপডাউন -->
+          <select id="category-dropdown" onchange="applyFiltersAndRender()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg px-3 py-2.5 outline-none focus:border-rose-500 cursor-pointer">
+            <option value="all">সব ইতিহাস</option>
+            <option value="client">ক্লায়েন্ট লেনদেন</option>
+            <option value="office">অফিস খরচ</option>
+            <option value="muldhon">মূলধন</option>
+          </select>
 
-			<!-- স্ট্যাটাস ড্রপডাউন (সব, বাকি, পরিশোধ) -->
-			<select id="status-dropdown" onchange="applyFiltersAndRender()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg px-3 py-2.5 outline-none focus:border-rose-500 cursor-pointer">
-			  <option value="all">সব স্ট্যাটাস</option>
-			  <option value="due">বাকি</option>
-			  <option value="paid">পরিশোধ</option>
-			</select>
+          <!-- স্ট্যাটাস ড্রপডাউন (সব, বাকি, পরিশোধ) -->
+          <select id="status-dropdown" onchange="applyFiltersAndRender()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg px-3 py-2.5 outline-none focus:border-rose-500 cursor-pointer">
+            <option value="all">সব স্ট্যাটাস</option>
+            <option value="due">বাকি</option>
+            <option value="paid">পরিশোধ</option>
+          </select>
 
-			<!-- প্রিন্ট বাটন -->
-			<button onclick="printFilteredData()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-medium px-3.5 py-2.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer shadow-2xs whitespace-nowrap">
-			  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-			  </svg>
-			  প্রিন্ট
-			</button>
-		  </div>
-		</div>
+          <!-- প্রিন্ট বাটন -->
+          <button onclick="printFilteredData()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-medium px-3.5 py-2.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer shadow-2xs whitespace-nowrap">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            প্রিন্ট
+          </button>
+        </div>
+      </div>
 
       <!-- Quick Action Bar -->
-      <div class="flex items-center justify-between gap-3">
+      <div class="flex items-center justify-between gap-3 no-print">
         <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">স্মার্ট ক্লায়েন্ট কার্ড ও লেজার খাতা</p>
         <button onclick="openQuickModal('client')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
           <span>➕</span> <span>নতুন এন্ট্রি দিন</span>
@@ -310,34 +319,34 @@
 
     <!-- TAB 2: DASHBOARD, REPORTS & ALL HISTORIES -->
     <div id="tab-dashboard-view" class="tab-content space-y-6 hidden">
-      <div id="pdf-report-container" class="space-y-6">
+      <div id="printable-report-area" class="space-y-6">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-2xs no-print">
-		  <div>
-			<h3 class="text-xs md:text-sm font-bold text-slate-900 flex items-center gap-2">
-			  <span class="visually-hidden-field">🔒</span> <span>রিপোর্ট ও ড্যাশবোর্ড</span>
-			</h3>
-			<p class="text-[11px] text-slate-500 mt-0.5">গোপনীয়তা রক্ষার জন্য পাসকোড দিয়ে ড্যাশবোর্ড আনলক করতে হবে।</p>
-		  </div>
-		  
-		  <!-- বাটন গ্রূপ -->
-		  <div class="flex items-center gap-2 w-full sm:w-auto">
-			
-			<!-- বাটন ১ -->
-			<button id="toggle-report-btn" onclick="handleReportUnlock()" class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
-			  <span>👁️</span> <span id="report-btn-text">ড্যাশবোর্ড আনলক করুন</span>
-			</button>
-			
-			<!-- বাটন ২ -->
-			<button id="print-report-btn" onclick="printReport()" class="hidden flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
-			  <span>🖨️</span> <span>প্রিন্ট</span>
-			</button>
-			
-			<!-- বাটন ৩ (সামারি বাটন) -->
-			<button class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5" onclick="openSummaryModal()">
-			  <span>📋</span> <span>সামারি</span>
-			</button>
-		  </div>
-		</div>
+          <div>
+            <h3 class="text-xs md:text-sm font-bold text-slate-900 flex items-center gap-2">
+              <span class="visually-hidden-field">🔒</span> <span>রিপোর্ট ও ড্যাশবোর্ড</span>
+            </h3>
+            <p class="text-[11px] text-slate-500 mt-0.5">গোপনীয়তা রক্ষার জন্য পাসকোড দিয়ে ড্যাশবোর্ড আনলক করতে হবে।</p>
+          </div>
+          
+          <!-- বাটন গ্রূপ -->
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            
+            <!-- বাটন ১ -->
+            <button id="toggle-report-btn" onclick="handleReportUnlock()" class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
+              <span>👁️</span> <span id="report-btn-text">ড্যাশবোর্ড আনলক করুন</span>
+            </button>
+            
+            <!-- বাটন ২ -->
+            <button id="print-report-btn" onclick="printReport()" class="hidden flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
+              <span>🖨️</span> <span>প্রিন্ট</span>
+            </button>
+            
+            <!-- বাটন ৩ (সামারি বাটন) -->
+            <button class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5" onclick="openSummaryModal()">
+              <span>📋</span> <span>সামারি</span>
+            </button>
+          </div>
+        </div>
 
         <div id="report-content-body" class="space-y-6 filter blur-md select-none pointer-events-none transition-all duration-300">
           <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5 text-center">
@@ -363,7 +372,7 @@
             </div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-		  
+          
             <!-- ১. লাভ-ক্ষতি সামারি রিপোর্ট -->
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
               <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -459,7 +468,7 @@
             <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col">
               <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
                 <h4 class="text-xs md:text-sm font-bold text-slate-800 uppercase flex items-center gap-2">🏢 অফিস খরচের খাতা</h4>
-                <button onclick="openQuickModal('office')" class="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg hover:bg-rose-100">➕ এন্ট্রি</button>
+                <button onclick="openQuickModal('office')" class="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg hover:bg-rose-100 no-print">➕ এন্ট্রি</button>
               </div>
               <div class="max-h-72 overflow-y-auto border border-slate-100 rounded-xl flex-1">
                 <table class="w-full text-left text-xs">
@@ -479,7 +488,7 @@
             <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col">
               <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
                 <h4 class="text-xs md:text-sm font-bold text-slate-800 uppercase flex items-center gap-2">💼 মূলধন লেনদেন খাতা</h4>
-                <button onclick="openQuickModal('owner')" class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg hover:bg-amber-100">➕ এন্ট্রি</button>
+                <button onclick="openQuickModal('owner')" class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg hover:bg-amber-100 no-print">➕ এন্ট্রি</button>
               </div>
               <div class="max-h-72 overflow-y-auto border border-slate-100 rounded-xl flex-1">
                 <table class="w-full text-left text-xs">
@@ -503,12 +512,12 @@
   </main>
 
   <!-- FLOATING QUICK ADD BUTTON -->
-  <button onclick="openQuickModal('client')" class="fab-btn" title="নতুন এন্ট্রি">
+  <button onclick="openQuickModal('client')" class="fab-btn no-print" title="নতুন এন্ট্রি">
     ➕
   </button>
 
   <!-- BOTTOM NAVIGATION (Mobile Only) -->
-  <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 z-40 shadow-xl md:hidden">
+  <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 z-40 shadow-xl md:hidden no-print">
     <div class="grid grid-cols-2 text-center py-2">
       <button onclick="switchTab('journal-view')" id="btn-journal-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
         <span class="text-lg">💸</span><span>গ্রাহক ও লেনদেন</span>
@@ -520,7 +529,7 @@
   </nav>
 
   <!-- SUMMARY POPUP MODAL -->
-  <div id="summaryModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+  <div id="summaryModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 no-print">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b border-slate-200 pb-3">
         <h3 class="text-sm font-bold text-slate-900">মাসিক হিসাবের সামারি</h3>
@@ -542,7 +551,7 @@
   </div>
 
   <!-- UNIFIED QUICK FLOATING MODAL WITH ALL 3 ENTRY OPTIONS -->
-  <div id="quickModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+  <div id="quickModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 no-print">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b border-slate-200 pb-3">
         <h3 id="quickModalTitle" class="text-sm font-bold text-slate-900">নতুন এন্ট্রি যুক্ত করুন</h3>
@@ -669,7 +678,7 @@
   </div>
 
   <!-- SECURITY PASSCODE MODAL FOR PIN VALIDATION -->
-  <div id="securityModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+  <div id="securityModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 no-print">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-xs shadow-2xl text-center space-y-4">
       <div class="h-12 w-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl visually-hidden-field">🔒</div>
       <div>
@@ -685,7 +694,7 @@
   </div>
 
   <!-- EDIT / DELETE ACTION MODAL -->
-  <div id="actionModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+  <div id="actionModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 no-print">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b border-slate-200 pb-3">
         <h3 id="actionModalTitle" class="text-sm font-bold text-slate-900">তথ্য পরিচালনা করুন</h3>
@@ -784,7 +793,6 @@
     let officeExpenses = [];
     let ownerTransactions = [];
     let databasePathRef = null;
-    let activeClientFilter = 'all';
     let isReportUnlocked = false;
     let unlockedCards = {}; 
     let globalCalculatedNetBalance = 0;
@@ -802,12 +810,7 @@
     const actionForm = document.getElementById('actionForm');
     const officeExpenseRows = document.getElementById('office-expense-rows');
     const ownerExpenseRows = document.getElementById('owner-expense-rows');
-    
-    // Correct IDs fetched from HTML
-    const searchInput = document.getElementById('main-search-input');
     const monthFilter = document.getElementById('month-filter');
-    const categoryFilter = document.getElementById('category-dropdown');
-    const statusDropdown = document.getElementById('status-dropdown');
 
     if(document.getElementById('qc-date')) document.getElementById('qc-date').value = new Date().toISOString().substring(0, 10);
     if(document.getElementById('qt-date')) document.getElementById('qt-date').value = new Date().toISOString().substring(0, 10);
@@ -819,22 +822,16 @@
       monthFilter.addEventListener('change', uiUpdatePipeline);
     }
 
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        applyFiltersAndRender();
-      });
-    }
-
-    /* GLOBAL FILTER & PRINT HANDLERS */
-    window.applyFiltersAndRender = function() {
+    /* SEARCH, CATEGORY, STATUS FILTERING PIPELINE */
+    function applyFiltersAndRender() {
       renderClientCards();
       renderOfficeExpenses();
       renderOwnerTransactions();
-    };
+    }
 
-    window.printFilteredData = function() {
+    function printFilteredData() {
       window.print();
-    };
+    }
 
     /* SUMMARY GENERATOR LOGIC FOR WHATSAPP & CLIPBOARD */
     function generateMonthSummaryText() {
@@ -1029,9 +1026,7 @@
 
     function uiUpdatePipeline() {
       calculateGlobalMetrics();
-      renderClientCards();
-      renderOfficeExpenses();
-      renderOwnerTransactions();
+      applyFiltersAndRender();
       populateQuickTxDropdown();
     }
 
@@ -1196,13 +1191,16 @@
       }
     }
 
-    /* RENDER CLIENT CARDS WITH SEARCH AND CATEGORY FILTERS */
+    /* RENDER CLIENT CARDS WITH ADVANCED SEARCH AND DROPDOWN FILTERS */
     function renderClientCards() {
       const container = document.getElementById('client-cards-container');
       if (!container) return;
 
-      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-      const catVal = categoryFilter ? categoryFilter.value : 'all';
+      const mainSearch = document.getElementById('main-search-input');
+      const query = mainSearch ? mainSearch.value.toLowerCase().trim() : '';
+      const catDropdown = document.getElementById('category-dropdown');
+      const catVal = catDropdown ? catDropdown.value : 'all';
+      const statusDropdown = document.getElementById('status-dropdown');
       const statusVal = statusDropdown ? statusDropdown.value : 'all';
 
       if (farmData.length === 0) {
@@ -1210,22 +1208,24 @@
         return;
       }
 
-      // Hide Client view if explicit Office or Capital selected in category
+      // Hide clients if Office or Capital is isolated in Category dropdown
       if (catVal === 'office' || catVal === 'muldhon') {
-        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold">ক্যাটাগরি ফিল্টারে "অফিস খরচ" বা "মূলধন" সিলেক্ট করা আছে। ড্যাশবোর্ডে গিয়ে এই খাতা দেখতে পাবেন।</div>`;
+        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold">ক্যাটাগরি ফিল্টারে অফিস খরচ/মূলধন সিলেক্ট রয়েছে। কাস্টমার লেজার দেখতে 'সব ইতিহাস' বা 'ক্লায়েন্ট লেনদেন' সিলেক্ট করুন।</div>`;
         return;
       }
 
-      let filtered = farmData.filter(c => 
-        c.name.toLowerCase().includes(query) || 
-        c.phone.includes(query) || 
-        c.project.toLowerCase().includes(query)
-      );
+      let filtered = farmData.filter(c => {
+        const matchesQuery = c.name.toLowerCase().includes(query) || 
+                             c.phone.includes(query) || 
+                             c.project.toLowerCase().includes(query);
+        return matchesQuery;
+      });
 
       filtered = filtered.filter(c => {
         let totalPaid = c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
         let totalDiscount = c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0);
         let due = c.budget - (totalPaid + totalDiscount);
+        
         if (statusVal === 'due') return due > 0;
         if (statusVal === 'paid') return due <= 0;
         return true;
@@ -1719,10 +1719,20 @@
       });
     };
 
-    /* 💡 রেন্ডার অফিস খরচ */
+    /* 💡 রেন্ডার অফিস খরচ (WITH SEARCH & CATEGORY FILTER SUPPORT) */
     function renderOfficeExpenses() {
       if (!officeExpenseRows) return;
-      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+      const mainSearch = document.getElementById('main-search-input');
+      const query = mainSearch ? mainSearch.value.toLowerCase().trim() : '';
+      const catDropdown = document.getElementById('category-dropdown');
+      const catVal = catDropdown ? catDropdown.value : 'all';
+
+      // Hide office expense table if filtering solely by Client or Capital
+      if (catVal === 'client' || catVal === 'muldhon') {
+        officeExpenseRows.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 font-semibold">ক্যাটাগরি ফিল্টারে কাস্টমার/মূলধন সিলেক্ট রয়েছে।</td></tr>`;
+        return;
+      }
 
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
@@ -1762,10 +1772,20 @@
       });
     }
 
-    /* 💡 রেন্ডার ওনার ট্রানজ্যাকশন */
+    /* 💡 রেন্ডার ওনার ট্রানজ্যাকশন (WITH SEARCH & CATEGORY FILTER SUPPORT) */
     function renderOwnerTransactions() {
       if (!ownerExpenseRows) return;
-      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+      const mainSearch = document.getElementById('main-search-input');
+      const query = mainSearch ? mainSearch.value.toLowerCase().trim() : '';
+      const catDropdown = document.getElementById('category-dropdown');
+      const catVal = catDropdown ? catDropdown.value : 'all';
+
+      // Hide owner transactions table if filtering solely by Client or Office
+      if (catVal === 'client' || catVal === 'office') {
+        ownerExpenseRows.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 font-semibold">ক্যাটাগরি ফিল্টারে কাস্টমার/অফিস সিলেক্ট রয়েছে।</td></tr>`;
+        return;
+      }
 
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
