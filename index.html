@@ -262,11 +262,6 @@
         </div>
         
         <div class="flex flex-wrap items-center gap-2">
-          <!-- Search Filter Print Button -->
-          <button onclick="printSearchResults()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs rounded-xl px-3.5 py-2.5 transition shadow-xs flex items-center gap-1.5">
-			  🖨️ প্রিন্ট
-		   </button>
-
           <!-- Category Filter Dropdown -->
           <select id="category-filter" onchange="uiUpdatePipeline()" class="bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs rounded-xl px-3 py-2.5 outline-none focus:border-rose-600 transition">
             <option value="all">📁 সব</option>
@@ -281,6 +276,10 @@
             <button onclick="setClientFilter('due')" id="filter-btn-due" class="px-3 py-1.5 text-xs font-bold rounded-lg transition">বাকি</button>
             <button onclick="setClientFilter('paid')" id="filter-btn-paid" class="px-3 py-1.5 text-xs font-bold rounded-lg transition">পরিশোধ</button>
           </div>
+		  <!-- Search Filter Print Button -->
+          <button onclick="printSearchResults()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs rounded-xl px-3.5 py-2.5 transition shadow-xs flex items-center gap-1.5">
+			  🖨️ প্রিন্ট
+		   </button>
         </div>
       </div>
 
