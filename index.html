@@ -262,6 +262,11 @@
         </div>
         
         <div class="flex flex-wrap items-center gap-2">
+          <!-- Search Filter Print Button -->
+          <button onclick="printSearchResults()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl px-3.5 py-2.5 transition shadow-sm flex items-center gap-1.5">
+            <span>🖨️</span> <span>ফিল্টার প্রিন্ট</span>
+          </button>
+
           <!-- Category Filter Dropdown -->
           <select id="category-filter" onchange="uiUpdatePipeline()" class="bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs rounded-xl px-3 py-2.5 outline-none focus:border-rose-600 transition">
             <option value="all">📁 সব</option>
@@ -653,7 +658,7 @@
     </div>
   </div>
 
-  <!-- SECURITY PASSCODE MODAL FOR PIN VALIDATION -->
+  <!-- SECURITY PASSCODE MODAL FOR PIN VALIDATION (With Auto-confirm & Auto-clear) -->
   <div id="securityModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-xs shadow-2xl text-center space-y-4">
       <div class="h-12 w-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl visually-hidden-field">🔒</div>
@@ -801,14 +806,44 @@
       monthFilter.addEventListener('change', uiUpdatePipeline);
     }
 
-    /* GLOBAL SEARCH: SEARCH INPUT EVENT LISTENER */
+    /* GLOBAL SEARCH: SEARCH INPUT EVENT LISTENER FIXED */
     if (searchInput) {
       searchInput.addEventListener('input', () => {
-        renderClientCards();
-        renderOfficeExpenses();
-        renderOwnerTransactions();
+        uiUpdatePipeline();
       });
     }
+
+    /* SEARCH FILTER PRINT FUNCTION */
+    window.printSearchResults = function() {
+      const query = searchInput ? searchInput.value.trim() : '';
+      const printWindow = window.open('', '', 'width=900,height=700');
+      const container = document.getElementById('client-cards-container').innerHTML;
+      
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>ফিল্টার রিপোর্ট - ডিজিটাল খাতা</title>
+            <script src="https://cdn.tailwindcss.com"><\/script>
+            <style>
+              body { font-family: sans-serif; padding: 20px; }
+              .no-print { display: none !important; }
+            </style>
+          </head>
+          <body>
+            <div class="mb-4 pb-2 border-b">
+              <h2 class="text-xl font-bold">ডিজিটাল খাতা - সার্চ ফিল্টার রিপোর্ট</h2>
+              <p class="text-sm text-gray-600">খোঁজ করা শব্দ/ফিল্টার: "${query || 'সকল'}" | তারিখ: ${new Date().toLocaleDateString('bn-BD')}</p>
+            </div>
+            <div>${container}</div>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    };
 
     /* SUMMARY GENERATOR LOGIC FOR WHATSAPP & CLIPBOARD */
     function generateMonthSummaryText() {
@@ -1182,7 +1217,7 @@
       }
     }
 
-    /* RENDER CLIENT CARDS WITH GLOBAL SEARCH AND CATEGORY FILTERS */
+    /* RENDER CLIENT CARDS WITH FIXED GLOBAL SEARCH AND CATEGORY FILTERS */
     function renderClientCards() {
       const container = document.getElementById('client-cards-container');
       if (!container) return;
@@ -1196,9 +1231,12 @@
       }
 
       let filtered = farmData.filter(c => {
-        const matchBase = c.name.toLowerCase().includes(query) || 
-                          c.phone.includes(query) || 
-                          c.project.toLowerCase().includes(query);
+        if (catVal === 'office' || catVal === 'owner') return false; 
+        if (catVal === 'project') return true; 
+
+        const matchBase = (c.name && c.name.toLowerCase().includes(query)) || 
+                          (c.phone && c.phone.includes(query)) || 
+                          (c.project && c.project.toLowerCase().includes(query));
         
         const matchHistory = c.history && c.history.some(t => 
           (t.details && t.details.toLowerCase().includes(query)) ||
@@ -1207,10 +1245,6 @@
 
         return matchBase || matchHistory;
       });
-
-      if (catVal === 'office' || catVal === 'owner') {
-        filtered = []; // Project view hides if user explicitly isolates Office or Owner category
-      }
 
       filtered = filtered.filter(c => {
         let totalPaid = c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
@@ -1222,7 +1256,7 @@
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold">ফিল্টার বা কীওয়ার্ড অনুযায়ী কোনো গ্রাহক মilenি।</div>`;
+        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold">ফিল্টার বা কীওয়ার্ড অনুযায়ী কোনো গ্রাহক মিলেনি।</div>`;
         return;
       }
 
@@ -1518,6 +1552,7 @@
       window.print();
     };
 
+    /* PASSCODE MODAL INPUT HANDLER (Auto Confirm & Auto Clear) */
     function requestPasscodeAuth(onSuccess) {
       const modal = document.getElementById('securityModal');
       const passInput = document.getElementById('modalPasscodeInput');
@@ -1531,18 +1566,32 @@
       modal.classList.remove('hidden');
       setTimeout(() => passInput.focus(), 50);
 
-      passInput.onkeyup = function(e) { if (e.key === 'Enter') confirmBtn.click(); };
-      confirmBtn.onclick = function() {
+      const validateInputModal = () => {
         if (passInput.value.trim() === SECURITY_PASSCODE) {
           modal.classList.add('hidden');
+          passInput.removeEventListener('input', autoCheckModalInput);
           if (pendingAction) pendingAction();
         } else {
           passInput.classList.add('border-rose-600');
-          passInput.value = '';
+          passInput.value = ''; // ভুল PIN দিলে ফিল্ড ক্লিয়ার
           passInput.focus();
         }
       };
-      cancelBtn.onclick = function() { modal.classList.add('hidden'); };
+
+      const autoCheckModalInput = () => {
+        if (passInput.value.length === 4) {
+          validateInputModal();
+        }
+      };
+
+      passInput.addEventListener('input', autoCheckModalInput);
+
+      passInput.onkeyup = function(e) { if (e.key === 'Enter') validateInputModal(); };
+      confirmBtn.onclick = validateInputModal;
+      cancelBtn.onclick = function() { 
+        passInput.removeEventListener('input', autoCheckModalInput);
+        modal.classList.add('hidden'); 
+      };
     }
 
     /* ACTION MODAL LOGIC FOR EDIT/DELETE */
@@ -1712,10 +1761,11 @@
       uiUpdatePipeline();
     };
 
-    /* 💡 রেন্ডার অফিস খরচ (With Search Filter) */
+    /* 💡 রেন্ডার অফিস খরচ (With Search Filter & Category Dropdown Filter) */
     function renderOfficeExpenses() {
       if (!officeExpenseRows) return;
       const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const catVal = categoryFilter ? categoryFilter.value : 'all';
 
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
@@ -1729,6 +1779,8 @@
       const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
       const filtered = officeExpenses.filter(oe => {
+        if (catVal === 'project' || catVal === 'owner') return false; 
+
         const d = new Date(oe.date);
         const matchesMonth = d >= startOfMonth && d <= endOfMonth;
         
@@ -1755,10 +1807,11 @@
       });
     }
 
-    /* 💡 রেন্ডার ওনার ট্রানজ্যাকশন (With Search Filter) */
+    /* 💡 রেন্ডার ওনার ট্রানজ্যাকশন (With Search Filter & Category Dropdown Filter) */
     function renderOwnerTransactions() {
       if (!ownerExpenseRows) return;
       const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const catVal = categoryFilter ? categoryFilter.value : 'all';
 
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
@@ -1772,6 +1825,8 @@
       const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
       const filtered = ownerTransactions.filter(ow => {
+        if (catVal === 'project' || catVal === 'office') return false; 
+
         const d = new Date(ow.date);
         const matchesMonth = d >= startOfMonth && d <= endOfMonth;
 
@@ -1801,6 +1856,7 @@
       });
     }
 
+    /* FULLSCREEN PIN LOCK LOGIC (With Auto-confirm & Auto-clear) */
     const CORRECT_PIN = "6219"; 
     let enteredPin = "";
 
@@ -1810,7 +1866,7 @@
         updateDots();
         
         if (enteredPin.length === 4) {
-          setTimeout(verifyPin, 150);
+          setTimeout(verifyPin, 100); // ৪ ডিজিট টাইপ শেষ হতেই স্বয়ংক্রিয়ভাবে যাচাই করা শুরু করবে
         }
       }
     }
@@ -1849,9 +1905,10 @@
         statusText.innerText = "ভুল PIN! আবার চেষ্টা করুন";
         statusText.className = "text-xs font-semibold text-rose-600 mb-2.5 animate-bounce";
         
-        enteredPin = "";
+        enteredPin = ""; // ভুল PIN দিলে সাথে সাথে ফিল্ড ক্লিয়ার হয়ে যাবে
+        updateDots();
+
         setTimeout(() => {
-          updateDots();
           statusText.className = "text-xs font-semibold text-gray-700 mb-2.5";
           statusText.innerText = "PIN দিয়ে লগইন করুন";
         }, 1000);
