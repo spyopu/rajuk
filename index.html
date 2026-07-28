@@ -194,6 +194,7 @@
         <!-- GLOBAL EYE TOGGLE BUTTON (DEFAULT OFF) -->
         <button onclick="toggleGlobalEye()" id="global-eye-btn" class="bg-rose-700/80 hover:bg-rose-700 border border-rose-400/30 rounded-full px-2.5 py-1 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer text-xs font-bold ml-1">
           <span id="global-eye-icon">👁️‍🗨️</span>
+          <span id="global-eye-label"></span>
         </button>
 
         <!-- BKASH STYLE BALANCE TAB -->
@@ -259,7 +260,7 @@
         
         <div class="flex flex-wrap items-center gap-2">
           <button onclick="printSearchResults()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl px-3.5 py-2.5 transition shadow-sm flex items-center gap-1.5">
-            <span>🖨️</span> <span>প্রিন্ট</span>
+            <span>🖨️</span> 
           </button>
 
           <select id="category-filter" onchange="uiUpdatePipeline()" class="bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs rounded-xl px-3 py-2.5 outline-none focus:border-rose-600 transition">
@@ -304,15 +305,15 @@
 		  
 		  <div class="flex items-center gap-2 w-full sm:w-auto">
 			<button id="toggle-report-btn" onclick="handleReportUnlock()" class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
-			  <span>👁️</span> <span id="report-btn-text">ড্যাশবোর্ড</span>
+			  <span>👁️</span> <span id="report-btn-text">ড্যাশবোর্ড আনলক করুন</span>
 			</button>
 			
 			<button id="print-report-btn" onclick="printReport()" class="hidden flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
-			  <span>🖨️</span> <span>প্রিন্ট</span>
+			  <span>🖨️</span> 
 			</button>
 			
 			<button class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5" onclick="openSummaryModal()">
-			  <span>📋</span> <span>সামারি</span>
+			  <span>📋</span> 
 			</button>
 		  </div>
 		</div>
@@ -499,7 +500,7 @@
 
       <div class="grid grid-cols-2 gap-2 pt-2">
         <button onclick="copySummaryToClipboard()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1">
-          📋 <span>কপি</span>
+          📋 <span>কপি করুন</span>
         </button>
         <button onclick="shareSummaryToWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1">
           💬 <span>হোয়াটসঅ্যাপ</span>
@@ -531,6 +532,7 @@
         <div>
           <div class="flex justify-between items-center mb-1">
             <label class="block text-xs font-bold text-slate-700">মোবাইল নাম্বার</label>
+            
           </div>
           <input type="text" id="qc-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono font-semibold outline-none">
         </div>
