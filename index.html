@@ -276,15 +276,14 @@
         </div>
         
         <div class="flex flex-wrap items-center gap-2">
-          <!-- Category Filter Dropdown -->
-          
-
-          <!-- Paid / Due Filter Buttons -->
-          <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
-            <button onclick="setClientFilter('all')" id="filter-btn-all" class="px-3 py-1.5 text-xs font-bold rounded-lg transition">সব</button>
-            <button onclick="setClientFilter('due')" id="filter-btn-due" class="px-3 py-1.5 text-xs font-bold rounded-lg transition">বাকি</button>
-            <button onclick="setClientFilter('paid')" id="filter-btn-paid" class="px-3 py-1.5 text-xs font-bold rounded-lg transition">পরিশোধ</button>
-          </div>
+         <!-- Paid / Due Filter Dropdown -->
+			<div class="relative inline-block">
+			    <select id="client-filter-select" onchange="setClientFilter(this.value)" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-100 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer">
+			        <option value="all">সব</option>
+			        <option value="due">বাকি</option>
+			        <option value="paid">পরিশোধ</option>
+			    </select>
+			</div>
 		  <!-- Search Filter Print Button -->
           <button onclick="printSearchResults()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs rounded-xl px-3.5 py-2.5 transition shadow-xs flex items-center gap-1.5">
 			  🖨️ প্রিন্ট
