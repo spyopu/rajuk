@@ -942,13 +942,13 @@
       monthFilter.addEventListener('change', uiUpdatePipeline);
     }
 
-    /* PIN LOCK SCREEN KEYPAD LOGIC */
+    /* PIN LOCK SCREEN KEYPAD LOGIC & AUTO ENTER */
     window.pressKey = function(key) {
       if (currentEnteredPin.length < 4) {
         currentEnteredPin += key;
         updatePinDots();
         if (currentEnteredPin.length === 4) {
-          setTimeout(validateMainPin, 150);
+          setTimeout(validateMainPin, 100);
         }
       }
     };
@@ -989,7 +989,19 @@
       }
     }
 
-    /* SECURITY PIN PASSCODE AUTHENTICATION PROMPT FUNCTION */
+    /* Physical Keyboard Support for Main Pin Screen */
+    document.addEventListener('keydown', (e) => {
+      const pinLock = document.getElementById('pinLockScreen');
+      if (pinLock && !pinLock.classList.contains('hidden')) {
+        if (e.key >= '0' && e.key <= '9') {
+          pressKey(e.key);
+        } else if (e.key === 'Backspace') {
+          deleteKey();
+        }
+      }
+    });
+
+    /* SECURITY PIN PASSCODE AUTHENTICATION PROMPT FUNCTION (With Auto Enter) */
     function requestPasscodeAuth(callback) {
       const modal = document.getElementById('securityModal');
       const input = document.getElementById('modalPasscodeInput');
@@ -1020,6 +1032,7 @@
       const cleanup = () => {
         confirmBtn.removeEventListener('click', verifyPin);
         cancelBtn.removeEventListener('click', closePinModal);
+        input.removeEventListener('input', handleInputAutoEnter);
         input.removeEventListener('keyup', handleKeyUp);
       };
 
@@ -1028,20 +1041,25 @@
         cleanup();
       };
 
-      const handleKeyUp = (e) => {
+      const handleInputAutoEnter = () => {
         if (input.value.length === 4) {
-          verifyPin();
-        } else if (e.key === 'Enter') {
+          setTimeout(verifyPin, 100);
+        }
+      };
+
+      const handleKeyUp = (e) => {
+        if (e.key === 'Enter') {
           verifyPin();
         }
       };
 
       confirmBtn.addEventListener('click', verifyPin);
       cancelBtn.addEventListener('click', closePinModal);
+      input.addEventListener('input', handleInputAutoEnter);
       input.addEventListener('keyup', handleKeyUp);
     }
 
-    /* GLOBAL SEARCH: SEARCH INPUT EVENT LISTENER FIXED */
+    /* GLOBAL SEARCH: SEARCH INPUT EVENT LISTENER */
     if (searchInput) {
       searchInput.addEventListener('input', () => {
         uiUpdatePipeline();
@@ -1252,7 +1270,7 @@
 
       farmData.forEach(c => {
         csvContent += `"Client","${c.name} - ${c.project}","${c.phone}","${c.budget}","${c.date}"\n`;
-        c.history.forEach(t => {
+        (c.history || []).forEach(t => {
           csvContent += `"Transaction","${t.details || t.type}","${c.project}","${t.amount}","${t.date}"\n`;
         });
       });
@@ -1924,121 +1942,97 @@
 
     window.openQuickTxForClient = function(clientId, type) {
       openQuickModal('tx');
-      document.getElementById('qt-client-select').value = clientId;
-      document.getElementById('qt-type').value = type;
+      const select = document.getElementById('qt-client-select');
+      if (select) select.value = clientId;
+      const typeSelect = document.getElementById('qt-type');
+      if (typeSelect) typeSelect.value = type;
       toggleDiscountField();
     };
 
-    /* SUBMIT FORMS */
-    document.getElementById('quick-client-form').addEventListener('submit', (e) => {
+    /* SUBMIT HANDLERS FOR FORMS */
+    document.getElementById('quick-client-form').addEventListener('submit', function(e) {
       e.preventDefault();
-      if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
+      if (!databasePathRef) { alert('অনুগ্রহ করে আগে লগইন করুন!'); return; }
 
-      const newClient = {
-        name: document.getElementById('qc-name').value,
-        phone: document.getElementById('qc-phone').value,
-        project: document.getElementById('qc-project').value,
-        budget: parseFloat(document.getElementById('qc-budget').value),
-        date: document.getElementById('qc-date').value,
-        history: []
-      };
+      const name = document.getElementById('qc-name').value;
+      const phone = document.getElementById('qc-phone').value;
+      const project = document.getElementById('qc-project').value;
+      const budget = parseFloat(document.getElementById('qc-budget').value) || 0;
+      const date = document.getElementById('qc-date').value;
 
-      databasePathRef.child('clients').push(newClient);
-      document.getElementById('quick-client-form').reset();
-      document.getElementById('qc-date').value = new Date().toISOString().substring(0, 10);
-      closeQuickModal();
-      uiUpdatePipeline();
-    });
-
-    document.getElementById('quick-tx-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
-
-      const id = document.getElementById('qt-client-select').value;
-      if(!id) { alert('প্রজেক্ট সিলেক্ট করুন!'); return; }
-
-      const client = farmData.find(c => c.id === id);
-      if(client) {
-        const updatedHistory = client.history || [];
-        const txType = document.getElementById('qt-type').value;
-        const discountVal = txType === 'income' ? (parseFloat(document.getElementById('qt-discount').value) || 0) : 0;
-
-        updatedHistory.push({
-          id: 't_' + Date.now(),
-          type: txType,
-          amount: parseFloat(document.getElementById('qt-amount').value),
-          discount: discountVal,
-          details: document.getElementById('qt-details').value || (txType === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ'),
-          date: document.getElementById('qt-date').value
-        });
-
-        updatedHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
-        databasePathRef.child('clients').child(id).update({ history: updatedHistory });
-
-        document.getElementById('qt-amount').value = '';
-        document.getElementById('qt-discount').value = '0';
+      databasePathRef.child('clients').push({
+        name, phone, project, budget, date, history: []
+      }).then(() => {
         closeQuickModal();
-        uiUpdatePipeline();
-      }
+        this.reset();
+        document.getElementById('qc-date').value = new Date().toISOString().substring(0, 10);
+      });
     });
 
-    document.getElementById('quick-office-form').addEventListener('submit', (e) => {
+    document.getElementById('quick-tx-form').addEventListener('submit', function(e) {
       e.preventDefault();
-      if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
+      if (!databasePathRef) { alert('অনুগ্রহ করে আগে লগইন করুন!'); return; }
+
+      const clientId = document.getElementById('qt-client-select').value;
+      if(!clientId) return;
+
+      const type = document.getElementById('qt-type').value;
+      const amount = parseFloat(document.getElementById('qt-amount').value) || 0;
+      const discount = parseFloat(document.getElementById('qt-discount').value) || 0;
+      const date = document.getElementById('qt-date').value;
+      const details = document.getElementById('qt-details').value;
+
+      const client = farmData.find(c => c.id === clientId);
+      if(!client) return;
+
+      const history = client.history || [];
+      const newTx = {
+        id: 'tx_' + Date.now(),
+        type, amount, discount, date, details
+      };
+      history.push(newTx);
+
+      databasePathRef.child('clients/' + clientId + '/history').set(history).then(() => {
+        closeQuickModal();
+        this.reset();
+        document.getElementById('qt-date').value = new Date().toISOString().substring(0, 10);
+      });
+    });
+
+    document.getElementById('quick-office-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!databasePathRef) { alert('অনুগ্রহ করে আগে লগইন করুন!'); return; }
 
       const entryType = document.getElementById('qo-entry-type').value;
-      const amount = parseFloat(document.getElementById('qo-amount').value);
-      const details = document.getElementById('qo-details').value || 'অফিস খরচ';
+      const amount = parseFloat(document.getElementById('qo-amount').value) || 0;
       const date = document.getElementById('qo-date').value;
+      const details = document.getElementById('qo-details').value;
 
       if (entryType === 'office') {
+        const category = document.getElementById('qo-category').value;
         databasePathRef.child('office_expenses').push({
-          category: document.getElementById('qo-category').value,
-          amount: amount,
-          details: details,
-          date: date
+          category, amount, date, details
+        }).then(() => {
+          closeQuickModal();
+          this.reset();
+          document.getElementById('qo-date').value = new Date().toISOString().substring(0, 10);
         });
       } else {
+        const type = entryType === 'owner_in' ? 'injection' : 'drawing';
         databasePathRef.child('owner_transactions').push({
-          type: entryType === 'owner_in' ? 'injection' : 'drawing',
-          amount: amount,
-          details: details,
-          date: date
+          type, amount, date, details
+        }).then(() => {
+          closeQuickModal();
+          this.reset();
+          document.getElementById('qo-date').value = new Date().toISOString().substring(0, 10);
         });
       }
-
-      document.getElementById('qo-amount').value = '';
-      closeQuickModal();
-      uiUpdatePipeline();
     });
 
-    window.handleReportUnlock = function() {
-      if (isReportUnlocked) {
-        isReportUnlocked = false;
-        document.getElementById('report-content-body').classList.add('filter', 'blur-md', 'select-none', 'pointer-events-none');
-        document.getElementById('report-btn-text').innerText = "ড্যাশবোর্ড আনলক করুন";
-        document.getElementById('print-report-btn').classList.add('hidden');
-      } else {
-        requestPasscodeAuth(() => {
-          isReportUnlocked = true;
-          document.getElementById('report-content-body').classList.remove('filter', 'blur-md', 'select-none', 'pointer-events-none');
-          document.getElementById('report-btn-text').innerText = "ড্যাশবোর্ড লক করুন";
-          document.getElementById('print-report-btn').classList.remove('hidden');
-        });
-      }
-    };
-
-    window.printReport = function() {
-      if (!isReportUnlocked) { alert("আগে ড্যাশবোর্ড আনলক করুন!"); return; }
-      document.body.classList.remove('print-mode-invoice');
-      document.body.classList.add('print-mode-dashboard');
-      window.print();
-    };
-
-    /* ACTION MODAL IMPLEMENTATION (EDIT / DELETE) */
-    window.openActionModal = function(type, id, subId = null) {
+    /* EDIT & DELETE ACTION MODAL HANDLERS */
+    window.openActionModal = function(type, itemId, subId = null) {
       document.getElementById('action-item-type').value = type;
-      document.getElementById('action-item-id').value = id;
+      document.getElementById('action-item-id').value = itemId;
       document.getElementById('action-sub-id').value = subId || '';
 
       const groupClient = document.getElementById('group-client-fields');
@@ -2052,69 +2046,53 @@
       discountWrapper.classList.add('hidden');
 
       if (type === 'client') {
-        const item = farmData.find(c => c.id === id);
-        if (!item) return;
-        document.getElementById('actionModalTitle').innerText = 'ক্লায়েন্ট তথ্য এডিট করুন';
+        document.getElementById('actionModalTitle').innerText = 'গ্রাহক তথ্য পরিবর্তন';
         groupClient.classList.remove('hidden');
         document.getElementById('group-generic-fields').classList.add('hidden');
 
-        document.getElementById('action-client-name').value = item.name || '';
-        document.getElementById('action-client-phone').value = item.phone || '';
-        document.getElementById('action-client-project').value = item.project || '';
-        document.getElementById('action-client-budget').value = item.budget || 0;
+        const c = farmData.find(x => x.id === itemId);
+        if (c) {
+          document.getElementById('action-client-name').value = c.name || '';
+          document.getElementById('action-client-phone').value = c.phone || '';
+          document.getElementById('action-client-project').value = c.project || '';
+          document.getElementById('action-client-budget').value = c.budget || 0;
+        }
       } else {
         document.getElementById('group-generic-fields').classList.remove('hidden');
 
         if (type === 'ledger') {
-          const client = farmData.find(c => c.id === id);
-          if (!client) return;
-          const t = (client.history || []).find(x => x.id === subId);
-          if (!t) return;
-
           document.getElementById('actionModalTitle').innerText = 'লেনদেন এডিট করুন';
-          groupType.classList.remove('hidden');
-          const typeSelect = document.getElementById('action-type');
-          typeSelect.innerHTML = `
-            <option value="income">🟢 টাকা জমা (Debit)</option>
-            <option value="expense">🔴 প্রজেক্ট খরচ (Credit)</option>
-          `;
-          typeSelect.value = t.type;
-
-          if (t.type === 'income') {
-            discountWrapper.classList.remove('hidden');
-            document.getElementById('action-discount').value = t.discount || 0;
+          const c = farmData.find(x => x.id === itemId);
+          if (c) {
+            const t = (c.history || []).find(x => x.id === subId);
+            if (t) {
+              document.getElementById('action-amount').value = t.amount || 0;
+              document.getElementById('action-date').value = t.date || '';
+              document.getElementById('action-details').value = t.details || '';
+              if (t.type === 'income') {
+                discountWrapper.classList.remove('hidden');
+                document.getElementById('action-discount').value = t.discount || 0;
+              }
+            }
           }
-
-          document.getElementById('action-amount').value = t.amount;
-          document.getElementById('action-details').value = t.details || '';
-          document.getElementById('action-date').value = t.date;
         } else if (type === 'office') {
-          const item = officeExpenses.find(x => x.id === id);
-          if (!item) return;
-
           document.getElementById('actionModalTitle').innerText = 'অফিস খরচ এডিট করুন';
           groupCategory.classList.remove('hidden');
-          document.getElementById('action-category').value = item.category;
-
-          document.getElementById('action-amount').value = item.amount;
-          document.getElementById('action-details').value = item.details || '';
-          document.getElementById('action-date').value = item.date;
+          const item = officeExpenses.find(x => x.id === itemId);
+          if (item) {
+            document.getElementById('action-category').value = item.category || 'Others';
+            document.getElementById('action-amount').value = item.amount || 0;
+            document.getElementById('action-date').value = item.date || '';
+            document.getElementById('action-details').value = item.details || '';
+          }
         } else if (type === 'owner') {
-          const item = ownerTransactions.find(x => x.id === id);
-          if (!item) return;
-
           document.getElementById('actionModalTitle').innerText = 'মূলধন লেনদেন এডিট করুন';
-          groupType.classList.remove('hidden');
-          const typeSelect = document.getElementById('action-type');
-          typeSelect.innerHTML = `
-            <option value="injection">🟢 ক্যাশ জমা (Injection)</option>
-            <option value="drawing">🔴 ক্যাশ উত্তোলন (Drawing)</option>
-          `;
-          typeSelect.value = item.type;
-
-          document.getElementById('action-amount').value = item.amount;
-          document.getElementById('action-details').value = item.details || '';
-          document.getElementById('action-date').value = item.date;
+          const item = ownerTransactions.find(x => x.id === itemId);
+          if (item) {
+            document.getElementById('action-amount').value = item.amount || 0;
+            document.getElementById('action-date').value = item.date || '';
+            document.getElementById('action-details').value = item.details || '';
+          }
         }
       }
 
@@ -2125,84 +2103,98 @@
       document.getElementById('actionModal').classList.add('hidden');
     };
 
-    actionForm.addEventListener('submit', (e) => {
+    actionForm.addEventListener('submit', function(e) {
       e.preventDefault();
       if (!databasePathRef) return;
 
       const type = document.getElementById('action-item-type').value;
-      const id = document.getElementById('action-item-id').value;
+      const itemId = document.getElementById('action-item-id').value;
       const subId = document.getElementById('action-sub-id').value;
 
       if (type === 'client') {
-        databasePathRef.child('clients').child(id).update({
+        databasePathRef.child('clients/' + itemId).update({
           name: document.getElementById('action-client-name').value,
           phone: document.getElementById('action-client-phone').value,
           project: document.getElementById('action-client-project').value,
-          budget: parseFloat(document.getElementById('action-client-budget').value)
-        });
+          budget: parseFloat(document.getElementById('action-client-budget').value) || 0
+        }).then(() => closeActionModal());
       } else if (type === 'ledger') {
-        const client = farmData.find(c => c.id === id);
-        if (client) {
-          const txType = document.getElementById('action-type').value;
-          const updatedHistory = (client.history || []).map(t => {
+        const c = farmData.find(x => x.id === itemId);
+        if (c) {
+          const history = (c.history || []).map(t => {
             if (t.id === subId) {
               return {
                 ...t,
-                type: txType,
-                amount: parseFloat(document.getElementById('action-amount').value),
-                discount: txType === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
-                details: document.getElementById('action-details').value,
-                date: document.getElementById('action-date').value
+                amount: parseFloat(document.getElementById('action-amount').value) || 0,
+                discount: parseFloat(document.getElementById('action-discount').value) || 0,
+                date: document.getElementById('action-date').value,
+                details: document.getElementById('action-details').value
               };
             }
             return t;
           });
-          databasePathRef.child('clients').child(id).update({ history: updatedHistory });
+          databasePathRef.child('clients/' + itemId + '/history').set(history).then(() => closeActionModal());
         }
       } else if (type === 'office') {
-        databasePathRef.child('office_expenses').child(id).update({
+        databasePathRef.child('office_expenses/' + itemId).update({
           category: document.getElementById('action-category').value,
-          amount: parseFloat(document.getElementById('action-amount').value),
-          details: document.getElementById('action-details').value,
-          date: document.getElementById('action-date').value
-        });
+          amount: parseFloat(document.getElementById('action-amount').value) || 0,
+          date: document.getElementById('action-date').value,
+          details: document.getElementById('action-details').value
+        }).then(() => closeActionModal());
       } else if (type === 'owner') {
-        databasePathRef.child('owner_transactions').child(id).update({
-          type: document.getElementById('action-type').value,
-          amount: parseFloat(document.getElementById('action-amount').value),
-          details: document.getElementById('action-details').value,
-          date: document.getElementById('action-date').value
-        });
+        databasePathRef.child('owner_transactions/' + itemId).update({
+          amount: parseFloat(document.getElementById('action-amount').value) || 0,
+          date: document.getElementById('action-date').value,
+          details: document.getElementById('action-details').value
+        }).then(() => closeActionModal());
       }
-
-      closeActionModal();
-      uiUpdatePipeline();
     });
 
     window.executeDeleteAction = function() {
-      if (!confirm("আপনি কি নিশ্চিত যে এটি মুছে ফেলতে চান?")) return;
+      if (!confirm('আপনি কি নিশ্চিত যে এই রেকর্ডটি মুছে ফেলতে চান?')) return;
       if (!databasePathRef) return;
 
       const type = document.getElementById('action-item-type').value;
-      const id = document.getElementById('action-item-id').value;
+      const itemId = document.getElementById('action-item-id').value;
       const subId = document.getElementById('action-sub-id').value;
 
       if (type === 'client') {
-        databasePathRef.child('clients').child(id).remove();
+        databasePathRef.child('clients/' + itemId).remove().then(() => closeActionModal());
       } else if (type === 'ledger') {
-        const client = farmData.find(c => c.id === id);
-        if (client) {
-          const updatedHistory = (client.history || []).filter(t => t.id !== subId);
-          databasePathRef.child('clients').child(id).update({ history: updatedHistory });
+        const c = farmData.find(x => x.id === itemId);
+        if (c) {
+          const history = (c.history || []).filter(t => t.id !== subId);
+          databasePathRef.child('clients/' + itemId + '/history').set(history).then(() => closeActionModal());
         }
       } else if (type === 'office') {
-        databasePathRef.child('office_expenses').child(id).remove();
+        databasePathRef.child('office_expenses/' + itemId).remove().then(() => closeActionModal());
       } else if (type === 'owner') {
-        databasePathRef.child('owner_transactions').child(id).remove();
+        databasePathRef.child('owner_transactions/' + itemId).remove().then(() => closeActionModal());
       }
+    };
 
-      closeActionModal();
-      uiUpdatePipeline();
+    /* REPORT UNLOCK HANDLER */
+    window.handleReportUnlock = function() {
+      if (isReportUnlocked) {
+        isReportUnlocked = false;
+        document.getElementById('report-content-body').classList.add('blur-md', 'select-none', 'pointer-events-none');
+        document.getElementById('report-btn-text').innerText = 'ড্যাশবোর্ড আনলক করুন';
+        document.getElementById('print-report-btn').classList.add('hidden');
+      } else {
+        requestPasscodeAuth(() => {
+          isReportUnlocked = true;
+          document.getElementById('report-content-body').classList.remove('blur-md', 'select-none', 'pointer-events-none');
+          document.getElementById('report-btn-text').innerText = 'ড্যাশবোর্ড লক করুন';
+          document.getElementById('print-report-btn').classList.remove('hidden');
+        });
+      }
+    };
+
+    window.printReport = function() {
+      document.body.classList.remove('print-mode-invoice');
+      document.body.classList.add('print-mode-dashboard');
+      window.print();
     };
   </script>
 </body>
