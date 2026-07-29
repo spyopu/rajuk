@@ -898,6 +898,9 @@
     }
 
     /* FEATURE 1: 1-CLICK PRIVACY EYE TOGGLE LOGIC */
+    // ডিফল্টভাবে প্রাইভেসি মোড চালু (True) থাকবে
+    let isPrivacyModeActive = true;
+
     window.togglePrivacyEye = function() {
       isPrivacyModeActive = !isPrivacyModeActive;
       const eyeIcon = document.getElementById('privacy-eye-icon');
@@ -925,6 +928,15 @@
         }
       });
     }
+
+    // পেজ লোড হওয়ার পর বা স্ক্রিপ্ট রান হওয়ার সাথেই ডিফল্টভাবে প্রাইভেসি কার্যকর করা
+    document.addEventListener("DOMContentLoaded", () => {
+      const eyeIcon = document.getElementById('privacy-eye-icon');
+      if (eyeIcon) {
+        eyeIcon.innerText = isPrivacyModeActive ? '🙈' : '👁️';
+      }
+      applyPrivacyFormatting();
+    });
 
     /* SEARCH FILTER PRINT FUNCTION */
     window.printSearchResults = function() {
