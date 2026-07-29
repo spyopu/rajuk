@@ -203,9 +203,9 @@
             <span class="text-amber-500">✍️</span>
           </div>
           <div class="flex flex-col">
-			    <span class="text-base font-extrabold tracking-tight leading-none">Digital<span class="text-yellow-300">Khata</span></span>
-			    <span class="text-[10px] text-rose-100 font-semibold uppercase mt-1">Smart Ledger</span>
-			</div>
+            <span class="text-base font-extrabold tracking-tight leading-none">Digital<span class="text-yellow-300">Khata</span></span>
+            <span class="text-[10px] text-rose-100 font-semibold uppercase mt-1 hidden sm:block">Smart Ledger</span>
+          </div>
         </div>
 
         <!-- BKASH STYLE BALANCE TAB -->
@@ -276,7 +276,7 @@
         </div>
         
         <div class="flex flex-wrap items-center gap-2">
-         <!-- Paid / Due Filter Dropdown -->
+          <!-- Paid / Due Filter Dropdown -->
 			<div class="relative inline-block">
 			    <select id="client-filter-select" onchange="setClientFilter(this.value)" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-100 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer">
 			        <option value="all">সব</option>
@@ -313,7 +313,7 @@
 			<h3 class="text-xs md:text-sm font-bold text-slate-900 flex items-center gap-2">
 			  <span class="visually-hidden-field">🔒</span> <span>রিপোর্ট ও ড্যাশবোর্ড</span>
 			</h3>
-			<p class="text-[11px] text-slate-500 mt-0.5">পাসকোড দিয়ে ড্যাশবোর্ড আনলক করতে হবে।</p>
+			<p class="text-[11px] text-slate-500 mt-0.5">গোপনীয়তা রক্ষার জন্য পাসকোড দিয়ে ড্যাশবোর্ড আনলক করতে হবে।</p>
 		  </div>
 		  
 		  <!-- বাটন গ্রূপ -->
@@ -428,7 +428,7 @@
                 </div>
 
                 <div class="flex justify-between items-center py-2.5 px-3 bg-rose-50/50 rounded-xl mt-1">
-                  <span id="net-profit-label" class="font-bold text-sm md:text-base text-slate-900">নিট লাভ/ক্ষতি:</span>
+                  <span id="net-profit-label" class="font-bold text-sm md:text-base text-slate-900">নিট লাভ/ক্ষতি (Net Profit):</span>
                   <span id="report-net-profit" class="font-mono font-black text-sm md:text-base text-emerald-600 money-field">৳0</span>
                 </div>
               </div>
@@ -528,10 +528,10 @@
   <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 z-40 shadow-xl md:hidden">
     <div class="grid grid-cols-2 text-center py-2">
       <button onclick="switchTab('journal-view')" id="btn-journal-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
-        <span class="text-lg">💸</span><span>গ্রাহক</span>
+        <span class="text-lg">💸</span><span>গ্রাহক ও লেনদেন</span>
       </button>
       <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
-        <span class="text-lg">📊</span><span>ড্যাশবোর্ড</span>
+        <span class="text-lg">📊</span><span>ড্যাশবোর্ড ও রিপোর্ট</span>
       </button>
     </div>
   </nav>
@@ -540,7 +540,7 @@
   <div id="invoiceModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-200 pb-3 no-print">
-        <h3 class="text-sm font-bold text-slate-900">ডিজিটাল মেমো</h3>
+        <h3 class="text-sm font-bold text-slate-900">ডিজিটাল মেমো </h3>
         <button onclick="closeInvoiceModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
       </div>
 
@@ -596,7 +596,7 @@
 
       <div class="grid grid-cols-2 gap-2 pt-2">
         <button onclick="copySummaryToClipboard()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1">
-          📋 <span>কপি</span>
+          📋 <span>কপি করুন</span>
         </button>
         <button onclick="shareSummaryToWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1">
           💬 <span>হোয়াটসঅ্যাপ</span>
@@ -694,8 +694,8 @@
           <label class="block text-xs font-bold text-slate-700 mb-1">এন্ট্রির ধরন</label>
           <select id="qo-entry-type" onchange="toggleOfficeOwnerFields()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-slate-800 outline-none">
             <option value="office">অফিস খরচ</option>
-            <option value="owner_in">মূলধন ক্যাশ জমা</option>
-            <option value="owner_out">মূলধন ক্যাশ উত্তোলন</option>
+            <option value="owner_in">মূলধন ক্যাশ জমা (Injection)</option>
+            <option value="owner_out">মূলধন ক্যাশ উত্তোলন (Drawing)</option>
           </select>
         </div>
 
@@ -728,7 +728,7 @@
           </div>
         </div>
 
-        <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl py-3 text-xs transition shadow-md mt-2">সেভ করুন</button>
+        <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl py-3 text-xs transition shadow-md mt-2">এন্ট্রি সেভ করুন</button>
       </form>
     </div>
   </div>
@@ -739,7 +739,7 @@
       <div class="h-12 w-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl visually-hidden-field">🔒</div>
       <div>
         <h3 class="text-base font-bold text-slate-900">পাসকোড দিন</h3>
-        <p class="text-xs text-slate-500 mt-1">ক্লায়েন্ট লেজার দেখতে বা এডিট করতে পিন দিন</p>
+        <p class="text-xs text-slate-500 mt-1">ক্লায়েন্ট লেজার দেখতে বা এডিট করতে PIN দিন</p>
       </div>
       <input type="password" id="modalPasscodeInput" autocomplete="off" placeholder="••••" maxlength="4" class="w-full bg-slate-50 border border-slate-300 focus:border-rose-600 text-slate-900 rounded-xl p-3 text-center text-lg tracking-widest outline-none font-mono">
       <div class="flex gap-3">
@@ -783,7 +783,7 @@
 
         <div id="group-category" class="hidden">
           <label class="block text-xs font-bold text-slate-700 mb-1">ক্যাটাগরি</label>
-          <select id="qo-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none font-semibold text-slate-800">
+          <select id="action-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none text-slate-800 font-semibold">
             <option value="Staff Salary">স্টাফ স্যালারি</option>
             <option value="Office Rent">অফিস ভাড়া</option>
             <option value="Utility Bill">ইউটিলিটি বিল</option>
@@ -820,8 +820,8 @@
         </div>
 
         <div class="flex gap-2 pt-3 border-t border-slate-100">
-          <button type="button" onclick="executeDeleteAction()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-4 py-2.5 rounded-xl text-xs transition border border-rose-200">মুছে ফেলুন</button>
-          <button type="submit" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">আপডেট করুন</button>
+          <button type="button" onclick="executeDeleteAction()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-4 py-2.5 rounded-xl text-xs transition border border-rose-200">মুছে ফেলুন 🗑️</button>
+          <button type="submit" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">আপডেট করুন 💾</button>
         </div>
       </form>
     </div>
@@ -898,9 +898,6 @@
     }
 
     /* FEATURE 1: 1-CLICK PRIVACY EYE TOGGLE LOGIC */
-    // ডিফল্টভাবে প্রাইভেসি মোড চালু (True) থাকবে
-    let isPrivacyModeActive = true;
-
     window.togglePrivacyEye = function() {
       isPrivacyModeActive = !isPrivacyModeActive;
       const eyeIcon = document.getElementById('privacy-eye-icon');
@@ -928,15 +925,6 @@
         }
       });
     }
-
-    // পেজ লোড হওয়ার পর বা স্ক্রিপ্ট রান হওয়ার সাথেই ডিফল্টভাবে প্রাইভেসি কার্যকর করা
-    document.addEventListener("DOMContentLoaded", () => {
-      const eyeIcon = document.getElementById('privacy-eye-icon');
-      if (eyeIcon) {
-        eyeIcon.innerText = isPrivacyModeActive ? '🙈' : '👁️';
-      }
-      applyPrivacyFormatting();
-    });
 
     /* SEARCH FILTER PRINT FUNCTION */
     window.printSearchResults = function() {
@@ -1636,7 +1624,7 @@
 
             <!-- Full Ledger History -->
             <div class="space-y-2">
-              <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">লেনদেন ইতিহাস (ক্লিক করে এডিট করুন)</p>
+              <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">লেনদেন ইতিহাস</p>
               <div class="space-y-1.5 max-h-56 overflow-y-auto">
                 ${historyListHtml}
               </div>
