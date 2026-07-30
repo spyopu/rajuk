@@ -47,26 +47,24 @@
       font-family: monospace;
     }
 
-    /* Fixed Print Styles - Dynamically controlled via JS mode */
+    /* Fixed Print Styles - Prevents Blank Invoice & Report Pages */
     @media print {
       body { background: #ffffff !important; color: #000000 !important; }
       body * { visibility: hidden; }
       
-      /* Mode 1: Dashboard Print */
-      body.print-mode-dashboard #pdf-report-container, 
-      body.print-mode-dashboard #pdf-report-container * { 
+      /* Make printable components visible */
+      #pdf-report-container, #pdf-report-container *, 
+      #invoice-modal-content, #invoice-modal-content * { 
         visibility: visible; 
       }
-      body.print-mode-dashboard #pdf-report-container { 
+      
+      /* Position printable sections properly */
+      #pdf-report-container { 
         position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; 
       }
 
-      /* Mode 2: Invoice Print */
-      body.print-mode-invoice #invoiceModal, 
-      body.print-mode-invoice #invoiceModal * { 
-        visibility: visible; 
-      }
-      body.print-mode-invoice #invoiceModal { 
+      /* Unhide and reset invoice modal containers during print */
+      #invoiceModal { 
         display: block !important; 
         position: absolute !important; 
         left: 0 !important; 
@@ -78,7 +76,8 @@
         border: none !important; 
         box-shadow: none !important; 
       }
-      body.print-mode-invoice #invoiceModal > div { 
+
+      #invoiceModal > div { 
         border: none !important; 
         box-shadow: none !important; 
         padding: 0 !important; 
@@ -87,7 +86,8 @@
         margin: 0 !important; 
         background: transparent !important; 
       }
-      body.print-mode-invoice #invoice-modal-content { 
+
+      #invoice-modal-content { 
         position: absolute; 
         left: 0; 
         top: 0; 
@@ -347,7 +347,7 @@
       <!-- Quick Action Bar -->
       <div class="flex items-center justify-between gap-3">
         <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">স্মার্ট ক্লায়েন্ট কার্ড ও লেজার খাতা</p>
-        <button onclick="openQuickModal('client')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3.5 py rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+        <button onclick="openQuickModal('client')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
           <span>➕</span> <span>নতুন এন্ট্রি দিন</span>
         </button>
       </div>
@@ -913,8 +913,8 @@
     let headerBalanceTimer = null;
     let currentEnteredPin = "";
 
-    /* Privacy Toggle Global State - Default Off (False means numbers are shown properly) */
-    let isPrivacyModeActive = false;
+    /* Privacy Toggle Global State - Default Closed/Active (True means hidden by default) */
+    let isPrivacyModeActive = true;
     let currentInvoiceClient = null;
 
     /* Chart Global Instances */
@@ -932,13 +932,15 @@
     const ownerExpenseRows = document.getElementById('owner-expense-rows');
     const searchInput = document.getElementById('search-input');
     const monthFilter = document.getElementById('month-filter');
+    const categoryFilter = document.getElementById('category-filter');
 
     if(document.getElementById('qc-date')) document.getElementById('qc-date').value = new Date().toISOString().substring(0, 10);
     if(document.getElementById('qt-date')) document.getElementById('qt-date').value = new Date().toISOString().substring(0, 10);
     if(document.getElementById('qo-date')) document.getElementById('qo-date').value = new Date().toISOString().substring(0, 10);
 
     if (monthFilter) {
-      monthFilter.value = ""; // Default empty to show All Time calculations instead of 0 for current month
+      const now = new Date();
+      monthFilter.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
       monthFilter.addEventListener('change', uiUpdatePipeline);
     }
 
@@ -989,58 +991,6 @@
       }
     }
 
-    /* SECURITY PIN PASSCODE AUTHENTICATION PROMPT FUNCTION */
-    function requestPasscodeAuth(callback) {
-      const modal = document.getElementById('securityModal');
-      const input = document.getElementById('modalPasscodeInput');
-      const confirmBtn = document.getElementById('modalConfirmBtn');
-      const cancelBtn = document.getElementById('modalCancelBtn');
-
-      if (!modal || !input) {
-        if (callback) callback();
-        return;
-      }
-
-      input.value = "";
-      modal.classList.remove('hidden');
-      input.focus();
-
-      const verifyPin = () => {
-        if (input.value === SECURITY_PASSCODE) {
-          modal.classList.add('hidden');
-          cleanup();
-          if (callback) callback();
-        } else {
-          alert("ভুল পাসকোড!");
-          input.value = "";
-          input.focus();
-        }
-      };
-
-      const cleanup = () => {
-        confirmBtn.removeEventListener('click', verifyPin);
-        cancelBtn.removeEventListener('click', closePinModal);
-        input.removeEventListener('keyup', handleKeyUp);
-      };
-
-      const closePinModal = () => {
-        modal.classList.add('hidden');
-        cleanup();
-      };
-
-      const handleKeyUp = (e) => {
-        if (input.value.length === 4) {
-          verifyPin();
-        } else if (e.key === 'Enter') {
-          verifyPin();
-        }
-      };
-
-      confirmBtn.addEventListener('click', verifyPin);
-      cancelBtn.addEventListener('click', closePinModal);
-      input.addEventListener('keyup', handleKeyUp);
-    }
-
     /* GLOBAL SEARCH: SEARCH INPUT EVENT LISTENER FIXED */
     if (searchInput) {
       searchInput.addEventListener('input', () => {
@@ -1060,6 +1010,7 @@
     };
 
     function applyPrivacyFormatting() {
+      // Hide/Show Money fields, Client Names, and Mobile numbers based on privacy mode
       const elementsToMask = document.querySelectorAll('.money-field, .privacy-client-name, .privacy-client-phone');
       elementsToMask.forEach(el => {
         if (isPrivacyModeActive) {
@@ -1118,7 +1069,7 @@
     /* SUMMARY GENERATOR LOGIC FOR WHATSAPP & CLIPBOARD */
     function generateMonthSummaryText() {
       const selectedMonthVal = monthFilter ? monthFilter.value : '';
-      let monthLabel = "সকল সময়";
+      let monthLabel = selectedMonthVal;
       
       if (selectedMonthVal) {
         const [year, month] = selectedMonthVal.split('-');
@@ -1126,7 +1077,7 @@
         monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
       }
 
-      return `📊 *ডিজিটাল খাতা - হিসাব সামারি* (${monthLabel})\n` +
+      return `📊 *ডিজিটাল খাতা - মাসিক হিসাব সামারি* (${monthLabel})\n` +
              `-----------------------------------\n` +
              `🟢 মোট জমা: ৳${globalCalculatedIncome.toLocaleString('en-IN')}\n` +
              `🔴 মোট খরচ: ৳${globalCalculatedExpense.toLocaleString('en-IN')}\n` +
@@ -1218,8 +1169,6 @@
     };
 
     window.printInvoice = function() {
-      document.body.classList.remove('print-mode-dashboard');
-      document.body.classList.add('print-mode-invoice');
       window.print();
     };
 
@@ -1340,6 +1289,10 @@
       renderClientCards();
     }
 
+    uiUpdatePipeline();
+    setClientFilter('all');
+    switchTab('journal-view');
+
     if (profileTrigger) {
       profileTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1428,57 +1381,6 @@
       applyPrivacyFormatting();
     }
 
-    /* RENDER OFFICE EXPENSE TABLE */
-    function renderOfficeExpenses() {
-      if (!officeExpenseRows) return;
-      officeExpenseRows.innerHTML = '';
-      if (officeExpenses.length === 0) {
-        officeExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">কোনো অফিস খরচ পাওয়া যায়নি</td></tr>`;
-        return;
-      }
-      officeExpenses.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 transition cursor-pointer";
-        tr.onclick = () => handleOfficeActionWithPin(item.id);
-        tr.innerHTML = `
-          <td class="p-3 pl-4">
-            <span class="block text-slate-800 font-bold">${item.details || 'অফিস খরচ'}</span>
-            <span class="text-[10px] text-slate-400 font-normal">${item.category}</span>
-          </td>
-          <td class="p-3 font-mono text-slate-500">${item.date}</td>
-          <td class="p-3 text-right font-mono text-rose-600 font-bold money-field">৳${item.amount.toLocaleString('en-IN')}</td>
-        `;
-        officeExpenseRows.appendChild(tr);
-      });
-    }
-
-    /* RENDER OWNER CAPITAL TABLE */
-    function renderOwnerTransactions() {
-      if (!ownerExpenseRows) return;
-      ownerExpenseRows.innerHTML = '';
-      if (ownerTransactions.length === 0) {
-        ownerExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">কোনো মূলধন লেনদেন পাওয়া যায়নি</td></tr>`;
-        return;
-      }
-      ownerTransactions.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 transition cursor-pointer";
-        tr.onclick = () => handleOwnerActionWithPin(item.id);
-        const isInjection = item.type === 'injection';
-        tr.innerHTML = `
-          <td class="p-3 pl-4">
-            <span class="block text-slate-800 font-bold">${item.details || (isInjection ? 'ক্যাশ জমা' : 'ক্যাশ উত্তোলন')}</span>
-            <span class="text-[10px] ${isInjection ? 'text-emerald-600' : 'text-rose-600'} font-semibold">${isInjection ? 'জমা (Injection)' : 'উত্তোল (Drawing)'}</span>
-          </td>
-          <td class="p-3 font-mono text-slate-500">${item.date}</td>
-          <td class="p-3 text-right font-mono ${isInjection ? 'text-emerald-600' : 'text-rose-600'} font-bold money-field">
-            ${isInjection ? '+' : '-'}৳${item.amount.toLocaleString('en-IN')}
-          </td>
-        `;
-        ownerExpenseRows.appendChild(tr);
-      });
-    }
-
     /* FEATURE 5: RENDER CHART JS VISUAL ANALYTICS */
     function renderCharts() {
       const barCtx = document.getElementById('barAnalyticsChart');
@@ -1530,45 +1432,46 @@
       let budget = 0, collection = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
       let ownerInjection = 0, ownerDrawing = 0;
       
-      let targetYear = null, targetMonth = null;
-      let hasMonthFilter = false;
-
+      let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
         const parts = monthFilter.value.split('-'); 
         targetYear = parseInt(parts[0]);
         targetMonth = parseInt(parts[1]) - 1; 
-        hasMonthFilter = true;
+      } else {
+        const now = new Date();
+        targetYear = now.getFullYear();
+        targetMonth = now.getMonth();
       }
       
-      const startOfMonth = hasMonthFilter ? new Date(targetYear, targetMonth, 1) : null;
-      const endOfMonth = hasMonthFilter ? new Date(targetYear, targetMonth + 1, 0, 23, 59, 59) : null;
+      const startOfMonth = new Date(targetYear, targetMonth, 1);
+      const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
       let projectExpenseBreakdown = [];
       let officeExpenseBreakdown = [];
       let ownerDrawingBreakdown = [];
 
       farmData.forEach(c => {
-        budget += parseFloat(c.budget || 0); 
+        budget += c.budget; 
         let cIncome = 0;
         let cDiscount = 0;
         let prjMonthExp = 0;
         
-        (c.history || []).forEach(t => {
+        c.history.forEach(t => {
           const tDate = new Date(t.date);
-          const isSelectedMonth = !hasMonthFilter || (tDate >= startOfMonth && tDate <= endOfMonth);
+          const isSelectedMonth = (tDate >= startOfMonth && tDate <= endOfMonth);
 
           if (t.type === 'income') {
-            cIncome += parseFloat(t.amount || 0); 
-            cDiscount += parseFloat(t.discount || 0);
-            if (isSelectedMonth) collection += parseFloat(t.amount || 0); 
+            cIncome += t.amount; 
+            cDiscount += (t.discount || 0);
+            if (isSelectedMonth) collection += t.amount; 
           }
           if (t.type === 'expense' && isSelectedMonth) {
-            prjExpense += parseFloat(t.amount || 0); 
-            prjMonthExp += parseFloat(t.amount || 0);
+            prjExpense += t.amount; 
+            prjMonthExp += t.amount;
           }
         });
 
-        let effectiveDue = parseFloat(c.budget || 0) - (cIncome + cDiscount);
+        let effectiveDue = c.budget - (cIncome + cDiscount);
         due += Math.max(0, effectiveDue); 
 
         if (prjMonthExp > 0) {
@@ -1578,26 +1481,26 @@
 
       officeExpenses.forEach(oe => {
         const oeDate = new Date(oe.date);
-        if (!hasMonthFilter || (oeDate >= startOfMonth && oeDate <= endOfMonth)) {
-          totalOfficeExpense += parseFloat(oe.amount || 0);
-          officeExpenseBreakdown.push({ name: oe.details || oe.category, cat: oe.category, amount: parseFloat(oe.amount || 0) });
+        if (oeDate >= startOfMonth && oeDate <= endOfMonth) {
+          totalOfficeExpense += oe.amount;
+          officeExpenseBreakdown.push({ name: oe.details || oe.category, cat: oe.category, amount: oe.amount });
         }
       });
 
       ownerTransactions.forEach(ow => {
         const owDate = new Date(ow.date);
-        if (!hasMonthFilter || (owDate >= startOfMonth && owDate <= endOfMonth)) {
-          if (ow.type === 'injection') ownerInjection += parseFloat(ow.amount || 0);
+        if (owDate >= startOfMonth && owDate <= endOfMonth) {
+          if (ow.type === 'injection') ownerInjection += ow.amount;
           if (ow.type === 'drawing') {
-            ownerDrawing += parseFloat(ow.amount || 0);
-            ownerDrawingBreakdown.push({ name: ow.details || 'উত্তোল', amount: parseFloat(ow.amount || 0) });
+            ownerDrawing += ow.amount;
+            ownerDrawingBreakdown.push({ name: ow.details || 'উত্তোলন', amount: ow.amount });
           }
         }
       });
 
       const prjListElem = document.getElementById('acc-project-cost-list');
       if (prjListElem) {
-        prjListElem.innerHTML = projectExpenseBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">কোনো প্রজেক্ট খরচ নেই</div>' : '';
+        prjListElem.innerHTML = projectExpenseBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">এই মাসে কোনো প্রজেক্ট খরচ নেই</div>' : '';
         projectExpenseBreakdown.forEach(item => {
           prjListElem.innerHTML += `
             <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none">
@@ -1610,7 +1513,7 @@
 
       const oeListElem = document.getElementById('acc-office-cost-list');
       if (oeListElem) {
-        oeListElem.innerHTML = officeExpenseBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">কোনো অফিস খরচ নেই</div>' : '';
+        oeListElem.innerHTML = officeExpenseBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">এই মাসে কোনো অফিস খরচ নেই</div>' : '';
         officeExpenseBreakdown.forEach(item => {
           oeListElem.innerHTML += `
             <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none">
@@ -1623,7 +1526,7 @@
 
       const owListElem = document.getElementById('acc-owner-drawing-list');
       if (owListElem) {
-        owListElem.innerHTML = ownerDrawingBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">ক্যাশ উত্তোলন নেই</div>' : '';
+        owListElem.innerHTML = ownerDrawingBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">এই মাসে ক্যাশ উত্তোলন নেই</div>' : '';
         ownerDrawingBreakdown.forEach(item => {
           owListElem.innerHTML += `
             <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none">
@@ -1711,8 +1614,8 @@
       });
 
       filtered = filtered.filter(c => {
-        let totalPaid = (c.history || []).reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
-        let totalDiscount = (c.history || []).reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0);
+        let totalPaid = c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
+        let totalDiscount = c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0);
         let due = c.budget - (totalPaid + totalDiscount);
         if (activeClientFilter === 'due') return due > 0;
         if (activeClientFilter === 'paid') return due <= 0;
@@ -1720,15 +1623,15 @@
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold">ফিল্টার বা কীওয়ার্ড অনুযায়ী কোনো গ্রাহক মেলেনি।</div>`;
+        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold">ফিল্টার বা কীওয়ার্ড অনুযায়ী কোনো গ্রাহক মilenি।</div>`;
         return;
       }
 
       container.innerHTML = '';
 
       filtered.forEach(c => {
-        let totalPaid = (c.history || []).reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
-        let totalDiscount = (c.history || []).reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0);
+        let totalPaid = c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
+        let totalDiscount = c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0);
         let due = Math.max(0, c.budget - (totalPaid + totalDiscount));
 
         const card = document.createElement('div');
@@ -1832,18 +1735,6 @@
     window.handleLedgerActionWithPin = function(clientId, subId) {
       requestPasscodeAuth(() => {
         openActionModal('ledger', clientId, subId);
-      });
-    };
-
-    window.handleOfficeActionWithPin = function(id) {
-      requestPasscodeAuth(() => {
-        openActionModal('office', id);
-      });
-    };
-
-    window.handleOwnerActionWithPin = function(id) {
-      requestPasscodeAuth(() => {
-        openActionModal('owner', id);
       });
     };
 
@@ -2030,92 +1921,154 @@
 
     window.printReport = function() {
       if (!isReportUnlocked) { alert("আগে ড্যাশবোর্ড আনলক করুন!"); return; }
-      document.body.classList.remove('print-mode-invoice');
-      document.body.classList.add('print-mode-dashboard');
       window.print();
     };
 
-    /* ACTION MODAL IMPLEMENTATION (EDIT / DELETE) */
-    window.openActionModal = function(type, id, subId = null) {
+    /* PASSCODE MODAL INPUT HANDLER (Auto Confirm & Auto Clear) */
+    function requestPasscodeAuth(onSuccess) {
+      const modal = document.getElementById('securityModal');
+      const passInput = document.getElementById('modalPasscodeInput');
+      const confirmBtn = document.getElementById('modalConfirmBtn');
+      const cancelBtn = document.getElementById('modalCancelBtn');
+
+      if (!modal || !passInput) return;
+      passInput.value = '';
+      passInput.classList.remove('border-rose-600');
+      let pendingAction = onSuccess;
+      modal.classList.remove('hidden');
+      setTimeout(() => passInput.focus(), 50);
+
+      const validateInputModal = () => {
+        if (passInput.value.trim() === SECURITY_PASSCODE) {
+          modal.classList.add('hidden');
+          passInput.removeEventListener('input', autoCheckModalInput);
+          if (pendingAction) pendingAction();
+        } else {
+          passInput.classList.add('border-rose-600');
+          passInput.value = ''; 
+          passInput.focus();
+        }
+      };
+
+      const autoCheckModalInput = () => {
+        if (passInput.value.length === 4) {
+          validateInputModal();
+        }
+      };
+
+      passInput.addEventListener('input', autoCheckModalInput);
+
+      passInput.onkeyup = function(e) { if (e.key === 'Enter') validateInputModal(); };
+      confirmBtn.onclick = validateInputModal;
+      cancelBtn.onclick = function() { 
+        passInput.removeEventListener('input', autoCheckModalInput);
+        modal.classList.add('hidden'); 
+      };
+    }
+
+    /* RENDER OFFICE & OWNER EXPENSES */
+    function renderOfficeExpenses() {
+      if (!officeExpenseRows) return;
+      officeExpenseRows.innerHTML = officeExpenses.length === 0 ? `<tr><td colspan="3" class="p-4 text-center text-slate-400">কোনো খরচ রেকর্ড করা হয়নি</td></tr>` : '';
+
+      officeExpenses.forEach(oe => {
+        const row = document.createElement('tr');
+        row.className = "hover:bg-slate-50 cursor-pointer transition";
+        row.onclick = () => requestPasscodeAuth(() => openActionModal('office', oe.id));
+        row.innerHTML = `
+          <td class="p-3 pl-4">
+            <span class="font-bold text-slate-800 block">${oe.details || 'অফিস খরচ'}</span>
+            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-semibold">${oe.category}</span>
+          </td>
+          <td class="p-3 font-mono text-slate-500">${oe.date}</td>
+          <td class="p-3 text-right font-mono font-bold text-rose-600 money-field">৳${oe.amount.toLocaleString('en-IN')}</td>
+        `;
+        officeExpenseRows.appendChild(row);
+      });
+    }
+
+    function renderOwnerTransactions() {
+      if (!ownerExpenseRows) return;
+      ownerExpenseRows.innerHTML = ownerTransactions.length === 0 ? `<tr><td colspan="3" class="p-4 text-center text-slate-400">কোনো মূলধন লেনদেন রেকর্ড করা হয়নি</td></tr>` : '';
+
+      ownerTransactions.forEach(ow => {
+        const row = document.createElement('tr');
+        row.className = "hover:bg-slate-50 cursor-pointer transition";
+        row.onclick = () => requestPasscodeAuth(() => openActionModal('owner', ow.id));
+        row.innerHTML = `
+          <td class="p-3 pl-4">
+            <span class="font-bold text-slate-800 block">${ow.details || (ow.type === 'injection' ? 'ক্যাশ জমা' : 'ক্যাশ উত্তোলন')}</span>
+            <span class="text-[10px] ${ow.type === 'injection' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'} px-1.5 py-0.5 rounded font-semibold">${ow.type === 'injection' ? 'ক্যাশ জমা' : 'উত্তোলন'}</span>
+          </td>
+          <td class="p-3 font-mono text-slate-500">${ow.date}</td>
+          <td class="p-3 text-right font-mono font-bold ${ow.type === 'injection' ? 'text-emerald-600' : 'text-rose-600'} money-field">
+            ${ow.type === 'injection' ? '+' : '-'}৳${ow.amount.toLocaleString('en-IN')}
+          </td>
+        `;
+        ownerExpenseRows.appendChild(row);
+      });
+    }
+
+    /* ACTION MODAL HANDLERS FOR EDIT & DELETE */
+    window.openActionModal = function(type, itemId, subId = null) {
       document.getElementById('action-item-type').value = type;
-      document.getElementById('action-item-id').value = id;
+      document.getElementById('action-item-id').value = itemId;
       document.getElementById('action-sub-id').value = subId || '';
 
-      const groupClient = document.getElementById('group-client-fields');
-      const groupCategory = document.getElementById('group-category');
-      const groupType = document.getElementById('group-type');
+      const clientFields = document.getElementById('group-client-fields');
+      const catGroup = document.getElementById('group-category');
+      const typeGroup = document.getElementById('group-type');
       const discountWrapper = document.getElementById('action-discount-wrapper');
 
-      groupClient.classList.add('hidden');
-      groupCategory.classList.add('hidden');
-      groupType.classList.add('hidden');
+      clientFields.classList.add('hidden');
+      catGroup.classList.add('hidden');
+      typeGroup.classList.add('hidden');
       discountWrapper.classList.add('hidden');
 
       if (type === 'client') {
-        const item = farmData.find(c => c.id === id);
-        if (!item) return;
-        document.getElementById('actionModalTitle').innerText = 'ক্লায়েন্ট তথ্য এডিট করুন';
-        groupClient.classList.remove('hidden');
-        document.getElementById('group-generic-fields').classList.add('hidden');
+        const client = farmData.find(c => c.id === itemId);
+        if (!client) return;
+        document.getElementById('actionModalTitle').innerText = 'গ্রাহক তথ্য পরিবর্তন করুন';
+        clientFields.classList.remove('hidden');
 
-        document.getElementById('action-client-name').value = item.name || '';
-        document.getElementById('action-client-phone').value = item.phone || '';
-        document.getElementById('action-client-project').value = item.project || '';
-        document.getElementById('action-client-budget').value = item.budget || 0;
-      } else {
-        document.getElementById('group-generic-fields').classList.remove('hidden');
+        document.getElementById('action-client-name').value = client.name;
+        document.getElementById('action-client-phone').value = client.phone;
+        document.getElementById('action-client-project').value = client.project;
+        document.getElementById('action-client-budget').value = client.budget;
+        document.getElementById('action-date').value = client.date || new Date().toISOString().substring(0, 10);
+      } else if (type === 'ledger') {
+        const client = farmData.find(c => c.id === itemId);
+        if (!client) return;
+        const tx = client.history.find(h => h.id === subId);
+        if (!tx) return;
 
-        if (type === 'ledger') {
-          const client = farmData.find(c => c.id === id);
-          if (!client) return;
-          const t = (client.history || []).find(x => x.id === subId);
-          if (!t) return;
+        document.getElementById('actionModalTitle').innerText = 'লেনদেন পরিবর্তন করুন';
+        document.getElementById('action-amount').value = tx.amount;
+        document.getElementById('action-details').value = tx.details || '';
+        document.getElementById('action-date').value = tx.date;
 
-          document.getElementById('actionModalTitle').innerText = 'লেনদেন এডিট করুন';
-          groupType.classList.remove('hidden');
-          const typeSelect = document.getElementById('action-type');
-          typeSelect.innerHTML = `
-            <option value="income">🟢 টাকা জমা (Debit)</option>
-            <option value="expense">🔴 প্রজেক্ট খরচ (Credit)</option>
-          `;
-          typeSelect.value = t.type;
-
-          if (t.type === 'income') {
-            discountWrapper.classList.remove('hidden');
-            document.getElementById('action-discount').value = t.discount || 0;
-          }
-
-          document.getElementById('action-amount').value = t.amount;
-          document.getElementById('action-details').value = t.details || '';
-          document.getElementById('action-date').value = t.date;
-        } else if (type === 'office') {
-          const item = officeExpenses.find(x => x.id === id);
-          if (!item) return;
-
-          document.getElementById('actionModalTitle').innerText = 'অফিস খরচ এডিট করুন';
-          groupCategory.classList.remove('hidden');
-          document.getElementById('action-category').value = item.category;
-
-          document.getElementById('action-amount').value = item.amount;
-          document.getElementById('action-details').value = item.details || '';
-          document.getElementById('action-date').value = item.date;
-        } else if (type === 'owner') {
-          const item = ownerTransactions.find(x => x.id === id);
-          if (!item) return;
-
-          document.getElementById('actionModalTitle').innerText = 'মূলধন লেনদেন এডিট করুন';
-          groupType.classList.remove('hidden');
-          const typeSelect = document.getElementById('action-type');
-          typeSelect.innerHTML = `
-            <option value="injection">🟢 ক্যাশ জমা (Injection)</option>
-            <option value="drawing">🔴 ক্যাশ উত্তোলন (Drawing)</option>
-          `;
-          typeSelect.value = item.type;
-
-          document.getElementById('action-amount').value = item.amount;
-          document.getElementById('action-details').value = item.details || '';
-          document.getElementById('action-date').value = item.date;
+        if (tx.type === 'income') {
+          discountWrapper.classList.remove('hidden');
+          document.getElementById('action-discount').value = tx.discount || 0;
         }
+      } else if (type === 'office') {
+        const oe = officeExpenses.find(o => o.id === itemId);
+        if (!oe) return;
+        document.getElementById('actionModalTitle').innerText = 'অফিস খরচ পরিবর্তন করুন';
+        catGroup.classList.remove('hidden');
+
+        document.getElementById('action-category').value = oe.category;
+        document.getElementById('action-amount').value = oe.amount;
+        document.getElementById('action-details').value = oe.details || '';
+        document.getElementById('action-date').value = oe.date;
+      } else if (type === 'owner') {
+        const ow = ownerTransactions.find(o => o.id === itemId);
+        if (!ow) return;
+        document.getElementById('actionModalTitle').innerText = 'মূলধন এন্ট্রি পরিবর্তন করুন';
+        
+        document.getElementById('action-amount').value = ow.amount;
+        document.getElementById('action-details').value = ow.details || '';
+        document.getElementById('action-date').value = ow.date;
       }
 
       document.getElementById('actionModal').classList.remove('hidden');
@@ -2130,45 +2083,43 @@
       if (!databasePathRef) return;
 
       const type = document.getElementById('action-item-type').value;
-      const id = document.getElementById('action-item-id').value;
+      const itemId = document.getElementById('action-item-id').value;
       const subId = document.getElementById('action-sub-id').value;
 
       if (type === 'client') {
-        databasePathRef.child('clients').child(id).update({
+        databasePathRef.child('clients').child(itemId).update({
           name: document.getElementById('action-client-name').value,
           phone: document.getElementById('action-client-phone').value,
           project: document.getElementById('action-client-project').value,
-          budget: parseFloat(document.getElementById('action-client-budget').value)
+          budget: parseFloat(document.getElementById('action-client-budget').value),
+          date: document.getElementById('action-date').value
         });
       } else if (type === 'ledger') {
-        const client = farmData.find(c => c.id === id);
+        const client = farmData.find(c => c.id === itemId);
         if (client) {
-          const txType = document.getElementById('action-type').value;
-          const updatedHistory = (client.history || []).map(t => {
-            if (t.id === subId) {
+          const updatedHistory = client.history.map(h => {
+            if (h.id === subId) {
               return {
-                ...t,
-                type: txType,
+                ...h,
                 amount: parseFloat(document.getElementById('action-amount').value),
-                discount: txType === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
+                discount: h.type === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
                 details: document.getElementById('action-details').value,
                 date: document.getElementById('action-date').value
               };
             }
-            return t;
+            return h;
           });
-          databasePathRef.child('clients').child(id).update({ history: updatedHistory });
+          databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
         }
       } else if (type === 'office') {
-        databasePathRef.child('office_expenses').child(id).update({
+        databasePathRef.child('office_expenses').child(itemId).update({
           category: document.getElementById('action-category').value,
           amount: parseFloat(document.getElementById('action-amount').value),
           details: document.getElementById('action-details').value,
           date: document.getElementById('action-date').value
         });
       } else if (type === 'owner') {
-        databasePathRef.child('owner_transactions').child(id).update({
-          type: document.getElementById('action-type').value,
+        databasePathRef.child('owner_transactions').child(itemId).update({
           amount: parseFloat(document.getElementById('action-amount').value),
           details: document.getElementById('action-details').value,
           date: document.getElementById('action-date').value
@@ -2180,25 +2131,25 @@
     });
 
     window.executeDeleteAction = function() {
-      if (!confirm("আপনি কি নিশ্চিত যে এটি মুছে ফেলতে চান?")) return;
+      if (!confirm('আপনি কি নিশ্চিত যে এই আইটেমটি মুছে ফেলতে চান?')) return;
       if (!databasePathRef) return;
 
       const type = document.getElementById('action-item-type').value;
-      const id = document.getElementById('action-item-id').value;
+      const itemId = document.getElementById('action-item-id').value;
       const subId = document.getElementById('action-sub-id').value;
 
       if (type === 'client') {
-        databasePathRef.child('clients').child(id).remove();
+        databasePathRef.child('clients').child(itemId).remove();
       } else if (type === 'ledger') {
-        const client = farmData.find(c => c.id === id);
+        const client = farmData.find(c => c.id === itemId);
         if (client) {
-          const updatedHistory = (client.history || []).filter(t => t.id !== subId);
-          databasePathRef.child('clients').child(id).update({ history: updatedHistory });
+          const updatedHistory = client.history.filter(h => h.id !== subId);
+          databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
         }
       } else if (type === 'office') {
-        databasePathRef.child('office_expenses').child(id).remove();
+        databasePathRef.child('office_expenses').child(itemId).remove();
       } else if (type === 'owner') {
-        databasePathRef.child('owner_transactions').child(id).remove();
+        databasePathRef.child('owner_transactions').child(itemId).remove();
       }
 
       closeActionModal();
