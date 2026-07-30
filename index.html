@@ -51,7 +51,7 @@
       #pdf-report-container, #pdf-report-container * { visibility: visible; }
       #pdf-report-container { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; }
       #report-content-body { filter: none !important; pointer-events: auto !important; user-select: auto !important; }
-      .no-print, button, input[type="month"], nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal, #summaryModal, .fab-btn { display: none !important; }
+      .no-print, button, input[type="month"], select, nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal, #summaryModal, .fab-btn { display: none !important; }
     }
 	
 	/* ১. প্রিন্ট বাটনের পাশের ছোট সামারি বাটনের স্টাইল */
@@ -249,16 +249,32 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6 flex-1">
     
-    <!-- NAVIGATION TABS & MONTH SELECTOR -->
+    <!-- NAVIGATION TABS & MONTH/YEAR SELECTOR -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div class="hidden md:flex items-center bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-        <button onclick="switchTab('journal-view')" id="btn-journal-view-pc" class="tab-btn px-5 py-2.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">💸 গ্রাহক ও লেনদেন</button>
+        <button onclick="switchTab('journal-view')" id="btn-journal-view-pc" class="tab-btn px-5 py-2.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm">💸 গ্রাহক ও লেনদেন</button>
         <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-pc" class="tab-btn px-5 py-2.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">📊 ড্যাশবোর্ড ও রিপোর্ট</button>
       </div>
 
-      <div class="flex items-center justify-between md:justify-end gap-2 w-full md:w-auto">
-        <span class="text-xs font-bold text-slate-500 md:hidden">মাস সিলেক্ট করুন:</span>
-        <input type="month" id="month-filter" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs md:text-sm rounded-xl px-3.5 py-2.5 outline-none focus:border-rose-600 transition">
+      <!-- ANALYTICS MODE & DATE FILTERS -->
+      <div class="flex flex-wrap items-center justify-between md:justify-end gap-2 w-full md:w-auto">
+        <!-- Monthly vs Yearly Analytics Mode Switcher -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <button onclick="setAnalyticsViewMode('monthly')" id="mode-btn-monthly" class="px-3 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm">মাসিক</button>
+          <button onclick="setAnalyticsViewMode('yearly')" id="mode-btn-yearly" class="px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">বার্ষিক</button>
+        </div>
+
+        <div id="month-picker-wrapper" class="flex items-center gap-2">
+          <span class="text-xs font-bold text-slate-500 hidden sm:inline">মাস:</span>
+          <input type="month" id="month-filter" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs md:text-sm rounded-xl px-3.5 py-2 outline-none focus:border-rose-600 transition">
+        </div>
+
+        <div id="year-picker-wrapper" class="flex items-center gap-2 hidden">
+          <span class="text-xs font-bold text-slate-500 hidden sm:inline">বছর:</span>
+          <select id="year-filter" onchange="uiUpdatePipeline()" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs md:text-sm rounded-xl px-3.5 py-2 outline-none focus:border-rose-600 transition">
+            <!-- Dynamic Years -->
+          </select>
+        </div>
       </div>
     </div>
 
@@ -289,9 +305,9 @@
 
           <!-- Paid / Due Filter Buttons -->
           <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
-            <button onclick="setClientFilter('all')" id="filter-btn-all" class="px-3 py-1.5 text-xs font-bold rounded-lg transition">সব</button>
-            <button onclick="setClientFilter('due')" id="filter-btn-due" class="px-3 py-1.5 text-xs font-bold rounded-lg transition">বাকি</button>
-            <button onclick="setClientFilter('paid')" id="filter-btn-paid" class="px-3 py-1.5 text-xs font-bold rounded-lg transition">পরিশোধ</button>
+            <button onclick="setClientFilter('all')" id="filter-btn-all" class="px-3 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm">সব</button>
+            <button onclick="setClientFilter('due')" id="filter-btn-due" class="px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">বাকি</button>
+            <button onclick="setClientFilter('paid')" id="filter-btn-paid" class="px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">পরিশোধ</button>
           </div>
         </div>
       </div>
@@ -316,7 +332,7 @@
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-2xs no-print">
 		  <div>
 			<h3 class="text-xs md:text-sm font-bold text-slate-900 flex items-center gap-2">
-			  <span class="visually-hidden-field">🔒</span> <span>রিপোর্ট ও ড্যাশবোর্ড</span>
+			  <span class="visually-hidden-field">🔒</span> <span id="dashboard-heading-title">মাসিক রিপোর্ট ও ড্যাশবোর্ড</span>
 			</h3>
 			<p class="text-[11px] text-slate-500 mt-0.5">গোপনীয়তা রক্ষার জন্য পাসকোড দিয়ে ড্যাশবোর্ড আনলক করতে হবে।</p>
 		  </div>
@@ -365,14 +381,39 @@
             </div>
           </div>
 
+          <!-- YEARLY MONTH-BY-MONTH BREAKDOWN ANALYTICS TABLE (Shown only in Yearly Mode) -->
+          <div id="yearly-analytics-section" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 hidden">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <span>📅</span> <span id="yearly-breakdown-title">বার্ষিক মাসভিত্তিক অ্যানালিটিক্স রিপোর্ট</span>
+              </h4>
+              <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-2.5 py-1 rounded-lg">১২ মাসের সামারি</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px]">
+                  <tr>
+                    <th class="p-3">মাস</th>
+                    <th class="p-3 text-right">মোট জমা (৳)</th>
+                    <th class="p-3 text-right">মোট খরচ (৳)</th>
+                    <th class="p-3 text-right">নিট ব্যালেন্স / লাভ (৳)</th>
+                  </tr>
+                </thead>
+                <tbody id="yearly-breakdown-rows" class="divide-y divide-slate-100 font-semibold text-slate-800">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- ১. লাভ-ক্ষতি সামারি রিপোর্ট -->
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
               <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                  <span>📈</span> লাভ-ক্ষতি সামারি রিপোর্ট
+                  <span>📈</span> <span id="profit-report-title">লাভ-ক্ষতি সামারি রিপোর্ট</span>
                 </h4>
-                <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-lg"></span>
+                <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-lg" id="profit-badge">আজকের হিসাব</span>
               </div>
               
               <div class="space-y-2 text-xs md:text-sm font-semibold text-slate-700">
@@ -512,10 +553,10 @@
   <!-- BOTTOM NAVIGATION (Mobile Only) -->
   <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 z-40 shadow-xl md:hidden">
     <div class="grid grid-cols-2 text-center py-2">
-      <button onclick="switchTab('journal-view')" id="btn-journal-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
+      <button onclick="switchTab('journal-view')" id="btn-journal-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105">
         <span class="text-lg">💸</span><span>গ্রাহক ও লেনদেন</span>
       </button>
-      <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1">
+      <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition">
         <span class="text-lg">📊</span><span>ড্যাশবোর্ড ও রিপোর্ট</span>
       </button>
     </div>
@@ -525,7 +566,7 @@
   <div id="summaryModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b border-slate-200 pb-3">
-        <h3 class="text-sm font-bold text-slate-900">মাসিক হিসাবের সামারি</h3>
+        <h3 id="summaryModalTitle" class="text-sm font-bold text-slate-900">হিসাবের সামারি</h3>
         <button onclick="closeSummaryModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
       </div>
 
@@ -784,6 +825,7 @@
     let ownerTransactions = [];
     let databasePathRef = null;
     let activeClientFilter = 'all';
+    let analyticsViewMode = 'monthly'; // 'monthly' or 'yearly'
     let isReportUnlocked = false;
     let unlockedCards = {}; 
     let globalCalculatedNetBalance = 0;
@@ -807,16 +849,30 @@
     const ownerExpenseRows = document.getElementById('owner-expense-rows');
     const searchInput = document.getElementById('search-input');
     const monthFilter = document.getElementById('month-filter');
+    const yearFilter = document.getElementById('year-filter');
     const categoryFilter = document.getElementById('category-filter');
 
     if(document.getElementById('qc-date')) document.getElementById('qc-date').value = new Date().toISOString().substring(0, 10);
     if(document.getElementById('qt-date')) document.getElementById('qt-date').value = new Date().toISOString().substring(0, 10);
     if(document.getElementById('qo-date')) document.getElementById('qo-date').value = new Date().toISOString().substring(0, 10);
 
+    const now = new Date();
     if (monthFilter) {
-      const now = new Date();
       monthFilter.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
       monthFilter.addEventListener('change', uiUpdatePipeline);
+    }
+
+    // Populate Year Filter Dropdown
+    if (yearFilter) {
+      const currentYear = now.getFullYear();
+      yearFilter.innerHTML = '';
+      for (let y = currentYear + 1; y >= currentYear - 5; y--) {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.innerText = y + " সাল";
+        if (y === currentYear) opt.selected = true;
+        yearFilter.appendChild(opt);
+      }
     }
 
     /* GLOBAL SEARCH */
@@ -825,6 +881,37 @@
         uiUpdatePipeline();
       });
     }
+
+    /* TOGGLE MONTHLY / YEARLY ANALYTICS MODE */
+    window.setAnalyticsViewMode = function(mode) {
+      analyticsViewMode = mode;
+      const btnMonthly = document.getElementById('mode-btn-monthly');
+      const btnYearly = document.getElementById('mode-btn-yearly');
+      const monthWrapper = document.getElementById('month-picker-wrapper');
+      const yearWrapper = document.getElementById('year-picker-wrapper');
+      const yearlySection = document.getElementById('yearly-analytics-section');
+      const dashTitle = document.getElementById('dashboard-heading-title');
+      const profitBadge = document.getElementById('profit-badge');
+
+      if (mode === 'monthly') {
+        btnMonthly.className = "px-3 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
+        btnYearly.className = "px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
+        monthWrapper.classList.remove('hidden');
+        yearWrapper.classList.add('hidden');
+        yearlySection.classList.add('hidden');
+        if (dashTitle) dashTitle.innerText = "মাসিক রিপোর্ট ও ড্যাশবোর্ড";
+        if (profitBadge) profitBadge.innerText = "মাসিক হিসাব";
+      } else {
+        btnYearly.className = "px-3 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
+        btnMonthly.className = "px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
+        monthWrapper.classList.add('hidden');
+        yearWrapper.classList.remove('hidden');
+        yearlySection.classList.remove('hidden');
+        if (dashTitle) dashTitle.innerText = "বার্ষিক রিপোর্ট ও ড্যাশবোর্ড";
+        if (profitBadge) profitBadge.innerText = "বার্ষিক হিসাব";
+      }
+      uiUpdatePipeline();
+    };
 
     /* LOCK SCREEN PIN KEYPAD HANDLERS */
     window.pressKey = function(key) {
@@ -905,7 +992,7 @@
       });
     }
 
-    /* CROSS-PLATFORM PRINT HELPER FOR MOBILE (PWA / ANDROID WEBVIEW) AND DESKTOP */
+    /* CROSS-PLATFORM PRINT HELPER FOR MOBILE AND DESKTOP */
     function triggerUniversalPrint(htmlContent) {
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
@@ -1067,16 +1154,19 @@
 
     /* SUMMARY GENERATOR LOGIC FOR WHATSAPP & CLIPBOARD */
     function generateMonthSummaryText() {
-      const selectedMonthVal = monthFilter ? monthFilter.value : '';
-      let monthLabel = selectedMonthVal;
-      
-      if (selectedMonthVal) {
-        const [year, month] = selectedMonthVal.split('-');
-        const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
-        monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
+      let label = "";
+      if (analyticsViewMode === 'monthly') {
+        const selectedMonthVal = monthFilter ? monthFilter.value : '';
+        if (selectedMonthVal) {
+          const [year, month] = selectedMonthVal.split('-');
+          const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+          label = `${monthNames[parseInt(month) - 1]} ${year}`;
+        }
+      } else {
+        label = (yearFilter ? yearFilter.value : new Date().getFullYear()) + " সাল (বার্ষিক)";
       }
 
-      return `📊 *ডিজিটাল খাতা - মাসিক হিসাব সামারি* (${monthLabel})\n` +
+      return `📊 *ডিজিটাল খাতা - হিসাব সামারি* (${label})\n` +
              `-----------------------------------\n` +
              `🟢 মোট জমা: ৳${globalCalculatedIncome.toLocaleString('en-IN')}\n` +
              `🔴 মোট খরচ: ৳${globalCalculatedExpense.toLocaleString('en-IN')}\n` +
@@ -1089,6 +1179,10 @@
 
     window.openSummaryModal = function() {
       const preview = document.getElementById('summaryTextPreview');
+      const title = document.getElementById('summaryModalTitle');
+      if (title) {
+        title.innerText = analyticsViewMode === 'yearly' ? 'বার্ষিক হিসাবের সামারি' : 'মাসিক হিসাবের সামারি';
+      }
       if (preview) {
         preview.innerText = generateMonthSummaryText();
       }
@@ -1102,7 +1196,7 @@
     window.copySummaryToClipboard = function() {
       const text = generateMonthSummaryText();
       navigator.clipboard.writeText(text).then(() => {
-        alert("মাসিক হিসাবের সামারি সফলভাবে কপি হয়েছে!");
+        alert("হিসাবের সামারি সফলভাবে কপি হয়েছে!");
       }).catch(err => {
         alert("কপি করতে ব্যর্থ হয়েছে: " + err);
       });
@@ -1287,6 +1381,9 @@
 
     function uiUpdatePipeline() {
       calculateGlobalMetrics();
+      if (analyticsViewMode === 'yearly') {
+        renderYearlyBreakdownTable();
+      }
       renderClientCards();
       renderOfficeExpenses();
       renderOwnerTransactions();
@@ -1294,24 +1391,31 @@
       applyPrivacyToElements();
     }
 
-    /* GLOBAL METRICS CALCULATION */
+    /* GLOBAL METRICS CALCULATION (MONTHLY & YEARLY SUPPORT) */
     function calculateGlobalMetrics() {
       let budget = 0, collection = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
       let ownerInjection = 0, ownerDrawing = 0;
       
-      let targetYear, targetMonth;
-      if (monthFilter && monthFilter.value) {
-        const parts = monthFilter.value.split('-'); 
-        targetYear = parseInt(parts[0]);
-        targetMonth = parseInt(parts[1]) - 1; 
+      let startPeriod, endPeriod;
+
+      if (analyticsViewMode === 'monthly') {
+        let targetYear, targetMonth;
+        if (monthFilter && monthFilter.value) {
+          const parts = monthFilter.value.split('-'); 
+          targetYear = parseInt(parts[0]);
+          targetMonth = parseInt(parts[1]) - 1; 
+        } else {
+          const now = new Date();
+          targetYear = now.getFullYear();
+          targetMonth = now.getMonth();
+        }
+        startPeriod = new Date(targetYear, targetMonth, 1);
+        endPeriod = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
       } else {
-        const now = new Date();
-        targetYear = now.getFullYear();
-        targetMonth = now.getMonth();
+        let targetYear = yearFilter ? parseInt(yearFilter.value) : new Date().getFullYear();
+        startPeriod = new Date(targetYear, 0, 1);
+        endPeriod = new Date(targetYear, 11, 31, 23, 59, 59);
       }
-      
-      const startOfMonth = new Date(targetYear, targetMonth, 1);
-      const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
       let projectExpenseBreakdown = [];
       let officeExpenseBreakdown = [];
@@ -1321,21 +1425,21 @@
         budget += (c.budget || 0); 
         let cIncome = 0;
         let cDiscount = 0;
-        let prjMonthExp = 0;
+        let prjPeriodExp = 0;
         
         if(c.history) {
           c.history.forEach(t => {
             const tDate = new Date(t.date);
-            const isSelectedMonth = (tDate >= startOfMonth && tDate <= endOfMonth);
+            const isInPeriod = (tDate >= startPeriod && tDate <= endPeriod);
 
             if (t.type === 'income') {
               cIncome += t.amount; 
               cDiscount += (t.discount || 0);
-              if (isSelectedMonth) collection += t.amount; 
+              if (isInPeriod) collection += t.amount; 
             }
-            if (t.type === 'expense' && isSelectedMonth) {
+            if (t.type === 'expense' && isInPeriod) {
               prjExpense += t.amount; 
-              prjMonthExp += t.amount;
+              prjPeriodExp += t.amount;
             }
           });
         }
@@ -1343,14 +1447,14 @@
         let effectiveDue = c.budget - (cIncome + cDiscount);
         due += Math.max(0, effectiveDue); 
 
-        if (prjMonthExp > 0) {
-          projectExpenseBreakdown.push({ name: c.project, amount: prjMonthExp });
+        if (prjPeriodExp > 0) {
+          projectExpenseBreakdown.push({ name: c.project, amount: prjPeriodExp });
         }
       });
 
       officeExpenses.forEach(oe => {
         const oeDate = new Date(oe.date);
-        if (oeDate >= startOfMonth && oeDate <= endOfMonth) {
+        if (oeDate >= startPeriod && oeDate <= endPeriod) {
           totalOfficeExpense += oe.amount;
           officeExpenseBreakdown.push({ name: oe.details || oe.category, cat: oe.category, amount: oe.amount });
         }
@@ -1358,7 +1462,7 @@
 
       ownerTransactions.forEach(ow => {
         const owDate = new Date(ow.date);
-        if (owDate >= startOfMonth && owDate <= endOfMonth) {
+        if (owDate >= startPeriod && owDate <= endPeriod) {
           if (ow.type === 'injection') ownerInjection += ow.amount;
           if (ow.type === 'drawing') {
             ownerDrawing += ow.amount;
@@ -1369,7 +1473,7 @@
 
       const prjListElem = document.getElementById('acc-project-cost-list');
       if (prjListElem) {
-        prjListElem.innerHTML = projectExpenseBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">এই মাসে কোনো প্রজেক্ট খরচ নেই</div>' : '';
+        prjListElem.innerHTML = projectExpenseBreakdown.length === 0 ? `<div class="text-slate-400 font-normal italic py-1">এই ${analyticsViewMode === 'yearly' ? 'বছরে' : 'মাসে'} কোনো প্রজেক্ট খরচ নেই</div>` : '';
         projectExpenseBreakdown.forEach(item => {
           const formattedText = '৳' + item.amount.toLocaleString('en-IN');
           prjListElem.innerHTML += `
@@ -1383,7 +1487,7 @@
 
       const oeListElem = document.getElementById('acc-office-cost-list');
       if (oeListElem) {
-        oeListElem.innerHTML = officeExpenseBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">এই মাসে কোনো অফিস খরচ নেই</div>' : '';
+        oeListElem.innerHTML = officeExpenseBreakdown.length === 0 ? `<div class="text-slate-400 font-normal italic py-1">এই ${analyticsViewMode === 'yearly' ? 'বছরে' : 'মাসে'} কোনো অফিস খরচ নেই</div>` : '';
         officeExpenseBreakdown.forEach(item => {
           const formattedText = '৳' + item.amount.toLocaleString('en-IN');
           oeListElem.innerHTML += `
@@ -1397,7 +1501,7 @@
 
       const owListElem = document.getElementById('acc-owner-drawing-list');
       if (owListElem) {
-        owListElem.innerHTML = ownerDrawingBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">এই মাসে ক্যাশ উত্তোলন নেই</div>' : '';
+        owListElem.innerHTML = ownerDrawingBreakdown.length === 0 ? `<div class="text-slate-400 font-normal italic py-1">এই ${analyticsViewMode === 'yearly' ? 'বছরে' : 'মাসে'} ক্যাশ উত্তোলন নেই</div>` : '';
         ownerDrawingBreakdown.forEach(item => {
           const formattedText = '৳' + item.amount.toLocaleString('en-IN');
           owListElem.innerHTML += `
@@ -1475,20 +1579,87 @@
       }
     }
 
+    /* RENDER 12-MONTH BREAKDOWN TABLE FOR YEARLY ANALYTICS */
+    function renderYearlyBreakdownTable() {
+      const rowsElem = document.getElementById('yearly-breakdown-rows');
+      const titleElem = document.getElementById('yearly-breakdown-title');
+      if (!rowsElem) return;
+
+      const selectedYear = yearFilter ? parseInt(yearFilter.value) : new Date().getFullYear();
+      if (titleElem) titleElem.innerText = `${selectedYear} সালের মাসভিত্তিক অ্যানালিটিক্স রিপোর্ট`;
+
+      const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+      let monthlyStats = Array.from({ length: 12 }, () => ({ income: 0, expense: 0 }));
+
+      farmData.forEach(c => {
+        if (c.history) {
+          c.history.forEach(t => {
+            const d = new Date(t.date);
+            if (d.getFullYear() === selectedYear) {
+              const m = d.getMonth();
+              if (t.type === 'income') monthlyStats[m].income += t.amount;
+              if (t.type === 'expense') monthlyStats[m].expense += t.amount;
+            }
+          });
+        }
+      });
+
+      officeExpenses.forEach(oe => {
+        const d = new Date(oe.date);
+        if (d.getFullYear() === selectedYear) {
+          const m = d.getMonth();
+          monthlyStats[m].expense += oe.amount;
+        }
+      });
+
+      ownerTransactions.forEach(ow => {
+        const d = new Date(ow.date);
+        if (d.getFullYear() === selectedYear) {
+          const m = d.getMonth();
+          if (ow.type === 'injection') monthlyStats[m].income += ow.amount;
+          if (ow.type === 'drawing') monthlyStats[m].expense += ow.amount;
+        }
+      });
+
+      rowsElem.innerHTML = monthlyStats.map((stat, idx) => {
+        const net = stat.income - stat.expense;
+        const incText = '৳' + stat.income.toLocaleString('en-IN');
+        const expText = '৳' + stat.expense.toLocaleString('en-IN');
+        const netText = '৳' + net.toLocaleString('en-IN');
+        const netColor = net >= 0 ? 'text-emerald-600' : 'text-rose-600';
+
+        return `
+          <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+            <td class="p-3 font-bold text-slate-800">${monthNames[idx]}</td>
+            <td class="p-3 text-right font-mono font-bold text-emerald-600 hide-sensitive" data-original="${incText}">${incText}</td>
+            <td class="p-3 text-right font-mono font-bold text-rose-600 hide-sensitive" data-original="${expText}">${expText}</td>
+            <td class="p-3 text-right font-mono font-bold ${netColor} hide-sensitive" data-original="${netText}">${netText}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
     /* RENDER OFFICE EXPENSES TABLE */
     function renderOfficeExpenses() {
       if (!officeExpenseRows) return;
-      const selectedMonth = monthFilter ? monthFilter.value : '';
 
       let filtered = officeExpenses;
-      if (selectedMonth) {
-        filtered = officeExpenses.filter(oe => oe.date && oe.date.startsWith(selectedMonth));
+      if (analyticsViewMode === 'monthly') {
+        const selectedMonth = monthFilter ? monthFilter.value : '';
+        if (selectedMonth) {
+          filtered = officeExpenses.filter(oe => oe.date && oe.date.startsWith(selectedMonth));
+        }
+      } else {
+        const selectedYear = yearFilter ? yearFilter.value : '';
+        if (selectedYear) {
+          filtered = officeExpenses.filter(oe => oe.date && oe.date.startsWith(selectedYear));
+        }
       }
 
       filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
       if (filtered.length === 0) {
-        officeExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 font-normal">এই মাসে কোনো অফিস খরচ নেই</td></tr>`;
+        officeExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 font-normal">এই সময়কালে কোনো অফিস খরচ নেই</td></tr>`;
         return;
       }
 
@@ -1510,17 +1681,24 @@
     /* RENDER OWNER TRANSACTIONS TABLE */
     function renderOwnerTransactions() {
       if (!ownerExpenseRows) return;
-      const selectedMonth = monthFilter ? monthFilter.value : '';
 
       let filtered = ownerTransactions;
-      if (selectedMonth) {
-        filtered = ownerTransactions.filter(ow => ow.date && ow.date.startsWith(selectedMonth));
+      if (analyticsViewMode === 'monthly') {
+        const selectedMonth = monthFilter ? monthFilter.value : '';
+        if (selectedMonth) {
+          filtered = ownerTransactions.filter(ow => ow.date && ow.date.startsWith(selectedMonth));
+        }
+      } else {
+        const selectedYear = yearFilter ? yearFilter.value : '';
+        if (selectedYear) {
+          filtered = ownerTransactions.filter(ow => ow.date && ow.date.startsWith(selectedYear));
+        }
       }
 
       filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
       if (filtered.length === 0) {
-        ownerExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 font-normal">এই মাসে কোনো মূলধন লেনদেন নেই</td></tr>`;
+        ownerExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 font-normal">এই সময়কালে কোনো মূলধন লেনদেন নেই</td></tr>`;
         return;
       }
 
@@ -1906,35 +2084,31 @@
       if (!modal || !passInput) return;
       passInput.value = '';
       passInput.classList.remove('border-rose-600');
-      let pendingAction = onSuccess;
       modal.classList.remove('hidden');
-      setTimeout(() => passInput.focus(), 50);
+      passInput.focus();
 
-      const validateInputModal = () => {
-        if (passInput.value.trim() === SECURITY_PASSCODE) {
-          modal.classList.add('hidden');
-          passInput.removeEventListener('input', autoCheckModalInput);
-          if (pendingAction) pendingAction();
+      const cleanup = () => {
+        modal.classList.add('hidden');
+        confirmBtn.onclick = null;
+        cancelBtn.onclick = null;
+        passInput.onkeyup = null;
+      };
+
+      const verify = () => {
+        if (passInput.value === SECURITY_PASSCODE) {
+          cleanup();
+          if (onSuccess) onSuccess();
         } else {
           passInput.classList.add('border-rose-600');
           passInput.value = '';
-          passInput.focus();
+          passInput.placeholder = 'ভুল PIN!';
         }
       };
 
-      const autoCheckModalInput = () => {
-        if (passInput.value.length === 4) {
-          validateInputModal();
-        }
-      };
-
-      passInput.addEventListener('input', autoCheckModalInput);
-
-      passInput.onkeyup = function(e) { if (e.key === 'Enter') validateInputModal(); };
-      confirmBtn.onclick = validateInputModal;
-      cancelBtn.onclick = function() { 
-        passInput.removeEventListener('input', autoCheckModalInput);
-        modal.classList.add('hidden');
+      confirmBtn.onclick = verify;
+      cancelBtn.onclick = cleanup;
+      passInput.onkeyup = (e) => {
+        if (e.key === 'Enter') verify();
       };
     }
 
@@ -1943,73 +2117,68 @@
       const modal = document.getElementById('actionModal');
       const title = document.getElementById('actionModalTitle');
       
-      document.getElementById('action-item-type').value = type;
       document.getElementById('action-item-id').value = itemId;
       document.getElementById('action-sub-id').value = subId || '';
+      document.getElementById('action-item-type').value = type;
 
-      const grpClient = document.getElementById('group-client-fields');
-      const grpCat = document.getElementById('group-category');
-      const grpType = document.getElementById('group-type');
-      const grpGeneric = document.getElementById('group-generic-fields');
-      const discountWrapper = document.getElementById('action-discount-wrapper');
-
-      grpClient.classList.add('hidden');
-      grpCat.classList.add('hidden');
-      grpType.classList.add('hidden');
-      grpGeneric.classList.remove('hidden');
-      discountWrapper.classList.add('hidden');
+      document.getElementById('group-client-fields').classList.add('hidden');
+      document.getElementById('group-category').classList.add('hidden');
+      document.getElementById('group-type').classList.add('hidden');
+      document.getElementById('action-discount-wrapper').classList.add('hidden');
 
       if (type === 'client') {
-        title.innerText = 'গ্রাহক তথ্য পরিবর্তন করুন';
-        grpClient.classList.remove('hidden');
-        grpGeneric.classList.add('hidden');
+        title.innerText = "গ্রাহক তথ্য সম্পাদন করুন";
+        document.getElementById('group-client-fields').classList.remove('hidden');
+        document.getElementById('group-generic-fields').classList.add('hidden');
 
-        const c = farmData.find(x => x.id === itemId);
-        if (c) {
-          document.getElementById('action-client-name').value = c.name || '';
-          document.getElementById('action-client-phone').value = c.phone || '';
-          document.getElementById('action-client-project').value = c.project || '';
-          document.getElementById('action-client-budget').value = c.budget || 0;
+        const client = farmData.find(c => c.id === itemId);
+        if (client) {
+          document.getElementById('action-client-name').value = client.name || '';
+          document.getElementById('action-client-phone').value = client.phone || '';
+          document.getElementById('action-client-project').value = client.project || '';
+          document.getElementById('action-client-budget').value = client.budget || 0;
         }
-      } else if (type === 'ledger') {
-        title.innerText = 'লেনদেন পরিবর্তন করুন';
-        const c = farmData.find(x => x.id === itemId);
-        if (c && c.history) {
-          const t = c.history.find(h => h.id === subId);
-          if (t) {
-            document.getElementById('action-amount').value = t.amount || 0;
-            document.getElementById('action-details').value = t.details || '';
-            document.getElementById('action-date').value = t.date || '';
-            if (t.type === 'income') {
-              discountWrapper.classList.remove('hidden');
-              document.getElementById('action-discount').value = t.discount || 0;
+      } else {
+        document.getElementById('group-generic-fields').classList.remove('hidden');
+
+        if (type === 'office') {
+          title.innerText = "অফিস খরচ সম্পাদন করুন";
+          document.getElementById('group-category').classList.remove('hidden');
+          const oe = officeExpenses.find(x => x.id === itemId);
+          if (oe) {
+            document.getElementById('action-category').value = oe.category || 'Others';
+            document.getElementById('action-amount').value = oe.amount || 0;
+            document.getElementById('action-details').value = oe.details || '';
+            document.getElementById('action-date').value = oe.date || '';
+          }
+        } else if (type === 'owner') {
+          title.innerText = "মূলধন লেনদেন সম্পাদন করুন";
+          document.getElementById('group-type').classList.remove('hidden');
+          const typeSelect = document.getElementById('action-type');
+          typeSelect.innerHTML = `<option value="injection">ক্যাশ জমা (Injection)</option><option value="drawing">ক্যাশ উত্তোলন (Drawing)</option>`;
+
+          const ow = ownerTransactions.find(x => x.id === itemId);
+          if (ow) {
+            typeSelect.value = ow.type || 'injection';
+            document.getElementById('action-amount').value = ow.amount || 0;
+            document.getElementById('action-details').value = ow.details || '';
+            document.getElementById('action-date').value = ow.date || '';
+          }
+        } else if (type === 'ledger') {
+          title.innerText = "লেজার লেনদেন সম্পাদন করুন";
+          const client = farmData.find(c => c.id === itemId);
+          if (client && client.history) {
+            const tx = client.history.find(t => t.id === subId);
+            if (tx) {
+              if (tx.type === 'income') {
+                document.getElementById('action-discount-wrapper').classList.remove('hidden');
+                document.getElementById('action-discount').value = tx.discount || 0;
+              }
+              document.getElementById('action-amount').value = tx.amount || 0;
+              document.getElementById('action-details').value = tx.details || '';
+              document.getElementById('action-date').value = tx.date || '';
             }
           }
-        }
-      } else if (type === 'office') {
-        title.innerText = 'অফিস খরচ আপডেট করুন';
-        grpCat.classList.remove('hidden');
-        const oe = officeExpenses.find(x => x.id === itemId);
-        if (oe) {
-          document.getElementById('action-category').value = oe.category || 'Others';
-          document.getElementById('action-amount').value = oe.amount || 0;
-          document.getElementById('action-details').value = oe.details || '';
-          document.getElementById('action-date').value = oe.date || '';
-        }
-      } else if (type === 'owner') {
-        title.innerText = 'মূলধন লেনদেন আপডেট করুন';
-        grpType.classList.remove('hidden');
-        const selectType = document.getElementById('action-type');
-        selectType.innerHTML = `
-          <option value="injection">💼 ক্যাশ জমা (Injection)</option>
-          <option value="drawing">💼 ক্যাশ উত্তোলন (Drawing)</option>
-        `;
-        const ow = ownerTransactions.find(x => x.id === itemId);
-        if (ow) {
-          selectType.value = ow.type || 'injection';
-          document.getElementById('action-amount').value = ow.amount || 0;
-          document.getElementById('action-details').value = ow.details || '';
-          document.getElementById('action-date').value = ow.date || '';
         }
       }
 
@@ -2022,7 +2191,7 @@
 
     actionForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (!databasePathRef) return;
+      if(!databasePathRef) return;
 
       const type = document.getElementById('action-item-type').value;
       const itemId = document.getElementById('action-item-id').value;
@@ -2035,23 +2204,6 @@
           project: document.getElementById('action-client-project').value,
           budget: parseFloat(document.getElementById('action-client-budget').value) || 0
         });
-      } else if (type === 'ledger') {
-        const c = farmData.find(x => x.id === itemId);
-        if (c && c.history) {
-          const updatedHistory = c.history.map(t => {
-            if (t.id === subId) {
-              return {
-                ...t,
-                amount: parseFloat(document.getElementById('action-amount').value) || 0,
-                discount: t.type === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
-                details: document.getElementById('action-details').value,
-                date: document.getElementById('action-date').value
-              };
-            }
-            return t;
-          });
-          databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
-        }
       } else if (type === 'office') {
         databasePathRef.child('office_expenses').child(itemId).update({
           category: document.getElementById('action-category').value,
@@ -2066,6 +2218,23 @@
           details: document.getElementById('action-details').value,
           date: document.getElementById('action-date').value
         });
+      } else if (type === 'ledger') {
+        const client = farmData.find(c => c.id === itemId);
+        if (client && client.history) {
+          const updatedHistory = client.history.map(t => {
+            if (t.id === subId) {
+              return {
+                ...t,
+                amount: parseFloat(document.getElementById('action-amount').value) || 0,
+                discount: t.type === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
+                details: document.getElementById('action-details').value,
+                date: document.getElementById('action-date').value
+              };
+            }
+            return t;
+          });
+          databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
+        }
       }
 
       closeActionModal();
@@ -2073,8 +2242,8 @@
     });
 
     window.executeDeleteAction = function() {
-      if (!databasePathRef) return;
-      if (!confirm("আপনি কি নিশ্চিত যে এটি মুছে ফেলতে চান?")) return;
+      if(!databasePathRef) return;
+      if(!confirm('আপনি কি নিশ্চিত যে এটি মুছে ফেলতে চান?')) return;
 
       const type = document.getElementById('action-item-type').value;
       const itemId = document.getElementById('action-item-id').value;
@@ -2082,16 +2251,16 @@
 
       if (type === 'client') {
         databasePathRef.child('clients').child(itemId).remove();
-      } else if (type === 'ledger') {
-        const c = farmData.find(x => x.id === itemId);
-        if (c && c.history) {
-          const updatedHistory = c.history.filter(t => t.id !== subId);
-          databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
-        }
       } else if (type === 'office') {
         databasePathRef.child('office_expenses').child(itemId).remove();
       } else if (type === 'owner') {
         databasePathRef.child('owner_transactions').child(itemId).remove();
+      } else if (type === 'ledger') {
+        const client = farmData.find(c => c.id === itemId);
+        if (client && client.history) {
+          const updatedHistory = client.history.filter(t => t.id !== subId);
+          databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
+        }
       }
 
       closeActionModal();
