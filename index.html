@@ -905,6 +905,45 @@
       });
     }
 
+    /* CROSS-PLATFORM PRINT HELPER FOR MOBILE (PWA / ANDROID WEBVIEW) AND DESKTOP */
+    function triggerUniversalPrint(htmlContent) {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        let printFrame = document.getElementById('mobile-print-iframe');
+        if (!printFrame) {
+          printFrame = document.createElement('iframe');
+          printFrame.id = 'mobile-print-iframe';
+          printFrame.style.position = 'fixed';
+          printFrame.style.right = '0';
+          printFrame.style.bottom = '0';
+          printFrame.style.width = '0';
+          printFrame.style.height = '0';
+          printFrame.style.border = '0';
+          document.body.appendChild(printFrame);
+        }
+        
+        const frameDoc = printFrame.contentWindow.document;
+        frameDoc.open();
+        frameDoc.write(htmlContent);
+        frameDoc.close();
+        
+        setTimeout(() => {
+          printFrame.contentWindow.focus();
+          printFrame.contentWindow.print();
+        }, 500);
+      } else {
+        const printWin = window.open('', '', 'width=800,height=700');
+        printWin.document.write(htmlContent);
+        printWin.document.close();
+        setTimeout(() => {
+          printWin.focus();
+          printWin.print();
+          printWin.close();
+        }, 500);
+      }
+    }
+
     /* PRINT SINGLE CLIENT INVOICE / MEMO */
     window.printClientInvoice = function(clientId, txId = null) {
       const client = farmData.find(c => c.id === clientId);
@@ -929,10 +968,11 @@
         </tr>
       `).join('');
 
-      const printWin = window.open('', '', 'width=800,height=700');
-      printWin.document.write(`
+      const htmlContent = `
+        <!DOCTYPE html>
         <html>
           <head>
+            <meta charset="UTF-8">
             <title>ইনভয়েস - ${client.project}</title>
             <style>
               body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; color: #1e293b; }
@@ -990,23 +1030,21 @@
             </div>
           </body>
         </html>
-      `);
-      printWin.document.close();
-      setTimeout(() => {
-        printWin.print();
-        printWin.close();
-      }, 500);
+      `;
+
+      triggerUniversalPrint(htmlContent);
     };
 
     /* SEARCH FILTER PRINT FUNCTION */
     window.printSearchResults = function() {
       const query = searchInput ? searchInput.value.trim() : '';
-      const printWindow = window.open('', '', 'width=900,height=700');
       const container = document.getElementById('client-cards-container').innerHTML;
       
-      printWindow.document.write(`
+      const htmlContent = `
+        <!DOCTYPE html>
         <html>
           <head>
+            <meta charset="UTF-8">
             <title>ফিল্টার রিপোর্ট - ডিজিটাল খাতা</title>
             <script src="https://cdn.tailwindcss.com"><\/script>
             <style>
@@ -1022,12 +1060,9 @@
             <div>${container}</div>
           </body>
         </html>
-      `);
-      printWindow.document.close();
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-      }, 500);
+      `;
+
+      triggerUniversalPrint(htmlContent);
     };
 
     /* SUMMARY GENERATOR LOGIC FOR WHATSAPP & CLIPBOARD */
@@ -1905,77 +1940,80 @@
 
     /* ACTION MODAL HANDLERS FOR EDIT / DELETE */
     window.openActionModal = function(type, itemId, subId = null) {
+      const modal = document.getElementById('actionModal');
+      const title = document.getElementById('actionModalTitle');
+      
       document.getElementById('action-item-type').value = type;
       document.getElementById('action-item-id').value = itemId;
       document.getElementById('action-sub-id').value = subId || '';
 
-      const gClient = document.getElementById('group-client-fields');
-      const gCategory = document.getElementById('group-category');
-      const gType = document.getElementById('group-type');
-      const gGeneric = document.getElementById('group-generic-fields');
+      const grpClient = document.getElementById('group-client-fields');
+      const grpCat = document.getElementById('group-category');
+      const grpType = document.getElementById('group-type');
+      const grpGeneric = document.getElementById('group-generic-fields');
       const discountWrapper = document.getElementById('action-discount-wrapper');
 
-      gClient.classList.add('hidden');
-      gCategory.classList.add('hidden');
-      gType.classList.add('hidden');
+      grpClient.classList.add('hidden');
+      grpCat.classList.add('hidden');
+      grpType.classList.add('hidden');
+      grpGeneric.classList.remove('hidden');
       discountWrapper.classList.add('hidden');
-      gGeneric.classList.remove('hidden');
 
       if (type === 'client') {
-        const c = farmData.find(item => item.id === itemId);
-        if(!c) return;
-        gClient.classList.remove('hidden');
-        gGeneric.classList.add('hidden');
-        document.getElementById('action-client-name').value = c.name || '';
-        document.getElementById('action-client-phone').value = c.phone || '';
-        document.getElementById('action-client-project').value = c.project || '';
-        document.getElementById('action-client-budget').value = c.budget || 0;
-      } else if (type === 'ledger') {
-        const c = farmData.find(item => item.id === itemId);
-        if(!c || !c.history) return;
-        const t = c.history.find(h => h.id === subId);
-        if(!t) return;
-        
-        gType.classList.remove('hidden');
-        const typeSelect = document.getElementById('action-type');
-        typeSelect.innerHTML = `
-          <option value="income">🟢 টাকা জমা (Debit)</option>
-          <option value="expense">🔴 প্রজেক্ট খরচ (Credit)</option>
-        `;
-        typeSelect.value = t.type;
+        title.innerText = 'গ্রাহক তথ্য পরিবর্তন করুন';
+        grpClient.classList.remove('hidden');
+        grpGeneric.classList.add('hidden');
 
-        if (t.type === 'income') {
-          discountWrapper.classList.remove('hidden');
-          document.getElementById('action-discount').value = t.discount || 0;
+        const c = farmData.find(x => x.id === itemId);
+        if (c) {
+          document.getElementById('action-client-name').value = c.name || '';
+          document.getElementById('action-client-phone').value = c.phone || '';
+          document.getElementById('action-client-project').value = c.project || '';
+          document.getElementById('action-client-budget').value = c.budget || 0;
         }
-
-        document.getElementById('action-amount').value = t.amount || 0;
-        document.getElementById('action-details').value = t.details || '';
-        document.getElementById('action-date').value = t.date || '';
+      } else if (type === 'ledger') {
+        title.innerText = 'লেনদেন পরিবর্তন করুন';
+        const c = farmData.find(x => x.id === itemId);
+        if (c && c.history) {
+          const t = c.history.find(h => h.id === subId);
+          if (t) {
+            document.getElementById('action-amount').value = t.amount || 0;
+            document.getElementById('action-details').value = t.details || '';
+            document.getElementById('action-date').value = t.date || '';
+            if (t.type === 'income') {
+              discountWrapper.classList.remove('hidden');
+              document.getElementById('action-discount').value = t.discount || 0;
+            }
+          }
+        }
       } else if (type === 'office') {
-        const oe = officeExpenses.find(item => item.id === itemId);
-        if(!oe) return;
-        gCategory.classList.remove('hidden');
-        document.getElementById('action-category').value = oe.category || 'Others';
-        document.getElementById('action-amount').value = oe.amount || 0;
-        document.getElementById('action-details').value = oe.details || '';
-        document.getElementById('action-date').value = oe.date || '';
+        title.innerText = 'অফিস খরচ আপডেট করুন';
+        grpCat.classList.remove('hidden');
+        const oe = officeExpenses.find(x => x.id === itemId);
+        if (oe) {
+          document.getElementById('action-category').value = oe.category || 'Others';
+          document.getElementById('action-amount').value = oe.amount || 0;
+          document.getElementById('action-details').value = oe.details || '';
+          document.getElementById('action-date').value = oe.date || '';
+        }
       } else if (type === 'owner') {
-        const ow = ownerTransactions.find(item => item.id === itemId);
-        if(!ow) return;
-        gType.classList.remove('hidden');
-        const typeSelect = document.getElementById('action-type');
-        typeSelect.innerHTML = `
+        title.innerText = 'মূলধন লেনদেন আপডেট করুন';
+        grpType.classList.remove('hidden');
+        const selectType = document.getElementById('action-type');
+        selectType.innerHTML = `
           <option value="injection">💼 ক্যাশ জমা (Injection)</option>
           <option value="drawing">💼 ক্যাশ উত্তোলন (Drawing)</option>
         `;
-        typeSelect.value = ow.type;
-        document.getElementById('action-amount').value = ow.amount || 0;
-        document.getElementById('action-details').value = ow.details || '';
-        document.getElementById('action-date').value = ow.date || '';
+        const ow = ownerTransactions.find(x => x.id === itemId);
+        if (ow) {
+          selectType.value = ow.type || 'injection';
+          document.getElementById('action-amount').value = ow.amount || 0;
+          document.getElementById('action-details').value = ow.details || '';
+          document.getElementById('action-date').value = ow.date || '';
+        }
       }
 
-      document.getElementById('actionModal').classList.remove('hidden');
+      modal.classList.remove('hidden');
     };
 
     window.closeActionModal = function() {
@@ -1984,7 +2022,7 @@
 
     actionForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      if(!databasePathRef) return;
+      if (!databasePathRef) return;
 
       const type = document.getElementById('action-item-type').value;
       const itemId = document.getElementById('action-item-id').value;
@@ -1995,19 +2033,17 @@
           name: document.getElementById('action-client-name').value,
           phone: document.getElementById('action-client-phone').value,
           project: document.getElementById('action-client-project').value,
-          budget: parseFloat(document.getElementById('action-client-budget').value)
+          budget: parseFloat(document.getElementById('action-client-budget').value) || 0
         });
       } else if (type === 'ledger') {
-        const c = farmData.find(item => item.id === itemId);
-        if(c && c.history) {
+        const c = farmData.find(x => x.id === itemId);
+        if (c && c.history) {
           const updatedHistory = c.history.map(t => {
             if (t.id === subId) {
-              const selectedType = document.getElementById('action-type').value;
               return {
                 ...t,
-                type: selectedType,
-                amount: parseFloat(document.getElementById('action-amount').value),
-                discount: selectedType === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
+                amount: parseFloat(document.getElementById('action-amount').value) || 0,
+                discount: t.type === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
                 details: document.getElementById('action-details').value,
                 date: document.getElementById('action-date').value
               };
@@ -2019,14 +2055,14 @@
       } else if (type === 'office') {
         databasePathRef.child('office_expenses').child(itemId).update({
           category: document.getElementById('action-category').value,
-          amount: parseFloat(document.getElementById('action-amount').value),
+          amount: parseFloat(document.getElementById('action-amount').value) || 0,
           details: document.getElementById('action-details').value,
           date: document.getElementById('action-date').value
         });
       } else if (type === 'owner') {
         databasePathRef.child('owner_transactions').child(itemId).update({
           type: document.getElementById('action-type').value,
-          amount: parseFloat(document.getElementById('action-amount').value),
+          amount: parseFloat(document.getElementById('action-amount').value) || 0,
           details: document.getElementById('action-details').value,
           date: document.getElementById('action-date').value
         });
@@ -2037,8 +2073,8 @@
     });
 
     window.executeDeleteAction = function() {
-      if(!databasePathRef) return;
-      if(!confirm("আপনি কি নিশ্চিতভাবে এই তথ্যটি মুছে ফেলতে চান?")) return;
+      if (!databasePathRef) return;
+      if (!confirm("আপনি কি নিশ্চিত যে এটি মুছে ফেলতে চান?")) return;
 
       const type = document.getElementById('action-item-type').value;
       const itemId = document.getElementById('action-item-id').value;
@@ -2047,8 +2083,8 @@
       if (type === 'client') {
         databasePathRef.child('clients').child(itemId).remove();
       } else if (type === 'ledger') {
-        const c = farmData.find(item => item.id === itemId);
-        if(c && c.history) {
+        const c = farmData.find(x => x.id === itemId);
+        if (c && c.history) {
           const updatedHistory = c.history.filter(t => t.id !== subId);
           databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
         }
@@ -2061,11 +2097,6 @@
       closeActionModal();
       uiUpdatePipeline();
     };
-
-    // Initial Pipeline Call
-    uiUpdatePipeline();
-    setClientFilter('all');
-    switchTab('journal-view');
   </script>
 </body>
 </html>
