@@ -255,18 +255,13 @@
       
       <!-- UNIFIED SEARCH & MULTI-FILTER BAR -->
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 md:space-y-0 md:flex md:items-center md:justify-between gap-3">
-        <!-- Keyword Search Bar (GLOBAL SEARCH) -->
+        <!-- Keyword Search Bar -->
         <div class="relative flex-1">
           <input type="text" id="search-input" placeholder="গ্রাহক, মোবাইল, প্রজেক্ট বা বিবরণ খুঁজুন..." class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs md:text-sm rounded-xl pl-10 pr-4 py-2.5 outline-none focus:border-rose-600 transition">
           <span class="absolute left-3.5 top-2.5 text-slate-400">🔍</span>
         </div>
         
         <div class="flex flex-wrap items-center gap-2">
-          <!-- Search Filter Print Button -->
-          <button onclick="printSearchResults()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl px-3.5 py-2.5 transition shadow-sm flex items-center gap-1.5">
-            <span>🖨️</span> <span>ফিল্টার প্রিন্ট</span>
-          </button>
-
           <!-- Category Filter Dropdown -->
           <select id="category-filter" onchange="uiUpdatePipeline()" class="bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs rounded-xl px-3 py-2.5 outline-none focus:border-rose-600 transition">
             <option value="all">📁 সব</option>
@@ -658,7 +653,7 @@
     </div>
   </div>
 
-  <!-- SECURITY PASSCODE MODAL FOR PIN VALIDATION (With Auto-confirm & Auto-clear) -->
+  <!-- SECURITY PASSCODE MODAL FOR PIN VALIDATION -->
   <div id="securityModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-xs shadow-2xl text-center space-y-4">
       <div class="h-12 w-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl visually-hidden-field">🔒</div>
@@ -806,44 +801,13 @@
       monthFilter.addEventListener('change', uiUpdatePipeline);
     }
 
-    /* GLOBAL SEARCH: SEARCH INPUT EVENT LISTENER FIXED */
     if (searchInput) {
       searchInput.addEventListener('input', () => {
-        uiUpdatePipeline();
+        renderClientCards();
+        renderOfficeExpenses();
+        renderOwnerTransactions();
       });
     }
-
-    /* SEARCH FILTER PRINT FUNCTION */
-    window.printSearchResults = function() {
-      const query = searchInput ? searchInput.value.trim() : '';
-      const printWindow = window.open('', '', 'width=900,height=700');
-      const container = document.getElementById('client-cards-container').innerHTML;
-      
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>ফিল্টার রিপোর্ট - ডিজিটাল খাতা</title>
-            <script src="https://cdn.tailwindcss.com"><\/script>
-            <style>
-              body { font-family: sans-serif; padding: 20px; }
-              .no-print { display: none !important; }
-            </style>
-          </head>
-          <body>
-            <div class="mb-4 pb-2 border-b">
-              <h2 class="text-xl font-bold">ডিজিটাল খাতা - সার্চ ফিল্টার রিপোর্ট</h2>
-              <p class="text-sm text-gray-600">খোঁজ করা শব্দ/ফিল্টার: "${query || 'সকল'}" | তারিখ: ${new Date().toLocaleDateString('bn-BD')}</p>
-            </div>
-            <div>${container}</div>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-      }, 500);
-    };
 
     /* SUMMARY GENERATOR LOGIC FOR WHATSAPP & CLIPBOARD */
     function generateMonthSummaryText() {
@@ -1217,7 +1181,7 @@
       }
     }
 
-    /* RENDER CLIENT CARDS WITH FIXED GLOBAL SEARCH AND CATEGORY FILTERS */
+    /* RENDER CLIENT CARDS WITH SEARCH AND CATEGORY FILTERS */
     function renderClientCards() {
       const container = document.getElementById('client-cards-container');
       if (!container) return;
@@ -1230,21 +1194,15 @@
         return;
       }
 
-      let filtered = farmData.filter(c => {
-        if (catVal === 'office' || catVal === 'owner') return false; 
-        if (catVal === 'project') return true; 
+      let filtered = farmData.filter(c => 
+        c.name.toLowerCase().includes(query) || 
+        c.phone.includes(query) || 
+        c.project.toLowerCase().includes(query)
+      );
 
-        const matchBase = (c.name && c.name.toLowerCase().includes(query)) || 
-                          (c.phone && c.phone.includes(query)) || 
-                          (c.project && c.project.toLowerCase().includes(query));
-        
-        const matchHistory = c.history && c.history.some(t => 
-          (t.details && t.details.toLowerCase().includes(query)) ||
-          (t.amount && t.amount.toString().includes(query))
-        );
-
-        return matchBase || matchHistory;
-      });
+      if (catVal === 'office' || catVal === 'owner') {
+        filtered = []; // Project view hides if user explicitly isolates Office or Owner category
+      }
 
       filtered = filtered.filter(c => {
         let totalPaid = c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
@@ -1274,7 +1232,7 @@
         let historyListHtml = '';
         if (c.history && c.history.length > 0) {
           historyListHtml = c.history.map(t => `
-            <div class="flex justify-between items-center py-2.5 px-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition cursor-pointer" onclick="handleLedgerActionWithPin('${c.id}', '${t.id}')">
+            <div class="flex justify-between items-center py-2.5 px-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition cursor-pointer" onclick="openActionModal('ledger', '${c.id}', '${t.id}')">
               <div>
                 <span class="text-xs font-bold text-slate-800 block">${t.details || (t.type === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ')}</span>
                 <span class="text-[10px] font-mono text-slate-400">${t.date} ${t.discount ? `<span class="text-amber-600 font-bold ml-1">(ছাড়: ৳${t.discount})</span>` : ''}</span>
@@ -1358,13 +1316,6 @@
         container.appendChild(card);
       });
     }
-
-    /* HANDLE LEDGER CLICK WITH PIN AUTHENTICATION REQUIRED ONCE */
-    window.handleLedgerActionWithPin = function(clientId, subId) {
-      requestPasscodeAuth(() => {
-        openActionModal('ledger', clientId, subId);
-      });
-    };
 
     /* UNIFIED QUICK MODAL HANDLERS */
     window.openQuickModal = function(defaultForm = 'client') {
@@ -1552,7 +1503,6 @@
       window.print();
     };
 
-    /* PASSCODE MODAL INPUT HANDLER (Auto Confirm & Auto Clear) */
     function requestPasscodeAuth(onSuccess) {
       const modal = document.getElementById('securityModal');
       const passInput = document.getElementById('modalPasscodeInput');
@@ -1562,36 +1512,22 @@
       if (!modal || !passInput) return;
       passInput.value = '';
       passInput.classList.remove('border-rose-600');
-      let pendingAction = onSuccess;
+      let pendingDeleteAction = onSuccess;
       modal.classList.remove('hidden');
       setTimeout(() => passInput.focus(), 50);
 
-      const validateInputModal = () => {
+      passInput.onkeyup = function(e) { if (e.key === 'Enter') confirmBtn.click(); };
+      confirmBtn.onclick = function() {
         if (passInput.value.trim() === SECURITY_PASSCODE) {
           modal.classList.add('hidden');
-          passInput.removeEventListener('input', autoCheckModalInput);
-          if (pendingAction) pendingAction();
+          if (pendingDeleteAction) pendingDeleteAction();
         } else {
           passInput.classList.add('border-rose-600');
-          passInput.value = ''; // ভুল PIN দিলে ফিল্ড ক্লিয়ার
+          passInput.value = '';
           passInput.focus();
         }
       };
-
-      const autoCheckModalInput = () => {
-        if (passInput.value.length === 4) {
-          validateInputModal();
-        }
-      };
-
-      passInput.addEventListener('input', autoCheckModalInput);
-
-      passInput.onkeyup = function(e) { if (e.key === 'Enter') validateInputModal(); };
-      confirmBtn.onclick = validateInputModal;
-      cancelBtn.onclick = function() { 
-        passInput.removeEventListener('input', autoCheckModalInput);
-        modal.classList.add('hidden'); 
-      };
+      cancelBtn.onclick = function() { modal.classList.add('hidden'); };
     }
 
     /* ACTION MODAL LOGIC FOR EDIT/DELETE */
@@ -1685,48 +1621,77 @@
         e.preventDefault();
         if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
 
+        requestPasscodeAuth(() => {
+          const type = document.getElementById('action-item-type').value;
+          const itemId = document.getElementById('action-item-id').value;
+          const subId = document.getElementById('action-sub-id').value;
+
+          if (type === 'client') {
+            databasePathRef.child('clients').child(itemId).update({
+              name: document.getElementById('action-client-name').value,
+              phone: document.getElementById('action-client-phone').value,
+              project: document.getElementById('action-client-project').value,
+              budget: parseFloat(document.getElementById('action-client-budget').value)
+            });
+          } else if (type === 'office') {
+            databasePathRef.child('office_expenses').child(itemId).update({
+              category: document.getElementById('action-category').value,
+              amount: parseFloat(document.getElementById('action-amount').value),
+              details: document.getElementById('action-details').value || 'অফিস খরচ',
+              date: document.getElementById('action-date').value
+            });
+          } else if (type === 'owner') {
+            databasePathRef.child('owner_transactions').child(itemId).update({
+              type: document.getElementById('action-type').value,
+              amount: parseFloat(document.getElementById('action-amount').value),
+              details: document.getElementById('action-details').value || 'মূলধন লেনদেন',
+              date: document.getElementById('action-date').value
+            });
+          } else if (type === 'ledger') {
+            const client = farmData.find(c => c.id === itemId);
+            if (client) {
+              const updatedHistory = (client.history || []).map(t => {
+                if (t.id === subId) {
+                  const updatedType = document.getElementById('action-type').value;
+                  return {
+                    id: t.id,
+                    type: updatedType,
+                    amount: parseFloat(document.getElementById('action-amount').value),
+                    discount: updatedType === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
+                    details: document.getElementById('action-details').value || (updatedType === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ'),
+                    date: document.getElementById('action-date').value
+                  };
+                }
+                return t;
+              });
+              databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
+            }
+          }
+
+          closeActionModal();
+          uiUpdatePipeline();
+        });
+      });
+    }
+
+    window.executeDeleteAction = function() {
+      if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
+
+      requestPasscodeAuth(() => {
         const type = document.getElementById('action-item-type').value;
         const itemId = document.getElementById('action-item-id').value;
         const subId = document.getElementById('action-sub-id').value;
 
         if (type === 'client') {
-          databasePathRef.child('clients').child(itemId).update({
-            name: document.getElementById('action-client-name').value,
-            phone: document.getElementById('action-client-phone').value,
-            project: document.getElementById('action-client-project').value,
-            budget: parseFloat(document.getElementById('action-client-budget').value)
-          });
+          databasePathRef.child('clients').child(itemId).remove();
         } else if (type === 'office') {
-          databasePathRef.child('office_expenses').child(itemId).update({
-            category: document.getElementById('action-category').value,
-            amount: parseFloat(document.getElementById('action-amount').value),
-            details: document.getElementById('action-details').value || 'অফিস খরচ',
-            date: document.getElementById('action-date').value
-          });
+          databasePathRef.child('office_expenses').child(itemId).remove();
         } else if (type === 'owner') {
-          databasePathRef.child('owner_transactions').child(itemId).update({
-            type: document.getElementById('action-type').value,
-            amount: parseFloat(document.getElementById('action-amount').value),
-            details: document.getElementById('action-details').value || 'মূলধন লেনদেন',
-            date: document.getElementById('action-date').value
-          });
+          databasePathRef.child('owner_transactions').child(itemId).remove();
         } else if (type === 'ledger') {
           const client = farmData.find(c => c.id === itemId);
           if (client) {
-            const updatedHistory = (client.history || []).map(t => {
-              if (t.id === subId) {
-                const updatedType = document.getElementById('action-type').value;
-                return {
-                  id: t.id,
-                  type: updatedType,
-                  amount: parseFloat(document.getElementById('action-amount').value),
-                  discount: updatedType === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
-                  details: document.getElementById('action-details').value || (updatedType === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ'),
-                  date: document.getElementById('action-date').value
-                };
-              }
-              return t;
-            });
+            const updatedHistory = (client.history || []).filter(t => t.id !== subId);
             databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
           }
         }
@@ -1734,38 +1699,12 @@
         closeActionModal();
         uiUpdatePipeline();
       });
-    }
-
-    window.executeDeleteAction = function() {
-      if(!databasePathRef) { alert('আগে লগইন করুন!'); return; }
-
-      const type = document.getElementById('action-item-type').value;
-      const itemId = document.getElementById('action-item-id').value;
-      const subId = document.getElementById('action-sub-id').value;
-
-      if (type === 'client') {
-        databasePathRef.child('clients').child(itemId).remove();
-      } else if (type === 'office') {
-        databasePathRef.child('office_expenses').child(itemId).remove();
-      } else if (type === 'owner') {
-        databasePathRef.child('owner_transactions').child(itemId).remove();
-      } else if (type === 'ledger') {
-        const client = farmData.find(c => c.id === itemId);
-        if (client) {
-          const updatedHistory = (client.history || []).filter(t => t.id !== subId);
-          databasePathRef.child('clients').child(itemId).update({ history: updatedHistory });
-        }
-      }
-
-      closeActionModal();
-      uiUpdatePipeline();
     };
 
-    /* 💡 রেন্ডার অফিস খরচ (With Search Filter & Category Dropdown Filter) */
+    /* 💡 রেন্ডার অফিস খরচ */
     function renderOfficeExpenses() {
       if (!officeExpenseRows) return;
       const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-      const catVal = categoryFilter ? categoryFilter.value : 'all';
 
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
@@ -1779,8 +1718,6 @@
       const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
       const filtered = officeExpenses.filter(oe => {
-        if (catVal === 'project' || catVal === 'owner') return false; 
-
         const d = new Date(oe.date);
         const matchesMonth = d >= startOfMonth && d <= endOfMonth;
         
@@ -1807,11 +1744,10 @@
       });
     }
 
-    /* 💡 রেন্ডার ওনার ট্রানজ্যাকশন (With Search Filter & Category Dropdown Filter) */
+    /* 💡 রেন্ডার ওনার ট্রানজ্যাকশন */
     function renderOwnerTransactions() {
       if (!ownerExpenseRows) return;
       const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-      const catVal = categoryFilter ? categoryFilter.value : 'all';
 
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
@@ -1825,8 +1761,6 @@
       const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
       const filtered = ownerTransactions.filter(ow => {
-        if (catVal === 'project' || catVal === 'office') return false; 
-
         const d = new Date(ow.date);
         const matchesMonth = d >= startOfMonth && d <= endOfMonth;
 
@@ -1856,7 +1790,6 @@
       });
     }
 
-    /* FULLSCREEN PIN LOCK LOGIC (With Auto-confirm & Auto-clear) */
     const CORRECT_PIN = "6219"; 
     let enteredPin = "";
 
@@ -1866,7 +1799,7 @@
         updateDots();
         
         if (enteredPin.length === 4) {
-          setTimeout(verifyPin, 100); // ৪ ডিজিট টাইপ শেষ হতেই স্বয়ংক্রিয়ভাবে যাচাই করা শুরু করবে
+          setTimeout(verifyPin, 150);
         }
       }
     }
@@ -1905,10 +1838,9 @@
         statusText.innerText = "ভুল PIN! আবার চেষ্টা করুন";
         statusText.className = "text-xs font-semibold text-rose-600 mb-2.5 animate-bounce";
         
-        enteredPin = ""; // ভুল PIN দিলে সাথে সাথে ফিল্ড ক্লিয়ার হয়ে যাবে
-        updateDots();
-
+        enteredPin = "";
         setTimeout(() => {
+          updateDots();
           statusText.className = "text-xs font-semibold text-gray-700 mb-2.5";
           statusText.innerText = "PIN দিয়ে লগইন করুন";
         }, 1000);
