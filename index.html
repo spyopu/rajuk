@@ -1187,6 +1187,61 @@
       applyPrivacyToElements();
     }
 
+    /* RENDER OFFICE EXPENSES TABLE */
+    function renderOfficeExpenses() {
+      if (!officeExpenseRows) return;
+      officeExpenseRows.innerHTML = '';
+
+      if (officeExpenses.length === 0) {
+        officeExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">কোনো খরচ রেকর্ড করা হয়নি</td></tr>`;
+        return;
+      }
+
+      officeExpenses.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 cursor-pointer transition";
+        tr.onclick = () => openActionModal('office', item.id);
+        tr.innerHTML = `
+          <td class="p-3 pl-4 text-left">
+            <span class="block font-bold text-slate-800">${item.details || 'অফিস খরচ'}</span>
+            <span class="text-[10px] text-slate-400 font-normal">${item.category || 'General'}</span>
+          </td>
+          <td class="p-3 text-center text-slate-500 font-mono text-[11px]">${item.date || '-'}</td>
+          <td class="p-3 text-right font-mono font-bold text-rose-600 hide-sensitive">৳${(item.amount || 0).toLocaleString('en-IN')}</td>
+        `;
+        officeExpenseRows.appendChild(tr);
+      });
+    }
+
+    /* RENDER OWNER TRANSACTIONS TABLE */
+    function renderOwnerTransactions() {
+      if (!ownerExpenseRows) return;
+      ownerExpenseRows.innerHTML = '';
+
+      if (ownerTransactions.length === 0) {
+        ownerExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">কোনো মূলধন লেনদেন হয়নি</td></tr>`;
+        return;
+      }
+
+      ownerTransactions.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 cursor-pointer transition";
+        tr.onclick = () => openActionModal('owner', item.id);
+        const isInjection = item.type === 'injection';
+        tr.innerHTML = `
+          <td class="p-3 pl-4 text-left">
+            <span class="block font-bold text-slate-800">${item.details || (isInjection ? 'ক্যাশ জমা' : 'ক্যাশ উত্তোলন')}</span>
+            <span class="text-[10px] ${isInjection ? 'text-emerald-600' : 'text-rose-600'} font-semibold">${isInjection ? 'Injection' : 'Drawing'}</span>
+          </td>
+          <td class="p-3 text-center text-slate-500 font-mono text-[11px]">${item.date || '-'}</td>
+          <td class="p-3 text-right font-mono font-bold ${isInjection ? 'text-emerald-600' : 'text-rose-600'} hide-sensitive">
+            ${isInjection ? '+' : '-'}৳${(item.amount || 0).toLocaleString('en-IN')}
+          </td>
+        `;
+        ownerExpenseRows.appendChild(tr);
+      });
+    }
+
     /* GLOBAL METRICS CALCULATION */
     function calculateGlobalMetrics() {
       let budget = 0, collection = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
@@ -1430,39 +1485,40 @@
 
         card.innerHTML = `
           <!-- Card Header / Summary -->
-          <div onclick="toggleClientCard('${c.id}')" class="p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3 cursor-pointer select-none">
-            <div class="flex items-start justify-between md:justify-start gap-3 text-left">
+          <div onclick="toggleClientCard('${c.id}')" class="p-4 md:p-5 flex flex-row items-center justify-between gap-3 cursor-pointer select-none">
+            
+            <!-- Left Aligned Client Info -->
+            <div class="flex items-center gap-3 text-left min-w-0 flex-1">
               <div class="h-10 w-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-base flex-shrink-0">
                 👤
               </div>
-              <div class="text-left">
-                <h3 class="text-sm font-bold text-slate-900">${c.project}</h3>
-                <p class="text-xs text-slate-500 font-medium"><span class="hide-sensitive">${c.name}</span> • <span class="font-mono text-slate-400 hide-sensitive">${c.phone}</span></p>
+              <div class="text-left truncate">
+                <h3 class="text-sm font-bold text-slate-900 truncate">${c.project}</h3>
+                <p class="text-xs text-slate-500 font-medium truncate">
+                  <span class="hide-sensitive">${c.name}</span> • <span class="font-mono text-slate-400 hide-sensitive">${c.phone}</span>
+                </p>
               </div>
             </div>
 
-            <!-- Financial Quick Stats -->
-            <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 md:bg-transparent md:border-none md:p-0">
-              <div class="text-left md:text-right">
-                <span class="text-[10px] font-bold text-slate-400 uppercase block">চুক্তি</span>
-                <span class="text-xs font-bold text-slate-800 font-mono hide-sensitive">৳${c.budget.toLocaleString('en-IN')}</span>
+            <!-- Right Aligned Financial Amounts & Arrow -->
+            <div class="flex items-center justify-end gap-3 flex-shrink-0">
+              <div class="flex items-center gap-3 sm:gap-6 text-right">
+                <div class="hidden sm:block text-right">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase block">চুক্তি</span>
+                  <span class="text-xs font-bold text-slate-800 font-mono hide-sensitive">৳${c.budget.toLocaleString('en-IN')}</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] font-bold text-emerald-600 uppercase block">জমা</span>
+                  <span class="text-xs font-bold text-emerald-600 font-mono hide-sensitive">৳${totalPaid.toLocaleString('en-IN')}</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} uppercase block">বাকি (Due)</span>
+                  <span class="text-xs font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} font-mono hide-sensitive">৳${due.toLocaleString('en-IN')}</span>
+                </div>
               </div>
-              <div class="text-center md:text-right">
-                <span class="text-[10px] font-bold text-emerald-600 uppercase block">জমা</span>
-                <span class="text-xs font-bold text-emerald-600 font-mono hide-sensitive">৳${totalPaid.toLocaleString('en-IN')}</span>
-              </div>
-              <div class="text-right">
-                <span class="text-[10px] font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} uppercase block">বাকি (Due)</span>
-                <span class="text-xs font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} font-mono hide-sensitive">৳${due.toLocaleString('en-IN')}</span>
-              </div>
-            </div>
 
-            <!-- Unlock Arrow / Visually Clean Lock Handler -->
-            <div class="flex items-center justify-between md:justify-end gap-2 border-t md:border-none pt-2 md:pt-0 border-slate-100">
-              <span class="text-[11px] font-bold text-rose-600 md:hidden flex items-center gap-1">
-                ${isUnlocked ? 'হিস্ট্রি দেখুন' : 'পিন দিয়ে আনলক করুন'}
-              </span>
-              <span id="acc-client-${c.id}-arrow" class="text-slate-400 transition-transform">
+              <!-- Unlock Arrow -->
+              <span id="acc-client-${c.id}-arrow" class="text-slate-400 transition-transform text-xs ml-1">
                 ▶
               </span>
             </div>
@@ -1900,112 +1956,6 @@
       closeActionModal();
       uiUpdatePipeline();
     };
-
-    /* RENDER OFFICE EXPENSES WITH RIGHT ALIGNED MONEY */
-    function renderOfficeExpenses() {
-      if (!officeExpenseRows) return;
-      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-      const catVal = categoryFilter ? categoryFilter.value : 'all';
-
-      let targetYear, targetMonth;
-      if (monthFilter && monthFilter.value) {
-        const parts = monthFilter.value.split('-'); 
-        targetYear = parseInt(parts[0]);
-        targetMonth = parseInt(parts[1]) - 1; 
-      } else {
-        const now = new Date();
-        targetYear = now.getFullYear();
-        targetMonth = now.getMonth();
-      }
-
-      const startOfMonth = new Date(targetYear, targetMonth, 1);
-      const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
-
-      let filtered = officeExpenses.filter(o => {
-        if (catVal === 'project' || catVal === 'owner') return false; 
-        const oDate = new Date(o.date);
-        const matchMonth = (oDate >= startOfMonth && oDate <= endOfMonth);
-        const matchQuery = (o.details && o.details.toLowerCase().includes(query)) ||
-                           (o.category && o.category.toLowerCase().includes(query)) ||
-                           (o.amount && o.amount.toString().includes(query));
-        return matchMonth && matchQuery;
-      });
-
-      if (filtered.length === 0) {
-        officeExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 font-normal">কোনো অফিস খরচ পাওয়া যায়নি</td></tr>`;
-        return;
-      }
-
-      officeExpenseRows.innerHTML = '';
-      filtered.forEach(o => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 cursor-pointer transition";
-        tr.onclick = () => openActionModal('office', o.id);
-        tr.innerHTML = `
-          <td class="p-3 pl-4 text-left">
-            <span class="font-bold text-slate-800 block">${o.details || o.category}</span>
-            <span class="text-[10px] text-slate-400 font-semibold">${o.category}</span>
-          </td>
-          <td class="p-3 font-mono text-slate-500 text-center text-[11px]">${o.date}</td>
-          <td class="p-3 text-right font-mono font-bold text-rose-600 hide-sensitive">৳${o.amount.toLocaleString('en-IN')}</td>
-        `;
-        officeExpenseRows.appendChild(tr);
-      });
-    }
-
-    /* RENDER OWNER TRANSACTIONS WITH RIGHT ALIGNED MONEY */
-    function renderOwnerTransactions() {
-      if (!ownerExpenseRows) return;
-      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-      const catVal = categoryFilter ? categoryFilter.value : 'all';
-
-      let targetYear, targetMonth;
-      if (monthFilter && monthFilter.value) {
-        const parts = monthFilter.value.split('-'); 
-        targetYear = parseInt(parts[0]);
-        targetMonth = parseInt(parts[1]) - 1; 
-      } else {
-        const now = new Date();
-        targetYear = now.getFullYear();
-        targetMonth = now.getMonth();
-      }
-
-      const startOfMonth = new Date(targetYear, targetMonth, 1);
-      const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
-
-      let filtered = ownerTransactions.filter(o => {
-        if (catVal === 'project' || catVal === 'office') return false; 
-        const oDate = new Date(o.date);
-        const matchMonth = (oDate >= startOfMonth && oDate <= endOfMonth);
-        const matchQuery = (o.details && o.details.toLowerCase().includes(query)) ||
-                           (o.amount && o.amount.toString().includes(query));
-        return matchMonth && matchQuery;
-      });
-
-      if (filtered.length === 0) {
-        ownerExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 font-normal">কোনো মূলধন লেনদেন পাওয়া যায়নি</td></tr>`;
-        return;
-      }
-
-      ownerExpenseRows.innerHTML = '';
-      filtered.forEach(o => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 cursor-pointer transition";
-        tr.onclick = () => openActionModal('owner', o.id);
-        const isInjection = o.type === 'injection';
-        tr.innerHTML = `
-          <td class="p-3 pl-4 text-left">
-            <span class="font-bold text-slate-800 block">${o.details || (isInjection ? 'ক্যাশ জমা' : 'ক্যাশ উত্তোলন')}</span>
-            <span class="text-[10px] ${isInjection ? 'text-emerald-600' : 'text-rose-600'} font-bold">${isInjection ? 'Injection (জমা)' : 'Drawing (উত্তোলন)'}</span>
-          </td>
-          <td class="p-3 font-mono text-slate-500 text-center text-[11px]">${o.date}</td>
-          <td class="p-3 text-right font-mono font-bold ${isInjection ? 'text-emerald-600' : 'text-rose-600'} hide-sensitive">
-            ${isInjection ? '+' : '-'}৳${o.amount.toLocaleString('en-IN')}
-          </td>
-        `;
-        ownerExpenseRows.appendChild(tr);
-      });
-    }
   </script>
 </body>
 </html>
