@@ -33,16 +33,11 @@
       letter-spacing: -0.02em; 
     }
 
-    /* Secret Privacy Complete Hidden Class */
-    .privacy-hidden-mode .hide-sensitive {
-      font-size: 0 !important;
+    /* Secret Privacy Blur Class */
+    .privacy-blurred {
+      filter: blur(5px) !important;
       user-select: none !important;
-    }
-    .privacy-hidden-mode .hide-sensitive::after {
-      content: '•••••';
-      font-size: 0.85rem;
-      letter-spacing: 2px;
-      opacity: 0.7;
+      transition: filter 0.2s ease-in-out;
     }
 
     /* Visual Hide Utility without breaking backend JS references */
@@ -127,7 +122,7 @@
 <body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col justify-between pb-24 md:pb-8">
   
   <!-- Passcode Lock Screen Overlay -->
-  <div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center gap-6 py-6 px-4 select-none font-sans overflow-y-auto hidden">
+  <div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center gap-6 py-6 px-4 select-none font-sans overflow-y-auto">
     <div class="flex flex-col items-center">
       <div class="w-16 h-16 flex items-center justify-center mb-1">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
@@ -303,14 +298,14 @@
 
       <!-- Quick Action Bar -->
       <div class="flex items-center justify-between gap-3">
-        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider text-left">স্মার্ট ক্লায়েন্ট কার্ড ও লেজার খাতা</p>
+        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">স্মার্ট ক্লায়েন্ট কার্ড ও লেজার খাতা</p>
         <button onclick="openQuickModal('client')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
           <span>➕</span> <span>নতুন এন্ট্রি দিন</span>
         </button>
       </div>
 
       <!-- Accordion Client List Container -->
-      <div id="client-cards-container" class="space-y-3 text-left">
+      <div id="client-cards-container" class="space-y-3">
         <!-- Rendered dynamically -->
       </div>
     </div>
@@ -319,7 +314,7 @@
     <div id="tab-dashboard-view" class="tab-content space-y-6 hidden">
       <div id="pdf-report-container" class="space-y-6">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-2xs no-print">
-		  <div class="text-left">
+		  <div>
 			<h3 class="text-xs md:text-sm font-bold text-slate-900 flex items-center gap-2">
 			  <span class="visually-hidden-field">🔒</span> <span>রিপোর্ট ও ড্যাশবোর্ড</span>
 			</h3>
@@ -372,7 +367,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- ১. লাভ-ক্ষতি সামারি রিপোর্ট -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 text-left">
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
               <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                   <span>📈</span> লাভ-ক্ষতি সামারি রিপোর্ট
@@ -383,7 +378,7 @@
               <div class="space-y-2 text-xs md:text-sm font-semibold text-slate-700">
                 <div class="flex justify-between items-center py-2 px-3 bg-slate-50 rounded-xl">
                   <span>মোট কাস্টমার আয় (Collection):</span>
-                  <span id="report-collection" class="font-mono text-emerald-600 font-bold text-right hide-sensitive">৳0</span>
+                  <span id="report-collection" class="font-mono text-emerald-600 font-bold hide-sensitive">৳0</span>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl overflow-hidden">
@@ -392,7 +387,7 @@
                       <span id="acc-project-cost-arrow" class="text-[10px] text-slate-400 transition-transform">▶</span>
                       <span>মোট প্রজেক্ট খরচ (Direct Cost):</span>
                     </span>
-                    <span id="report-project-cost" class="font-mono text-rose-600 font-bold text-right hide-sensitive">৳0</span>
+                    <span id="report-project-cost" class="font-mono text-rose-600 font-bold hide-sensitive">৳0</span>
                   </div>
                   <div id="acc-project-cost" class="accordion-content hidden bg-white p-3 border-t border-slate-100 text-xs space-y-1.5 max-h-48 overflow-y-auto">
                     <div id="acc-project-cost-list" class="space-y-1 text-slate-600"></div>
@@ -401,7 +396,7 @@
 
                 <div class="flex justify-between items-center py-2 px-3 bg-slate-100/70 rounded-xl">
                   <span class="font-bold text-slate-900">মোট গ্রস প্রফিট:</span>
-                  <span id="report-gross-profit" class="font-mono font-bold text-slate-900 text-right hide-sensitive">৳0</span>
+                  <span id="report-gross-profit" class="font-mono font-bold text-slate-900 hide-sensitive">৳0</span>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl overflow-hidden">
@@ -410,7 +405,7 @@
                       <span id="acc-office-cost-arrow" class="text-[10px] text-slate-400 transition-transform">▶</span>
                       <span>অফিস খরচ:</span>
                     </span>
-                    <span id="report-office-expense" class="font-mono text-rose-600 font-bold text-right hide-sensitive">৳0</span>
+                    <span id="report-office-expense" class="font-mono text-rose-600 font-bold hide-sensitive">৳0</span>
                   </div>
                   <div id="acc-office-cost" class="accordion-content hidden bg-white p-3 border-t border-slate-100 text-xs space-y-1.5 max-h-48 overflow-y-auto">
                     <div id="acc-office-cost-list" class="space-y-1 text-slate-600"></div>
@@ -419,13 +414,13 @@
 
                 <div class="flex justify-between items-center py-2.5 px-3 bg-rose-50/50 rounded-xl mt-1">
                   <span id="net-profit-label" class="font-bold text-sm md:text-base text-slate-900">নিট লাভ/ক্ষতি (Net Profit):</span>
-                  <span id="report-net-profit" class="font-mono font-black text-sm md:text-base text-emerald-600 text-right hide-sensitive">৳0</span>
+                  <span id="report-net-profit" class="font-mono font-black text-sm md:text-base text-emerald-600 hide-sensitive">৳0</span>
                 </div>
               </div>
             </div>
 
             <!-- ২. মালিকের মূলধন রিপোর্ট -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 text-left">
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
               <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                   <span>🏦</span> মূলধন রিপোর্ট
@@ -436,7 +431,7 @@
               <div class="space-y-2 text-xs md:text-sm font-semibold text-slate-700">
                 <div class="flex justify-between items-center py-2 px-3 bg-emerald-50/50 rounded-xl">
                   <span>ক্যাশ জমা (Cash In):</span>
-                  <span id="report-owner-in" class="font-mono text-emerald-600 font-bold text-right hide-sensitive">৳0</span>
+                  <span id="report-owner-in" class="font-mono text-emerald-600 font-bold hide-sensitive">৳0</span>
                 </div>
 
                 <div class="border border-slate-200 rounded-xl overflow-hidden">
@@ -445,7 +440,7 @@
                       <span id="acc-owner-drawing-arrow" class="text-[10px] text-slate-400 transition-transform">▶</span>
                       <span>ক্যাশ উত্তোলন (Cash Out):</span>
                     </span>
-                    <span id="report-owner-out" class="font-mono text-rose-600 font-bold text-right hide-sensitive">৳0</span>
+                    <span id="report-owner-out" class="font-mono text-rose-600 font-bold hide-sensitive">৳0</span>
                   </div>
                   <div id="acc-owner-drawing" class="accordion-content hidden bg-white p-3 border-t border-slate-100 text-xs space-y-1.5 max-h-48 overflow-y-auto">
                     <div id="acc-owner-drawing-list" class="space-y-1 text-slate-600"></div>
@@ -454,7 +449,7 @@
 
                 <div class="flex justify-between items-center py-2.5 px-3 bg-slate-100 rounded-xl mt-2">
                   <span class="font-bold text-sm md:text-base text-slate-900">মূলধন সামারি:</span>
-                  <span id="report-owner-net" class="font-mono font-black text-sm md:text-base text-slate-800 text-right hide-sensitive">৳0</span>
+                  <span id="report-owner-net" class="font-mono font-black text-sm md:text-base text-slate-800 hide-sensitive">৳0</span>
                 </div>
               </div>
             </div>
@@ -463,7 +458,7 @@
           <!-- TABLES: OFFICE EXPENSE & OWNER CAPITAL HISTORY IN DASHBOARD -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Office Expense History Table -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col text-left">
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col">
               <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
                 <h4 class="text-xs md:text-sm font-bold text-slate-800 uppercase flex items-center gap-2">🏢 অফিস খরচের খাতা</h4>
                 <button onclick="openQuickModal('office')" class="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg hover:bg-rose-100">➕ এন্ট্রি</button>
@@ -472,8 +467,8 @@
                 <table class="w-full text-left text-xs">
                   <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px] sticky top-0">
                     <tr>
-                      <th class="p-3 pl-4 text-left">বিবরণ ও ক্যাটাগরি</th>
-                      <th class="p-3 text-center">তারিখ</th>
+                      <th class="p-3 pl-4">বিবরণ ও ক্যাটাগরি</th>
+                      <th class="p-3">তারিখ</th>
                       <th class="p-3 text-right">পরিমাণ</th>
                     </tr>
                   </thead>
@@ -483,7 +478,7 @@
             </div>
 
             <!-- Owner Capital History Table -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col text-left">
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col">
               <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
                 <h4 class="text-xs md:text-sm font-bold text-slate-800 uppercase flex items-center gap-2">💼 মূলধন লেনদেন খাতা</h4>
                 <button onclick="openQuickModal('owner')" class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg hover:bg-amber-100">➕ এন্ট্রি</button>
@@ -492,8 +487,8 @@
                 <table class="w-full text-left text-xs">
                   <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px] sticky top-0">
                     <tr>
-                      <th class="p-3 pl-4 text-left">বিবরণ ও ধরন</th>
-                      <th class="p-3 text-center">তারিখ</th>
+                      <th class="p-3 pl-4">বিবরণ ও ধরন</th>
+                      <th class="p-3">তারিখ</th>
                       <th class="p-3 text-right">পরিমাণ</th>
                     </tr>
                   </thead>
@@ -528,7 +523,7 @@
 
   <!-- SUMMARY POPUP MODAL -->
   <div id="summaryModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4 text-left">
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b border-slate-200 pb-3">
         <h3 class="text-sm font-bold text-slate-900">মাসিক হিসাবের সামারি</h3>
         <button onclick="closeSummaryModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
@@ -550,7 +545,7 @@
 
   <!-- UNIFIED QUICK FLOATING MODAL WITH ALL 3 ENTRY OPTIONS -->
   <div id="quickModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4 text-left">
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b border-slate-200 pb-3">
         <h3 id="quickModalTitle" class="text-sm font-bold text-slate-900">নতুন এন্ট্রি যুক্ত করুন</h3>
         <button onclick="closeQuickModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
@@ -691,7 +686,7 @@
 
   <!-- EDIT / DELETE ACTION MODAL -->
   <div id="actionModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4 text-left">
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b border-slate-200 pb-3">
         <h3 id="actionModalTitle" class="text-sm font-bold text-slate-900">তথ্য পরিচালনা করুন</h3>
         <button onclick="closeActionModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
@@ -828,25 +823,23 @@
       });
     }
 
-    /* PRIVACY EYE TOGGLE FUNCTION (COMPLETE HIDE / SHOW TOGGLE) */
+    /* PRIVACY EYE TOGGLE FUNCTION */
     window.toggleGlobalPrivacyMode = function() {
       isPrivacyModeActive = !isPrivacyModeActive;
       const eyeBtn = document.getElementById('global-eye-toggle-btn');
       
       if (isPrivacyModeActive) {
         if(eyeBtn) eyeBtn.innerText = '🙈';
-        document.body.classList.add('privacy-hidden-mode');
+        document.querySelectorAll('.hide-sensitive').forEach(el => el.classList.add('privacy-blurred'));
       } else {
         if(eyeBtn) eyeBtn.innerText = '👁️';
-        document.body.classList.remove('privacy-hidden-mode');
+        document.querySelectorAll('.hide-sensitive').forEach(el => el.classList.remove('privacy-blurred'));
       }
     };
 
     function applyPrivacyToElements() {
       if (isPrivacyModeActive) {
-        document.body.classList.add('privacy-hidden-mode');
-      } else {
-        document.body.classList.remove('privacy-hidden-mode');
+        document.querySelectorAll('.hide-sensitive').forEach(el => el.classList.add('privacy-blurred'));
       }
     }
 
@@ -867,7 +860,7 @@
       let rowsHtml = historyToPrint.map((t, idx) => `
         <tr style="border-bottom: 1px solid #e2e8f0; font-size: 12px;">
           <td style="padding: 8px; text-align: center;">${idx + 1}</td>
-          <td style="padding: 8px; text-align: left;">${t.details || (t.type === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ')}</td>
+          <td style="padding: 8px;">${t.details || (t.type === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ')}</td>
           <td style="padding: 8px; text-align: center;">${t.date}</td>
           <td style="padding: 8px; text-align: center;">${t.type === 'income' ? 'জমা' : 'খরচ'}</td>
           <td style="padding: 8px; text-align: right; font-weight: bold;">৳${t.amount.toLocaleString('en-IN')}</td>
@@ -880,7 +873,7 @@
           <head>
             <title>ইনভয়েস - ${client.project}</title>
             <style>
-              body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; color: #1e293b; text-align: left; }
+              body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; color: #1e293b; }
               .invoice-card { border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px; max-width: 700px; margin: 0 auto; }
               .flex-between { display: flex; justify-content: space-between; align-items: center; }
               .header-title { font-size: 20px; font-weight: 800; color: #e11d48; margin: 0; }
@@ -912,7 +905,7 @@
                 <thead>
                   <tr>
                     <th style="text-align: center;">ক্রমিক</th>
-                    <th style="text-align: left;">বিবরণ</th>
+                    <th>বিবরণ</th>
                     <th style="text-align: center;">তারিখ</th>
                     <th style="text-align: center;">টাইপ</th>
                     <th style="text-align: right;">পরিমাণ</th>
@@ -955,7 +948,7 @@
             <title>ফিল্টার রিপোর্ট - ডিজিটাল খাতা</title>
             <script src="https://cdn.tailwindcss.com"><\/script>
             <style>
-              body { font-family: sans-serif; padding: 20px; text-align: left; }
+              body { font-family: sans-serif; padding: 20px; }
               .no-print { display: none !important; }
             </style>
           </head>
@@ -1260,12 +1253,12 @@
 
       const prjListElem = document.getElementById('acc-project-cost-list');
       if (prjListElem) {
-        prjListElem.innerHTML = projectExpenseBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1 text-left">এই মাসে কোনো প্রজেক্ট খরচ নেই</div>' : '';
+        prjListElem.innerHTML = projectExpenseBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">এই মাসে কোনো প্রজেক্ট খরচ নেই</div>' : '';
         projectExpenseBreakdown.forEach(item => {
           prjListElem.innerHTML += `
-            <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none text-left">
+            <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none">
               <span class="font-medium text-slate-700">${item.name}:</span>
-              <span class="font-mono font-bold text-rose-600 text-right hide-sensitive">৳${item.amount.toLocaleString('en-IN')}</span>
+              <span class="font-mono font-bold text-rose-600 hide-sensitive">৳${item.amount.toLocaleString('en-IN')}</span>
             </div>
           `;
         });
@@ -1273,12 +1266,12 @@
 
       const oeListElem = document.getElementById('acc-office-cost-list');
       if (oeListElem) {
-        oeListElem.innerHTML = officeExpenseBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1 text-left">এই মাসে কোনো অফিস খরচ নেই</div>' : '';
+        oeListElem.innerHTML = officeExpenseBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">এই মাসে কোনো অফিস খরচ নেই</div>' : '';
         officeExpenseBreakdown.forEach(item => {
           oeListElem.innerHTML += `
-            <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none text-left">
+            <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none">
               <span class="font-medium text-slate-700">${item.name} <span class="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">${item.cat}</span>:</span>
-              <span class="font-mono font-bold text-rose-600 text-right hide-sensitive">৳${item.amount.toLocaleString('en-IN')}</span>
+              <span class="font-mono font-bold text-rose-600 hide-sensitive">৳${item.amount.toLocaleString('en-IN')}</span>
             </div>
           `;
         });
@@ -1286,12 +1279,12 @@
 
       const owListElem = document.getElementById('acc-owner-drawing-list');
       if (owListElem) {
-        owListElem.innerHTML = ownerDrawingBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1 text-left">এই মাসে ক্যাশ উত্তোলন নেই</div>' : '';
+        owListElem.innerHTML = ownerDrawingBreakdown.length === 0 ? '<div class="text-slate-400 font-normal italic py-1">এই মাসে ক্যাশ উত্তোলন নেই</div>' : '';
         ownerDrawingBreakdown.forEach(item => {
           owListElem.innerHTML += `
-            <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none text-left">
+            <div class="flex justify-between items-center py-1 border-b border-slate-50 last:border-none">
               <span class="font-medium text-slate-700">${item.name}:</span>
-              <span class="font-mono font-bold text-rose-600 text-right hide-sensitive">৳${item.amount.toLocaleString('en-IN')}</span>
+              <span class="font-mono font-bold text-rose-600 hide-sensitive">৳${item.amount.toLocaleString('en-IN')}</span>
             </div>
           `;
         });
@@ -1330,10 +1323,10 @@
       if (netProfitElem) {
         netProfitElem.innerText = '৳' + Math.abs(netProfit).toLocaleString('en-IN');
         if (netProfit >= 0) {
-          netProfitElem.className = "text-sm md:text-base font-black font-mono text-emerald-600 text-right hide-sensitive";
+          netProfitElem.className = "text-sm md:text-base font-black font-mono text-emerald-600 hide-sensitive";
           if(netProfitLabel) netProfitLabel.innerText = "নিট লাভ (Net Profit):";
         } else {
-          netProfitElem.className = "text-sm md:text-base font-black font-mono text-rose-600 text-right hide-sensitive";
+          netProfitElem.className = "text-sm md:text-base font-black font-mono text-rose-600 hide-sensitive";
           if(netProfitLabel) netProfitLabel.innerText = "নিট ক্ষতি (Net Loss):";
         }
       }
@@ -1344,11 +1337,11 @@
       const ownerNetElem = document.getElementById('report-owner-net');
       if (ownerNetElem) {
         ownerNetElem.innerText = '৳' + ownerNetStatus.toLocaleString('en-IN');
-        ownerNetElem.className = `text-sm md:text-base font-black font-mono text-right hide-sensitive ${ownerNetStatus >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
+        ownerNetElem.className = `text-sm md:text-base font-black font-mono hide-sensitive ${ownerNetStatus >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
       }
     }
 
-    /* RENDER CLIENT CARDS WITH LEFT ALIGNED DETAILS & RIGHT ALIGNED MONEY */
+    /* RENDER CLIENT CARDS WITH INVOICE BUTTON & PRIVACY MODE SUPPORT */
     function renderClientCards() {
       const container = document.getElementById('client-cards-container');
       if (!container) return;
@@ -1387,7 +1380,7 @@
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold">ফিল্টার বা কীওয়ার্ড অনুযায়ী কোনো গ্রাহক মেলেনি।</div>`;
+        container.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 font-semibold">ফিল্টার বা কীওয়ার্ড অনুযায়ী কোনো গ্রাহক মilenি।</div>`;
         return;
       }
 
@@ -1406,16 +1399,16 @@
         if (c.history && c.history.length > 0) {
           historyListHtml = c.history.map(t => `
             <div class="flex justify-between items-center py-2.5 px-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition">
-              <div onclick="handleLedgerActionWithPin('${c.id}', '${t.id}')" class="flex-1 cursor-pointer text-left pr-2">
+              <div onclick="handleLedgerActionWithPin('${c.id}', '${t.id}')" class="flex-1 cursor-pointer">
                 <span class="text-xs font-bold text-slate-800 block">${t.details || (t.type === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ')}</span>
                 <span class="text-[10px] font-mono text-slate-400">${t.date} ${t.discount ? `<span class="text-amber-600 font-bold ml-1">(ছাড়: ৳${t.discount})</span>` : ''}</span>
               </div>
               <div class="text-right flex items-center gap-2">
-                <div onclick="handleLedgerActionWithPin('${c.id}', '${t.id}')" class="cursor-pointer text-right">
+                <div onclick="handleLedgerActionWithPin('${c.id}', '${t.id}')" class="cursor-pointer">
                   <span class="text-xs font-bold font-mono hide-sensitive ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
                     ${t.type === 'income' ? '+' : '-'}৳${t.amount.toLocaleString('en-IN')}
                   </span>
-                  <span class="text-[10px] text-slate-400 block text-right">${t.type === 'income' ? 'জমা' : 'খরচ'}</span>
+                  <span class="text-[10px] text-slate-400 block">${t.type === 'income' ? 'জমা' : 'খরচ'}</span>
                 </div>
                 <!-- SINGLE INVOICE PRINT BUTTON -->
                 <button onclick="printClientInvoice('${c.id}', '${t.id}')" title="প্রিন্ট মেমো" class="bg-white border border-slate-200 hover:bg-slate-100 p-1.5 rounded-lg text-xs transition">
@@ -1431,44 +1424,45 @@
         card.innerHTML = `
           <!-- Card Header / Summary -->
           <div onclick="toggleClientCard('${c.id}')" class="p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3 cursor-pointer select-none">
-            <div class="flex items-center gap-3 text-left w-full md:w-auto">
+            <div class="flex items-start justify-between md:justify-start gap-3">
               <div class="h-10 w-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-base flex-shrink-0">
                 👤
               </div>
-              <div class="text-left flex-1 min-w-0">
-                <h3 class="text-sm font-bold text-slate-900 truncate">${c.project}</h3>
-                <p class="text-xs text-slate-500 font-medium truncate"><span class="hide-sensitive">${c.name}</span> • <span class="font-mono text-slate-400 hide-sensitive">${c.phone}</span></p>
+              <div>
+                <h3 class="text-sm font-bold text-slate-900">${c.project}</h3>
+                <p class="text-xs text-slate-500 font-medium"><span class="hide-sensitive">${c.name}</span> • <span class="font-mono text-slate-400 hide-sensitive">${c.phone}</span></p>
               </div>
             </div>
 
-            <!-- Financial Quick Stats (Left Details / Right Amounts) -->
-            <div class="flex items-center justify-between gap-3 w-full md:w-auto">
-              <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 md:bg-transparent md:border-none md:p-0 flex-1 md:flex-initial">
-                <div class="text-left md:text-right">
-                  <span class="text-[10px] font-bold text-slate-400 uppercase block">চুক্তি</span>
-                  <span class="text-xs font-bold text-slate-800 font-mono hide-sensitive">৳${c.budget.toLocaleString('en-IN')}</span>
-                </div>
-                <div class="text-center md:text-right">
-                  <span class="text-[10px] font-bold text-emerald-600 uppercase block">জমা</span>
-                  <span class="text-xs font-bold text-emerald-600 font-mono hide-sensitive">৳${totalPaid.toLocaleString('en-IN')}</span>
-                </div>
-                <div class="text-right">
-                  <span class="text-[10px] font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} uppercase block">বাকি (Due)</span>
-                  <span class="text-xs font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} font-mono hide-sensitive">৳${due.toLocaleString('en-IN')}</span>
-                </div>
+            <!-- Financial Quick Stats -->
+            <div class="grid grid-cols-3 gap-2 text-center bg-slate-50 p-2.5 rounded-xl border border-slate-100 md:bg-transparent md:border-none md:p-0">
+              <div>
+                <span class="text-[10px] font-bold text-slate-400 uppercase block">চুক্তি</span>
+                <span class="text-xs font-bold text-slate-800 font-mono hide-sensitive">৳${c.budget.toLocaleString('en-IN')}</span>
               </div>
+              <div>
+                <span class="text-[10px] font-bold text-emerald-600 uppercase block">জমা</span>
+                <span class="text-xs font-bold text-emerald-600 font-mono hide-sensitive">৳${totalPaid.toLocaleString('en-IN')}</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} uppercase block">বাকি (Due)</span>
+                <span class="text-xs font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} font-mono hide-sensitive">৳${due.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
 
-              <!-- Unlock Arrow -->
-              <div class="flex items-center justify-end pl-1">
-                <span id="acc-client-${c.id}-arrow" class="text-slate-400 transition-transform text-xs">
-                  ▶
-                </span>
-              </div>
+            <!-- Unlock Arrow / Visually Clean Lock Handler -->
+            <div class="flex items-center justify-between md:justify-end gap-2 border-t md:border-none pt-2 md:pt-0 border-slate-100">
+              <span class="text-[11px] font-bold text-rose-600 md:hidden flex items-center gap-1">
+                ${isUnlocked ? 'হিস্ট্রি দেখুন' : 'পিন দিয়ে আনলক করুন'}
+              </span>
+              <span id="acc-client-${c.id}-arrow" class="text-slate-400 transition-transform">
+                ▶
+              </span>
             </div>
           </div>
 
           <!-- Accordion Content -->
-          <div id="acc-client-${c.id}" class="accordion-content hidden border-t border-slate-100 p-4 bg-slate-50/50 space-y-4 text-left">
+          <div id="acc-client-${c.id}" class="accordion-content hidden border-t border-slate-100 p-4 bg-slate-50/50 space-y-4">
             <!-- Quick Action Buttons Inside Accordion -->
             <div class="flex flex-wrap gap-2">
               <button onclick="openQuickTxForClient('${c.id}', 'income')" class="flex-1 min-w-[90px] bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition shadow-xs flex items-center justify-center gap-1">
@@ -1487,7 +1481,7 @@
 
             <!-- Full Ledger History -->
             <div class="space-y-2">
-              <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-left">লেনদেন ইতিহাস (ক্লিক করে এডিট করুন)</p>
+              <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">লেনদেন ইতিহাস (ক্লিক করে এডিট করুন)</p>
               <div class="space-y-1.5 max-h-56 overflow-y-auto">
                 ${historyListHtml}
               </div>
@@ -1900,7 +1894,7 @@
       uiUpdatePipeline();
     };
 
-    /* RENDER OFFICE EXPENSES WITH RIGHT ALIGNED MONEY */
+    /* RENDER OFFICE EXPENSES WITH PRIVACY SUPPORT */
     function renderOfficeExpenses() {
       if (!officeExpenseRows) return;
       const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -1908,51 +1902,45 @@
 
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
-        const parts = monthFilter.value.split('-'); 
-        targetYear = parseInt(parts[0]);
-        targetMonth = parseInt(parts[1]) - 1; 
+        const parts = monthFilter.value.split('-');
+        targetYear = parseInt(parts[0]); targetMonth = parseInt(parts[1]) - 1;
       } else {
         const now = new Date();
-        targetYear = now.getFullYear();
-        targetMonth = now.getMonth();
+        targetYear = now.getFullYear(); targetMonth = now.getMonth();
       }
-
       const startOfMonth = new Date(targetYear, targetMonth, 1);
       const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
-      let filtered = officeExpenses.filter(o => {
+      const filtered = officeExpenses.filter(oe => {
         if (catVal === 'project' || catVal === 'owner') return false; 
-        const oDate = new Date(o.date);
-        const matchMonth = (oDate >= startOfMonth && oDate <= endOfMonth);
-        const matchQuery = (o.details && o.details.toLowerCase().includes(query)) ||
-                           (o.category && o.category.toLowerCase().includes(query)) ||
-                           (o.amount && o.amount.toString().includes(query));
-        return matchMonth && matchQuery;
+
+        const d = new Date(oe.date);
+        const matchesMonth = d >= startOfMonth && d <= endOfMonth;
+        
+        const matchesQuery = !query || 
+          (oe.details && oe.details.toLowerCase().includes(query)) ||
+          (oe.category && oe.category.toLowerCase().includes(query)) ||
+          oe.amount.toString().includes(query);
+
+        return matchesMonth && matchesQuery;
       });
 
-      if (filtered.length === 0) {
-        officeExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 font-normal">কোনো অফিস খরচ পাওয়া যায়নি</td></tr>`;
-        return;
-      }
-
-      officeExpenseRows.innerHTML = '';
-      filtered.forEach(o => {
+      officeExpenseRows.innerHTML = filtered.length === 0 ? `<tr><td colspan="3" class="p-8 text-center text-slate-400 font-semibold">কোনো অফিস খরচ পাওয়া যায়নি</td></tr>` : '';
+      filtered.forEach(oe => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 cursor-pointer transition";
-        tr.onclick = () => openActionModal('office', o.id);
+        tr.className = "border-b border-slate-100 hover:bg-slate-50/90 transition cursor-pointer";
+        tr.onclick = () => openActionModal('office', oe.id);
+
         tr.innerHTML = `
-          <td class="p-3 pl-4 text-left">
-            <span class="font-bold text-slate-800 block">${o.details || o.category}</span>
-            <span class="text-[10px] text-slate-400 font-semibold">${o.category}</span>
-          </td>
-          <td class="p-3 font-mono text-slate-500 text-center text-[11px]">${o.date}</td>
-          <td class="p-3 text-right font-mono font-bold text-rose-600 hide-sensitive">৳${o.amount.toLocaleString('en-IN')}</td>
+          <td class="p-3 pl-4 font-bold text-slate-900">${oe.details || oe.category} <span class="text-[9px] bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded font-bold ml-1">${oe.category}</span></td>
+          <td class="p-3 text-slate-500 font-mono text-[11px]">${oe.date}</td>
+          <td class="p-3 text-right font-bold text-rose-600 hide-sensitive">৳${oe.amount.toLocaleString('en-IN')}</td>
         `;
         officeExpenseRows.appendChild(tr);
       });
     }
 
-    /* RENDER OWNER TRANSACTIONS WITH RIGHT ALIGNED MONEY */
+    /* RENDER OWNER TRANSACTIONS WITH PRIVACY SUPPORT */
     function renderOwnerTransactions() {
       if (!ownerExpenseRows) return;
       const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -1960,48 +1948,112 @@
 
       let targetYear, targetMonth;
       if (monthFilter && monthFilter.value) {
-        const parts = monthFilter.value.split('-'); 
-        targetYear = parseInt(parts[0]);
-        targetMonth = parseInt(parts[1]) - 1; 
+        const parts = monthFilter.value.split('-');
+        targetYear = parseInt(parts[0]); targetMonth = parseInt(parts[1]) - 1;
       } else {
         const now = new Date();
-        targetYear = now.getFullYear();
-        targetMonth = now.getMonth();
+        targetYear = now.getFullYear(); targetMonth = now.getMonth();
       }
-
       const startOfMonth = new Date(targetYear, targetMonth, 1);
       const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
 
-      let filtered = ownerTransactions.filter(o => {
+      const filtered = ownerTransactions.filter(ow => {
         if (catVal === 'project' || catVal === 'office') return false; 
-        const oDate = new Date(o.date);
-        const matchMonth = (oDate >= startOfMonth && oDate <= endOfMonth);
-        const matchQuery = (o.details && o.details.toLowerCase().includes(query)) ||
-                           (o.amount && o.amount.toString().includes(query));
-        return matchMonth && matchQuery;
+
+        const d = new Date(ow.date);
+        const matchesMonth = d >= startOfMonth && d <= endOfMonth;
+
+        const matchesQuery = !query || 
+          (ow.details && ow.details.toLowerCase().includes(query)) ||
+          ow.amount.toString().includes(query);
+
+        return matchesMonth && matchesQuery;
       });
 
-      if (filtered.length === 0) {
-        ownerExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 font-normal">কোনো মূলধন লেনদেন পাওয়া যায়নি</td></tr>`;
-        return;
-      }
-
-      ownerExpenseRows.innerHTML = '';
-      filtered.forEach(o => {
+      ownerExpenseRows.innerHTML = filtered.length === 0 ? `<tr><td colspan="3" class="p-8 text-center text-slate-400 font-semibold">মালিকের কোনো লেনদেন পাওয়া যায়নি</td></tr>` : '';
+      filtered.forEach(ow => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 cursor-pointer transition";
-        tr.onclick = () => openActionModal('owner', o.id);
+        tr.className = "border-b border-slate-100 hover:bg-slate-50/90 transition cursor-pointer";
+        tr.onclick = () => openActionModal('owner', ow.id);
+
+        const typeBadge = ow.type === 'injection' ? 
+          '<span class="text-[9px] bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded font-bold ml-1">ক্যাশ জমা</span>' : 
+          '<span class="text-[9px] bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded font-bold ml-1">উত্তোলন</span>';
+        
         tr.innerHTML = `
-          <td class="p-3 pl-4 text-left">
-            <span class="font-bold text-slate-800 block">${o.details || (o.type === 'injection' ? 'ক্যাশ জমা' : 'ক্যাশ উত্তোলন')}</span>
-            <span class="text-[10px] ${o.type === 'injection' ? 'text-emerald-600' : 'text-rose-600'} font-semibold">${o.type === 'injection' ? 'জমা' : 'উত্তোলন'}</span>
-          </td>
-          <td class="p-3 font-mono text-slate-500 text-center text-[11px]">${o.date}</td>
-          <td class="p-3 text-right font-mono font-bold ${o.type === 'injection' ? 'text-emerald-600' : 'text-rose-600'} hide-sensitive">
-            ${o.type === 'injection' ? '+' : '-'}৳${o.amount.toLocaleString('en-IN')}
-          </td>
+          <td class="p-3 pl-4 font-bold text-slate-900">${ow.details || 'মূলধন লেনদেন'} ${typeBadge}</td>
+          <td class="p-3 text-slate-500 font-mono text-[11px]">${ow.date}</td>
+          <td class="p-3 text-right font-bold hide-sensitive ${ow.type === 'injection' ? 'text-emerald-600' : 'text-rose-600'}">${ow.type === 'injection' ? '+' : '-'}৳${ow.amount.toLocaleString('en-IN')}</td>
         `;
         ownerExpenseRows.appendChild(tr);
+      });
+    }
+
+    /* FULLSCREEN PIN LOCK LOGIC */
+    const CORRECT_PIN = "6219"; 
+    let enteredPin = "";
+
+    function pressKey(num) {
+      if (enteredPin.length < 4) {
+        enteredPin += num;
+        updateDots();
+        
+        if (enteredPin.length === 4) {
+          setTimeout(verifyPin, 100);
+        }
+      }
+    }
+
+    function deleteKey() {
+      if (enteredPin.length > 0) {
+        enteredPin = enteredPin.slice(0, -1);
+        updateDots();
+      }
+    }
+
+    function updateDots() {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (i < enteredPin.length) {
+          dot.className = "w-3.5 h-3.5 rounded-full bg-rose-600 border-2 border-rose-600 scale-110 transition-all duration-200";
+        } else {
+          dot.className = "w-3.5 h-3.5 rounded-full border-2 border-gray-300 transition-all duration-200";
+        }
+      }
+    }
+
+    function verifyPin() {
+      const statusText = document.getElementById('pinStatusText');
+      
+      if (enteredPin === CORRECT_PIN) {
+        const lockScreen = document.getElementById('pinLockScreen');
+        lockScreen.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        lockScreen.style.opacity = '0';
+        lockScreen.style.transform = 'scale(0.95)';
+        
+        setTimeout(() => {
+          lockScreen.style.display = 'none';
+        }, 300);
+      } else {
+        statusText.innerText = "ভুল PIN! আবার চেষ্টা করুন";
+        statusText.className = "text-xs font-semibold text-rose-600 mb-2.5 animate-bounce";
+        
+        enteredPin = "";
+        updateDots();
+
+        setTimeout(() => {
+          statusText.className = "text-xs font-semibold text-gray-700 mb-2.5";
+          statusText.innerText = "PIN দিয়ে লগইন করুন";
+        }, 1000);
+      }
+    }
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then((reg) => console.log('Service Worker registered! Scope:', reg.scope))
+          .catch((err) => console.log('Service Worker registration failed:', err));
       });
     }
   </script>
