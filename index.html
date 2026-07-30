@@ -917,11 +917,15 @@
       };
 
       confirmBtn.onclick = verify;
-      cancelBtn.onclick = cleanup;
-      input.onkeyup = (e) => {
-        if (e.key === 'Enter') verify();
-      };
-    }
+	cancelBtn.onclick = cleanup;
+	
+	input.oninput = () => {
+	  const correctPin = "6219"; // আপনার সঠিক পিনটি এখানে দিন (বা ভ্যারিয়েবল থেকে পাস করুন)
+	  
+	  if (input.value === correctPin) {
+	    verify(); // পিন মিলে গেলে অটো এন্টার / ভেরিফাই হবে
+	  }
+	};
 
     /* DASHBOARD REPORT UNLOCK HANDLER */
     window.handleReportUnlock = function() {
