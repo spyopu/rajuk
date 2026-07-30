@@ -1187,55 +1187,50 @@
       applyPrivacyToElements();
     }
 
-    /* RENDER OFFICE EXPENSES TABLE */
+    /* RENDER OFFICE EXPENSES */
     function renderOfficeExpenses() {
       if (!officeExpenseRows) return;
       officeExpenseRows.innerHTML = '';
-
       if (officeExpenses.length === 0) {
-        officeExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">কোনো খরচ রেকর্ড করা হয়নি</td></tr>`;
+        officeExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 font-normal">কোনো অফিস খরচ পাওয়া যায়নি।</td></tr>`;
         return;
       }
-
-      officeExpenses.forEach(item => {
+      officeExpenses.forEach(oe => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 cursor-pointer transition";
-        tr.onclick = () => openActionModal('office', item.id);
+        tr.className = "hover:bg-slate-50 transition cursor-pointer";
+        tr.onclick = () => openActionModal('office', oe.id);
         tr.innerHTML = `
           <td class="p-3 pl-4 text-left">
-            <span class="block font-bold text-slate-800">${item.details || 'অফিস খরচ'}</span>
-            <span class="text-[10px] text-slate-400 font-normal">${item.category || 'General'}</span>
+            <span class="block font-bold text-slate-800">${oe.details || 'অফিস খরচ'}</span>
+            <span class="text-[10px] text-slate-400 font-normal">${oe.category || 'সাধারণ'}</span>
           </td>
-          <td class="p-3 text-center text-slate-500 font-mono text-[11px]">${item.date || '-'}</td>
-          <td class="p-3 text-right font-mono font-bold text-rose-600 hide-sensitive">৳${(item.amount || 0).toLocaleString('en-IN')}</td>
+          <td class="p-3 text-center font-mono text-slate-500 text-xs">${oe.date}</td>
+          <td class="p-3 text-right font-mono font-bold text-rose-600 hide-sensitive">৳${(oe.amount || 0).toLocaleString('en-IN')}</td>
         `;
         officeExpenseRows.appendChild(tr);
       });
     }
 
-    /* RENDER OWNER TRANSACTIONS TABLE */
+    /* RENDER OWNER TRANSACTIONS */
     function renderOwnerTransactions() {
       if (!ownerExpenseRows) return;
       ownerExpenseRows.innerHTML = '';
-
       if (ownerTransactions.length === 0) {
-        ownerExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">কোনো মূলধন লেনদেন হয়নি</td></tr>`;
+        ownerExpenseRows.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 font-normal">কোনো মূলধন লেনদেন পাওয়া যায়নি।</td></tr>`;
         return;
       }
-
-      ownerTransactions.forEach(item => {
+      ownerTransactions.forEach(ow => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 cursor-pointer transition";
-        tr.onclick = () => openActionModal('owner', item.id);
-        const isInjection = item.type === 'injection';
+        tr.className = "hover:bg-slate-50 transition cursor-pointer";
+        tr.onclick = () => openActionModal('owner', ow.id);
         tr.innerHTML = `
           <td class="p-3 pl-4 text-left">
-            <span class="block font-bold text-slate-800">${item.details || (isInjection ? 'ক্যাশ জমা' : 'ক্যাশ উত্তোলন')}</span>
-            <span class="text-[10px] ${isInjection ? 'text-emerald-600' : 'text-rose-600'} font-semibold">${isInjection ? 'Injection' : 'Drawing'}</span>
+            <span class="block font-bold text-slate-800">${ow.details || (ow.type === 'injection' ? 'ক্যাশ জমা' : 'ক্যাশ উত্তোলন')}</span>
+            <span class="text-[10px] ${ow.type === 'injection' ? 'text-emerald-600' : 'text-rose-600'} font-semibold">${ow.type === 'injection' ? 'ক্যাশ ইন (Injection)' : 'ক্যাশ আউট (Drawing)'}</span>
           </td>
-          <td class="p-3 text-center text-slate-500 font-mono text-[11px]">${item.date || '-'}</td>
-          <td class="p-3 text-right font-mono font-bold ${isInjection ? 'text-emerald-600' : 'text-rose-600'} hide-sensitive">
-            ${isInjection ? '+' : '-'}৳${(item.amount || 0).toLocaleString('en-IN')}
+          <td class="p-3 text-center font-mono text-slate-500 text-xs">${ow.date}</td>
+          <td class="p-3 text-right font-mono font-bold ${ow.type === 'injection' ? 'text-emerald-600' : 'text-rose-600'} hide-sensitive">
+            ${ow.type === 'injection' ? '+' : '-'}৳${(ow.amount || 0).toLocaleString('en-IN')}
           </td>
         `;
         ownerExpenseRows.appendChild(tr);
@@ -1485,40 +1480,39 @@
 
         card.innerHTML = `
           <!-- Card Header / Summary -->
-          <div onclick="toggleClientCard('${c.id}')" class="p-4 md:p-5 flex flex-row items-center justify-between gap-3 cursor-pointer select-none">
-            
-            <!-- Left Aligned Client Info -->
-            <div class="flex items-center gap-3 text-left min-w-0 flex-1">
+          <div onclick="toggleClientCard('${c.id}')" class="p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3 cursor-pointer select-none">
+            <div class="flex items-start justify-between md:justify-start gap-3 text-left flex-1">
               <div class="h-10 w-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-base flex-shrink-0">
                 👤
               </div>
-              <div class="text-left truncate">
-                <h3 class="text-sm font-bold text-slate-900 truncate">${c.project}</h3>
-                <p class="text-xs text-slate-500 font-medium truncate">
-                  <span class="hide-sensitive">${c.name}</span> • <span class="font-mono text-slate-400 hide-sensitive">${c.phone}</span>
-                </p>
+              <div class="text-left">
+                <h3 class="text-sm font-bold text-slate-900">${c.project}</h3>
+                <p class="text-xs text-slate-500 font-medium"><span class="hide-sensitive">${c.name}</span> • <span class="font-mono text-slate-400 hide-sensitive">${c.phone}</span></p>
               </div>
             </div>
 
-            <!-- Right Aligned Financial Amounts & Arrow -->
-            <div class="flex items-center justify-end gap-3 flex-shrink-0">
-              <div class="flex items-center gap-3 sm:gap-6 text-right">
-                <div class="hidden sm:block text-right">
-                  <span class="text-[10px] font-bold text-slate-400 uppercase block">চুক্তি</span>
-                  <span class="text-xs font-bold text-slate-800 font-mono hide-sensitive">৳${c.budget.toLocaleString('en-IN')}</span>
-                </div>
-                <div class="text-right">
-                  <span class="text-[10px] font-bold text-emerald-600 uppercase block">জমা</span>
-                  <span class="text-xs font-bold text-emerald-600 font-mono hide-sensitive">৳${totalPaid.toLocaleString('en-IN')}</span>
-                </div>
-                <div class="text-right">
-                  <span class="text-[10px] font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} uppercase block">বাকি (Due)</span>
-                  <span class="text-xs font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} font-mono hide-sensitive">৳${due.toLocaleString('en-IN')}</span>
-                </div>
+            <!-- Financial Quick Stats (Left Aligned Details, Right Aligned Money) -->
+            <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 md:bg-transparent md:border-none md:p-0 md:flex md:items-center md:gap-6">
+              <div class="text-left md:text-right">
+                <span class="text-[10px] font-bold text-slate-400 uppercase block">চুক্তি</span>
+                <span class="text-xs font-bold text-slate-800 font-mono hide-sensitive block text-right">৳${c.budget.toLocaleString('en-IN')}</span>
               </div>
+              <div class="text-left md:text-right">
+                <span class="text-[10px] font-bold text-emerald-600 uppercase block">জমা</span>
+                <span class="text-xs font-bold text-emerald-600 font-mono hide-sensitive block text-right">৳${totalPaid.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="text-left md:text-right">
+                <span class="text-[10px] font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} uppercase block">বাকি (Due)</span>
+                <span class="text-xs font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} font-mono hide-sensitive block text-right">৳${due.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
 
-              <!-- Unlock Arrow -->
-              <span id="acc-client-${c.id}-arrow" class="text-slate-400 transition-transform text-xs ml-1">
+            <!-- Unlock Arrow / Visually Clean Lock Handler -->
+            <div class="flex items-center justify-between md:justify-end gap-2 border-t md:border-none pt-2 md:pt-0 border-slate-100">
+              <span class="text-[11px] font-bold text-rose-600 md:hidden flex items-center gap-1">
+                ${isUnlocked ? 'হিস্ট্রি দেখুন' : 'পিন দিয়ে আনলক করুন'}
+              </span>
+              <span id="acc-client-${c.id}-arrow" class="text-slate-400 transition-transform">
                 ▶
               </span>
             </div>
