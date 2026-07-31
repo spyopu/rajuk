@@ -296,31 +296,27 @@
       </div>
     </section>
 
-    <!-- NAVIGATION TABS & DATE FILTERS -->
-<div class="bg-white p-3 md:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
-  <!-- Desktop & Mobile Navigation Tabs -->
-  <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 overflow-x-auto w-full md:w-auto scrollbar-none">
-    <button onclick="switchTab('home-view')" id="btn-home-view" class="tab-btn flex-1 md:flex-none px-3 md:px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm whitespace-nowrap text-center">🏠 হোম</button>
-    <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view" class="tab-btn flex-1 md:flex-none px-3 md:px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 whitespace-nowrap text-center">📊 ড্যাশবোর্ড</button>
-    <button onclick="switchTab('journal-view')" id="btn-journal-view" class="tab-btn flex-1 md:flex-none px-3 md:px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 whitespace-nowrap text-center">💸 লেনদেন</button>
-  </div>
-
-  <div class="flex flex-wrap items-center justify-between md:justify-end gap-2 w-full md:w-auto">
-    <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-      <button onclick="setAnalyticsViewMode('monthly')" id="mode-btn-monthly" class="px-3 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm">মাসিক</button>
-      <button onclick="setAnalyticsViewMode('yearly')" id="mode-btn-yearly" class="px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">বার্ষিক</button>
-    </div>
-
-    <div id="month-picker-wrapper" class="flex items-center gap-2">
-      <input type="month" id="month-filter" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs rounded-xl px-3 py-1.5 outline-none focus:border-rose-600 transition">
-    </div>
-
-    <div id="year-picker-wrapper" class="flex items-center gap-2 hidden">
-      <select id="year-filter" onchange="uiUpdatePipeline()" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs rounded-xl px-3 py-1.5 outline-none focus:border-rose-600 transition">
-      </select>
-    </div>
-  </div>
+    <!-- MOBILE BOTTOM NAVIGATION BAR -->
+<div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex items-center justify-around py-2 px-1 z-50 md:hidden shadow-lg">
+  <!-- হোম বাটন -->
+  <button onclick="switchTab('home-view')" id="btn-home-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105">
+    <span class="text-base">🏠</span>
+    <span>হোম</span>
+  </button>
+  
+  <!-- ড্যাশবোর্ড বাটন -->
+  <button onclick="switchTab('dashboard-view')" id="btn-dashboard-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition">
+    <span class="text-base">📊</span>
+    <span>ড্যাশবোর্ড</span>
+  </button>
+  
+  <!-- লেনদেন বাটন -->
+  <button onclick="switchTab('journal-view')" id="btn-journal-view-mob" class="mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition">
+    <span class="text-base">💸</span>
+    <span>লেনদেন</span>
+  </button>
 </div>
+	  
     <!-- TAB 1: DEFAULT HOMEPAGE DASHBOARD & REPORTS -->
     <div id="tab-dashboard-view" class="tab-content space-y-4">
       <div id="pdf-report-container" class="space-y-4">
@@ -1384,23 +1380,47 @@
     };
 
     window.switchTab = function(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      const target = document.getElementById(`tab-${tabId}`);
-      if(target) target.classList.remove('hidden');
+  // ১. সব ট্যাব কন্টেন্ট হাইড করা
+  const views = ['home-view', 'dashboard-view', 'journal-view'];
+  views.forEach(v => {
+    const el = document.getElementById(v);
+    if(el) el.classList.add('hidden');
+  });
 
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.className = "tab-btn px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
-      });
+  // ২. টার্গেট কন্টেন্ট দেখানো
+  const target = document.getElementById(tabId);
+  if(target) target.classList.remove('hidden');
 
-      const activePCBtn = document.getElementById(`btn-${tabId}-pc`);
-      if(activePCBtn) activePCBtn.className = "tab-btn px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
-      document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
-        btn.className = "mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition";
-      });
-		
-      const activeMobBtn = document.getElementById(`btn-${tabId}-mob`);
-      if(activeMobBtn) activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105";
-    } 
+  // ৩. পিসি (PC) ট্যাব বাটন স্টাইল রিসেট ও একটিভ করা
+  views.forEach(v => {
+    const btn = document.getElementById(`btn-${v}`);
+    if(btn) {
+      btn.className = "tab-btn px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 whitespace-nowrap";
+    }
+  });
+  const activePCBtn = document.getElementById(`btn-${tabId}`);
+  if(activePCBtn) {
+    activePCBtn.className = "tab-btn px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm whitespace-nowrap";
+  }
+
+  // ৪. মোবাইল বটম নেভিগেশন বাটন স্টাইল রিসেট ও একটিভ করা
+  views.forEach(v => {
+    const mobBtn = document.getElementById(`btn-${v}-mob`);
+    if(mobBtn) {
+      mobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition";
+    }
+  });
+  const activeMobBtn = document.getElementById(`${tabId}-mob` ? `btn-${tabId}-mob` : ``); // Safe check
+  const targetMobBtn = document.getElementById(`btn-${tabId}-mob`);
+  if(targetMobBtn) {
+    targetMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105";
+  }
+
+  // ৫. ড্যাশবোর্ডে গেলে রিপোর্ট আপডেট হবে, হোম বা লেনদেনে দেখাবে না
+  if (tabId === 'dashboard-view' && typeof uiUpdatePipeline === 'function') {
+    uiUpdatePipeline();
+  }
+};
 
     /* CLIENT CARD FILTER SWITCHER LOGIC */
     window.setClientFilter = function(filterType) {
