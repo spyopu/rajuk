@@ -1385,22 +1385,34 @@
     };
 
     window.switchTab = function(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      const target = document.getElementById(`tab-${tabId}`);
-      if(target) target.classList.remove('hidden');
-
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.className = "tab-btn px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
-      });
-      const activePCBtn = document.getElementById(`btn-${tabId}-pc`);
-      if(activePCBtn) activePCBtn.className = "tab-btn px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
-
-      document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
-        btn.className = "mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition";
-      });
-      const activeMobBtn = document.getElementById(`btn-${tabId}-mob`);
-      if(activeMobBtn) activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105";
-    }
+	  // ১. সব ট্যাবের কন্টেন্ট বা ভিউ হাইড করা (যেমন: tab-home-view, tab-dashboard-view ইত্যাদি বা সরাসরি ক্লাস অনুযায়ী)
+	  // যদি আপনার সেকশনগুলোর আইডি 'home-view', 'dashboard-view', 'journal-view' হয়:
+	  const views = ['home-view', 'dashboard-view', 'journal-view'];
+	  views.forEach(v => {
+	    const el = document.getElementById(v);
+	    if(el) el.classList.add('hidden');
+	  });
+	
+	  // কাঙ্ক্ষিত ভিউ বা সেকশনটি দেখানো
+	  const target = document.getElementById(tabId);
+	  if(target) target.classList.remove('hidden');
+	
+	  // ২. সব ট্যাব বাটনগুলোর স্টাইল রিসেট করা
+	  document.querySelectorAll('.tab-btn').forEach(btn => {
+	    btn.className = "tab-btn px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 whitespace-nowrap";
+	  });
+	
+	  // ৩. বর্তমান অ্যাক্টিভ বাটনটিতে ডিজাইন (রঙ) প্রয়োগ করা
+	  const activeBtn = document.getElementById(`btn-${tabId}`);
+	  if(activeBtn) {
+	    activeBtn.className = "tab-btn px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm whitespace-nowrap";
+	  }
+	
+	  // ৪. যদি ড্যাশবোর্ড ট্যাব সিলেক্ট করা হয়, তবেই কেবল রিপোর্ট বা পাইপলাইন আপডেট হবে
+	  if (tabId === 'dashboard-view' && typeof uiUpdatePipeline === 'function') {
+	    uiUpdatePipeline();
+	  }
+	};
 
     /* CLIENT CARD FILTER SWITCHER LOGIC */
     window.setClientFilter = function(filterType) {
