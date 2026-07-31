@@ -616,7 +616,7 @@
           <div class="flex items-center justify-between mb-0.5">
             <label class="block text-[11px] font-bold text-slate-700">মোবাইল নাম্বার</label>
             <button type="button" onclick="pickContact()" class="text-[10px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2 py-0.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
-              📇 ফোনবুক থেকে পিক করুন
+              📇 ফোনবুক
             </button>
           </div>
           <input type="text" id="qc-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-semibold outline-none">
@@ -648,8 +648,8 @@
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-0.5">লেনদেনের ধরন</label>
           <select id="qt-type" onchange="toggleDiscountField()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
-            <option value="income">🟢 টাকা জমা (Debit)</option>
-            <option value="expense">🔴 প্রজেক্ট খরচ (Credit)</option>
+            <option value="income">🟢 টাকা জমা</option>
+            <option value="expense">🔴 প্রজেক্ট খরচ</option>
           </select>
         </div>
         
@@ -682,9 +682,9 @@
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-0.5">এন্ট্রির ধরন</label>
           <select id="qo-entry-type" onchange="toggleOfficeOwnerFields()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
-            <option value="office">🏢 অফিস খরচ</option>
-            <option value="owner_in">💼 মূলধন ক্যাশ জমা (Injection)</option>
-            <option value="owner_out">💼 মূলধন ক্যাশ উত্তোলন (Drawing)</option>
+            <option value="office">অফিস খরচ</option>
+            <option value="owner_in">মূলধন ক্যাশ জমা</option>
+            <option value="owner_out">মূলধন ক্যাশ উত্তোলন</option>
           </select>
         </div>
 
@@ -1915,7 +1915,7 @@
           <tr class="hover:bg-slate-50 transition border-b border-slate-100 cursor-pointer" onclick="openActionModal('owner', '${item.id}')">
             <td class="p-2 pl-3">
               <div class="font-bold text-slate-800">${item.details || (isInj ? 'মূলধন ক্যাশ জমা' : 'মূলধন উত্তোলন')}</div>
-              <div class="text-[9px] ${isInj ? 'text-emerald-600' : 'text-rose-600'} font-bold">${isInj ? '🟢 Injection' : '🔴 Drawing'}</div>
+              <div class="text-[9px] ${isInj ? 'text-emerald-600' : 'text-rose-600'} font-bold">${isInj ? '🟢' : '🔴'}</div>
             </td>
             <td class="p-2 font-mono text-slate-500 text-[10px]">${item.date}</td>
             <td class="p-2 text-right font-mono font-bold ${isInj ? 'text-emerald-600' : 'text-rose-600'} hide-sensitive" data-original="${formattedAmount}">${formattedAmount}</td>
@@ -2030,8 +2030,8 @@
                   <button onclick="printClientInvoice('${client.id}')" class="p-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs transition shadow-2xs" title="ইনভয়েস প্রিন্ট করুন">🖨️</button>
                   <button onclick="openActionModal('client', '${client.id}')" class="p-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs transition shadow-2xs" title="সম্পাদনা করুন">✏️</button>
                   <button onclick="toggleClientCard('${client.id}')" class="p-1.5 bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 rounded-lg text-xs transition font-bold flex items-center gap-1 shadow-2xs">
-                    <span>${isUnlocked ? 'লেজার' : '🔒 আনলক'}</span>
-                    <span id="acc-client-${client.id}-arrow" class="text-[9px] transition-transform">▶</span>
+                    <span>${isUnlocked ? 'লেজার' : '🔒'}</span>
+                    
                   </button>
                 </div>
               </div>
