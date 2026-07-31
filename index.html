@@ -243,7 +243,7 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6 flex-1">
     
-    <!-- Quick Dashboard Shortcuts Grid -->
+    <!-- Quick Dashboard Shortcuts Grid (৪. রেসপন্সিভ শর্টকাট গ্রিড) -->
     <section class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm space-y-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -253,25 +253,25 @@
         <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-2.5 py-0.5 rounded-lg">ডিজিটাল খাতা</span>
       </div>
 
-      <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 gap-2 pt-1">
-        <button onclick="switchTab('dashboard-view')" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-50 hover:bg-indigo-50 border border-slate-100 hover:border-indigo-200 transition group cursor-pointer">
-          <div class="w-10 h-10 rounded-full bg-indigo-100 group-hover:bg-indigo-600 text-indigo-600 group-hover:text-white flex items-center justify-center text-lg transition mb-1 shadow-2xs">📊</div>
-          <span class="text-[10px] font-bold text-slate-700 group-hover:text-indigo-600 text-center leading-tight">রিপোর্ট</span>
+      <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-2.5 pt-1">
+        <button onclick="switchTab('dashboard-view')" class="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 border border-slate-100 hover:border-indigo-200 transition group cursor-pointer">
+          <div class="w-10 h-10 rounded-full bg-indigo-100 group-hover:bg-indigo-600 text-indigo-600 group-hover:text-white flex items-center justify-center text-lg transition mb-1.5 shadow-2xs">📊</div>
+          <span class="text-[11px] font-bold text-slate-700 group-hover:text-indigo-600 text-center leading-tight">রিপোর্ট</span>
         </button>
 
-        <button onclick="openSummaryModal()" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-200 transition group cursor-pointer">
-          <div class="w-10 h-10 rounded-full bg-blue-100 group-hover:bg-blue-600 text-blue-600 group-hover:text-white flex items-center justify-center text-lg transition mb-1 shadow-2xs">📋</div>
-          <span class="text-[10px] font-bold text-slate-700 group-hover:text-blue-600 text-center leading-tight">সামারি</span>
+        <button onclick="openSummaryModal()" class="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-200 transition group cursor-pointer">
+          <div class="w-10 h-10 rounded-full bg-blue-100 group-hover:bg-blue-600 text-blue-600 group-hover:text-white flex items-center justify-center text-lg transition mb-1.5 shadow-2xs">📋</div>
+          <span class="text-[11px] font-bold text-slate-700 group-hover:text-blue-600 text-center leading-tight">সামারি</span>
         </button>
 
-        <button onclick="printSearchResults()" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-50 hover:bg-slate-200 border border-slate-100 hover:border-slate-300 transition group cursor-pointer">
-          <div class="w-10 h-10 rounded-full bg-slate-200 group-hover:bg-slate-800 text-slate-700 group-hover:text-white flex items-center justify-center text-lg transition mb-1 shadow-2xs">🖨️</div>
-          <span class="text-[10px] font-bold text-slate-700 group-hover:text-slate-900 text-center leading-tight">প্রিন্ট</span>
+        <button onclick="printSearchResults()" class="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-50 hover:bg-slate-200 border border-slate-100 hover:border-slate-300 transition group cursor-pointer">
+          <div class="w-10 h-10 rounded-full bg-slate-200 group-hover:bg-slate-800 text-slate-700 group-hover:text-white flex items-center justify-center text-lg transition mb-1.5 shadow-2xs">🖨️</div>
+          <span class="text-[11px] font-bold text-slate-700 group-hover:text-slate-900 text-center leading-tight">প্রিন্ট</span>
         </button>
 
-        <button onclick="toggleGlobalPrivacyMode()" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-50 hover:bg-rose-50 border border-slate-100 hover:border-rose-200 transition group cursor-pointer">
-          <div id="global-eye-toggle-btn" class="w-10 h-10 rounded-full bg-rose-100 group-hover:bg-rose-600 text-rose-600 group-hover:text-white flex items-center justify-center text-lg transition mb-1 shadow-2xs">🙈</div>
-          <span class="text-[10px] font-bold text-slate-700 group-hover:text-rose-600 text-center leading-tight">গোপনীয়তা</span>
+        <button onclick="toggleGlobalPrivacyMode()" class="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-50 hover:bg-rose-50 border border-slate-100 hover:border-rose-200 transition group cursor-pointer">
+          <div id="global-eye-toggle-btn" class="w-10 h-10 rounded-full bg-rose-100 group-hover:bg-rose-600 text-rose-600 group-hover:text-white flex items-center justify-center text-lg transition mb-1.5 shadow-2xs">🙈</div>
+          <span class="text-[11px] font-bold text-slate-700 group-hover:text-rose-600 text-center leading-tight">গোপনীয়তা</span>
         </button>
       </div>
     </section>
@@ -347,7 +347,7 @@
 		  </div>
 		</div>
 
-        <!-- Minimal Summary Cards without indicator dots -->
+        <!-- Minimal Summary Cards -->
         <div id="report-content-body" class="space-y-4 filter blur-md select-none pointer-events-none transition-all duration-300">
           <div class="grid grid-cols-2 md:grid-cols-5 gap-2.5 text-center">
             <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
@@ -531,7 +531,7 @@
       </div>
     </div>
 
-    <!-- TAB 2: TRANSACTIONS / CLIENT ACCORDION VIEW (SEPARATE TAB) -->
+    <!-- TAB 2: TRANSACTIONS / CLIENT ACCORDION VIEW -->
     <div id="tab-journal-view" class="tab-content space-y-4 hidden">
       
       <!-- UNIFIED SEARCH BAR WITH INTEGRATED CLIENT FILTER CARD -->
@@ -549,7 +549,7 @@
         </div>
       </div>
 
-      <!-- Accordion Client List Container -->
+      <!-- Accordion Client List Container (৩. কাস্টম স্ট্যাটাস ইন্ডিকেটর ডট ও কালার বর্ডার সহ) -->
       <div id="client-cards-container" class="space-y-3">
         <!-- Rendered dynamically -->
       </div>
@@ -557,7 +557,7 @@
 
   </main>
 
-  <!-- ONLY FLOATING ENTRY BUTTON ALLOWED IN APP -->
+  <!-- FLOATING ENTRY BUTTON -->
   <button onclick="openQuickModal('client')" class="fab-btn" title="নতুন এন্ট্রি যুক্ত করুন">
     ➕
   </button>
@@ -611,14 +611,19 @@
         <button type="button" id="tab-opt-office" onclick="switchQuickForm('office')" class="py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600">🏢 অফিস খরচ</button>
       </div>
 
-      <!-- 1. Quick Client Form -->
+      <!-- 1. Quick Client Form (২. কন্ট্যাক্ট সিলেক্টর যুক্ত) -->
       <form id="quick-client-form" class="space-y-2.5">
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-0.5">গ্রাহকের নাম</label>
           <input type="text" id="qc-name" placeholder="যেমন: আব্দুল্লাহ" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">মোবাইল নাম্বার</label>
+          <div class="flex items-center justify-between mb-0.5">
+            <label class="block text-[11px] font-bold text-slate-700">মোবাইল নাম্বার</label>
+            <button type="button" onclick="pickContact()" class="text-[10px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2 py-0.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
+              📇 ফোনবুক থেকে পিক করুন
+            </button>
+          </div>
           <input type="text" id="qc-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-semibold outline-none">
         </div>
         <div>
@@ -885,6 +890,30 @@
       searchInput.addEventListener('input', () => {
         uiUpdatePipeline();
       });
+    }
+
+    /* ২. মোবাইল কন্ট্যাক্ট সিলেক্টর (Contact Picker API) */
+    async function pickContact() {
+      if ('contacts' in navigator && 'ContactsManager' in window) {
+        try {
+          const props = ['name', 'tel'];
+          const contacts = await navigator.contacts.select(props, { multiple: false });
+          if (contacts && contacts.length > 0) {
+            const contact = contacts[0];
+            if (contact.name && contact.name[0]) {
+              document.getElementById('qc-name').value = contact.name[0];
+            }
+            if (contact.tel && contact.tel[0]) {
+              let phone = contact.tel[0].replace(/\s+/g, '').replace(/-/g, '');
+              document.getElementById('qc-phone').value = phone;
+            }
+          }
+        } catch (ex) {
+          console.log('Contact selection cancelled or failed:', ex);
+        }
+      } else {
+        alert('আপনার ব্রাউজারে Contact Picker API সাপোর্ট করে না। অনুগ্রহ করে ম্যানুয়ালি নম্বর লিখুন।');
+      }
     }
 
     window.setAnalyticsViewMode = function(mode) {
@@ -1885,136 +1914,152 @@
       }
 
       ownerExpenseRows.innerHTML = filtered.map(item => {
-        const isInjection = item.type === 'injection';
         const formattedAmount = '৳' + item.amount.toLocaleString('en-IN');
+        const isInj = item.type === 'injection';
         return `
           <tr class="hover:bg-slate-50 transition border-b border-slate-100 cursor-pointer" onclick="openActionModal('owner', '${item.id}')">
             <td class="p-2 pl-3">
-              <div class="font-bold text-slate-800">${item.details || (isInjection ? 'ক্যাশ জমা' : 'ক্যাশ উত্তোলন')}</div>
-              <div class="text-[9px] ${isInjection ? 'text-emerald-600' : 'text-rose-600'} font-bold">${isInjection ? '🟢 Injection' : '🔴 Drawing'}</div>
+              <div class="font-bold text-slate-800">${item.details || (isInj ? 'মূলধন ক্যাশ জমা' : 'মূলধন উত্তোলন')}</div>
+              <div class="text-[9px] ${isInj ? 'text-emerald-600' : 'text-rose-600'} font-bold">${isInj ? '🟢 Injection' : '🔴 Drawing'}</div>
             </td>
             <td class="p-2 font-mono text-slate-500 text-[10px]">${item.date}</td>
-            <td class="p-2 text-right font-mono font-bold ${isInjection ? 'text-emerald-600' : 'text-rose-600'} hide-sensitive" data-original="${formattedAmount}">${formattedAmount}</td>
+            <td class="p-2 text-right font-mono font-bold ${isInj ? 'text-emerald-600' : 'text-rose-600'} hide-sensitive" data-original="${formattedAmount}">${formattedAmount}</td>
           </tr>
         `;
       }).join('');
     }
 
-    /* RENDER CLIENT CARDS WITH INSIDE FILTER FUNCTIONALITY */
+    /* ৩. কাস্টম স্ট্যাটাস ইন্ডিকেটর ডট ও কালারড বর্ডার এবং ১. ডাইরেক্ট কল লিংক (tel:) সহ CLIENT ACCORDION CARD RENDER */
     function renderClientCards() {
       const container = document.getElementById('client-cards-container');
       if (!container) return;
 
-      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const searchQuery = searchInput ? searchInput.value.trim().toLowerCase() : '';
 
-      let filtered = farmData.filter(c => {
-        const matchesQuery = !query || 
-          (c.name && c.name.toLowerCase().includes(query)) ||
-          (c.phone && c.phone.toLowerCase().includes(query)) ||
-          (c.project && c.project.toLowerCase().includes(query));
+      let filteredList = farmData.filter(client => {
+        const totalPaid = (client.history || []).reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
+        const totalDiscount = (client.history || []).reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0);
+        const due = Math.max(0, client.budget - (totalPaid + totalDiscount));
 
-        if (!matchesQuery) return false;
+        if (activeClientFilter === 'due' && due <= 0) return false;
+        if (activeClientFilter === 'paid' && due > 0) return false;
 
-        let totalPaid = (c.history || []).reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
-        let totalDiscount = (c.history || []).reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0);
-        let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDiscount));
+        if (searchQuery) {
+          const matchName = client.name && client.name.toLowerCase().includes(searchQuery);
+          const matchPhone = client.phone && client.phone.includes(searchQuery);
+          const matchProject = client.project && client.project.toLowerCase().includes(searchQuery);
+          return matchName || matchPhone || matchProject;
+        }
 
-        if (activeClientFilter === 'due') return due > 0;
-        if (activeClientFilter === 'paid') return due === 0;
         return true;
       });
 
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400">
-            <p class="text-sm font-semibold">কোনো গ্রাহক পাওয়া যায়নি</p>
-          </div>`;
+      if (filteredList.length === 0) {
+        container.innerHTML = `<div class="bg-white p-6 rounded-2xl border border-slate-200 text-center text-slate-400 font-medium text-xs">কোনো গ্রাহকের রেকর্ড পাওয়া যায়নি</div>`;
         return;
       }
 
-      container.innerHTML = filtered.map(c => {
-        let totalPaid = (c.history || []).reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
-        let totalDiscount = (c.history || []).reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0);
-        let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDiscount));
+      container.innerHTML = filteredList.map(client => {
+        const history = client.history || [];
+        const totalPaid = history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0);
+        const totalDiscount = history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0);
+        const totalPrjExpense = history.reduce((sum, t) => t.type === 'expense' ? sum + t.amount : sum, 0);
+        const due = Math.max(0, client.budget - (totalPaid + totalDiscount));
 
-        let historyRows = (c.history || []).map(t => {
+        const isUnlocked = !!unlockedCards[client.id];
+
+        /* ৩. কাস্টম স্ট্যাটাস ইন্ডিকেটর ডট ও কার্ডের বামপাশে কালার বর্ডার */
+        const borderClass = due <= 0 ? "border-l-4 border-l-emerald-500" : "border-l-4 border-l-amber-500";
+        const statusDot = due <= 0 
+          ? `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block shadow-xs" title="পরিশোধিত"></span>`
+          : `<span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block shadow-xs" title="বকেয়া"></span>`;
+
+        let historyRows = history.map(t => {
           const isInc = t.type === 'income';
-          const formattedAmt = '৳' + t.amount.toLocaleString('en-IN');
-          const formattedDisc = t.discount ? '৳' + t.discount.toLocaleString('en-IN') : '';
-
+          const amtFormatted = '৳' + t.amount.toLocaleString('en-IN');
+          const discFormatted = t.discount ? '৳' + t.discount.toLocaleString('en-IN') : null;
           return `
-            <tr class="border-b border-slate-100 hover:bg-slate-50 transition cursor-pointer" onclick="openActionModal('tx', '${c.id}', '${t.id}')">
-              <td class="p-2 pl-3">
-                <div class="font-bold text-slate-800 text-xs">${t.details || (isInc ? 'টাকা জমা' : 'প্রজেক্ট খরচ')}</div>
-                <div class="text-[9px] ${isInc ? 'text-emerald-600' : 'text-rose-600'} font-bold">${isInc ? '🟢 জমা (Debit)' : '🔴 খরচ (Credit)'}</div>
+            <tr class="border-b border-slate-100 hover:bg-slate-50 transition cursor-pointer" onclick="openActionModal('tx', '${client.id}', '${t.id}')">
+              <td class="py-2 px-3 font-medium text-slate-800">
+                ${t.details || (isInc ? 'টাকা জমা' : 'প্রজেক্ট খরচ')}
+                ${t.discount ? `<span class="block text-[9px] text-amber-600 font-bold">ছাড়: <span class="hide-sensitive" data-original="${discFormatted}">${discFormatted}</span></span>` : ''}
               </td>
-              <td class="p-2 font-mono text-slate-500 text-[10px]">${t.date}</td>
-              <td class="p-2 text-right">
-                <div class="font-mono font-bold text-xs ${isInc ? 'text-emerald-600' : 'text-rose-600'} hide-sensitive" data-original="${formattedAmt}">${formattedAmt}</div>
-                ${t.discount ? `<div class="text-[9px] text-amber-600 font-semibold font-mono hide-sensitive" data-original="ছাড়: ${formattedDisc}">ছাড়: ${formattedDisc}</div>` : ''}
+              <td class="py-2 px-2 font-mono text-[10px] text-slate-500">${t.date}</td>
+              <td class="py-2 px-2 text-center">
+                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${isInc ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}">${isInc ? 'জমা' : 'খরচ'}</span>
               </td>
+              <td class="py-2 px-3 text-right font-mono font-bold ${isInc ? 'text-emerald-600' : 'text-rose-600'} hide-sensitive" data-original="${amtFormatted}">${amtFormatted}</td>
             </tr>
           `;
         }).join('');
 
-        const formattedBudget = '৳' + (c.budget || 0).toLocaleString('en-IN');
-        const formattedPaid = '৳' + totalPaid.toLocaleString('en-IN');
-        const formattedDue = '৳' + due.toLocaleString('en-IN');
+        const bFormatted = '৳' + client.budget.toLocaleString('en-IN');
+        const pFormatted = '৳' + totalPaid.toLocaleString('en-IN');
+        const dFormatted = '৳' + due.toLocaleString('en-IN');
 
         return `
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden transition">
-            <div onclick="toggleClientCard('${c.id}')" class="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer hover:bg-slate-50/80 transition">
-              <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-xl ${due > 0 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'} flex items-center justify-center font-bold text-sm shrink-0">
-                  ${due > 0 ? '⚠️' : '🟢'}
+          <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden ${borderClass}">
+            <div class="p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  ${statusDot}
+                  <h3 class="text-xs sm:text-sm font-bold text-slate-900">${client.name}</h3>
+                  <span class="text-[10px] bg-slate-200/80 text-slate-700 px-2 py-0.5 rounded-md font-semibold">${client.project}</span>
                 </div>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <h3 class="text-xs md:text-sm font-bold text-slate-900">${c.name}</h3>
-                    <span class="text-[10px] font-mono font-semibold text-slate-500">(${c.phone})</span>
-                  </div>
-                  <p class="text-[11px] text-slate-600 font-medium mt-0.5">প্রজেক্ট: <span class="font-semibold text-slate-800">${c.project}</span></p>
+                <div class="flex items-center gap-3 text-xs text-slate-500">
+                  <!-- ১. ডাইরেক্ট কল লিংক (tel:) -->
+                  <a href="tel:${client.phone}" class="inline-flex items-center gap-1 text-slate-600 hover:text-rose-600 font-mono font-semibold transition" title="সরাসরি কল করুন">
+                    📞 <span>${client.phone}</span>
+                  </a>
+                  <span class="text-[10px] font-mono text-slate-400">তারিখ: ${client.date || 'N/A'}</span>
                 </div>
               </div>
 
               <div class="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                <div class="text-left sm:text-right">
-                  <p class="text-[9px] font-bold text-slate-400 uppercase">চুক্তি: <span class="font-mono text-slate-700 hide-sensitive" data-original="${formattedBudget}">${formattedBudget}</span></p>
-                  <div class="flex items-center gap-2 mt-0.5">
-                    <span class="text-[11px] font-mono font-bold text-emerald-600 hide-sensitive" data-original="জমা: ${formattedPaid}">জমা: ${formattedPaid}</span>
-                    <span class="text-[11px] font-mono font-bold ${due > 0 ? 'text-amber-600' : 'text-slate-400'} hide-sensitive" data-original="বকেয়া: ${formattedDue}">বকেয়া: ${formattedDue}</span>
+                <div class="flex items-center gap-3 text-right">
+                  <div>
+                    <span class="text-[9px] uppercase font-bold text-slate-400 block">চুক্তি</span>
+                    <span class="text-xs font-bold font-mono text-slate-800 hide-sensitive" data-original="${bFormatted}">${bFormatted}</span>
+                  </div>
+                  <div>
+                    <span class="text-[9px] uppercase font-bold text-emerald-600 block">জমা</span>
+                    <span class="text-xs font-bold font-mono text-emerald-600 hide-sensitive" data-original="${pFormatted}">${pFormatted}</span>
+                  </div>
+                  <div>
+                    <span class="text-[9px] uppercase font-bold text-amber-600 block">বকেয়া</span>
+                    <span class="text-xs font-bold font-mono text-amber-600 hide-sensitive" data-original="${dFormatted}">${dFormatted}</span>
                   </div>
                 </div>
-                <div class="text-slate-400 text-xs">
-                  <span id="acc-client-${c.id}-arrow" class="transition-transform inline-block">▶</span>
+
+                <div class="flex items-center gap-1.5">
+                  <button onclick="printClientInvoice('${client.id}')" class="p-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs transition shadow-2xs" title="ইনভয়েস প্রিন্ট করুন">🖨️</button>
+                  <button onclick="openActionModal('client', '${client.id}')" class="p-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs transition shadow-2xs" title="সম্পাদনা করুন">✏️</button>
+                  <button onclick="toggleClientCard('${client.id}')" class="p-1.5 bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 rounded-lg text-xs transition font-bold flex items-center gap-1 shadow-2xs">
+                    <span>${isUnlocked ? 'লেজার' : '🔒 আনলক'}</span>
+                    <span id="acc-client-${client.id}-arrow" class="text-[9px] transition-transform">▶</span>
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div id="acc-client-${c.id}" class="accordion-content hidden border-t border-slate-100 bg-slate-50/50 p-3 space-y-3">
-              <div class="flex items-center justify-between">
-                <h4 class="text-[11px] font-bold text-slate-800 flex items-center gap-1">📜 লেনদেন ইতিহাস</h4>
-                <div class="flex items-center gap-2">
-                  <button onclick="printClientInvoice('${c.id}')" class="btn-summary-mini">
-                    <i>🖨️</i> ইনভয়েস
-                  </button>
-                  <button onclick="openActionModal('client', '${c.id}')" class="btn-summary-mini">
-                    ✏️ এডিট
-                  </button>
-                </div>
+            <div id="acc-client-${client.id}" class="accordion-content hidden border-t border-slate-200 bg-white p-3 space-y-3">
+              <div class="flex justify-between items-center bg-slate-50 p-2 rounded-xl border border-slate-100">
+                <span class="text-[11px] font-bold text-slate-700">লেনদেনের ইতিহাস (${history.length} টি)</span>
+                <button onclick="openQuickModal('tx', '${client.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold transition flex items-center gap-1">➕ নতুন লেনদেন</button>
               </div>
 
-              <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
+              <div class="overflow-x-auto border border-slate-100 rounded-xl">
                 <table class="w-full text-left text-xs">
                   <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[9px]">
                     <tr>
-                      <th class="p-2 pl-3">বিবরণ</th>
-                      <th class="p-2">তারিখ</th>
-                      <th class="p-2 text-right">পরিমাণ</th>
+                      <th class="py-2 px-3">বিবরণ</th>
+                      <th class="py-2 px-2">তারিখ</th>
+                      <th class="py-2 px-2 text-center">টাইপ</th>
+                      <th class="py-2 px-3 text-right">পরিমাণ</th>
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-slate-100">
-                    ${historyRows || '<tr><td colspan="3" class="p-3 text-center text-slate-400 font-normal">কোনো লেনদেন রেকর্ড নেই</td></tr>'}
+                  <tbody class="divide-y divide-slate-100 font-semibold text-slate-800 text-[11px]">
+                    ${historyRows || `<tr><td colspan="4" class="p-3 text-center text-slate-400 font-normal">কোনো লেনদেন রেকর্ড পাওয়া যায়নি</td></tr>`}
                   </tbody>
                 </table>
               </div>
@@ -2024,255 +2069,214 @@
       }).join('');
     }
 
-    /* QUICK ENTRY MODAL CONTROLLERS */
-    window.openQuickModal = function(type = 'client') {
-      if(!databasePathRef) {
-        alert("অনুগ্রহ করে প্রথমে লগইন করুন!");
-        return;
-      }
+    function populateQuickTxDropdown() {
+      const select = document.getElementById('qt-client-select');
+      if (!select) return;
+      select.innerHTML = '<option value="" disabled selected>গ্রাহক বেছে নিন...</option>';
+      farmData.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.innerText = `${c.name} - ${c.project}`;
+        select.appendChild(opt);
+      });
+    }
+
+    window.openQuickModal = function(type = 'client', targetClientId = null) {
       document.getElementById('quickModal').classList.remove('hidden');
       switchQuickForm(type);
+      if (targetClientId && document.getElementById('qt-client-select')) {
+        document.getElementById('qt-client-select').value = targetClientId;
+      }
     };
 
     window.closeQuickModal = function() {
       document.getElementById('quickModal').classList.add('hidden');
     };
 
-    window.switchQuickForm = function(type) {
-      const formClient = document.getElementById('quick-client-form');
-      const formTx = document.getElementById('quick-tx-form');
-      const formOffice = document.getElementById('quick-office-form');
-
+    window.switchQuickForm = function(formType) {
       const btnClient = document.getElementById('tab-opt-client');
       const btnTx = document.getElementById('tab-opt-tx');
       const btnOffice = document.getElementById('tab-opt-office');
 
-      formClient.classList.add('hidden');
-      formTx.classList.add('hidden');
-      formOffice.classList.add('hidden');
+      const formClient = document.getElementById('quick-client-form');
+      const formTx = document.getElementById('quick-tx-form');
+      const formOffice = document.getElementById('quick-office-form');
 
       btnClient.className = "py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600";
       btnTx.className = "py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600";
       btnOffice.className = "py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600";
 
-      if(type === 'client') {
-        formClient.classList.remove('hidden');
+      formClient.classList.add('hidden');
+      formTx.classList.add('hidden');
+      formOffice.classList.add('hidden');
+
+      if (formType === 'client') {
         btnClient.className = "py-1.5 text-[11px] font-bold rounded-lg transition bg-rose-600 text-white";
-      } else if(type === 'tx') {
+        formClient.classList.remove('hidden');
+      } else if (formType === 'tx') {
+        btnTx.className = "py-1.5 text-[11px] font-bold rounded-lg transition bg-rose-600 text-white";
         formTx.classList.remove('hidden');
-        btnTx.className = "py-1.5 text-[11px] font-bold rounded-lg transition bg-emerald-600 text-white";
-      } else if(type === 'office') {
+      } else if (formType === 'office') {
+        btnOffice.className = "py-1.5 text-[11px] font-bold rounded-lg transition bg-rose-600 text-white";
         formOffice.classList.remove('hidden');
-        btnOffice.className = "py-1.5 text-[11px] font-bold rounded-lg transition bg-slate-800 text-white";
       }
     };
 
-    function populateQuickTxDropdown() {
-      const select = document.getElementById('qt-client-select');
-      if(!select) return;
-      select.innerHTML = '';
-      if(farmData.length === 0) {
-        select.innerHTML = '<option value="">কোনো প্রজেক্ট পাওয়া যায়নি</option>';
-        return;
-      }
-      farmData.forEach(c => {
-        select.innerHTML += `<option value="${c.id}">${c.name} - ${c.project}</option>`;
-      });
-    }
-
     window.toggleDiscountField = function() {
       const type = document.getElementById('qt-type').value;
-      const discWrapper = document.getElementById('discount-field-wrapper');
-      if(type === 'income') {
-        discWrapper.classList.remove('hidden');
-      } else {
-        discWrapper.classList.add('hidden');
+      const wrapper = document.getElementById('discount-field-wrapper');
+      if (wrapper) {
+        if (type === 'income') wrapper.classList.remove('hidden');
+        else wrapper.classList.add('hidden');
       }
     };
 
     window.toggleOfficeOwnerFields = function() {
-      const type = document.getElementById('qo-entry-type').value;
+      const entryType = document.getElementById('qo-entry-type').value;
       const catWrapper = document.getElementById('qo-cat-wrapper');
-      if(type === 'office') {
-        catWrapper.classList.remove('hidden');
-      } else {
-        catWrapper.classList.add('hidden');
+      if (catWrapper) {
+        if (entryType === 'office') catWrapper.classList.remove('hidden');
+        else catWrapper.classList.add('hidden');
       }
     };
 
-    /* FORM SUBMISSIONS */
+    /* FORM SUBMISSION HANDLERS */
     document.getElementById('quick-client-form').addEventListener('submit', (e) => {
       e.preventDefault();
-      if(!databasePathRef) return;
-      
-      const newClient = {
-        name: document.getElementById('qc-name').value.trim(),
-        phone: document.getElementById('qc-phone').value.trim(),
-        project: document.getElementById('qc-project').value.trim(),
-        budget: parseFloat(document.getElementById('qc-budget').value) || 0,
-        createdAt: document.getElementById('qc-date').value,
-        history: []
-      };
+      if (!databasePathRef) return alert("Firebase সংযোগ পাওয়া যায়নি। গুগল লগইন করুন।");
 
-      databasePathRef.child('clients').push(newClient, (err) => {
-        if(err) alert("ত্রুটি: " + err.message);
-        else {
-          closeQuickModal();
-          document.getElementById('quick-client-form').reset();
-          if(document.getElementById('qc-date')) document.getElementById('qc-date').value = new Date().toISOString().substring(0, 10);
-        }
+      const name = document.getElementById('qc-name').value.trim();
+      const phone = document.getElementById('qc-phone').value.trim();
+      const project = document.getElementById('qc-project').value.trim();
+      const budget = parseFloat(document.getElementById('qc-budget').value) || 0;
+      const date = document.getElementById('qc-date').value;
+
+      databasePathRef.child('clients').push({
+        name, phone, project, budget, date, history: []
+      }).then(() => {
+        closeQuickModal();
+        e.target.reset();
+        document.getElementById('qc-date').value = new Date().toISOString().substring(0, 10);
       });
     });
 
     document.getElementById('quick-tx-form').addEventListener('submit', (e) => {
       e.preventDefault();
-      if(!databasePathRef) return;
+      if (!databasePathRef) return alert("Firebase সংযোগ পাওয়া যায়নি। গুগল লগইন করুন।");
 
       const clientId = document.getElementById('qt-client-select').value;
-      if(!clientId) {
-        alert("অনুগ্রহ করে একটি প্রজেক্ট সিলেক্ট করুন!");
-        return;
-      }
+      const type = document.getElementById('qt-type').value;
+      const amount = parseFloat(document.getElementById('qt-amount').value) || 0;
+      const discount = parseFloat(document.getElementById('qt-discount').value) || 0;
+      const date = document.getElementById('qt-date').value;
+      const details = document.getElementById('qt-details').value.trim();
 
-      const txType = document.getElementById('qt-type').value;
-      const newTx = {
-        type: txType,
-        amount: parseFloat(document.getElementById('qt-amount').value) || 0,
-        discount: txType === 'income' ? (parseFloat(document.getElementById('qt-discount').value) || 0) : 0,
-        date: document.getElementById('qt-date').value,
-        details: document.getElementById('qt-details').value.trim()
-      };
+      if (!clientId) return alert("প্রজেক্ট নির্বাচন করুন!");
 
-      databasePathRef.child(`clients/${clientId}/history`).push(newTx, (err) => {
-        if(err) alert("ত্রুটি: " + err.message);
-        else {
-          closeQuickModal();
-          document.getElementById('quick-tx-form').reset();
-          if(document.getElementById('qt-date')) document.getElementById('qt-date').value = new Date().toISOString().substring(0, 10);
-        }
+      databasePathRef.child(`clients/${clientId}/history`).push({
+        type, amount, discount, date, details
+      }).then(() => {
+        closeQuickModal();
+        e.target.reset();
+        document.getElementById('qt-date').value = new Date().toISOString().substring(0, 10);
       });
     });
 
     document.getElementById('quick-office-form').addEventListener('submit', (e) => {
       e.preventDefault();
-      if(!databasePathRef) return;
+      if (!databasePathRef) return alert("Firebase সংযোগ পাওয়া যায়নি। গুগল লগইন করুন।");
 
       const entryType = document.getElementById('qo-entry-type').value;
-      const amt = parseFloat(document.getElementById('qo-amount').value) || 0;
-      const dt = document.getElementById('qo-date').value;
+      const amount = parseFloat(document.getElementById('qo-amount').value) || 0;
+      const date = document.getElementById('qo-date').value;
       const details = document.getElementById('qo-details').value.trim();
 
-      if(entryType === 'office') {
-        const item = {
-          category: document.getElementById('qo-category').value,
-          amount: amt,
-          date: dt,
-          details: details
-        };
-        databasePathRef.child('office_expenses').push(item, (err) => {
-          if(!err) {
-            closeQuickModal();
-            document.getElementById('quick-office-form').reset();
-            if(document.getElementById('qo-date')) document.getElementById('qo-date').value = new Date().toISOString().substring(0, 10);
-          }
+      if (entryType === 'office') {
+        const category = document.getElementById('qo-category').value;
+        databasePathRef.child('office_expenses').push({
+          category, amount, date, details
+        }).then(() => {
+          closeQuickModal();
+          e.target.reset();
+          document.getElementById('qo-date').value = new Date().toISOString().substring(0, 10);
         });
       } else {
-        const item = {
-          type: entryType === 'owner_in' ? 'injection' : 'drawing',
-          amount: amt,
-          date: dt,
-          details: details
-        };
-        databasePathRef.child('owner_transactions').push(item, (err) => {
-          if(!err) {
-            closeQuickModal();
-            document.getElementById('quick-office-form').reset();
-            if(document.getElementById('qo-date')) document.getElementById('qo-date').value = new Date().toISOString().substring(0, 10);
-          }
+        const type = entryType === 'owner_in' ? 'injection' : 'drawing';
+        databasePathRef.child('owner_transactions').push({
+          type, amount, date, details
+        }).then(() => {
+          closeQuickModal();
+          e.target.reset();
+          document.getElementById('qo-date').value = new Date().toISOString().substring(0, 10);
         });
       }
     });
 
-    /* EDIT & DELETE ACTION MODAL */
-    window.openActionModal = function(type, itemId, subId = null) {
-      requestPasscodeAuth(() => {
-        document.getElementById('actionModal').classList.remove('hidden');
-        document.getElementById('action-item-type').value = type;
-        document.getElementById('action-item-id').value = itemId;
-        document.getElementById('action-sub-id').value = subId || '';
+    /* EDIT & ACTION MODAL LOGIC */
+    window.openActionModal = function(itemType, id, subId = null) {
+      document.getElementById('actionModal').classList.remove('hidden');
+      document.getElementById('action-item-type').value = itemType;
+      document.getElementById('action-item-id').value = id;
+      document.getElementById('action-sub-id').value = subId || '';
 
-        const groupClient = document.getElementById('group-client-fields');
-        const groupCat = document.getElementById('group-category');
-        const groupType = document.getElementById('group-type');
-        const groupGeneric = document.getElementById('group-generic-fields');
-        const discWrapper = document.getElementById('action-discount-wrapper');
+      const grpClient = document.getElementById('group-client-fields');
+      const grpCat = document.getElementById('group-category');
+      const grpType = document.getElementById('group-type');
+      const discWrapper = document.getElementById('action-discount-wrapper');
 
-        groupClient.classList.add('hidden');
-        groupCat.classList.add('hidden');
-        groupType.classList.add('hidden');
-        groupGeneric.classList.remove('hidden');
-        discWrapper.classList.add('hidden');
+      grpClient.classList.add('hidden');
+      grpCat.classList.add('hidden');
+      grpType.classList.add('hidden');
+      discWrapper.classList.add('hidden');
 
-        if(type === 'client') {
-          const client = farmData.find(c => c.id === itemId);
-          if(!client) return;
-          document.getElementById('actionModalTitle').innerText = "গ্রাহকের তথ্য এডিট করুন";
-          groupClient.classList.remove('hidden');
-          groupGeneric.classList.add('hidden');
+      if (itemType === 'client') {
+        const client = farmData.find(c => c.id === id);
+        if (!client) return;
+        document.getElementById('actionModalTitle').innerText = "গ্রাহক তথ্য আপডেট";
+        grpClient.classList.remove('hidden');
+        document.getElementById('action-client-name').value = client.name || '';
+        document.getElementById('action-client-phone').value = client.phone || '';
+        document.getElementById('action-client-project').value = client.project || '';
+        document.getElementById('action-client-budget').value = client.budget || 0;
+        document.getElementById('group-generic-fields').classList.add('hidden');
+      } else {
+        document.getElementById('group-generic-fields').classList.remove('hidden');
 
-          document.getElementById('action-client-name').value = client.name || '';
-          document.getElementById('action-client-phone').value = client.phone || '';
-          document.getElementById('action-client-project').value = client.project || '';
-          document.getElementById('action-client-budget').value = client.budget || 0;
-        } else if(type === 'tx') {
-          const client = farmData.find(c => c.id === itemId);
-          if(!client) return;
-          const tx = (client.history || []).find(t => t.id === subId);
-          if(!tx) return;
+        if (itemType === 'tx') {
+          const client = farmData.find(c => c.id === id);
+          if (!client) return;
+          const t = (client.history || []).find(h => h.id === subId);
+          if (!t) return;
 
-          document.getElementById('actionModalTitle').innerText = "লেনদেন এডিট করুন";
-          groupType.classList.remove('hidden');
-          
-          const selectType = document.getElementById('action-type');
-          selectType.innerHTML = `
-            <option value="income">🟢 টাকা জমা (Debit)</option>
-            <option value="expense">🔴 প্রজেক্ট খরচ (Credit)</option>
-          `;
-          selectType.value = tx.type;
+          document.getElementById('actionModalTitle').innerText = "লেনদেন সম্পাদনা";
+          document.getElementById('action-amount').value = t.amount || 0;
+          document.getElementById('action-details').value = t.details || '';
+          document.getElementById('action-date').value = t.date || '';
 
-          if(tx.type === 'income') discWrapper.classList.remove('hidden');
+          if (t.type === 'income') {
+            discWrapper.classList.remove('hidden');
+            document.getElementById('action-discount').value = t.discount || 0;
+          }
+        } else if (itemType === 'office') {
+          const oe = officeExpenses.find(x => x.id === id);
+          if (!oe) return;
 
-          document.getElementById('action-amount').value = tx.amount || 0;
-          document.getElementById('action-discount').value = tx.discount || 0;
-          document.getElementById('action-details').value = tx.details || '';
-          document.getElementById('action-date').value = tx.date || '';
-        } else if(type === 'office') {
-          const oe = officeExpenses.find(o => o.id === itemId);
-          if(!oe) return;
-          document.getElementById('actionModalTitle').innerText = "অফিস খরচ এডিট করুন";
-          groupCat.classList.remove('hidden');
+          document.getElementById('actionModalTitle').innerText = "অফিস খরচ সম্পাদনা";
+          grpCat.classList.remove('hidden');
           document.getElementById('action-category').value = oe.category || 'Others';
           document.getElementById('action-amount').value = oe.amount || 0;
           document.getElementById('action-details').value = oe.details || '';
           document.getElementById('action-date').value = oe.date || '';
-        } else if(type === 'owner') {
-          const ow = ownerTransactions.find(o => o.id === itemId);
-          if(!ow) return;
-          document.getElementById('actionModalTitle').innerText = "মূলধন লেনদেন এডিট করুন";
-          groupType.classList.remove('hidden');
+        } else if (itemType === 'owner') {
+          const ow = ownerTransactions.find(x => x.id === id);
+          if (!ow) return;
 
-          const selectType = document.getElementById('action-type');
-          selectType.innerHTML = `
-            <option value="injection">🟢 ক্যাশ জমা (Injection)</option>
-            <option value="drawing">🔴 ক্যাশ উত্তোলন (Drawing)</option>
-          `;
-          selectType.value = ow.type;
-
+          document.getElementById('actionModalTitle').innerText = "মূলধন লেনদেন সম্পাদনা";
           document.getElementById('action-amount').value = ow.amount || 0;
           document.getElementById('action-details').value = ow.details || '';
           document.getElementById('action-date').value = ow.date || '';
         }
-      });
+      }
     };
 
     window.closeActionModal = function() {
@@ -2281,73 +2285,66 @@
 
     actionForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      if(!databasePathRef) return;
+      if (!databasePathRef) return alert("Firebase সংযোগ পাওয়া যায়নি।");
 
-      const type = document.getElementById('action-item-type').value;
-      const itemId = document.getElementById('action-item-id').value;
+      const itemType = document.getElementById('action-item-type').value;
+      const id = document.getElementById('action-item-id').value;
       const subId = document.getElementById('action-sub-id').value;
 
-      if(type === 'client') {
-        const updateData = {
-          name: document.getElementById('action-client-name').value.trim(),
-          phone: document.getElementById('action-client-phone').value.trim(),
-          project: document.getElementById('action-client-project').value.trim(),
-          budget: parseFloat(document.getElementById('action-client-budget').value) || 0
-        };
-        databasePathRef.child(`clients/${itemId}`).update(updateData, (err) => {
-          if(!err) closeActionModal();
-        });
-      } else if(type === 'tx') {
-        const txType = document.getElementById('action-type').value;
-        const updateData = {
-          type: txType,
-          amount: parseFloat(document.getElementById('action-amount').value) || 0,
-          discount: txType === 'income' ? (parseFloat(document.getElementById('action-discount').value) || 0) : 0,
-          details: document.getElementById('action-details').value.trim(),
-          date: document.getElementById('action-date').value
-        };
-        databasePathRef.child(`clients/${itemId}/history/${subId}`).update(updateData, (err) => {
-          if(!err) closeActionModal();
-        });
-      } else if(type === 'office') {
-        const updateData = {
-          category: document.getElementById('action-category').value,
-          amount: parseFloat(document.getElementById('action-amount').value) || 0,
-          details: document.getElementById('action-details').value.trim(),
-          date: document.getElementById('action-date').value
-        };
-        databasePathRef.child(`office_expenses/${itemId}`).update(updateData, (err) => {
-          if(!err) closeActionModal();
-        });
-      } else if(type === 'owner') {
-        const updateData = {
-          type: document.getElementById('action-type').value,
-          amount: parseFloat(document.getElementById('action-amount').value) || 0,
-          details: document.getElementById('action-details').value.trim(),
-          date: document.getElementById('action-date').value
-        };
-        databasePathRef.child(`owner_transactions/${itemId}`).update(updateData, (err) => {
-          if(!err) closeActionModal();
-        });
+      if (itemType === 'client') {
+        const name = document.getElementById('action-client-name').value.trim();
+        const phone = document.getElementById('action-client-phone').value.trim();
+        const project = document.getElementById('action-client-project').value.trim();
+        const budget = parseFloat(document.getElementById('action-client-budget').value) || 0;
+
+        databasePathRef.child(`clients/${id}`).update({
+          name, phone, project, budget
+        }).then(() => closeActionModal());
+      } else if (itemType === 'tx') {
+        const amount = parseFloat(document.getElementById('action-amount').value) || 0;
+        const discount = parseFloat(document.getElementById('action-discount').value) || 0;
+        const details = document.getElementById('action-details').value.trim();
+        const date = document.getElementById('action-date').value;
+
+        databasePathRef.child(`clients/${id}/history/${subId}`).update({
+          amount, discount, details, date
+        }).then(() => closeActionModal());
+      } else if (itemType === 'office') {
+        const category = document.getElementById('action-category').value;
+        const amount = parseFloat(document.getElementById('action-amount').value) || 0;
+        const details = document.getElementById('action-details').value.trim();
+        const date = document.getElementById('action-date').value;
+
+        databasePathRef.child(`office_expenses/${id}`).update({
+          category, amount, details, date
+        }).then(() => closeActionModal());
+      } else if (itemType === 'owner') {
+        const amount = parseFloat(document.getElementById('action-amount').value) || 0;
+        const details = document.getElementById('action-details').value.trim();
+        const date = document.getElementById('action-date').value;
+
+        databasePathRef.child(`owner_transactions/${id}`).update({
+          amount, details, date
+        }).then(() => closeActionModal());
       }
     });
 
     window.executeDeleteAction = function() {
-      if(!confirm("আপনি কি নিশ্চিতভাবে এই রেকর্ডটি মুছে ফেলতে চান?")) return;
-      if(!databasePathRef) return;
+      if (!confirm("আপনি কি নিশ্চিতভাবে এই তথ্যটি মুছে ফেলতে চান?")) return;
+      if (!databasePathRef) return alert("Firebase সংযোগ পাওয়া যায়নি।");
 
-      const type = document.getElementById('action-item-type').value;
-      const itemId = document.getElementById('action-item-id').value;
+      const itemType = document.getElementById('action-item-type').value;
+      const id = document.getElementById('action-item-id').value;
       const subId = document.getElementById('action-sub-id').value;
 
-      if(type === 'client') {
-        databasePathRef.child(`clients/${itemId}`).remove(() => closeActionModal());
-      } else if(type === 'tx') {
-        databasePathRef.child(`clients/${itemId}/history/${subId}`).remove(() => closeActionModal());
-      } else if(type === 'office') {
-        databasePathRef.child(`office_expenses/${itemId}`).remove(() => closeActionModal());
-      } else if(type === 'owner') {
-        databasePathRef.child(`owner_transactions/${itemId}`).remove(() => closeActionModal());
+      if (itemType === 'client') {
+        databasePathRef.child(`clients/${id}`).remove().then(() => closeActionModal());
+      } else if (itemType === 'tx') {
+        databasePathRef.child(`clients/${id}/history/${subId}`).remove().then(() => closeActionModal());
+      } else if (itemType === 'office') {
+        databasePathRef.child(`office_expenses/${id}`).remove().then(() => closeActionModal());
+      } else if (itemType === 'owner') {
+        databasePathRef.child(`owner_transactions/${id}`).remove().then(() => closeActionModal());
       }
     };
   </script>
