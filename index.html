@@ -2135,7 +2135,13 @@
         let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
         let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
         let due = Math.max(0, c.budget - (totalPaid + totalDisc));
-        let statusBadge = due > 0 ? `<span class="bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-md text-[10px] font-bold">৳${due.toLocaleString('en-IN')}</span>` : `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-md text-[10px] font-bold"></span>`;
+        let statusBadge = (due && due > 0) ? `
+		    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600">
+		        <span class="w-2 h-2 rounded-full bg-amber-500"></span> ৳${due.toLocaleString('en-IN')}
+		    </span>` : `
+		    <span class="inline-flex items-center" title="পরিশোধিত">
+		        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+		    </span>`;
 
         let historyRows = (c.history || []).map((t, idx) => `
           <tr class="hover:bg-slate-50 transition border-b border-slate-100 last:border-0">
