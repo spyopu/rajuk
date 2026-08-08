@@ -197,14 +197,14 @@
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
       <div class="flex items-center gap-2 sm:gap-3">
         <div class="flex items-center gap-2">
-          <div class="bg-white text-rose-600 w-9 h-9 rounded-xl shadow-sm flex items-center justify-center font-black text-lg">
-            <span class="text-amber-500">✍️</span>
-          </div>
-          <div class="flex flex-col">
-            <span class="text-base font-extrabold tracking-tight leading-none">Digital<span class="text-yellow-300">Khata</span></span>
-            <span class="text-[10px] text-rose-100 font-semibold uppercase mt-1 hidden sm:block">Smart Ledger</span>
-          </div>
-        </div>
+		  <div class="bg-white text-rose-600 w-9 h-9 rounded-xl shadow-sm flex items-center justify-center font-black text-lg">
+			<span class="text-amber-500">✍️</span>
+		  </div>
+		  <div class="flex flex-col">
+			<span class="text-base font-extrabold tracking-tight leading-none">Digital<span class="text-yellow-300">Khata</span></span>
+			<span class="text-[10px] text-rose-100 font-semibold uppercase mt-1">Smart Ledger</span>
+		  </div>
+		</div>
 
         <button onclick="toggleHeaderBalance()" class="bg-rose-700/80 hover:bg-rose-700 border border-rose-400/30 rounded-full px-3 py-1 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer ml-1 sm:ml-3">
           <span class="text-xs">💰</span>
@@ -281,7 +281,7 @@
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div class="flex items-center gap-2">
             <span class="text-base">📅</span>
-            <h2 class="text-xs md:text-sm font-bold text-slate-800 uppercase tracking-wide">আজকের হিসাব</h2>
+            <h2 class="text-xs md:text-sm font-bold text-slate-800 uppercase tracking-wide">আজকের হিসাব (Daily Income & Expense)</h2>
           </div>
           <span id="daily-card-date" class="text-[10px] md:text-xs bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-lg font-mono"></span>
         </div>
@@ -316,6 +316,9 @@
         <!-- Motivational Bangla Quote Banner -->
         <div class="max-w-md space-y-2">
           <span class="text-[11px] font-extrabold uppercase tracking-widest text-rose-600 bg-rose-50 border border-rose-200/60 px-3 py-1 rounded-full">স্মার্ট হিসাব খাতা</span>
+          <h3 class="text-lg md:text-xl font-bold text-slate-800 leading-snug pt-1">
+            "সঠিক হিসাব ও স্বচ্ছতাই ব্যবসার আসল মূলধন।"
+          </h3>
           <p class="text-xs md:text-sm text-slate-500 font-medium leading-relaxed">
             দৈনন্দিন হিসাব রাখুন সহজে ও নিরাপদে। নিচের <span class="text-rose-600 font-bold">+</span> বাটনে ক্লিক করে মুহূর্তেই নতুন এন্ট্রি যোগ করুন।
           </p>
@@ -354,31 +357,32 @@
         <div id="report-content-body" class="space-y-4 filter blur-md select-none pointer-events-none transition-all duration-300">
           
           <!-- Redesigned Modern Filter Bar Inside Dashboard -->
-          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <!-- View Mode Switcher Pills -->
-            <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 self-start md:self-auto">
-              <button onclick="setAnalyticsViewMode('monthly')" id="dash-mode-btn-monthly" class="px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm flex items-center gap-1.5">
-                <span>📅</span> মাসিক
-              </button>
-              <button onclick="setAnalyticsViewMode('yearly')" id="dash-mode-btn-yearly" class="px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 flex items-center gap-1.5">
-                <span>📆</span> বার্ষিক
-              </button>
-            </div>
+			<div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-row items-center justify-between gap-4">
+			  
+			  <!-- View Mode Switcher Pills -->
+			  <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+				<button onclick="setAnalyticsViewMode('monthly')" id="dash-mode-btn-monthly" class="px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm flex items-center gap-1.5">
+				  <span>📅</span> মাসিক
+				</button>
+				<button onclick="setAnalyticsViewMode('yearly')" id="dash-mode-btn-yearly" class="px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 flex items-center gap-1.5">
+				  <span>📆</span> বার্ষিক
+				</button>
+			  </div>
 
-            <!-- Date Selectors with Icons & Badges -->
-            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
-              <div id="dash-month-picker-wrapper" class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">
-                <span class="text-xs font-bold text-slate-500">মাস:</span>
-                <input type="month" id="dash-month-filter" class="bg-transparent text-rose-600 font-bold font-mono text-xs outline-none cursor-pointer">
-              </div>
+			  <!-- Date Selectors with Icons & Badges -->
+			  <div class="flex items-center gap-3">
+				<div id="dash-month-picker-wrapper" class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">
+				  <span class="text-xs font-bold text-slate-500">মাস:</span>
+				  <input type="month" id="dash-month-filter" class="bg-transparent text-rose-600 font-bold font-mono text-xs outline-none cursor-pointer">
+				</div>
 
-              <div id="dash-year-picker-wrapper" class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs hidden">
-                <span class="text-xs font-bold text-slate-500">সাল:</span>
-                <select id="dash-year-filter" onchange="syncYearFilter(this.value)" class="bg-transparent text-rose-600 font-bold font-mono text-xs outline-none cursor-pointer">
-                </select>
-              </div>
-            </div>
-          </div>
+				<div id="dash-year-picker-wrapper" class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs hidden">
+				  <span class="text-xs font-bold text-slate-500">সাল:</span>
+				  <select id="dash-year-filter" onchange="syncYearFilter(this.value)" class="bg-transparent text-rose-600 font-bold font-mono text-xs outline-none cursor-pointer">
+				  </select>
+				</div>
+			  </div>
+			</div>
 
           <div class="grid grid-cols-2 md:grid-cols-5 gap-2.5 text-center">
             <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
@@ -575,9 +579,9 @@
         <!-- CLIENT FILTER CARD BUTTONS & PRINT BUTTON -->
         <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
           <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-            <button onclick="setClientFilter('all')" id="client-filter-all" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition bg-rose-600 text-white shadow-xs">👥 সকল গ্রাহক</button>
-            <button onclick="setClientFilter('due')" id="client-filter-due" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600 hover:text-amber-600">⚠️ বকেয়া</button>
-            <button onclick="setClientFilter('paid')" id="client-filter-paid" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600 hover:text-emerald-600">🟢 পরিশোধিত</button>
+            <button onclick="setClientFilter('all')" id="client-filter-all" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition bg-rose-600 text-white shadow-xs">সব</button>
+            <button onclick="setClientFilter('due')" id="client-filter-due" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600 hover:text-amber-600">বকেয়া</button>
+            <button onclick="setClientFilter('paid')" id="client-filter-paid" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600 hover:text-emerald-600">পরিশোধিত</button>
           </div>
 
           <button onclick="printSearchResults()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 cursor-pointer">
@@ -736,11 +740,11 @@
         <div id="qo-cat-wrapper">
           <label class="block text-[11px] font-bold text-slate-700 mb-0.5">ক্যাটাগরি</label>
           <select id="qo-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-semibold text-slate-800">
-            <option value="Staff Salary">Staff Salary</option>
-            <option value="Office Rent">Office Rent</option>
-            <option value="Utility Bill">Utility Bills</option>
-            <option value="Conveyance">Conveyance/ Logistics</option>
-            <option value="Others">Miscellaneous Expense</option>
+            <option value="Staff Salary">স্টাফ স্যালারি</option>
+            <option value="Office Rent">অফিস ভাড়া</option>
+            <option value="Utility Bill">ইউটিলিটি বিল</option>
+            <option value="Conveyance">আপ্যায়ন</option>
+            <option value="Others">অন্যান্য</option>
           </select>
         </div>
 
@@ -815,11 +819,11 @@
         <div id="group-category" class="hidden">
           <label class="block text-[11px] font-bold text-slate-700 mb-0.5">ক্যাটাগরি</label>
           <select id="action-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none text-slate-800 font-semibold">
-            <option value="Staff Salary">Staff Salary</option>
-            <option value="Office Rent">Office Rent</option>
-            <option value="Utility Bill">Utility Bills</option>
-            <option value="Conveyance">Conveyance/ Logistics</option>
-            <option value="Others">Miscellaneous Expense</option>
+            <option value="Staff Salary">স্টাফ স্যালারি</option>
+            <option value="Office Rent">অফিস ভাড়া</option>
+            <option value="Utility Bill">ইউটিলিটি বিল</option>
+            <option value="Conveyance">আপ্যায়ন</option>
+            <option value="Others">অন্যান্য</option>
           </select>
         </div>
 
@@ -1375,7 +1379,7 @@
         label = (yearFilter ? yearFilter.value : new Date().getFullYear()) + " সাল (বার্ষিক)";
       }
 
-      return `📊 *ডিজিটাল খাতা - হিসাব সামারি* (${label})\n` +
+      return `📊 হিসাব সামারি (${label})\n` +
              `-----------------------------------\n` +
              `🟢 মোট জমা: ৳${globalCalculatedIncome.toLocaleString('en-IN')}\n` +
              `🔴 মোট খরচ: ৳${globalCalculatedExpense.toLocaleString('en-IN')}\n` +
@@ -2284,31 +2288,26 @@
       }
     };
 
-    document.getElementById('quick-client-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
+		document.getElementById('quick-client-form').addEventListener('submit', (e) => {
+		e.preventDefault();
+		if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
 
-      const newClient = {
-        name: document.getElementById('qc-name').value.trim(),
-        phone: document.getElementById('qc-phone').value.trim(),
-        project: document.getElementById('qc-project').value.trim(),
-        budget: parseFloat(document.getElementById('qc-budget').value) || 0,
-        history: [{
-          id: 't_' + Date.now(),
-          type: 'income',
-          amount: parseFloat(document.getElementById('qc-budget').value) || 0,
-          discount: 0,
-          date: document.getElementById('qc-date').value || getLocalDateString(),
-          details: 'প্রাথমিক প্রজেক্ট চুক্তি'
-        }]
-      };
+		const budgetValue = parseFloat(document.getElementById('qc-budget'))?.value || parseFloat(document.getElementById('qc-budget').value) || 0;
+		
+		const newClient = {
+		  name: document.getElementById('qc-name').value.trim(),
+		  phone: document.getElementById('qc-phone').value.trim(),
+		  project: document.getElementById('qc-project').value.trim(),
+		  budget: budgetValue,
+		  history: [] // কোনো পেমেন্ট ছাড়াই শুধু প্রজেক্ট ও বাজেট দিয়ে শুরু হবে
+		};
 
-      databasePathRef.child('clients').push(newClient).then(() => {
-        closeQuickModal();
-        e.target.reset();
-        document.getElementById('qc-date').value = getLocalDateString();
-      }).catch(err => alert("Error: " + err.message));
-    });
+		databasePathRef.child('clients').push(newClient).then(() => {
+		  closeQuickModal();
+		  e.target.reset();
+		  document.getElementById('qc-date').value = getLocalDateString();
+		}).catch(err => alert("Error: " + err.message));
+	});
 
     document.getElementById('quick-tx-form').addEventListener('submit', (e) => {
       e.preventDefault();
