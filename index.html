@@ -2667,7 +2667,7 @@
     };
 
 	// হোম ট্যাব এনালাইটিক্স
-	let homeProfitExpenseChart = null;
+let homeProfitExpenseChart = null;
 
 // চার্ট তৈরি বা আপডেট করার মূল ফাংশন
 function renderHomeChart(isYearly = false) {
@@ -2677,14 +2677,11 @@ function renderHomeChart(isYearly = false) {
     let labels, profitData, expenseData;
 
     if (isYearly) {
-        // বার্ষিক (Yearly) মোডের লেবেল ও ডেমো ডাটা (প্রয়োজনে পরিবর্তন করতে পারেন)
         labels = ['2023', '2024', '2025', '2026'];
         profitData = [3500000, 4200000, 5100000, 4800000];
         expenseData = [2100000, 2500000, 3000000, 2900000];
     } else {
-        // মাসিক (Monthly) মোডের ১২ মাসের নাম
         labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        // ডিফল্ট জিরো দিয়ে শুরু হবে, পরে ফায়ারবেসের রিয়েল ডেটা এখানে বসে যাবে
         profitData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         expenseData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     }
@@ -2804,16 +2801,21 @@ function renderHomeChart(isYearly = false) {
     });
 }
 
-// ফায়ারবেসের রিয়েল ডেটা দিয়ে চার্ট ও ইউআই আপডেট করার মূল পাইপলাইন ফাংশন
+// ফায়ারবেসের রিয়েল ডেটা দিয়ে চার্ট ও ইউআই আপডেট করার মূল পাইপলাইন ফাংশন
 function uiUpdatePipeline() {
     try {
         let monthlyProfits = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         let monthlyExpenses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-        // farmData অ্যারে থেকে মাস অনুযায়ী ইনকাম ও খরচ ক্যালকুলেট করা
-        if (typeof farmData !== 'undefined' && Array.isArray(farmData)) {
-            farmData.forEach(item => {
-                if (item.date) {
+        // farmData যদি ফায়ারবেসের অবজেক্ট হয়, তবে সেটিকে অ্যারেতে রূপান্তর করে লুপ চালানো
+        let dataArray = [];
+        if (typeof farmData !== 'undefined' && farmData) {
+            dataArray = Array.isArray(farmData) ? farmData : Object.values(farmData);
+        }
+
+        if (dataArray.length > 0) {
+            dataArray.forEach(item => {
+                if (item && item.date) {
                     let itemDate = new Date(item.date);
                     let monthIndex = item.date.includes('-') ? Number(item.date.split('-')[1]) - 1 : itemDate.getMonth();
                     let amount = Number(item.amount) || 0;
@@ -2840,7 +2842,7 @@ function uiUpdatePipeline() {
     }
 }
 
-// পেজ লোড হওয়ার পর ইনিশিয়ালাইজ করার জন্য
+// পেজ লোড হওয়ার 후 ইনিশিয়ালাইজ করার জন্য
 document.addEventListener("DOMContentLoaded", function() {
     renderHomeChart(false); // ডিফল্ট মাসিক মোড কল করা
 });
