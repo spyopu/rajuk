@@ -208,7 +208,7 @@
 
         <button onclick="toggleHeaderBalance()" class="bg-rose-700/80 hover:bg-rose-700 border border-rose-400/30 rounded-full px-3 py-1 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer ml-1 sm:ml-3">
           <span class="text-xs">💰</span>
-          <span id="header-balance-text" class="text-xs font-bold tracking-wide hide-sensitive" data-original="ব্যালেন্স দেখুন">ব্যালেন্স</span>
+          <span id="header-balance-text" class="text-xs font-bold tracking-wide hide-sensitive" data-original="Balance">ব্যালেন্স</span>
         </button>
       </div>
 
@@ -662,7 +662,7 @@
           <div class="flex items-center justify-between mb-0.5">
             <label class="block text-[11px] font-bold text-slate-700">মোবাইল নাম্বার</label>
             <button type="button" onclick="pickContact()" class="text-[10px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2 py-0.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
-              📇 ফোনবুক
+              ফোনবুক
             </button>
           </div>
           <input type="text" id="qc-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-semibold outline-none">
@@ -739,7 +739,7 @@
           <select id="qo-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-semibold text-slate-800">
             <option value="Staff Salary">স্টাফ স্যালারি</option>
             <option value="Office Rent">অফিস ভাড়া</option>
-            <option value="Utility Bill">ইউটিলিটি বিল</option>
+            <option value="Project Cost">প্রকল্প ব্যয়</option>
             <option value="Conveyance">আপ্যায়ন</option>
             <option value="Others">অন্যান্য</option>
           </select>
@@ -818,7 +818,7 @@
           <select id="action-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none text-slate-800 font-semibold">
             <option value="Staff Salary">স্টাফ স্যালারি</option>
             <option value="Office Rent">অফিস ভাড়া</option>
-            <option value="Utility Bill">ইউটিলিটি বিল</option>
+            <option value="Project Cost">প্রকল্প ব্যয়</option>
             <option value="Conveyance">আপ্যায়ন</option>
             <option value="Others">অন্যান্য</option>
           </select>
@@ -1248,7 +1248,9 @@
       const client = farmData.find(c => c.id === clientId);
       if (!client) return;
 
-      let historyToPrint = client.history || [];
+      // ১. এখানে শুধু 'income' (জমা) এন্ট্রিগুলো ফিল্টার করে নেওয়া হলো, যাতে কোনো খরচ ক্লায়েন্ট ইনভয়েসে না যায়
+      let historyToPrint = (client.history || []).filter(t => t.type === 'income');
+      
       if (txId) {
         historyToPrint = historyToPrint.filter(t => t.id === txId);
       }
@@ -1260,9 +1262,9 @@
       let rowsHtml = historyToPrint.map((t, idx) => `
         <tr style="border-bottom: 1px solid #e2e8f0; font-size: 12px;">
           <td style="padding: 8px; text-align: center;">${idx + 1}</td>
-          <td style="padding: 8px;">${t.details || (t.type === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ')}</td>
+          <td style="padding: 8px;">${t.details || 'টাকা জমা'}</td>
           <td style="padding: 8px; text-align: center;">${t.date}</td>
-          <td style="padding: 8px; text-align: center;">${t.type === 'income' ? 'জমা' : 'খরচ'}</td>
+          <td style="padding: 8px; text-align: center;">জমা</td>
           <td style="padding: 8px; text-align: right; font-weight: bold;">৳${t.amount.toLocaleString('en-IN')}</td>
         </tr>
       `).join('');
