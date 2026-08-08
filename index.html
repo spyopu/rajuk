@@ -1444,24 +1444,20 @@
              `_💡 ডিজিটাল খাতা স্মার্ট অ্যাপ দ্বারা প্রস্তুতকৃত_`;
     }
 
-    window.openSummaryModal = function() {
-	    if (typeof generateMonthSummaryText === 'function') {
-	        alert(generateMonthSummaryText());
-	    }
-	};
-	
-	window.closeSummaryModal = function() {
-	    // এটার দরকার না থাকলেও রেখে দিতে পারেন, সমস্যা করবে না
-	};
-	
-	window.copySummaryToClipboard = function() {
-	    const text = generateMonthSummaryText();
-	    navigator.clipboard.writeText(text).then(() => {
-	        alert("হিসাবের সামারি সফলভাবে কপি হয়েছে!");
-	    }).catch(err => {
-	        alert("কপি করতে ব্যর্থ হয়েছে: " + err);
-	    });
-	};
+   window.openSummaryModal = function() {
+    if (typeof generateMonthSummaryText === 'function') {
+        const summaryText = generateMonthSummaryText();
+        
+        // কনফার্ম পপআপের মাধ্যমে কপি করার সুবিধা রাখা হলো
+        if (confirm(summaryText + "\n\n📋 এই হিসাবটি কি ক্লিপবোর্ডে কপি করতে চান?")) {
+            navigator.clipboard.writeText(summaryText).then(() => {
+                alert("সফলভাবে কপি হয়েছে!");
+            }).catch(err => {
+                alert("কপি করতে সমস্যা হয়েছে: " + err);
+            });
+        }
+    }
+};
 
     window.shareSummaryToWhatsApp = function() {
       const text = generateMonthSummaryText();
