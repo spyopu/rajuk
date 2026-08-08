@@ -1425,27 +1425,27 @@
       const balanceFormatted = '৳' + globalCalculatedNetBalance.toLocaleString('en-IN');
       btnText.dataset.original = balanceFormatted;
 
-      if (btnText.innerText === "ব্যালেন্স দেখুন" || btnText.innerText === '••••••••') {
+      if (btnText.innerText === "Balance" || btnText.innerText === '••••••••') {
         btnText.innerText = balanceFormatted;
         btnText.classList.remove('privacy-dot-hidden');
 
         if (headerBalanceTimer) clearTimeout(headerBalanceTimer);
         headerBalanceTimer = setTimeout(() => {
-          btnText.dataset.original = "ব্যালেন্স দেখুন";
+          btnText.dataset.original = "Balance";
           if (isPrivacyModeActive) {
             btnText.innerText = "••••••••";
             btnText.classList.add('privacy-dot-hidden');
           } else {
-            btnText.innerText = "ব্যালেন্স দেখুন";
+            btnText.innerText = "Balance";
           }
         }, 4000);
       } else {
-        btnText.dataset.original = "ব্যালেন্স দেখুন";
+        btnText.dataset.original = "Balance";
         if (isPrivacyModeActive) {
           btnText.innerText = "••••••••";
           btnText.classList.add('privacy-dot-hidden');
         } else {
-          btnText.innerText = "ব্যালেন্স দেখুন";
+          btnText.innerText = "Balance";
         }
         if (headerBalanceTimer) clearTimeout(headerBalanceTimer);
       }
