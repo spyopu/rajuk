@@ -1147,12 +1147,24 @@
         document.getElementById('report-content-body').classList.add('filter', 'blur-md', 'select-none', 'pointer-events-none');
         document.getElementById('report-btn-text').innerText = "আনলক করুন";
         document.getElementById('print-report-btn').classList.add('hidden');
+        
+        // সামারি বাটন লক অবস্থায় লুকিয়ে ফেলার জন্য এটি যোগ করা হলো:
+        let summaryBtn = document.getElementById('summary-report-btn');
+        if (summaryBtn) summaryBtn.classList.add('hidden');
+
       } else {
         requestPasscodeAuth(() => {
           isReportUnlocked = true;
           document.getElementById('report-content-body').classList.remove('filter', 'blur-md', 'select-none', 'pointer-events-none');
           document.getElementById('report-btn-text').innerText = "লক করুন";
           document.getElementById('print-report-btn').classList.remove('hidden');
+          
+          // আনলক করার পর সামারি বাটন দেখানোর জন্য এটি যোগ করা হলো:
+          let summaryBtn = document.getElementById('summary-report-btn');
+          if (summaryBtn) {
+              summaryBtn.classList.remove('hidden');
+              summaryBtn.classList.add('flex');
+          }
         });
       }
     };
