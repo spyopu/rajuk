@@ -232,7 +232,7 @@
         </div>
 
         <!-- Privacy Eye Toggle in Header -->
-        <button onclick="toggleGlobalPrivacyMode()" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center cursor-pointer" title="গোপনীয়তা টগল">
+        <button onclick="toggleGlobalPrivacyMode()" style="background: transparent !important; border: none !important;" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center cursor-pointer" title="গোপনীয়তা টগল">
 		    <span id="header-eye-toggle-icon" class="text-sm">👁️</span>
 		</button>
 
@@ -287,15 +287,15 @@
         </div>
         <div class="grid grid-cols-3 gap-3 text-center pt-1">
           <div class="bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-100/80">
-            <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-emerald-600">আজকের জমা</p>
+            <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-emerald-600">জমা</p>
             <h3 id="daily-income" class="text-sm md:text-base font-black text-emerald-600 mt-1 font-mono hide-sensitive">৳0</h3>
           </div>
           <div class="bg-rose-50/60 p-3.5 rounded-xl border border-rose-100/80">
-            <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-rose-600">আজকের খরচ</p>
+            <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-rose-600">খরচ</p>
             <h3 id="daily-expense" class="text-sm md:text-base font-black text-rose-600 mt-1 font-mono hide-sensitive">৳0</h3>
           </div>
           <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-            <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-700">আজকের ব্যালেন্স</p>
+            <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-700">ক্যাশ</p>
             <h3 id="daily-net" class="text-sm md:text-base font-black text-slate-800 mt-1 font-mono hide-sensitive">৳0</h3>
           </div>
         </div>
