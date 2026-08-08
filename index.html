@@ -1579,10 +1579,12 @@
     if (homeFabBtn) homeFabBtn.classList.add('hidden');
   }
 
-  // ট্যাব পরিবর্তনের সাথে সাথে ড্যাশবোর্ড বা লেনদেনের ডেটা রেন্ডার করতে এটি কল করুন
-  if (typeof uiUpdatePipeline === 'function') {
-    uiUpdatePipeline();
-  }
+  // ট্যাব সুইচ করার পর ডেটা যাতে সাথে সাথে রেন্ডার হয়ে আসে
+  setTimeout(() => {
+    if (typeof uiUpdatePipeline === 'function') {
+      uiUpdatePipeline();
+    }
+  }, 50);
 };
 
     window.setClientFilter = function(filterType) {
