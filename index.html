@@ -1445,29 +1445,23 @@
     }
 
     window.openSummaryModal = function() {
-      const preview = document.getElementById('summaryTextPreview');
-      const title = document.getElementById('summaryModalTitle');
-      if (title) {
-        title.innerText = analyticsViewMode === 'yearly' ? 'বার্ষিক হিসাবের সামারি' : 'মাসিক হিসাবের সামারি';
-      }
-      if (preview) {
-        preview.innerText = generateMonthSummaryText();
-      }
-      document.getElementById('summaryModal').classList.remove('hidden');
-    };
-
-    window.closeSummaryModal = function() {
-      document.getElementById('summaryModal').classList.add('hidden');
-    };
-
-    window.copySummaryToClipboard = function() {
-      const text = generateMonthSummaryText();
-      navigator.clipboard.writeText(text).then(() => {
-        alert("হিসাবের সামারি সফলভাবে কপি হয়েছে!");
-      }).catch(err => {
-        alert("কপি করতে ব্যর্থ হয়েছে: " + err);
-      });
-    };
+	    if (typeof generateMonthSummaryText === 'function') {
+	        alert(generateMonthSummaryText());
+	    }
+	};
+	
+	window.closeSummaryModal = function() {
+	    // এটার দরকার না থাকলেও রেখে দিতে পারেন, সমস্যা করবে না
+	};
+	
+	window.copySummaryToClipboard = function() {
+	    const text = generateMonthSummaryText();
+	    navigator.clipboard.writeText(text).then(() => {
+	        alert("হিসাবের সামারি সফলভাবে কপি হয়েছে!");
+	    }).catch(err => {
+	        alert("কপি করতে ব্যর্থ হয়েছে: " + err);
+	    });
+	};
 
     window.shareSummaryToWhatsApp = function() {
       const text = generateMonthSummaryText();
