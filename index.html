@@ -2669,147 +2669,181 @@
 	// হোম ট্যাব এনালাইটিক্স
 	let homeProfitExpenseChart = null;
 
-		// চার্ট তৈরি বা আপডেট করার ফাংশন
-		function renderHomeChart(isYearly = false) {
-			const ctx = document.getElementById('homeProfitExpenseChart');
-			if (!ctx) return;
+// চার্ট তৈরি বা আপডেট করার মূল ফাংশন
+function renderHomeChart(isYearly = false) {
+    const ctx = document.getElementById('homeProfitExpenseChart');
+    if (!ctx) return;
 
-			// মোড অনুযায়ী লেবেল ও ডেটা সেট করা
-			let labels, profitData, expenseData;
+    let labels, profitData, expenseData;
 
-			if (isYearly) {
-				// বার্ষিক (Yearly) মোডের ডেটা
-				labels = ['2023', '2024', '2025', '2026'];
-				profitData = [3500000, 4200000, 5100000, 4800000];
-				expenseData = [2100000, 2500000, 3000000, 2900000];
-			} else {
-				// মাসিক (Monthly) মোডের ডেটা
-				labels = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-				profitData = [310000, 550000, 500000, 380000, 420000, 350000, 450000, 390000, 410000, 460000, 490000, 520000];
-				expenseData = [250000, 180000, 220000, 200000, 230000, 190000, 210000, 195000, 205000, 215000, 230000, 240000];
-			}
+    if (isYearly) {
+        // বার্ষিক (Yearly) মোডের লেবেল ও ডেমো ডাটা (প্রয়োজনে পরিবর্তন করতে পারেন)
+        labels = ['2023', '2024', '2025', '2026'];
+        profitData = [3500000, 4200000, 5100000, 4800000];
+        expenseData = [2100000, 2500000, 3000000, 2900000];
+    } else {
+        // মাসিক (Monthly) মোডের ১২ মাসের নাম
+        labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        // ডিফল্ট জিরো দিয়ে শুরু হবে, পরে ফায়ারবেসের রিয়েল ডেটা এখানে বসে যাবে
+        profitData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        expenseData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    }
 
-			// যদি চার্ট আগে থেকে তৈরি করা থাকে, তবে শুধু ডেটা আপডেট করে রিফ্রেশ করবে
-			if (homeProfitExpenseChart) {
-				homeProfitExpenseChart.data.labels = labels;
-				homeProfitExpenseChart.data.datasets[0].data = profitData;
-				homeProfitExpenseChart.data.datasets[1].data = expenseData;
-				homeProfitExpenseChart.update();
-				return;
-			}
+    if (homeProfitExpenseChart) {
+        homeProfitExpenseChart.data.labels = labels;
+        homeProfitExpenseChart.data.datasets[0].data = profitData;
+        homeProfitExpenseChart.data.datasets[1].data = expenseData;
+        homeProfitExpenseChart.update();
+        return;
+    }
 
-			// নতুন চার্ট ইনিশিয়ালাইজ করা
-			const roseColor = '#e11d48'; 
-			homeProfitExpenseChart = new Chart(ctx.getContext('2d'), {
-				type: 'line',
-				data: {
-					labels: labels,
-					datasets: [
-						{
-							label: 'Profit',
-							data: profitData,
-							borderColor: roseColor,
-							backgroundColor: 'transparent',
-							borderWidth: 3,
-							tension: 0.4,
-							pointRadius: 0,
-							pointHoverRadius: 6,
-							pointBackgroundColor: '#fff',
-							pointBorderColor: roseColor,
-							pointBorderWidth: 2,
-							fill: false
-						},
-						{
-							label: 'Expense',
-							data: expenseData,
-							borderColor: '#64748b',
-							backgroundColor: 'transparent',
-							borderWidth: 3,
-							tension: 0.4,
-							pointRadius: 0,
-							pointHoverRadius: 6,
-							pointBackgroundColor: '#fff',
-							pointBorderColor: '#64748b',
-							pointBorderWidth: 2,
-							fill: false,
-							borderDash: [5, 5]
-						}
-					]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false, // কন্টেইনারের হাইট অনুযায়ী ফিট হওয়ার জন্য
-					interaction: {
-						mode: 'index',
-						intersect: false,
-					},
-					plugins: {
-						legend: {
-							position: 'top',
-							align: 'end',
-							labels: {
-								usePointStyle: true,
-								boxWidth: 8,
-								font: { size: 11, family: "'Inter', sans-serif", weight: '600' },
-								color: '#64748b'
-							}
-						},
-						tooltip: {
-							backgroundColor: '#fff',
-							titleColor: '#1e293b',
-							bodyColor: '#1e293b',
-							borderColor: '#e2e8f0',
-							borderWidth: 1,
-							cornerRadius: 8,
-							padding: 12,
-							displayColors: true,
-							usePointStyle: true,
-							callbacks: {
-								label: function(context) {
-									let label = context.dataset.label || '';
-									if (label) label += ': ';
-									if (context.parsed.y !== null) {
-										label += new Intl.NumberFormat('bn-BD', {
-											style: 'currency',
-											currency: 'BDT',
-											minimumFractionDigits: 0,
-											maximumFractionDigits: 0
-										}).format(context.parsed.y);
-									}
-									return label;
-								}
-							}
-						}
-					},
-					scales: {
-						y: {
-							beginAtZero: true,
-							grid: { color: '#f1f5f9', drawBorder: false },
-							ticks: {
-								font: { size: 10, family: "'Inter', sans-serif" },
-								color: '#94a3b8',
-								callback: function(value) {
-									if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
-									else if (value >= 100000) return (value / 100000).toFixed(0) + ' Lac';
-									else if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
-									return value;
-								}
-							}
-						},
-						x: {
-							grid: { display: false },
-							ticks: { font: { size: 10, family: "'Inter', sans-serif" }, color: '#94a3b8' }
-						}
-					},
-					animation: { duration: 1000, easing: 'easeInOutQuart' }
-				}
-			});
-		}
+    const roseColor = '#e11d48'; 
+    homeProfitExpenseChart = new Chart(ctx.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Profit',
+                    data: profitData,
+                    borderColor: roseColor,
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: roseColor,
+                    pointBorderWidth: 2,
+                    fill: false
+                },
+                {
+                    label: 'Expense',
+                    data: expenseData,
+                    borderColor: '#64748b',
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#64748b',
+                    pointBorderWidth: 2,
+                    fill: false,
+                    borderDash: [5, 5]
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    align: 'end',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 8,
+                        font: { size: 11, family: "'Inter', sans-serif", weight: '600' },
+                        color: '#64748b'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    titleColor: '#1e293b',
+                    bodyColor: '#1e293b',
+                    borderColor: '#e2e8f0',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    padding: 12,
+                    displayColors: true,
+                    usePointStyle: true,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) label += ': ';
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('bn-BD', {
+                                    style: 'currency',
+                                    currency: 'BDT',
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f1f5f9', drawBorder: false },
+                    ticks: {
+                        font: { size: 10, family: "'Inter', sans-serif" },
+                        color: '#94a3b8',
+                        callback: function(value) {
+                            if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                            else if (value >= 100000) return (value / 100000).toFixed(0) + ' Lac';
+                            else if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
+                            return value;
+                        }
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 10, family: "'Inter', sans-serif" }, color: '#94a3b8' }
+                }
+            },
+            animation: { duration: 1000, easing: 'easeInOutQuart' }
+        }
+    });
+}
 
-		// পেজ লোড হওয়ার পর ডিফল্টভাবে চার্ট কল করার জন্য
-		document.addEventListener("DOMContentLoaded", function() {
-			renderHomeChart(false);
-		});
+// ফায়ারবেসের রিয়েল ডেটা দিয়ে চার্ট ও ইউআই আপডেট করার মূল পাইপলাইন ফাংশন
+function uiUpdatePipeline() {
+    try {
+        let monthlyProfits = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let monthlyExpenses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+        // farmData অ্যারে থেকে মাস অনুযায়ী ইনকাম ও খরচ ক্যালকুলেট করা
+        if (typeof farmData !== 'undefined' && Array.isArray(farmData)) {
+            farmData.forEach(item => {
+                if (item.date) {
+                    let itemDate = new Date(item.date);
+                    let monthIndex = item.date.includes('-') ? Number(item.date.split('-')[1]) - 1 : itemDate.getMonth();
+                    let amount = Number(item.amount) || 0;
+
+                    if (monthIndex >= 0 && monthIndex <= 11) {
+                        if (item.type === 'income' || item.type === 'profit') {
+                            monthlyProfits[monthIndex] += amount;
+                        } else if (item.type === 'expense') {
+                            monthlyExpenses[monthIndex] += amount;
+                        }
+                    }
+                }
+            });
+        }
+
+        // চার্টে আসল ডেটা পাস করে আপডেট করা
+        if (typeof homeProfitExpenseChart !== 'undefined' && homeProfitExpenseChart) {
+            homeProfitExpenseChart.data.datasets[0].data = monthlyProfits;
+            homeProfitExpenseChart.data.datasets[1].data = monthlyExpenses;
+            homeProfitExpenseChart.update();
+        }
+    } catch (e) {
+        console.log("UI Update & Chart Error: ", e);
+    }
+}
+
+// পেজ লোড হওয়ার পর ইনিশিয়ালাইজ করার জন্য
+document.addEventListener("DOMContentLoaded", function() {
+    renderHomeChart(false); // ডিফল্ট মাসিক মোড কল করা
+});
   </script>
 </body>
 </html>
