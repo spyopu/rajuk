@@ -114,7 +114,6 @@
 	}
   </style>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Firebase SDK v8 LIBRARIES -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -270,6 +269,8 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6 flex-1">
 
+    
+
     <!-- TAB 0: HOME VIEW -->
     <div id="tab-home-view" class="tab-content space-y-6">
       <!-- DAILY INCOME & EXPENSE CARD -->
@@ -297,23 +298,11 @@
         </div>
       </section>
 
-      <!-- PROFIT & EXPENSE ANALYTICS CHART CARD -->
-      <section class="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="text-xs md:text-sm font-bold text-slate-800 uppercase tracking-wide">লাভ ও খরচ অ্যানালিটিক্স</h3>
-          <span class="text-[10px] md:text-xs bg-rose-50 text-rose-600 font-bold px-2.5 py-1 rounded-lg">চার্ট ভিউ</span>
-        </div>
-        <!-- চার্ট রেন্ডার হওয়ার ক্যানভাস -->
-        <div class="relative w-full h-48 md:h-64">
-          <canvas id="homeProfitExpenseChart"></canvas>
-        </div>
-      </section>
-
       <!-- HUMAN ILLUSTRATION ICON & BEAUTIFUL QUOTES WITH WHITE BACKGROUND -->
-      <section class="w-full py-6 px-4 text-center flex flex-col items-center justify-center space-y-4">
+      <section class="w-full py-8 px-4 text-center flex flex-col items-center justify-center space-y-5">
 		  <!-- Vector Human Illustration SVG -->
-		  <div class="w-28 h-28 md:w-36 md:h-36 bg-rose-50/50 rounded-full flex items-center justify-center p-4 border border-rose-100/60 shadow-inner">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-16 h-16 md:w-24 md:h-24">
+		  <div class="w-32 h-32 md:w-44 md:h-44 bg-rose-50/50 rounded-full flex items-center justify-center p-4 border border-rose-100/60 shadow-inner">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20 md:w-28 md:h-28">
 			  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
 			  <circle cx="9" cy="7" r="4"></circle>
 			  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -1564,39 +1553,58 @@
     };
 
     window.switchTab = function(tabId) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-  const target = document.getElementById(`tab-${tabId}`);
-  if(target) target.classList.remove('hidden');
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      const target = document.getElementById(`tab-${tabId}`);
+      if(target) target.classList.remove('hidden');
 
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.className = "tab-btn px-4 py-1.5 text-xs font-bold rounded-lg transition text-rose-100 hover:text-white";
-  });
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = "tab-btn px-4 py-1.5 text-xs font-bold rounded-lg transition text-rose-100 hover:text-white";
+      });
 
-  const activePCBtn = document.getElementById(`btn-${tabId}`);
-  if(activePCBtn) activePCBtn.className = "tab-btn px-4 py-1.5 text-xs font-bold rounded-lg transition bg-white text-rose-600 shadow-sm";
-  
-  document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
-    btn.className = "mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition";
-  });
-  
-  const activeMobBtn = document.getElementById(`btn-${tabId}-mob`);
-  if(activeMobBtn) activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105";
+      const activePCBtn = document.getElementById(`btn-${tabId}`);
+      if(activePCBtn) activePCBtn.className = "tab-btn px-4 py-1.5 text-xs font-bold rounded-lg transition bg-white text-rose-600 shadow-sm";
+      
+      document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+        btn.className = "mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition";
+      });
+		
+      const activeMobBtn = document.getElementById(`btn-${tabId}-mob`);
+      if(activeMobBtn) activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105";
 
-  const homeFabBtn = document.getElementById('home-fab-btn');
+      const topNavBar = document.getElementById('top-navigation-bar');
+      const homeFabBtn = document.getElementById('home-fab-btn');
 
-  if (tabId === 'home-view') {
-    if (homeFabBtn) homeFabBtn.classList.remove('hidden');
-  } else {
-    if (homeFabBtn) homeFabBtn.classList.add('hidden');
-  }
+      if (tabId === 'home-view') {
+        if (topNavBar) {
+          topNavBar.classList.add('hidden');
+          topNavBar.classList.remove('flex');
+        }
+        if (homeFabBtn) homeFabBtn.classList.remove('hidden');
+      } else {
+        if (topNavBar) {
+          topNavBar.classList.remove('hidden');
+          topNavBar.classList.add('md:flex');
+        }
+        if (homeFabBtn) homeFabBtn.classList.add('hidden');
+      }
 
-  // ট্যাব সুইচ করার পর ডেটা যাতে সাথে সাথে রেন্ডার হয়ে আসে
-  setTimeout(() => {
-    if (typeof uiUpdatePipeline === 'function') {
-      uiUpdatePipeline();
-    }
-  }, 50);
-};
+      const monthWrapper = document.getElementById('month-picker-wrapper');
+      const yearWrapper = document.getElementById('year-picker-wrapper');
+      const modeBtnMonthly = document.getElementById('mode-btn-monthly');
+
+      if (tabId === 'home-view') {
+        if (monthWrapper) monthWrapper.classList.add('hidden');
+        if (yearWrapper) yearWrapper.classList.add('hidden');
+        if (modeBtnMonthly && modeBtnMonthly.parentElement) modeBtnMonthly.parentElement.classList.add('hidden');
+      } else {
+        if (modeBtnMonthly && modeBtnMonthly.parentElement) modeBtnMonthly.parentElement.classList.remove('hidden');
+        if (analyticsViewMode === 'monthly') {
+          if (monthWrapper) monthWrapper.classList.remove('hidden');
+        } else {
+          if (yearWrapper) yearWrapper.classList.remove('hidden');
+        }
+      }
+    };
 
     window.setClientFilter = function(filterType) {
       activeClientFilter = filterType;
@@ -2665,187 +2673,6 @@
         databasePathRef.child('owner_transactions').child(itemId).remove().then(() => { closeActionModal(); });
       }
     };
-
-	// হোম ট্যাব এনালাইটিক্স
-let homeProfitExpenseChart = null;
-
-// চার্ট তৈরি বা আপডেট করার মূল ফাংশন
-function renderHomeChart(isYearly = false) {
-    const ctx = document.getElementById('homeProfitExpenseChart');
-    if (!ctx) return;
-
-    let labels, profitData, expenseData;
-
-    if (isYearly) {
-        labels = ['2023', '2024', '2025', '2026'];
-        profitData = [3500000, 4200000, 5100000, 4800000];
-        expenseData = [2100000, 2500000, 3000000, 2900000];
-    } else {
-        labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        profitData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        expenseData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    }
-
-    if (homeProfitExpenseChart) {
-        homeProfitExpenseChart.data.labels = labels;
-        homeProfitExpenseChart.data.datasets[0].data = profitData;
-        homeProfitExpenseChart.data.datasets[1].data = expenseData;
-        homeProfitExpenseChart.update();
-        return;
-    }
-
-    const roseColor = '#e11d48'; 
-    homeProfitExpenseChart = new Chart(ctx.getContext('2d'), {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Profit',
-                    data: profitData,
-                    borderColor: roseColor,
-                    backgroundColor: 'transparent',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHoverRadius: 6,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: roseColor,
-                    pointBorderWidth: 2,
-                    fill: false
-                },
-                {
-                    label: 'Expense',
-                    data: expenseData,
-                    borderColor: '#64748b',
-                    backgroundColor: 'transparent',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHoverRadius: 6,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#64748b',
-                    pointBorderWidth: 2,
-                    fill: false,
-                    borderDash: [5, 5]
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            plugins: {
-                legend: {
-                    position: 'top',
-                    align: 'end',
-                    labels: {
-                        usePointStyle: true,
-                        boxWidth: 8,
-                        font: { size: 11, family: "'Inter', sans-serif", weight: '600' },
-                        color: '#64748b'
-                    }
-                },
-                tooltip: {
-                    backgroundColor: '#fff',
-                    titleColor: '#1e293b',
-                    bodyColor: '#1e293b',
-                    borderColor: '#e2e8f0',
-                    borderWidth: 1,
-                    cornerRadius: 8,
-                    padding: 12,
-                    displayColors: true,
-                    usePointStyle: true,
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) label += ': ';
-                            if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('bn-BD', {
-                                    style: 'currency',
-                                    currency: 'BDT',
-                                    minimumFractionDigits: 0,
-                                    maximumFractionDigits: 0
-                                }).format(context.parsed.y);
-                            }
-                            return label;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#f1f5f9', drawBorder: false },
-                    ticks: {
-                        font: { size: 10, family: "'Inter', sans-serif" },
-                        color: '#94a3b8',
-                        callback: function(value) {
-                            if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
-                            else if (value >= 100000) return (value / 100000).toFixed(0) + ' Lac';
-                            else if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
-                            return value;
-                        }
-                    }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { font: { size: 10, family: "'Inter', sans-serif" }, color: '#94a3b8' }
-                }
-            },
-            animation: { duration: 1000, easing: 'easeInOutQuart' }
-        }
-    });
-}
-
-// ফায়ারবেসের রিয়েল ডেটা দিয়ে চার্ট ও ইউআই আপডেট করার মূল পাইপলাইন ফাংশন
-function uiUpdatePipeline() {
-    try {
-        let monthlyProfits = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        let monthlyExpenses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-        // farmData যদি ফায়ারবেসের অবজেক্ট হয়, তবে সেটিকে অ্যারেতে রূপান্তর করে লুপ চালানো
-        let dataArray = [];
-        if (typeof farmData !== 'undefined' && farmData) {
-            dataArray = Array.isArray(farmData) ? farmData : Object.values(farmData);
-        }
-
-        if (dataArray.length > 0) {
-            dataArray.forEach(item => {
-                if (item && item.date) {
-                    let itemDate = new Date(item.date);
-                    let monthIndex = item.date.includes('-') ? Number(item.date.split('-')[1]) - 1 : itemDate.getMonth();
-                    let amount = Number(item.amount) || 0;
-
-                    if (monthIndex >= 0 && monthIndex <= 11) {
-                        if (item.type === 'income' || item.type === 'profit') {
-                            monthlyProfits[monthIndex] += amount;
-                        } else if (item.type === 'expense') {
-                            monthlyExpenses[monthIndex] += amount;
-                        }
-                    }
-                }
-            });
-        }
-
-        // চার্টে আসল ডেটা পাস করে আপডেট করা
-        if (typeof homeProfitExpenseChart !== 'undefined' && homeProfitExpenseChart) {
-            homeProfitExpenseChart.data.datasets[0].data = monthlyProfits;
-            homeProfitExpenseChart.data.datasets[1].data = monthlyExpenses;
-            homeProfitExpenseChart.update();
-        }
-    } catch (e) {
-        console.log("UI Update & Chart Error: ", e);
-    }
-}
-
-// পেজ লোড হওয়ার 후 ইনিশিয়ালাইজ করার জন্য
-document.addEventListener("DOMContentLoaded", function() {
-    renderHomeChart(false); // ডিফল্ট মাসিক মোড কল করা
-});
   </script>
 </body>
 </html>
