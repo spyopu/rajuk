@@ -1377,35 +1377,28 @@
         label = (yearFilter ? yearFilter.value : new Date().getFullYear()) + " সাল (বার্ষিক)";
       }
 
-      // হেল্পপার ফাংশন: অতিরিক্ত কোড বা অপ্রয়োজনীয় শব্দ রিমুভ করার জন্য
-      function cleanDesc(text) {
-        if (!text) return "";
-        // প্রজেক্টের কোড বা ডেট রিমুভ করা (যেমন: Plot-389-... বা 2026-07-16)
-        text = text.replace(/Plot-[\w\s.-]+/gi, ''); 
-        text = text.replace(/\d{4}-\d{2}-\d{2}/g, '');
-        // অপ্রয়োজনীয় শব্দ যেমন 'ক্যাশ উত্তোলন', 'ক্যাশ জমা (মূলধন)' ইত্যাদি ছোট করা চাইলে এখানে রিমুভ বা রিপ্লেস করা যায়
-        text = text.replace(/ক্যাশ উত্তোলন|ক্যাশ জমা \(মূলধন\)/g, '').trim();
-        // ডাবল ডট বা হাইফেন পরিষ্কার করা
-        text = text.replace(/^[•\-\.\s]+|[•\-\.\s]+$/g, '');
-        return text;
-      }
-
-      // ১. প্রজেক্ট খরচ
+      // ১. প্রজেক্ট খরচ পরিষ্কার করার স্মার্ট লজিক (শুধু শেষের নোট ও টাকা রাখবে)
       let projectCostText = "";
       const projectCostContainer = document.getElementById('acc-project-cost-list');
       if (projectCostContainer && projectCostContainer.children.length > 0) {
         projectCostText = Array.from(projectCostContainer.children).map(item => {
           let text = item.innerText.replace(/\s+/g, ' ').trim();
-          // শুধু প্রয়োজনীয় অংশ বা শেষের নোটটুকু রাখার লজিক
-          let parts = text.split('•');
-          let note = parts.length > 1 ? parts[1].trim() : text;
-          note = cleanDesc(note);
-          // যদি টাকার পরিমাণ আলাদা থাকে বা টেক্সট থেকে অ্যামাউন্ট বের করতে হয়
-          return note ? `   ▪ ${note}` : '';
+          if (!text) return '';
+          
+          // যদি ডট বা বুলেট (•) থাকে, তাহলে তার পরের অংশটুকু (যেমন: মৌজা ম্যাপ ৳500) নেবে
+          if (text.includes('•')) {
+            let parts = text.split('•');
+            return `   ▪ ${parts[parts.length - 1].trim()}`;
+          }
+          // যদি বুলেট না থাকে, তবে ডেট বা প্লট কোডগুলো রিমুভ করে দেবে
+          text = text.replace(/\b(Plot-|K\.S\.|GONG)?[\w\s.-]+?\b\d{4}-\d{2}-\d{2}/gi, '').trim();
+          text = text.replace(/^[•\-\.\s]+|[•\-\.\s]+$/g, '');
+          
+          return text ? `   ▪ ${text}` : '';
         }).filter(Boolean).join('\n');
       }
 
-      // ২. অফিস খরচ
+      // ২. অফিস খরচ (অপ্রয়োজনীয় অতিরিক্ত টেক্সট থাকলে ক্লিন করার নিয়ম)
       let officeCostText = "";
       const officeTableBody = document.getElementById('office-expense-rows');
       if (officeTableBody && officeTableBody.children.length > 0) {
@@ -1414,7 +1407,6 @@
           if (cols.length >= 3) {
             let desc = cols[0].innerText.replace(/\s+/g, ' ').trim();
             let amount = cols[2].innerText.replace(/\s+/g, ' ').trim();
-            desc = cleanDesc(desc);
             return desc ? `   ▪ ${desc}: ${amount}` : '';
           }
           return '';
@@ -1430,7 +1422,9 @@
           if (cols.length >= 3) {
             let desc = cols[0].innerText.replace(/\s+/g, ' ').trim();
             let amount = cols[2].innerText.replace(/\s+/g, ' ').trim();
-            desc = cleanDesc(desc);
+            // 'ক্যাশ উত্তোলন' বা 'ক্যাশ জমা' লেখাগুলো বাদ দিয়ে শুধু নোট রাখতে চাইলে:
+            desc = desc.replace(/ক্যাশ উত্তোলন|ক্যাশ জমা/g, '').trim();
+            desc = desc.replace(/^[•\-\.\s]+|[•\-\.\s]+$/g, '');
             return desc ? `   ▪ ${desc}: ${amount}` : '';
           }
           return '';
@@ -1451,8 +1445,8 @@
       return `📊 *মাসিক হিসাব প্রতিবেদন*\n` +
              `📅 *সময়কাল:* ${label}\n` +
              `━━━━━━━━━━━━━━━━━━━━━━━\n` +
-             `🟢 *মোট কাস্টমার আয়:* ৳${incomeVal.toLocaleString('en-IN')}\n` +
-             `🔴 *মোট খরচ:* ৳${expenseVal.toLocaleString('en-IN')}\n` +
+             `🟢 *আয়:* ৳${incomeVal.toLocaleString('en-IN')}\n` +
+             `🔴 *ব্যয়:* ৳${expenseVal.toLocaleString('en-IN')}\n` +
              `━━━━━━━━━━━━━━━━━━━━━━━\n` +
              `${combinedDetails}` +
              `━━━━━━━━━━━━━━━━━━━━━━━\n` +
