@@ -1553,58 +1553,37 @@
     };
 
     window.switchTab = function(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      const target = document.getElementById(`tab-${tabId}`);
-      if(target) target.classList.remove('hidden');
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  const target = document.getElementById(`tab-${tabId}`);
+  if(target) target.classList.remove('hidden');
 
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.className = "tab-btn px-4 py-1.5 text-xs font-bold rounded-lg transition text-rose-100 hover:text-white";
-      });
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.className = "tab-btn px-4 py-1.5 text-xs font-bold rounded-lg transition text-rose-100 hover:text-white";
+  });
 
-      const activePCBtn = document.getElementById(`btn-${tabId}`);
-      if(activePCBtn) activePCBtn.className = "tab-btn px-4 py-1.5 text-xs font-bold rounded-lg transition bg-white text-rose-600 shadow-sm";
-      
-      document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
-        btn.className = "mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition";
-      });
-		
-      const activeMobBtn = document.getElementById(`btn-${tabId}-mob`);
-      if(activeMobBtn) activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105";
+  const activePCBtn = document.getElementById(`btn-${tabId}`);
+  if(activePCBtn) activePCBtn.className = "tab-btn px-4 py-1.5 text-xs font-bold rounded-lg transition bg-white text-rose-600 shadow-sm";
+  
+  document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+    btn.className = "mobile-tab-btn flex flex-col items-center justify-center text-slate-500 text-[11px] font-bold py-1 transition";
+  });
+  
+  const activeMobBtn = document.getElementById(`btn-${tabId}-mob`);
+  if(activeMobBtn) activeMobBtn.className = "mobile-tab-btn flex flex-col items-center justify-center text-rose-600 text-[11px] font-bold py-1 transition scale-105";
 
-      const topNavBar = document.getElementById('top-navigation-bar');
-      const homeFabBtn = document.getElementById('home-fab-btn');
+  const homeFabBtn = document.getElementById('home-fab-btn');
 
-      if (tabId === 'home-view') {
-        if (topNavBar) {
-          topNavBar.classList.add('hidden');
-          topNavBar.classList.remove('flex');
-        }
-        if (homeFabBtn) homeFabBtn.classList.remove('hidden');
-      } else {
-        if (topNavBar) {
-          topNavBar.classList.remove('hidden');
-          topNavBar.classList.add('md:flex');
-        }
-        if (homeFabBtn) homeFabBtn.classList.add('hidden');
-      }
+  if (tabId === 'home-view') {
+    if (homeFabBtn) homeFabBtn.classList.remove('hidden');
+  } else {
+    if (homeFabBtn) homeFabBtn.classList.add('hidden');
+  }
 
-      const monthWrapper = document.getElementById('month-picker-wrapper');
-      const yearWrapper = document.getElementById('year-picker-wrapper');
-      const modeBtnMonthly = document.getElementById('mode-btn-monthly');
-
-      if (tabId === 'home-view') {
-        if (monthWrapper) monthWrapper.classList.add('hidden');
-        if (yearWrapper) yearWrapper.classList.add('hidden');
-        if (modeBtnMonthly && modeBtnMonthly.parentElement) modeBtnMonthly.parentElement.classList.add('hidden');
-      } else {
-        if (modeBtnMonthly && modeBtnMonthly.parentElement) modeBtnMonthly.parentElement.classList.remove('hidden');
-        if (analyticsViewMode === 'monthly') {
-          if (monthWrapper) monthWrapper.classList.remove('hidden');
-        } else {
-          if (yearWrapper) yearWrapper.classList.remove('hidden');
-        }
-      }
-    };
+  // ট্যাব পরিবর্তনের সাথে সাথে ড্যাশবোর্ড বা লেনদেনের ডেটা রেন্ডার করতে এটি কল করুন
+  if (typeof uiUpdatePipeline === 'function') {
+    uiUpdatePipeline();
+  }
+};
 
     window.setClientFilter = function(filterType) {
       activeClientFilter = filterType;
