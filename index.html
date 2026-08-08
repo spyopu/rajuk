@@ -1377,26 +1377,30 @@
         label = (yearFilter ? yearFilter.value : new Date().getFullYear()) + " সাল (বার্ষিক)";
       }
 
-      // প্রজেক্ট বা অন্যান্য খরচের লিস্ট ডাইনামিক করার জন্য DOM বা আপনার ডেটা অ্যারে থেকে সংগ্রহ করা
       let expenseItemsText = "";
       const costListContainer = document.getElementById('acc-project-cost-list');
       if (costListContainer && costListContainer.children.length > 0) {
-        // যদি লিস্টে উপাদান থাকে, সেগুলোর টেক্সট সংগ্রহ করবে
-        expenseItemsText = Array.from(costListContainer.children).map(item => `* ${item.innerText.trim()}`).join('\n');
+        expenseItemsText = Array.from(costListContainer.children).map(item => `   ▪ ${item.innerText.trim()}`).join('\n');
       } else {
-        expenseItemsText = "* কোনো খরচ এন্ট্রি নেই";
+        expenseItemsText = "   ▪ কোনো খরচ এন্ট্রি নেই";
       }
 
-      // নিট ব্যালেন্সের লেবেল নির্ধারণ (ঘাটতি হলে মাইনাস সহ দেখাবে)
       let netBalanceVal = typeof globalCalculatedNetBalance !== 'undefined' ? globalCalculatedNetBalance : 0;
+      let incomeVal = typeof globalCalculatedIncome !== 'undefined' ? globalCalculatedIncome : 0;
+      let expenseVal = typeof globalCalculatedExpense !== 'undefined' ? globalCalculatedExpense : 0;
 
-      return `${label}\n` +
-             `আয়: ৳${(typeof globalCalculatedIncome !== 'undefined' ? globalCalculatedIncome : 0).toLocaleString('en-IN')}\n` +
-             `ব্যয়: ৳${(typeof globalCalculatedExpense !== 'undefined' ? globalCalculatedExpense : 0).toLocaleString('en-IN')}\n\n` +
-             `${expenseItemsText}\n\n` +
-             `অবশিষ্ট হিসাব:\n` +
-             `নিট ব্যালেন্স (${netBalanceVal < 0 ? 'ঘাটতি' : 'উদ্বৃত্ত'}): ৳${netBalanceVal.toLocaleString('en-IN')}\n\n` +
-             `ডিজিটাল খাতা স্মার্ট অ্যাপ দ্বারা প্রস্তুতকৃত।`;
+      return `📌 *মাসিক হিসাব প্রতিবেদন*\n` +
+             `📅 *সময়কাল:* ${label}\n` +
+             `━━━━━━━━━━━━━━━━━━━━━━━\n` +
+             `🟢 *আয়:* ৳${incomeVal.toLocaleString('en-IN')}\n` +
+             `🔴 *ব্যয়:* ৳${expenseVal.toLocaleString('en-IN')}\n` +
+             `━━━━━━━━━━━━━━━━━━━━━━━\n` +
+             `📝 *খরচের বিস্তারিত:*\n` +
+             `${expenseItemsText}\n` +
+             `━━━━━━━━━━━━━━━━━━━━━━━\n` +
+             `💰 *অবশিষ্ট হিসাব:*\n` +
+             `🔸 *নিট ব্যালেন্স (${netBalanceVal < 0 ? 'ঘাটতি' : 'উদ্বৃত্ত'}):* ৳${netBalanceVal.toLocaleString('en-IN')}\n` +
+             `━━━━━━━━━━━━━━━━━━━━━━━\n`;
     }
 
     window.openSummaryModal = function() {
