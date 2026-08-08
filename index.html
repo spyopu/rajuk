@@ -336,17 +336,20 @@
 		  </div>
 		  
 		  <div class="flex items-center gap-2 w-full sm:w-auto">
-			<button id="toggle-report-btn" onclick="handleReportUnlock()" class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1">
-			  <span>👁️</span> <span id="report-btn-text">আনলক করুন</span>
-			</button>
-			
-			<button id="print-report-btn" onclick="printReport()" class="hidden flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1">
-			  <span>🖨️</span> <span>প্রিন্ট</span>
-			</button>
-
-            <button onclick="openSummaryModal()" class="btn-summary-mini no-print">
-              <i>📋</i> <span>সামারি</span>
-            </button>
+			<!-- ১. লক/আনলক বাটন -->
+		    <button id="toggle-report-btn" onclick="handleReportUnlock()" class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
+		        <span>👁️</span> <span id="report-btn-text">আনলক করুন</span>
+		    </button>
+		    
+		    <!-- ২. প্রিন্ট বাটন -->
+		    <button id="print-report-btn" onclick="printReport()" class="hidden flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
+		        <span>🖨️</span> <span>প্রিন্ট</span>
+		    </button>
+		
+		    <!-- ৩. সামারি বাটন (লক অবস্থায় লুকানো থাকবে, আনলক করলে দেখাবে) -->
+		    <button id="summary-report-btn" onclick="openSummaryModal()" class="hidden flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5 no-print">
+		        <span>📋</span> <span>সামারি</span>
+		    </button>
 		  </div>
 		</div>
 
