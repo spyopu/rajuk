@@ -1377,17 +1377,35 @@
         label = (yearFilter ? yearFilter.value : new Date().getFullYear()) + " সাল (বার্ষিক)";
       }
 
-      // ১. প্রজেক্ট খরচের লিস্ট থেকে নোট ও অ্যামাউন্ট সংগ্রহ
+      // হেল্পপার ফাংশন: অতিরিক্ত কোড বা অপ্রয়োজনীয় শব্দ রিমুভ করার জন্য
+      function cleanDesc(text) {
+        if (!text) return "";
+        // প্রজেক্টের কোড বা ডেট রিমুভ করা (যেমন: Plot-389-... বা 2026-07-16)
+        text = text.replace(/Plot-[\w\s.-]+/gi, ''); 
+        text = text.replace(/\d{4}-\d{2}-\d{2}/g, '');
+        // অপ্রয়োজনীয় শব্দ যেমন 'ক্যাশ উত্তোলন', 'ক্যাশ জমা (মূলধন)' ইত্যাদি ছোট করা চাইলে এখানে রিমুভ বা রিপ্লেস করা যায়
+        text = text.replace(/ক্যাশ উত্তোলন|ক্যাশ জমা \(মূলধন\)/g, '').trim();
+        // ডাবল ডট বা হাইফেন পরিষ্কার করা
+        text = text.replace(/^[•\-\.\s]+|[•\-\.\s]+$/g, '');
+        return text;
+      }
+
+      // ১. প্রজেক্ট খরচ
       let projectCostText = "";
       const projectCostContainer = document.getElementById('acc-project-cost-list');
       if (projectCostContainer && projectCostContainer.children.length > 0) {
         projectCostText = Array.from(projectCostContainer.children).map(item => {
           let text = item.innerText.replace(/\s+/g, ' ').trim();
-          return text ? `   ▪ ${text}` : '';
+          // শুধু প্রয়োজনীয় অংশ বা শেষের নোটটুকু রাখার লজিক
+          let parts = text.split('•');
+          let note = parts.length > 1 ? parts[1].trim() : text;
+          note = cleanDesc(note);
+          // যদি টাকার পরিমাণ আলাদা থাকে বা টেক্সট থেকে অ্যামাউন্ট বের করতে হয়
+          return note ? `   ▪ ${note}` : '';
         }).filter(Boolean).join('\n');
       }
 
-      // ২. অফিস খরচের টেবিল থেকে নোট (বিবরণ) ও অ্যামাউন্ট সংগ্রহ
+      // ২. অফিস খরচ
       let officeCostText = "";
       const officeTableBody = document.getElementById('office-expense-rows');
       if (officeTableBody && officeTableBody.children.length > 0) {
@@ -1396,14 +1414,14 @@
           if (cols.length >= 3) {
             let desc = cols[0].innerText.replace(/\s+/g, ' ').trim();
             let amount = cols[2].innerText.replace(/\s+/g, ' ').trim();
+            desc = cleanDesc(desc);
             return desc ? `   ▪ ${desc}: ${amount}` : '';
           }
-          let cleanText = row.innerText.replace(/\s+/g, ' ').trim();
-          return cleanText ? `   ▪ ${cleanText}` : '';
+          return '';
         }).filter(Boolean).join('\n');
       }
 
-      // ৩. মূলধন লেনদেন টেবিল থেকে নোট ও অ্যামাউন্ট সংগ্রহ
+      // ৩. মূলধন লেনদেন
       let ownerCapitalText = "";
       const ownerTableBody = document.getElementById('owner-expense-rows');
       if (ownerTableBody && ownerTableBody.children.length > 0) {
@@ -1412,17 +1430,17 @@
           if (cols.length >= 3) {
             let desc = cols[0].innerText.replace(/\s+/g, ' ').trim();
             let amount = cols[2].innerText.replace(/\s+/g, ' ').trim();
+            desc = cleanDesc(desc);
             return desc ? `   ▪ ${desc}: ${amount}` : '';
           }
-          let cleanText = row.innerText.replace(/\s+/g, ' ').trim();
-          return cleanText ? `   ▪ ${cleanText}` : '';
+          return '';
         }).filter(Boolean).join('\n');
       }
 
       let combinedDetails = "";
-      if (officeCostText) combinedDetails += `📌 অফিস খরচ:\n${officeCostText}\n\n`;
-      if (projectCostText) combinedDetails += `📌 প্রজেক্ট খরচ:\n${projectCostText}\n\n`;
-      if (ownerCapitalText) combinedDetails += `💼 মূলধন লেনদেন:\n${ownerCapitalText}\n`;
+      if (officeCostText) combinedDetails += `📌 *অফিস খরচ:*\n${officeCostText}\n\n`;
+      if (projectCostText) combinedDetails += `📌 *প্রজেক্ট খরচ:*\n${projectCostText}\n\n`;
+      if (ownerCapitalText) combinedDetails += `💼 *মূলধন লেনদেন:*\n${ownerCapitalText}\n`;
       
       if (!combinedDetails) combinedDetails = `   ▪ কোনো লেনদেন নেই`;
 
@@ -1430,16 +1448,18 @@
       let incomeVal = typeof globalCalculatedIncome !== 'undefined' ? globalCalculatedIncome : 0;
       let expenseVal = typeof globalCalculatedExpense !== 'undefined' ? globalCalculatedExpense : 0;
 
-      return `📊 মাসিক হিসাব প্রতিবেদন\n` +
-             `📅 সময়কাল: ${label}\n` +
+      return `📊 *মাসিক হিসাব প্রতিবেদন*\n` +
+             `📅 *সময়কাল:* ${label}\n` +
              `━━━━━━━━━━━━━━━━━━━━━━━\n` +
-             `🟢 আয়: ৳${incomeVal.toLocaleString('en-IN')}\n` +
-             `🔴 ব্যয়: ৳${expenseVal.toLocaleString('en-IN')}\n` +
+             `🟢 *মোট কাস্টমার আয়:* ৳${incomeVal.toLocaleString('en-IN')}\n` +
+             `🔴 *মোট খরচ:* ৳${expenseVal.toLocaleString('en-IN')}\n` +
              `━━━━━━━━━━━━━━━━━━━━━━━\n` +
              `${combinedDetails}` +
              `━━━━━━━━━━━━━━━━━━━━━━━\n` +
-             `💰 অবশিষ্ট হিসাব:\n` +
-             `🔸 নিট লাভ/ক্ষতি: ৳${netBalanceVal.toLocaleString('en-IN')}\n`;
+             `💰 *অবশিষ্ট হিসাব:*\n` +
+             `🔸 *নিট লাভ/ক্ষতি:* ৳${netBalanceVal.toLocaleString('en-IN')}\n` +
+             `━━━━━━━━━━━━━━━━━━━━━━━\n` +
+             `_💡 ডিজিটাল খাতা স্মার্ট অ্যাপ দ্বারা প্রস্তুতকৃত_`;
     }
 
    window.openSummaryModal = function() {
