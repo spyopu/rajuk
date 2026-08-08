@@ -114,6 +114,7 @@
 	}
   </style>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Firebase SDK v8 LIBRARIES -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -269,8 +270,6 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6 flex-1">
 
-    
-
     <!-- TAB 0: HOME VIEW -->
     <div id="tab-home-view" class="tab-content space-y-6">
       <!-- DAILY INCOME & EXPENSE CARD -->
@@ -298,11 +297,23 @@
         </div>
       </section>
 
+      <!-- PROFIT & EXPENSE ANALYTICS CHART CARD -->
+      <section class="bg-white p-4 md:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-xs md:text-sm font-bold text-slate-800 uppercase tracking-wide">লাভ ও খরচ অ্যানালিটিক্স</h3>
+          <span class="text-[10px] md:text-xs bg-rose-50 text-rose-600 font-bold px-2.5 py-1 rounded-lg">চার্ট ভিউ</span>
+        </div>
+        <!-- চার্ট রেন্ডার হওয়ার ক্যানভাস -->
+        <div class="relative w-full h-48 md:h-64">
+          <canvas id="homeProfitExpenseChart"></canvas>
+        </div>
+      </section>
+
       <!-- HUMAN ILLUSTRATION ICON & BEAUTIFUL QUOTES WITH WHITE BACKGROUND -->
-      <section class="w-full py-8 px-4 text-center flex flex-col items-center justify-center space-y-5">
+      <section class="w-full py-6 px-4 text-center flex flex-col items-center justify-center space-y-4">
 		  <!-- Vector Human Illustration SVG -->
-		  <div class="w-32 h-32 md:w-44 md:h-44 bg-rose-50/50 rounded-full flex items-center justify-center p-4 border border-rose-100/60 shadow-inner">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20 md:w-28 md:h-28">
+		  <div class="w-28 h-28 md:w-36 md:h-36 bg-rose-50/50 rounded-full flex items-center justify-center p-4 border border-rose-100/60 shadow-inner">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-16 h-16 md:w-24 md:h-24">
 			  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
 			  <circle cx="9" cy="7" r="4"></circle>
 			  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -2654,6 +2665,151 @@
         databasePathRef.child('owner_transactions').child(itemId).remove().then(() => { closeActionModal(); });
       }
     };
+
+	// হোম ট্যাব এনালাইটিক্স
+	let homeProfitExpenseChart = null;
+
+		// চার্ট তৈরি বা আপডেট করার ফাংশন
+		function renderHomeChart(isYearly = false) {
+			const ctx = document.getElementById('homeProfitExpenseChart');
+			if (!ctx) return;
+
+			// মোড অনুযায়ী লেবেল ও ডেটা সেট করা
+			let labels, profitData, expenseData;
+
+			if (isYearly) {
+				// বার্ষিক (Yearly) মোডের ডেটা
+				labels = ['2023', '2024', '2025', '2026'];
+				profitData = [3500000, 4200000, 5100000, 4800000];
+				expenseData = [2100000, 2500000, 3000000, 2900000];
+			} else {
+				// মাসিক (Monthly) মোডের ডেটা
+				labels = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+				profitData = [310000, 550000, 500000, 380000, 420000, 350000, 450000, 390000, 410000, 460000, 490000, 520000];
+				expenseData = [250000, 180000, 220000, 200000, 230000, 190000, 210000, 195000, 205000, 215000, 230000, 240000];
+			}
+
+			// যদি চার্ট আগে থেকে তৈরি করা থাকে, তবে শুধু ডেটা আপডেট করে রিফ্রেশ করবে
+			if (homeProfitExpenseChart) {
+				homeProfitExpenseChart.data.labels = labels;
+				homeProfitExpenseChart.data.datasets[0].data = profitData;
+				homeProfitExpenseChart.data.datasets[1].data = expenseData;
+				homeProfitExpenseChart.update();
+				return;
+			}
+
+			// নতুন চার্ট ইনিশিয়ালাইজ করা
+			const roseColor = '#e11d48'; 
+			homeProfitExpenseChart = new Chart(ctx.getContext('2d'), {
+				type: 'line',
+				data: {
+					labels: labels,
+					datasets: [
+						{
+							label: 'Profit',
+							data: profitData,
+							borderColor: roseColor,
+							backgroundColor: 'transparent',
+							borderWidth: 3,
+							tension: 0.4,
+							pointRadius: 0,
+							pointHoverRadius: 6,
+							pointBackgroundColor: '#fff',
+							pointBorderColor: roseColor,
+							pointBorderWidth: 2,
+							fill: false
+						},
+						{
+							label: 'Expense',
+							data: expenseData,
+							borderColor: '#64748b',
+							backgroundColor: 'transparent',
+							borderWidth: 3,
+							tension: 0.4,
+							pointRadius: 0,
+							pointHoverRadius: 6,
+							pointBackgroundColor: '#fff',
+							pointBorderColor: '#64748b',
+							pointBorderWidth: 2,
+							fill: false,
+							borderDash: [5, 5]
+						}
+					]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false, // কন্টেইনারের হাইট অনুযায়ী ফিট হওয়ার জন্য
+					interaction: {
+						mode: 'index',
+						intersect: false,
+					},
+					plugins: {
+						legend: {
+							position: 'top',
+							align: 'end',
+							labels: {
+								usePointStyle: true,
+								boxWidth: 8,
+								font: { size: 11, family: "'Inter', sans-serif", weight: '600' },
+								color: '#64748b'
+							}
+						},
+						tooltip: {
+							backgroundColor: '#fff',
+							titleColor: '#1e293b',
+							bodyColor: '#1e293b',
+							borderColor: '#e2e8f0',
+							borderWidth: 1,
+							cornerRadius: 8,
+							padding: 12,
+							displayColors: true,
+							usePointStyle: true,
+							callbacks: {
+								label: function(context) {
+									let label = context.dataset.label || '';
+									if (label) label += ': ';
+									if (context.parsed.y !== null) {
+										label += new Intl.NumberFormat('bn-BD', {
+											style: 'currency',
+											currency: 'BDT',
+											minimumFractionDigits: 0,
+											maximumFractionDigits: 0
+										}).format(context.parsed.y);
+									}
+									return label;
+								}
+							}
+						}
+					},
+					scales: {
+						y: {
+							beginAtZero: true,
+							grid: { color: '#f1f5f9', drawBorder: false },
+							ticks: {
+								font: { size: 10, family: "'Inter', sans-serif" },
+								color: '#94a3b8',
+								callback: function(value) {
+									if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+									else if (value >= 100000) return (value / 100000).toFixed(0) + ' Lac';
+									else if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
+									return value;
+								}
+							}
+						},
+						x: {
+							grid: { display: false },
+							ticks: { font: { size: 10, family: "'Inter', sans-serif" }, color: '#94a3b8' }
+						}
+					},
+					animation: { duration: 1000, easing: 'easeInOutQuart' }
+				}
+			});
+		}
+
+		// পেজ লোড হওয়ার পর ডিফল্টভাবে চার্ট কল করার জন্য
+		document.addEventListener("DOMContentLoaded", function() {
+			renderHomeChart(false);
+		});
   </script>
 </body>
 </html>
