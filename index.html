@@ -1398,7 +1398,7 @@
         }).filter(Boolean).join('\n');
       }
 
-      // ২. অফিস খরচ (অপ্রয়োজনীয় অতিরিক্ত টেক্সট থাকলে ক্লিন করার নিয়ম)
+      // ২. অফিস খরচ (ক্যাটাগরি বা প্রিফিক্স বাদ দিয়ে শুধু মূল নোট ও অ্যামাউন্ট রাখার লজিক)
       let officeCostText = "";
       const officeTableBody = document.getElementById('office-expense-rows');
       if (officeTableBody && officeTableBody.children.length > 0) {
@@ -1407,6 +1407,10 @@
           if (cols.length >= 3) {
             let desc = cols[0].innerText.replace(/\s+/g, ' ').trim();
             let amount = cols[2].innerText.replace(/\s+/g, ' ').trim();
+            
+            // ক্যাটাগরি বা নির্দিষ্ট কিছু শব্দ যেগুলো শুরুতে থাকে, সেগুলো রিমুভ করার নিয়ম:
+            desc = desc.replace(/^(Others|Office Rent|Staff Salary|Conveyance)\s*/i, '').trim();
+            
             return desc ? `   ▪ ${desc}: ${amount}` : '';
           }
           return '';
@@ -1432,9 +1436,9 @@
       }
 
       let combinedDetails = "";
-      if (officeCostText) combinedDetails += `📌 *অফিস খরচ:*\n${officeCostText}\n\n`;
-      if (projectCostText) combinedDetails += `📌 *প্রজেক্ট খরচ:*\n${projectCostText}\n\n`;
-      if (ownerCapitalText) combinedDetails += `💼 *মূলধন লেনদেন:*\n${ownerCapitalText}\n`;
+      if (officeCostText) combinedDetails += `📌 অফিস খরচ:\n${officeCostText}\n\n`;
+      if (projectCostText) combinedDetails += `📌 প্রজেক্ট খরচ:\n${projectCostText}\n\n`;
+      if (ownerCapitalText) combinedDetails += `💼 মূলধন লেনদেন:\n${ownerCapitalText}\n`;
       
       if (!combinedDetails) combinedDetails = `   ▪ কোনো লেনদেন নেই`;
 
@@ -1442,16 +1446,15 @@
       let incomeVal = typeof globalCalculatedIncome !== 'undefined' ? globalCalculatedIncome : 0;
       let expenseVal = typeof globalCalculatedExpense !== 'undefined' ? globalCalculatedExpense : 0;
 
-      return `📊 *মাসিক হিসাব প্রতিবেদন*\n` +
-             `📅 *সময়কাল:* ${label}\n` +
+      return `📅 মাসিক হিসাব প্রতিবেদন: ${label}\n` +
              `━━━━━━━━━━━━━━━━━━━━━━━\n` +
-             `🟢 *আয়:* ৳${incomeVal.toLocaleString('en-IN')}\n` +
-             `🔴 *ব্যয়:* ৳${expenseVal.toLocaleString('en-IN')}\n` +
+             `🟢 আয়: ৳${incomeVal.toLocaleString('en-IN')}\n` +
+             `🔴 ব্যয়: ৳${expenseVal.toLocaleString('en-IN')}\n` +
              `━━━━━━━━━━━━━━━━━━━━━━━\n` +
              `${combinedDetails}` +
              `━━━━━━━━━━━━━━━━━━━━━━━\n` +
-             `💰 *অবশিষ্ট হিসাব:*\n` +
-             `🔸 *নিট লাভ/ক্ষতি:* ৳${netBalanceVal.toLocaleString('en-IN')}\n` +
+             `💰 অবশিষ্ট হিসাব:\n` +
+             `🔸 নিট লাভ/ক্ষতি: ৳${netBalanceVal.toLocaleString('en-IN')}\n` +
              `━━━━━━━━━━━━━━━━━━━━━━━\n` +
              `_💡 ডিজিটাল খাতা স্মার্ট অ্যাপ দ্বারা প্রস্তুতকৃত_`;
     }
