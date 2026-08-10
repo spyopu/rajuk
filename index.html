@@ -322,30 +322,42 @@
     <div id="tab-dashboard-view" class="tab-content space-y-4 hidden">
 
       <div id="pdf-report-container" class="space-y-4">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs no-print">
-		  <div>
-			<h3 class="text-xs md:text-sm font-bold text-slate-900 flex items-center gap-2">
-			  <span id="dashboard-heading-title">মাসিক রিপোর্ট ও ড্যাশবোর্ড</span>
-			</h3>
-			<p class="text-[10px] text-slate-500 mt-0.5">গোপনীয়তা রক্ষার জন্য পাসকোড দিয়ে ড্যাশবোর্ড আনলক করতে হবে।</p>
-		  </div>
-		  
-		  <div class="flex items-center gap-2 w-full sm:w-auto">
-			<!-- ১. লক/আনলক বাটন -->
-		    <button id="toggle-report-btn" onclick="handleReportUnlock()" class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
-		        <span>👁️</span> <span id="report-btn-text">আনলক করুন</span>
-		    </button>
-		    
-		    <!-- ২. প্রিন্ট বাটন -->
-		    <button id="print-report-btn" onclick="printReport()" class="hidden flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
-		        <span>🖨️</span> <span>প্রিন্ট</span>
-		    </button>
-		
-		    <!-- ৩. সামারি বাটন (লক অবস্থায় লুকানো থাকবে, আনলক করলে দেখাবে) -->
-		    <button id="summary-report-btn" onclick="openSummaryModal()" class="hidden flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5 no-print">
-		        <span>📋</span> <span>সামারি</span>
-		    </button>
-		  </div>
+		    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs no-print">
+		        <div>
+		            <h3 class="text-xs md:text-sm font-bold text-slate-900 flex items-center gap-2">
+		              <span id="dashboard-heading-title">মাসিক রিপোর্ট ও ড্যাশবোর্ড</span>
+		            </h3>
+		            <p class="text-[10px] text-slate-500 mt-0.5">গোপনীয়তা রক্ষার জন্য পাসকোড বা ফিঙ্গারপ্রিন্ট দিয়ে ড্যাশবোর্ড আনলক করতে হবে।</p>
+		        </div>
+		        
+		        <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap">
+		            <!-- ১. লক/আনলক বাটন -->
+		            <button id="toggle-report-btn" onclick="handleReportUnlock()" class="flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
+		                <span>👁️</span> <span id="report-btn-text">আনলক করুন</span>
+		            </button>
+		            
+		            <!-- নতুন ফিঙ্গারপ্রিন্ট বা বায়োমেট্রিক বাটন -->
+		            <button type="button" onclick="handleBiometricAuth()" class="flex-1 sm:flex-none bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5" title="ফিঙ্গারপ্রিন্ট দিয়ে আনলক করুন">
+		                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		                    <path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"></path>
+		                    <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 12 0c0 3 .5 6 1 7.5"></path>
+		                    <path d="M2 15h20"></path>
+		                    <path d="M12 9v6"></path>
+		                </svg>
+		                <span>বায়োমেট্রিক</span>
+		            </button>
+		            
+		            <!-- ২. প্রিন্ট বাটন -->
+		            <button id="print-report-btn" onclick="printReport()" class="hidden flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5">
+		                <span>🖨️</span> <span>প্রিন্ট</span>
+		            </button>
+		        
+		            <!-- ৩. সামারি বাটন -->
+		            <button id="summary-report-btn" onclick="openSummaryModal()" class="hidden flex-1 sm:flex-none bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-1.5 rounded-xl text-xs font-semibold transition shadow-2xs flex items-center justify-center gap-1.5 no-print">
+		                <span>📋</span> <span>সামারি</span>
+		            </button>
+		        </div>
+		    </div>
 		</div>
 
         <!-- Minimal Summary Cards -->
