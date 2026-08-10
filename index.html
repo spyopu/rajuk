@@ -1143,9 +1143,8 @@
         document.getElementById('report-btn-text').innerText = "আনলক করুন";
         document.getElementById('print-report-btn').classList.add('hidden');
 
-		// ১. মূল বায়োমেট্রিক হ্যান্ডলার ফাংশন (এটি অবশ্যই থাকতে হবে)
+		// ১. বায়োমেট্রিক হ্যান্ডলার ফাংশন (সেফটি চেক সহ)
 		window.handleBiometricAuth = async function(onSuccessCallback) {
-		    // এই সেফটি চেকটুকু যুক্ত করে দেবেন:
 		    if (!window.PublicKeyCredential || !window.isSecureContext) {
 		        return; 
 		    }
@@ -1183,16 +1182,19 @@
 		    }
 		};
 		
+		// ২. পাসকোড উইন্ডো ওপেন করার মূল ফাংশন (এটি সবার আগে পিন উইন্ডো ওপেন করবে)
 		let pendingPasscodeCallback = null;
 		function requestPasscodeAuth(onSuccess) {
 		    pendingPasscodeCallback = onSuccess;
 		    const modal = document.getElementById('securityModal');
 		    const input = document.getElementById('modalPasscodeInput');
+		    
 		    if (modal && input) {
 		        input.value = "";
-		        modal.classList.remove('hidden');
+		        modal.classList.remove('hidden'); // সবার আগে পিন মডাল ওপেন হবে
 		        input.focus();
 		        
+		        // ব্যাকগ্রাউন্ডে ফিঙ্গারপ্রিন্ট ট্রাই করবে, মডাল আটকে রাখবে না
 		        setTimeout(() => {
 		            window.handleBiometricAuth(() => {
 		                if (pendingPasscodeCallback) {
