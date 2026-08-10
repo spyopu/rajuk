@@ -987,6 +987,7 @@
       }
     }
 
+	  // ড্যাশবোর্ড আনলক হ্যান্ডলার 
     window.setAnalyticsViewMode = function(mode) {
       analyticsViewMode = mode;
       const btnMonthly = document.getElementById('mode-btn-monthly');
@@ -1142,6 +1143,49 @@
         document.getElementById('report-content-body').classList.add('filter', 'blur-md', 'select-none', 'pointer-events-none');
         document.getElementById('report-btn-text').innerText = "আনলক করুন";
         document.getElementById('print-report-btn').classList.add('hidden');
+
+		// বায়োমেট্রিক বা ফিঙ্গারপ্রিন্ট আনলক হ্যান্ডলার ড্যাশবোর্ড
+		window.handleBiometricAuth = async function(onSuccessCallback) {
+		    if (!window.PublicKeyCredential) {
+		        alert("আপনার ব্রাউজার বা ডিভাইসে বায়োমেট্রিক সাপোর্ট করছে না।");
+		        return;
+		    }
+		
+		    try {
+		        const publicKey = {
+		            challenge: new Uint8Array([21, 31, 105, 78, 18, 45, 67, 89]),
+		            rp: { name: "DigitalKhata Smart Ledger" },
+		            user: {
+		                id: new Uint8Array(16),
+		                name: "admin@digitalkhata",
+		                displayName: "Admin"
+		            },
+		            pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+		            timeout: 60000,
+		            authenticatorSelection: { 
+		                authenticatorAttachment: "platform", 
+		                userVerification: "required" 
+		            },
+		            attestation: "none"
+		        };
+		
+		        const credential = await navigator.credentials.create({ publicKey });
+		        
+		        if (credential) {
+		            // বায়োমেট্রিক সফল হলে সরাসরি পিন ভেরিফিকেশন পাস করে দেবো
+		            if (typeof onSuccessCallback === 'function') {
+		                onSuccessCallback();
+		            } else {
+		                // ডিফল্টভাবে মেইন পিন লক স্ক্রিন হাইড করার জন্য
+		                const lockScreen = document.getElementById('pinLockScreen');
+		                if (lockScreen) lockScreen.classList.add('hidden');
+		            }
+		        }
+		    } catch (error) {
+		        console.log("Biometric Error: ", error);
+		        alert("বায়োমেট্রিক যাচাই বাতিল বা ব্যর্থ হয়েছে।");
+		    }
+		};
         
         // সামারি বাটন লক অবস্থায় লুকিয়ে ফেলার জন্য এটি যোগ করা হলো:
         let summaryBtn = document.getElementById('summary-report-btn');
@@ -2597,7 +2641,7 @@
         document.getElementById('action-discount-wrapper').classList.add('hidden');
 
         const typeSelect = document.getElementById('action-type');
-        typeSelect.innerHTML = `<option value="injection">🟢 ক্যাশ জমা (মূলধন)</option><option value="drawing">🔴 ক্যাশ উত্তোলন</option>`;
+        typeSelect.innerHTML = `<option value="injection">🟢 ক্যাশ জমা</option><option value="drawing">🔴 ক্যাশ উত্তোলন</option>`;
         typeSelect.value = ow.type;
 
         document.getElementById('action-amount').value = ow.amount;
