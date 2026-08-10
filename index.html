@@ -1145,9 +1145,9 @@
 
 		// ১. মূল বায়োমেট্রিক হ্যান্ডলার ফাংশন (এটি অবশ্যই থাকতে হবে)
 		window.handleBiometricAuth = async function(onSuccessCallback) {
-		    if (!window.PublicKeyCredential) {
-		        alert("আপনার ব্রাউজার বা ডিভাইসে বায়োমেট্রিক সাপোর্ট করছে না।");
-		        return;
+		    // এই সেফটি চেকটুকু যুক্ত করে দেবেন:
+		    if (!window.PublicKeyCredential || !window.isSecureContext) {
+		        return; 
 		    }
 		
 		    try {
@@ -1180,11 +1180,9 @@
 		        }
 		    } catch (error) {
 		        console.log("Biometric Error: ", error);
-		        // ইউজার ফিঙ্গারপ্রিন্ট ক্যানসেল করলে বারবার অ্যালার্ট দিয়ে বিরক্ত না করার জন্য এটি কমেন্ট বা রিমুভ করে রাখতে পারেন
 		    }
 		};
 		
-		// ২. পাসকোড উইন্ডো ওপেন করার ফাংশন (যেখানে অটো-ট্রিগার যুক্ত করা হয়েছে)
 		let pendingPasscodeCallback = null;
 		function requestPasscodeAuth(onSuccess) {
 		    pendingPasscodeCallback = onSuccess;
@@ -1195,7 +1193,6 @@
 		        modal.classList.remove('hidden');
 		        input.focus();
 		        
-		        // 🚀 পপআপ আসার সাথে সাথেই অটোমেটিক ফিঙ্গারপ্রিন্ট স্ক্যানার চালু হবে
 		        setTimeout(() => {
 		            window.handleBiometricAuth(() => {
 		                if (pendingPasscodeCallback) {
