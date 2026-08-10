@@ -2515,39 +2515,45 @@
 	    }
 	}
 
-	  // ১. অ্যাপ লক পেজ লোড হওয়ার সাথে সাথে টগল সুইচের বর্তমান অবস্থা সেট করা
-		document.addEventListener("DOMContentLoaded", function() {
-		    const isLockEnabled = localStorage.getItem("appLockEnabled") !== "false"; // বাই-ডিফল্ট অন থাকবে
-		    const toggleEl = document.getElementById('appLockToggle');
-		    if (toggleEl) {
-		        toggleEl.checked = isLockEnabled;
-		    }
-		});
-		
-		// ২. টগল পরিবর্তন করলে সেটিংস লোকালস্টোরেজে সেভ হওয়া
-		function toggleAppLock(checkbox) {
-		    if (checkbox.checked) {
-		        localStorage.setItem("appLockEnabled", "true");
-		        // চাইলে এখানে ছোট কোনো নোটিফিকেশন বা অ্যালার্ট দিতে পারেন
-		    } else {
-		        localStorage.setItem("appLockEnabled", "false");
-		    }
-		}
-		
-		// ৩. অ্যাপ বা ড্যাশবোর্ড খোলার সময় লক চেক করার ফাংশন
-		function checkAndRequestLock(onSuccess) {
-		    const isLockEnabled = localStorage.getItem("appLockEnabled") !== "false";
-		    
-		    if (isLockEnabled) {
-		        // লক অন থাকলে পাসকোড উইন্ডো ওপেন করবে
-		        requestPasscodeAuth(onSuccess);
-		    } else {
-		        // লক অফ থাকলে পাসকোড ছাড়াই সরাসরি কাজ করবে
-		        if (typeof onSuccess === 'function') {
-		            onSuccess();
-		        }
-		    }
-		}
+	  // ১. পেজ লোড হওয়ার পর টগল সুইচের স্টেট ঠিক রাখা এবং এন্ট্রি লক চেক করা
+document.addEventListener("DOMContentLoaded", function() {
+    const isLockEnabled = localStorage.getItem("appLockEnabled") !== "false"; // বাই-ডিফল্ট অন থাকবে
+    const toggleEl = document.getElementById('appLockToggle');
+    if (toggleEl) {
+        toggleEl.checked = isLockEnabled;
+    }
+});
+
+// ২. টগল সুইচ অন/অফ করলে সেটিংস সেভ করার ফাংশন
+function toggleAppLock(checkbox) {
+    if (checkbox.checked) {
+        localStorage.setItem("appLockEnabled", "true");
+        // alert("অ্যাপ এন্ট্রি লক চালু করা হয়েছে!");
+    } else {
+        localStorage.setItem("appLockEnabled", "false");
+        // alert("অ্যাপ এন্ট্রি লক বন্ধ করা হয়েছে!");
+    }
+}
+
+// ৩. এই ফাংশনটি অ্যাপ বা সংবেদনশীল ফিচার খೋದার সময় কল করতে হবে (লক চেক করার মূল ইঞ্জিন)
+function checkAndRequestLock(onSuccess) {
+    const isLockEnabled = localStorage.getItem("appLockEnabled") !== "false";
+    
+    if (isLockEnabled) {
+        // যদি লক অন থাকে, তবে পাসকোড বা পিন উইন্ডো ওপেন করবে
+        if (typeof requestPasscodeAuth === 'function') {
+            requestPasscodeAuth(onSuccess);
+        } else {
+            console.error("requestPasscodeAuth function not found!");
+            if (typeof onSuccess === 'function') onSuccess();
+        }
+    } else {
+        // যদি লক অফ করা থাকে, তবে পিন চাওয়া ছাড়াই ডিরেক্ট কাজ করবে
+        if (typeof onSuccess === 'function') {
+            onSuccess();
+        }
+    }
+}
 	  
     // এডিট বা ডিলিট করার সময় এখন সিকিউরিটি পিন চাওয়া হবে (রিকোয়েস্ট অনুযায়ী)
     window.openEditClientModal = function(clientId) {
