@@ -254,9 +254,31 @@
             <img id="user-avatar" class="h-8 w-8 rounded-full border border-white/40 object-cover shadow-sm" src="" alt="avatar">
           </div>
 
-          <div id="profile-dropdown" class="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl p-1.5 hidden z-50">
-            <button id="logout-btn" class="w-full text-left flex items-center px-3.5 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-lg transition">
-                লগ আউট
+          <!-- Profile Dropdown Menu with App Lock Settings -->
+          <div id="profile-dropdown" class="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-xl p-1.5 hidden z-50">
+            
+            <!-- ইউজার ইনফো হেডার -->
+            <div class="px-3 py-2 border-b border-slate-100 mb-1">
+                <p id="dropdown-user-name" class="text-xs font-bold text-slate-800">User Account</p>
+                <p class="text-[10px] text-slate-500">Settings & Security</p>
+            </div>
+
+            <!-- 🔒 অ্যাপ এন্ট্রি পিন লক সেটিংস অপশন -->
+            <div class="flex items-center justify-between px-3 py-2 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer">
+                <span class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                    <span>🔒</span> অ্যাপ এন্ট্রি লক
+                </span>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" id="appLockToggle" onchange="toggleAppLock(this)" class="sr-only peer">
+                    <div class="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-rose-600"></div>
+                </label>
+            </div>
+
+            <div class="border-t border-slate-100 my-1"></div>
+
+            <!-- লগ আউট বাটন -->
+            <button id="logout-btn" class="w-full text-left flex items-center px-3.5 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-lg transition">
+                <span>🚪</span> লগ আউট
             </button>
           </div>
         </div>
@@ -266,8 +288,6 @@
   
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6 flex-1">
-
-    
 
     <!-- TAB 0: HOME VIEW -->
     <div id="tab-home-view" class="tab-content space-y-6">
@@ -2494,6 +2514,40 @@
 	        console.log("Fingerprint cancelled", error);
 	    }
 	}
+
+	  // ১. অ্যাপ লক পেজ লোড হওয়ার সাথে সাথে টগল সুইচের বর্তমান অবস্থা সেট করা
+		document.addEventListener("DOMContentLoaded", function() {
+		    const isLockEnabled = localStorage.getItem("appLockEnabled") !== "false"; // বাই-ডিফল্ট অন থাকবে
+		    const toggleEl = document.getElementById('appLockToggle');
+		    if (toggleEl) {
+		        toggleEl.checked = isLockEnabled;
+		    }
+		});
+		
+		// ২. টগল পরিবর্তন করলে সেটিংস লোকালস্টোরেজে সেভ হওয়া
+		function toggleAppLock(checkbox) {
+		    if (checkbox.checked) {
+		        localStorage.setItem("appLockEnabled", "true");
+		        // চাইলে এখানে ছোট কোনো নোটিফিকেশন বা অ্যালার্ট দিতে পারেন
+		    } else {
+		        localStorage.setItem("appLockEnabled", "false");
+		    }
+		}
+		
+		// ৩. অ্যাপ বা ড্যাশবোর্ড খোলার সময় লক চেক করার ফাংশন
+		function checkAndRequestLock(onSuccess) {
+		    const isLockEnabled = localStorage.getItem("appLockEnabled") !== "false";
+		    
+		    if (isLockEnabled) {
+		        // লক অন থাকলে পাসকোড উইন্ডো ওপেন করবে
+		        requestPasscodeAuth(onSuccess);
+		    } else {
+		        // লক অফ থাকলে পাসকোড ছাড়াই সরাসরি কাজ করবে
+		        if (typeof onSuccess === 'function') {
+		            onSuccess();
+		        }
+		    }
+		}
 	  
     // এডিট বা ডিলিট করার সময় এখন সিকিউরিটি পিন চাওয়া হবে (রিকোয়েস্ট অনুযায়ী)
     window.openEditClientModal = function(clientId) {
