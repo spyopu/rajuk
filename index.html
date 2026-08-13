@@ -1794,146 +1794,87 @@
       return dateStr.substring(0, 7);
     }
 
-    // নিখুঁতভাবে মাস ও সাল ভিত্তিক মেট্রিক্স এবং মূলধন আলাদা রেখে ফিল্টার করার ফাংশন
+    // ১. নিখুঁতভাবে মাস ও সাল ভিত্তিক মেট্রিক্স, অফিস খরচ এবং মূলধন ফিল্টার করার ফাংশন
 function calculateGlobalMetrics() {
   let budget = 0, collection = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
   let ownerInjection = 0, ownerDrawing = 0;
   
-  let targetMonthStr = '';
-  let targetYearStr = '';
+  let targetFilter = (analyticsViewMode === 'monthly') 
+    ? (monthFilter?.value || getLocalDateString().substring(0, 7)) 
+    : (yearFilter?.value || String(new Date().getFullYear()));
 
   let filteredProjectCostList = [];
   let filteredOfficeCostList = [];
   let filteredOwnerInList = [];
   let filteredOwnerOutList = [];
 
-  if (analyticsViewMode === 'monthly') {
-    if (monthFilter && monthFilter.value) {
-      targetMonthStr = monthFilter.value; 
-    } else {
-      targetMonthStr = getLocalDateString().substring(0, 7);
+  // প্রজেক্ট ডাটা ফিল্টারিং
+  farmData.forEach(c => {
+    budget += (c.budget || 0);
+    let clientIncomeSum = 0, clientDiscountSum = 0;
+
+    if (c.history) {
+      c.history.forEach(t => {
+        let dateKey = (analyticsViewMode === 'monthly') ? getDateMonthPrefix(t.date) : (t.date?.substring(0, 4));
+        if (dateKey === targetFilter) {
+          if (t.type === 'income') collection += t.amount;
+          if (t.type === 'expense') {
+            prjExpense += t.amount;
+            filteredProjectCostList.push({ ...t, clientName: c.name, projectName: c.project });
+          }
+        }
+        if (t.type === 'income') {
+          clientIncomeSum += t.amount;
+          clientDiscountSum += (t.discount || 0);
+        }
+      });
     }
+    due += Math.max(0, (c.budget || 0) - (clientIncomeSum + clientDiscountSum));
+  });
 
-    // ১. প্রজেক্টের বাজেট, কালেকশন, প্রজেক্ট খরচ এবং বকেয়া হিসাব
-    farmData.forEach(c => {
-      budget += (c.budget || 0);
-      let clientIncomeSum = 0;
-      let clientDiscountSum = 0;
-
-      if (c.history) {
-        c.history.forEach(t => {
-          if (t.date && getDateMonthPrefix(t.date) === targetMonthStr) {
-            if (t.type === 'income') collection += t.amount;
-            if (t.type === 'expense') {
-              prjExpense += t.amount;
-              filteredProjectCostList.push({ ...t, clientName: c.name, projectName: c.project });
-            }
-          }
-          if (t.type === 'income') {
-            clientIncomeSum += t.amount;
-            clientDiscountSum += (t.discount || 0);
-          }
-        });
-      }
-      due += Math.max(0, (c.budget || 0) - (clientIncomeSum + clientDiscountSum));
-    });
-
-    // ২. অফিস খরচ ফিল্টার
-    officeExpenses.forEach(oe => {
-      if (oe.date && getDateMonthPrefix(oe.date) === targetMonthStr) {
-        totalOfficeExpense += oe.amount;
-        filteredOfficeCostList.push(oe);
-      }
-    });
-
-    // ৩. মূলধন (Owner In/Out) সম্পূর্ণ আলাদাভাবে ফিল্টার করা (আয়/ব্যয়ের সাথে মেলানো হয়নি)
-    ownerTransactions.forEach(ow => {
-      if (ow.date && getDateMonthPrefix(ow.date) === targetMonthStr) {
-        if (ow.type === 'injection') {
-          ownerInjection += ow.amount;
-          filteredOwnerInList.push(ow);
-        }
-        if (ow.type === 'drawing') {
-          ownerDrawing += ow.amount;
-          filteredOwnerOutList.push(ow);
-        }
-      }
-    });
-
-  } else {
-    // ইয়ার্লি ভিউ
-    if (yearFilter && yearFilter.value) {
-      targetYearStr = yearFilter.value;
-    } else {
-      targetYearStr = String(new Date().getFullYear());
+  // অফিস খরচ ফিল্টারিং
+  officeExpenses.forEach(oe => {
+    let dateKey = (analyticsViewMode === 'monthly') ? getDateMonthPrefix(oe.date) : (oe.date?.substring(0, 4));
+    if (dateKey === targetFilter) {
+      totalOfficeExpense += oe.amount;
+      filteredOfficeCostList.push(oe);
     }
+  });
 
-    farmData.forEach(c => {
-      budget += (c.budget || 0);
-      let clientIncomeSum = 0;
-      let clientDiscountSum = 0;
-
-      if (c.history) {
-        c.history.forEach(t => {
-          if (t.date && t.date.substring(0, 4) === targetYearStr) {
-            if (t.type === 'income') collection += t.amount;
-            if (t.type === 'expense') {
-              prjExpense += t.amount;
-              filteredProjectCostList.push({ ...t, clientName: c.name, projectName: c.project });
-            }
-          }
-          if (t.type === 'income') {
-            clientIncomeSum += t.amount;
-            clientDiscountSum += (t.discount || 0);
-          }
-        });
+  // মূলধন (Owner In/Out) ফিল্টারিং (আয়-ব্যয়ের সাথে মিশে না গিয়ে স্বাধীন থাকবে)
+  ownerTransactions.forEach(ow => {
+    let dateKey = (analyticsViewMode === 'monthly') ? getDateMonthPrefix(ow.date) : (ow.date?.substring(0, 4));
+    if (dateKey === targetFilter) {
+      if (ow.type === 'injection') {
+        ownerInjection += ow.amount;
+        filteredOwnerInList.push(ow);
       }
-      due += Math.max(0, (c.budget || 0) - (clientIncomeSum + clientDiscountSum));
-    });
-
-    officeExpenses.forEach(oe => {
-      if (oe.date && oe.date.substring(0, 4) === targetYearStr) {
-        totalOfficeExpense += oe.amount;
-        filteredOfficeCostList.push(oe);
+      if (ow.type === 'drawing') {
+        ownerDrawing += ow.amount;
+        filteredOwnerOutList.push(ow);
       }
-    });
+    }
+  });
 
-    ownerTransactions.forEach(ow => {
-      if (ow.date && ow.date.substring(0, 4) === targetYearStr) {
-        if (ow.type === 'injection') {
-          ownerInjection += ow.amount;
-          filteredOwnerInList.push(ow);
-        }
-        if (ow.type === 'drawing') {
-          ownerDrawing += ow.amount;
-          filteredOwnerOutList.push(ow);
-        }
-      }
-    });
-  }
-
-  // লাভ, খরচ এবং ক্যাশ ব্যালেন্স ক্যালকুলেশন
-  let totalExpense = prjExpense + totalOfficeExpense;
+  // হিসাব নিকাশ
   let grossProfit = collection - prjExpense;
   let netProfit = grossProfit - totalOfficeExpense;
   let ownerNetCapital = ownerInjection - ownerDrawing;
-  
-  // ক্যাশ ব্যালেন্সে শুধুমাত্র মূলধন যোগ/বিয়োগ হবে, অপারেশনাল আয়-ব্যয়ে এর প্রভাব পড়বে না
   let netBalance = (collection + ownerInjection) - (prjExpense + totalOfficeExpense + ownerDrawing);
 
   globalCalculatedNetBalance = netBalance;
   globalCalculatedIncome = collection;
-  globalCalculatedExpense = totalExpense;
+  globalCalculatedExpense = prjExpense + totalOfficeExpense;
   globalCalculatedDue = due;
 
-  const setVal = (id, val, isColored = false, customColorClass = '') => {
+  const setVal = (id, val, isColored = false, colorClass = '') => {
     const el = document.getElementById(id);
     if (el) {
       const formatted = '৳' + val.toLocaleString('en-IN');
       el.dataset.original = formatted;
       el.innerText = formatted;
       if (isColored) {
-        el.className = `font-mono font-black hide-sensitive ${customColorClass}`;
+        el.className = `font-mono font-black hide-sensitive ${colorClass}`;
       }
     }
   };
@@ -1941,7 +1882,7 @@ function calculateGlobalMetrics() {
   // UI আপডেট
   setVal('global-budget', budget);
   setVal('global-income', collection);
-  setVal('global-expense', totalExpense);
+  setVal('global-expense', prjExpense + totalOfficeExpense);
   setVal('global-due', due);
   setVal('global-net', netBalance, true, netBalance >= 0 ? 'text-emerald-600' : 'text-rose-600');
 
@@ -1996,7 +1937,7 @@ function calculateGlobalMetrics() {
   `);
 }
 
-// বার্ষিক ব্রেকডাউন টেবিল (এখানেও মূলধন আয়/ব্যয়ের সাথে ক্যাটাগরি অনুযায়ী আলাদা রাখা হয়েছে)
+// ২. বার্ষিক ব্রেকডাউন টেবিল রেন্ডার করার ফাংশন
 function renderYearlyBreakdownTable() {
   const yearVal = yearFilter && yearFilter.value ? yearFilter.value : String(new Date().getFullYear());
   const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
@@ -2029,7 +1970,6 @@ function renderYearlyBreakdownTable() {
       }
     });
 
-    // বার্ষিক টেবিলে ক্যাশফ্লো ঠিক রাখতে মালিকের ইনজেকশন ইনকাম ও ড্রয়িং খরচের সাথে হিসাব করা হলেও মূল প্রজেক্ট আয় প্রভাবিত হয় না
     ownerTransactions.forEach(ow => {
       if (getDateMonthPrefix(ow.date) === monthPrefix) {
         if (ow.type === 'injection') mInc += ow.amount;
