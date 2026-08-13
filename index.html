@@ -398,9 +398,9 @@
 
           <div class="grid grid-cols-2 md:grid-cols-5 gap-2.5 text-center">
             <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
-              <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">মোট বাজেট</p>
-              <h3 id="global-budget" class="text-sm md:text-base font-black text-slate-800 mt-0.5 font-mono hide-sensitive">৳0</h3>
-            </div>
+			  <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">নিট মূলধন</p>
+			  <h3 id="global-owner-net" class="text-sm md:text-base font-black text-slate-800 mt-0.5 font-mono hide-sensitive">৳০</h3>
+			</div>
             <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100 shadow-2xs">
               <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">মোট জমা</p>
               <h3 id="global-income" class="text-sm md:text-base font-black text-emerald-600 mt-0.5 font-mono hide-sensitive">৳0</h3>
@@ -434,8 +434,8 @@
 				      <th class="p-2">মাস</th>
 				      <th class="p-2 text-right">জমা (৳)</th>
 				      <th class="p-2 text-right">খরচ (৳)</th>
-				      <th class="p-2 text-right text-cyan-600">ক্যাশ জমা (৳)</th>
-				      <th class="p-2 text-right text-amber-600">ক্যাশ উত্তোলন (৳)</th>
+				      <th class="p-2 text-right text-cyan-600">মূলধন (৳)</th>
+				      <th class="p-2 text-right text-amber-600">উত্তোলন (৳)</th>
 				      <th class="p-2 text-right">ব্যালেন্স (৳)</th>
 				    </tr>
 				  </thead>
@@ -2000,7 +2000,10 @@ function calculateGlobalMetrics() {
     }
   };
 
-  setVal('global-budget', budget);
+  // আগের কোড: setVal('global-budget', budget); 
+  // এই লাইনটি সরিয়ে নিচের লাইনটি বসিয়ে দিন:
+  
+  setVal('global-owner-net', ownerNetCapital);
   setVal('global-income', collection);
   setVal('global-expense', totalExpense);
   setVal('global-due', due);
