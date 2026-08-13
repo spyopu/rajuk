@@ -266,25 +266,6 @@
   
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6 flex-1">
-
-    <!-- NAVIGATION TABS & DATE FILTERS (Mobile te hidden, Home-a hidden) -->
-    <div id="top-navigation-bar" class="bg-white p-3 md:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex-col md:flex-row md:items-center justify-between gap-3 hidden">
-      <div class="flex flex-wrap items-center justify-between md:justify-end gap-2 w-full">
-        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-          <button onclick="setAnalyticsViewMode('monthly')" id="mode-btn-monthly" class="px-3 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm">মাসিক</button>
-          <button onclick="setAnalyticsViewMode('yearly')" id="mode-btn-yearly" class="px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">বার্ষিক</button>
-        </div>
-
-        <div id="month-picker-wrapper" class="flex items-center gap-2">
-          <input type="month" id="month-filter" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs rounded-xl px-3 py-1.5 outline-none focus:border-rose-600 transition">
-        </div>
-
-        <div id="year-picker-wrapper" class="flex items-center gap-2 hidden">
-          <select id="year-filter" onchange="uiUpdatePipeline()" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs rounded-xl px-3 py-1.5 outline-none focus:border-rose-600 transition">
-          </select>
-        </div>
-      </div>
-    </div>
 	  
     <!-- TAB 0: HOME VIEW -->
     <div id="tab-home-view" class="tab-content space-y-6">
@@ -368,31 +349,29 @@
         <!-- Minimal Summary Cards -->
         <div id="report-content-body" class="space-y-4 filter blur-md select-none pointer-events-none transition-all duration-300">
           
-          <!-- Redesigned Modern Filter Bar Inside Dashboard -->
-			<div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-row items-center justify-between gap-4">
-			  
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-row items-center justify-between gap-4">
 			  <!-- View Mode Switcher Pills -->
 			  <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-				<button onclick="setAnalyticsViewMode('monthly')" id="dash-mode-btn-monthly" class="px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm flex items-center gap-1.5">
-				  <span>📅</span> মাসিক
-				</button>
-				<button onclick="setAnalyticsViewMode('yearly')" id="dash-mode-btn-yearly" class="px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 flex items-center gap-1.5">
-				  <span>📆</span> বার্ষিক
-				</button>
+			    <button onclick="setAnalyticsViewMode('monthly')" id="mode-btn-monthly" class="px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm flex items-center gap-1.5">
+			      <span>📅</span> মাসিক
+			    </button>
+			    <button onclick="setAnalyticsViewMode('yearly')" id="mode-btn-yearly" class="px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 flex items-center gap-1.5">
+			      <span>📆</span> বার্ষিক
+			    </button>
 			  </div>
-
+			
 			  <!-- Date Selectors with Icons & Badges -->
 			  <div class="flex items-center gap-3">
-				<div id="dash-month-picker-wrapper" class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">
-				  <span class="text-xs font-bold text-slate-500">মাস:</span>
-				  <input type="month" id="dash-month-filter" class="bg-transparent text-rose-600 font-bold font-mono text-xs outline-none cursor-pointer">
-				</div>
-
-				<div id="dash-year-picker-wrapper" class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs hidden">
-				  <span class="text-xs font-bold text-slate-500">সাল:</span>
-				  <select id="dash-year-filter" onchange="syncYearFilter(this.value)" class="bg-transparent text-rose-600 font-bold font-mono text-xs outline-none cursor-pointer">
-				  </select>
-				</div>
+			    <div id="month-picker-wrapper" class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">
+			      <span class="text-xs font-bold text-slate-500">মাস:</span>
+			      <input type="month" id="month-filter" class="bg-transparent text-rose-600 font-bold font-mono text-xs outline-none cursor-pointer">
+			    </div>
+			
+			    <div id="year-picker-wrapper" class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs hidden">
+			      <span class="text-xs font-bold text-slate-500">সাল:</span>
+			      <select id="year-filter" class="bg-transparent text-rose-600 font-bold font-mono text-xs outline-none cursor-pointer">
+			      </select>
+			    </div>
 			  </div>
 			</div>
 
