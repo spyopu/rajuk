@@ -1803,320 +1803,328 @@
     }
 
     // নিখুঁতভাবে মাস ও সাল ভিত্তিক অফিস খরচ এবং মূলধন ফিল্টার করার ফাংশন
-    function calculateGlobalMetrics() {
-      let budget = 0, collection = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
-      let ownerInjection = 0, ownerDrawing = 0;
-      
-      let targetMonthStr = '';
-      let targetYearStr = '';
-      let previousCumulativeNet = 0;
+function calculateGlobalMetrics() {
+  let budget = 0, collection = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
+  let ownerInjection = 0, ownerDrawing = 0;
+  
+  let targetMonthStr = '';
+  let targetYearStr = '';
+  let previousCumulativeNet = 0;
 
-      let filteredProjectCostList = [];
-      let filteredOfficeCostList = [];
-      let filteredOwnerInList = [];
-      let filteredOwnerOutList = [];
+  let filteredProjectCostList = [];
+  let filteredOfficeCostList = [];
+  let filteredOwnerInList = [];
+  let filteredOwnerOutList = [];
 
-      if (analyticsViewMode === 'monthly') {
-        if (monthFilter && monthFilter.value) {
-          targetMonthStr = monthFilter.value; 
-        } else {
-          targetMonthStr = getLocalDateString().substring(0, 7);
-        }
+  if (analyticsViewMode === 'monthly') {
+    if (monthFilter && monthFilter.value) {
+      targetMonthStr = monthFilter.value; 
+    } else {
+      targetMonthStr = getLocalDateString().substring(0, 7);
+    }
 
-        let pastCollection = 0, pastPrjExpense = 0, pastOfficeExpense = 0, pastOwnerInjection = 0, pastOwnerDrawing = 0;
+    let pastCollection = 0, pastPrjExpense = 0, pastOfficeExpense = 0, pastOwnerInjection = 0, pastOwnerDrawing = 0;
 
-        farmData.forEach(c => {
-          if (c.history) {
-            c.history.forEach(t => {
-              if (getDateMonthPrefix(t.date) < targetMonthStr) {
-                if (t.type === 'income') pastCollection += t.amount;
-                if (t.type === 'expense') pastPrjExpense += t.amount;
-              }
-            });
-          }
-        });
-
-        officeExpenses.forEach(oe => {
-          if (getDateMonthPrefix(oe.date) < targetMonthStr) {
-            pastOfficeExpense += oe.amount;
-          }
-        });
-
-        ownerTransactions.forEach(ow => {
-          if (getDateMonthPrefix(ow.date) < targetMonthStr) {
-            if (ow.type === 'injection') pastOwnerInjection += ow.amount;
-            if (ow.type === 'drawing') pastOwnerDrawing += ow.amount;
-          }
-        });
-
-        previousCumulativeNet = (pastCollection + pastOwnerInjection) - (pastPrjExpense + pastOfficeExpense + pastOwnerDrawing);
-
-        farmData.forEach(c => {
-          budget += (c.budget || 0);
-          let clientIncomeSum = 0;
-          let clientDiscountSum = 0;
-
-          if (c.history) {
-            c.history.forEach(t => {
-              if (getDateMonthPrefix(t.date) === targetMonthStr) {
-                if (t.type === 'income') collection += t.amount;
-                if (t.type === 'expense') {
-                  prjExpense += t.amount;
-                  filteredProjectCostList.push({ ...t, clientName: c.name, projectName: c.project });
-                }
-              }
-              if (t.type === 'income') {
-                clientIncomeSum += t.amount;
-                clientDiscountSum += (t.discount || 0);
-              }
-            });
-          }
-          due += Math.max(0, (c.budget || 0) - (clientIncomeSum + clientDiscountSum));
-        });
-
-        officeExpenses.forEach(oe => {
-          if (getDateMonthPrefix(oe.date) === targetMonthStr) {
-            totalOfficeExpense += oe.amount;
-            filteredOfficeCostList.push(oe);
-          }
-        });
-
-        ownerTransactions.forEach(ow => {
-          if (getDateMonthPrefix(ow.date) === targetMonthStr) {
-            if (ow.type === 'injection') {
-              ownerInjection += ow.amount;
-              filteredOwnerInList.push(ow);
-            }
-            if (ow.type === 'drawing') {
-              ownerDrawing += ow.amount;
-              filteredOwnerOutList.push(ow);
-            }
-          }
-        });
-
-      } else {
-        if (yearFilter && yearFilter.value) {
-          targetYearStr = yearFilter.value;
-        } else {
-          targetYearStr = String(new Date().getFullYear());
-        }
-
-        let pastCollection = 0, pastPrjExpense = 0, pastOfficeExpense = 0, pastOwnerInjection = 0, pastOwnerDrawing = 0;
-
-        farmData.forEach(c => {
-          if (c.history) {
-            c.history.forEach(t => {
-              if (t.date && t.date.substring(0, 4) < targetYearStr) {
-                if (t.type === 'income') pastCollection += t.amount;
-                if (t.type === 'expense') pastPrjExpense += t.amount;
-              }
-            });
-          }
-        });
-
-        officeExpenses.forEach(oe => {
-          if (oe.date && oe.date.substring(0, 4) < targetYearStr) {
-            pastOfficeExpense += oe.amount;
-          }
-        });
-
-        ownerTransactions.forEach(ow => {
-          if (ow.date && ow.date.substring(0, 4) < targetYearStr) {
-            if (ow.type === 'injection') pastOwnerInjection += ow.amount;
-            if (ow.type === 'drawing') pastOwnerDrawing += ow.amount;
-          }
-        });
-
-        previousCumulativeNet = (pastCollection + pastOwnerInjection) - (pastPrjExpense + pastOfficeExpense + pastOwnerDrawing);
-
-        farmData.forEach(c => {
-          budget += (c.budget || 0);
-          let clientIncomeSum = 0;
-          let clientDiscountSum = 0;
-
-          if (c.history) {
-            c.history.forEach(t => {
-              if (t.date && t.date.substring(0, 4) === targetYearStr) {
-                if (t.type === 'income') collection += t.amount;
-                if (t.type === 'expense') {
-                  prjExpense += t.amount;
-                  filteredProjectCostList.push({ ...t, clientName: c.name, projectName: c.project });
-                }
-              }
-              if (t.type === 'income') {
-                clientIncomeSum += t.amount;
-                clientDiscountSum += (t.discount || 0);
-              }
-            });
-          }
-          due += Math.max(0, (c.budget || 0) - (clientIncomeSum + clientDiscountSum));
-        });
-
-        officeExpenses.forEach(oe => {
-          if (oe.date && oe.date.substring(0, 4) === targetYearStr) {
-            totalOfficeExpense += oe.amount;
-            filteredOfficeCostList.push(oe);
-          }
-        });
-
-        ownerTransactions.forEach(ow => {
-          if (ow.date && ow.date.substring(0, 4) === targetYearStr) {
-            if (ow.type === 'injection') {
-              ownerInjection += ow.amount;
-              filteredOwnerInList.push(ow);
-            }
-            if (ow.type === 'drawing') {
-              ownerDrawing += ow.amount;
-              filteredOwnerOutList.push(ow);
-            }
+    farmData.forEach(c => {
+      if (c.history) {
+        c.history.forEach(t => {
+          if (getDateMonthPrefix(t.date) < targetMonthStr) {
+            if (t.type === 'income') pastCollection += t.amount;
+            if (t.type === 'expense') pastPrjExpense += t.amount;
           }
         });
       }
+    });
 
-      let totalExpense = prjExpense + totalOfficeExpense;
-      let grossProfit = collection - prjExpense;
-      let netProfit = grossProfit - totalOfficeExpense;
-      let ownerNetCapital = ownerInjection - ownerDrawing;
-      let netBalance = (collection + ownerInjection) - (prjExpense + totalOfficeExpense + ownerDrawing);
-
-      globalCalculatedNetBalance = netBalance;
-      globalCalculatedIncome = collection;
-      globalCalculatedExpense = totalExpense;
-      globalCalculatedDue = due;
-
-      const setVal = (id, val, isColored = false, customColorClass = '') => {
-        const el = document.getElementById(id);
-        if (el) {
-          const formatted = '৳' + val.toLocaleString('en-IN');
-          el.dataset.original = formatted;
-          el.innerText = formatted;
-          if (isColored) {
-            el.className = `font-mono font-black hide-sensitive ${customColorClass}`;
-          }
-        }
-      };
-
-      setVal('global-budget', budget);
-      setVal('global-income', collection);
-      setVal('global-expense', totalExpense);
-      setVal('global-due', due);
-      setVal('global-net', netBalance, true, netBalance >= 0 ? 'text-rose-600' : 'text-rose-600');
-
-      setVal('report-collection', collection);
-      setVal('report-project-cost', prjExpense);
-      setVal('report-gross-profit', grossProfit);
-      setVal('report-office-expense', totalOfficeExpense);
-      setVal('report-net-profit', netProfit, true, netProfit >= 0 ? 'text-emerald-600' : 'text-rose-600');
-
-      setVal('report-owner-in', ownerInjection);
-      setVal('report-owner-out', ownerDrawing);
-      setVal('report-owner-net', ownerNetCapital);
-
-      const populateListHtml = (listId, items, formatter) => {
-        const container = document.getElementById(listId);
-        if (!container) return;
-        if (items.length === 0) {
-          container.innerHTML = `<p class="text-[11px] text-slate-400 italic py-1">কোনো তথ্য নেই</p>`;
-          return;
-        }
-        container.innerHTML = items.map(formatter).join('');
-      };
-
-      populateListHtml('acc-project-cost-list', filteredProjectCostList, item => `
-        <div class="flex justify-between items-center py-1 border-b border-slate-100 last:border-0">
-          <div>
-            <p class="font-bold text-slate-800">${item.projectName || item.clientName}</p>
-            <p class="text-[10px] text-slate-400">${item.date} • ${item.details || ''}</p>
-          </div>
-          <span class="font-mono font-bold text-rose-600">৳${item.amount.toLocaleString('en-IN')}</span>
-        </div>
-      `);
-
-      populateListHtml('acc-office-cost-list', filteredOfficeCostList, item => `
-        <div class="flex justify-between items-center py-1 border-b border-slate-100 last:border-0">
-          <div>
-            <p class="font-bold text-slate-800">${item.category || 'অফিস খরচ'}</p>
-            <p class="text-[10px] text-slate-400">${item.date} • ${item.details || ''}</p>
-          </div>
-          <span class="font-mono font-bold text-rose-600">৳${item.amount.toLocaleString('en-IN')}</span>
-        </div>
-      `);
-
-      populateListHtml('acc-owner-drawing-list', filteredOwnerOutList, item => `
-        <div class="flex justify-between items-center py-1 border-b border-slate-100 last:border-0">
-          <div>
-            <p class="font-bold text-slate-800">${item.details || 'উত্তোলন'}</p>
-            <p class="text-[10px] text-slate-400">${item.date}</p>
-          </div>
-          <span class="font-mono font-bold text-rose-600">৳${item.amount.toLocaleString('en-IN')}</span>
-        </div>
-      `);
-    }
-
-    function renderYearlyBreakdownTable() {
-      const yearVal = yearFilter && yearFilter.value ? yearFilter.value : String(new Date().getFullYear());
-      const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
-      
-      let tbodyHtml = '';
-      let totalYrInc = 0;
-      let totalYrExp = 0;
-
-      for (let m = 1; m <= 12; m++) {
-        const mStr = String(m).padStart(2, '0');
-        const monthPrefix = `${yearVal}-${mStr}`;
-
-        let mInc = 0;
-        let mExp = 0;
-
-        farmData.forEach(c => {
-          if (c.history) {
-            c.history.forEach(t => {
-              if (getDateMonthPrefix(t.date) === monthPrefix) {
-                if (t.type === 'income') mInc += t.amount;
-                if (t.type === 'expense') mExp += t.amount;
-              }
-            });
-          }
-        });
-
-        officeExpenses.forEach(oe => {
-          if (getDateMonthPrefix(oe.date) === monthPrefix) {
-            mExp += oe.amount;
-          }
-        });
-
-        ownerTransactions.forEach(ow => {
-          if (getDateMonthPrefix(ow.date) === monthPrefix) {
-            if (ow.type === 'injection') mInc += ow.amount;
-            if (ow.type === 'drawing') mExp += ow.amount;
-          }
-        });
-
-        let mNet = mInc - mExp;
-        totalYrInc += mInc;
-        totalYrExp += mExp;
-
-        tbodyHtml += `
-          <tr class="hover:bg-slate-50 transition">
-            <td class="p-2 font-bold text-slate-700">${monthNames[m - 1]}</td>
-            <td class="p-2 text-right font-mono text-emerald-600">৳${mInc.toLocaleString('en-IN')}</td>
-            <td class="p-2 text-right font-mono text-rose-600">৳${mExp.toLocaleString('en-IN')}</td>
-            <td class="p-2 text-right font-mono font-bold ${mNet >= 0 ? 'text-slate-900' : 'text-rose-600'}">৳${mNet.toLocaleString('en-IN')}</td>
-          </tr>
-        `;
+    officeExpenses.forEach(oe => {
+      if (getDateMonthPrefix(oe.date) < targetMonthStr) {
+        pastOfficeExpense += oe.amount;
       }
+    });
 
-      document.getElementById('yearly-breakdown-rows').innerHTML = tbodyHtml;
-      let netYrTotal = totalYrInc - totalYrExp;
-      document.getElementById('yearly-breakdown-foot').innerHTML = `
-        <tr>
-          <td class="p-2">মোট (${yearVal})</td>
-          <td class="p-2 text-right font-mono text-emerald-600">৳${totalYrInc.toLocaleString('en-IN')}</td>
-          <td class="p-2 text-right font-mono text-rose-600">৳${totalYrExp.toLocaleString('en-IN')}</td>
-          <td class="p-2 text-right font-mono ${netYrTotal >= 0 ? 'text-slate-900' : 'text-rose-600'}">৳${netYrTotal.toLocaleString('en-IN')}</td>
-        </tr>
-      `;
+    ownerTransactions.forEach(ow => {
+      if (getDateMonthPrefix(ow.date) < targetMonthStr) {
+        if (ow.type === 'injection') pastOwnerInjection += ow.amount;
+        if (ow.type === 'drawing') pastOwnerDrawing += ow.amount;
+      }
+    });
+
+    previousCumulativeNet = (pastCollection + pastOwnerInjection) - (pastPrjExpense + pastOfficeExpense + pastOwnerDrawing);
+
+    farmData.forEach(c => {
+      budget += (c.budget || 0);
+      let clientIncomeSum = 0;
+      let clientDiscountSum = 0;
+
+      if (c.history) {
+        c.history.forEach(t => {
+          if (getDateMonthPrefix(t.date) === targetMonthStr) {
+            if (t.type === 'income') collection += t.amount;
+            if (t.type === 'expense') {
+              prjExpense += t.amount;
+              filteredProjectCostList.push({ ...t, clientName: c.name, projectName: c.project });
+            }
+          }
+          if (t.type === 'income') {
+            clientIncomeSum += t.amount;
+            clientDiscountSum += (t.discount || 0);
+          }
+        });
+      }
+      due += Math.max(0, (c.budget || 0) - (clientIncomeSum + clientDiscountSum));
+    });
+
+    officeExpenses.forEach(oe => {
+      if (getDateMonthPrefix(oe.date) === targetMonthStr) {
+        totalOfficeExpense += oe.amount;
+        filteredOfficeCostList.push(oe);
+      }
+    });
+
+    ownerTransactions.forEach(ow => {
+      if (getDateMonthPrefix(ow.date) === targetMonthStr) {
+        if (ow.type === 'injection') {
+          ownerInjection += ow.amount;
+          filteredOwnerInList.push(ow);
+        }
+        if (ow.type === 'drawing') {
+          ownerDrawing += ow.amount;
+          filteredOwnerOutList.push(ow);
+        }
+      }
+    });
+
+  } else {
+    if (yearFilter && yearFilter.value) {
+      targetYearStr = yearFilter.value;
+    } else {
+      targetYearStr = String(new Date().getFullYear());
     }
+
+    let pastCollection = 0, pastPrjExpense = 0, pastOfficeExpense = 0, pastOwnerInjection = 0, pastOwnerDrawing = 0;
+
+    farmData.forEach(c => {
+      if (c.history) {
+        c.history.forEach(t => {
+          if (t.date && t.date.substring(0, 4) < targetYearStr) {
+            if (t.type === 'income') pastCollection += t.amount;
+            if (t.type === 'expense') pastPrjExpense += t.amount;
+          }
+        });
+      }
+    });
+
+    officeExpenses.forEach(oe => {
+      if (oe.date && oe.date.substring(0, 4) < targetYearStr) {
+        pastOfficeExpense += oe.amount;
+      }
+    });
+
+    ownerTransactions.forEach(ow => {
+      if (ow.date && ow.date.substring(0, 4) < targetYearStr) {
+        if (ow.type === 'injection') pastOwnerInjection += ow.amount;
+        if (ow.type === 'drawing') pastOwnerDrawing += ow.amount;
+      }
+    });
+
+    previousCumulativeNet = (pastCollection + pastOwnerInjection) - (pastPrjExpense + pastOfficeExpense + pastOwnerDrawing);
+
+    farmData.forEach(c => {
+      budget += (c.budget || 0);
+      let clientIncomeSum = 0;
+      let clientDiscountSum = 0;
+
+      if (c.history) {
+        c.history.forEach(t => {
+          if (t.date && t.date.substring(0, 4) === targetYearStr) {
+            if (t.type === 'income') collection += t.amount;
+            if (t.type === 'expense') {
+              prjExpense += t.amount;
+              filteredProjectCostList.push({ ...t, clientName: c.name, projectName: c.project });
+            }
+          }
+          if (t.type === 'income') {
+            clientIncomeSum += t.amount;
+            clientDiscountSum += (t.discount || 0);
+          }
+        });
+      }
+      due += Math.max(0, (c.budget || 0) - (clientIncomeSum + clientDiscountSum));
+    });
+
+    officeExpenses.forEach(oe => {
+      if (oe.date && oe.date.substring(0, 4) === targetYearStr) {
+        totalOfficeExpense += oe.amount;
+        filteredOfficeCostList.push(oe);
+      }
+    });
+
+    ownerTransactions.forEach(ow => {
+      if (ow.date && ow.date.substring(0, 4) === targetYearStr) {
+        if (ow.type === 'injection') {
+          ownerInjection += ow.amount;
+          filteredOwnerInList.push(ow);
+        }
+        if (ow.type === 'drawing') {
+          ownerDrawing += ow.amount;
+          filteredOwnerOutList.push(ow);
+        }
+      }
+    });
+  }
+
+  let totalExpense = prjExpense + totalOfficeExpense;
+  let grossProfit = collection - prjExpense;
+  let netProfit = grossProfit - totalOfficeExpense;
+  let ownerNetCapital = ownerInjection - ownerDrawing;
+  
+  // কারেন্ট পিরিয়ডের নিট ব্যালেন্সের সাথে আগের সব মাসের জমানো ব্যালেন্স যোগ করা হলো
+  let netBalance = previousCumulativeNet + (collection + ownerInjection) - (totalExpense + ownerDrawing);
+
+  globalCalculatedNetBalance = netBalance;
+  globalCalculatedIncome = collection;
+  globalCalculatedExpense = totalExpense;
+  globalCalculatedDue = due;
+
+  const setVal = (id, val, isColored = false, customColorClass = '') => {
+    const el = document.getElementById(id);
+    if (el) {
+      const formatted = '৳' + val.toLocaleString('en-IN');
+      el.dataset.original = formatted;
+      el.innerText = formatted;
+      if (isColored) {
+        el.className = `font-mono font-black hide-sensitive ${customColorClass}`;
+      }
+    }
+  };
+
+  setVal('global-budget', budget);
+  setVal('global-income', collection);
+  setVal('global-expense', totalExpense);
+  setVal('global-due', due);
+  setVal('global-net', netBalance, true, netBalance >= 0 ? 'text-emerald-600' : 'text-rose-600');
+
+  setVal('report-collection', collection);
+  setVal('report-project-cost', prjExpense);
+  setVal('report-gross-profit', grossProfit);
+  setVal('report-office-expense', totalOfficeExpense);
+  setVal('report-net-profit', netProfit, true, netProfit >= 0 ? 'text-emerald-600' : 'text-rose-600');
+
+  setVal('report-owner-in', ownerInjection);
+  setVal('report-owner-out', ownerDrawing);
+  setVal('report-owner-net', ownerNetCapital);
+
+  const populateListHtml = (listId, items, formatter) => {
+    const container = document.getElementById(listId);
+    if (!container) return;
+    if (items.length === 0) {
+      container.innerHTML = `<p class="text-[11px] text-slate-400 italic py-1">কোনো তথ্য নেই</p>`;
+      return;
+    }
+    container.innerHTML = items.map(formatter).join('');
+  };
+
+  populateListHtml('acc-project-cost-list', filteredProjectCostList, item => `
+    <div class="flex justify-between items-center py-1 border-b border-slate-100 last:border-0">
+      <div>
+        <p class="font-bold text-slate-800">${item.projectName || item.clientName}</p>
+        <p class="text-[10px] text-slate-400">${item.date} • ${item.details || ''}</p>
+      </div>
+      <span class="font-mono font-bold text-rose-600">৳${item.amount.toLocaleString('en-IN')}</span>
+    </div>
+  `);
+
+  populateListHtml('acc-office-cost-list', filteredOfficeCostList, item => `
+    <div class="flex justify-between items-center py-1 border-b border-slate-100 last:border-0">
+      <div>
+        <p class="font-bold text-slate-800">${item.category || 'অফিস খরচ'}</p>
+        <p class="text-[10px] text-slate-400">${item.date} • ${item.details || ''}</p>
+      </div>
+      <span class="font-mono font-bold text-rose-600">৳${item.amount.toLocaleString('en-IN')}</span>
+    </div>
+  `);
+
+  populateListHtml('acc-owner-drawing-list', filteredOwnerOutList, item => `
+    <div class="flex justify-between items-center py-1 border-b border-slate-100 last:border-0">
+      <div>
+        <p class="font-bold text-slate-800">${item.details || 'উত্তোলন'}</p>
+        <p class="text-[10px] text-slate-400">${item.date}</p>
+      </div>
+      <span class="font-mono font-bold text-rose-600">৳${item.amount.toLocaleString('en-IN')}</span>
+    </div>
+  `);
+}
+
+function renderYearlyBreakdownTable() {
+  const yearVal = yearFilter && yearFilter.value ? yearFilter.value : String(new Date().getFullYear());
+  const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+  
+  let tbodyHtml = '';
+  let totalYrInc = 0;
+  let totalYrExp = 0;
+
+  for (let m = 1; m <= 12; m++) {
+    const mStr = String(m).padStart(2, '0');
+    const monthPrefix = `${yearVal}-${mStr}`;
+
+    let mInc = 0;
+    let mExp = 0;
+
+    farmData.forEach(c => {
+      if (c.history) {
+        c.history.forEach(t => {
+          if (getDateMonthPrefix(t.date) === monthPrefix) {
+            if (t.type === 'income') mInc += t.amount;
+            if (t.type === 'expense') mExp += t.amount;
+          }
+        });
+      }
+    });
+
+    officeExpenses.forEach(oe => {
+      if (getDateMonthPrefix(oe.date) === monthPrefix) {
+        mExp += oe.amount;
+      }
+    });
+
+    ownerTransactions.forEach(ow => {
+      if (getDateMonthPrefix(ow.date) === monthPrefix) {
+        if (ow.type === 'injection') mInc += ow.amount;
+        if (ow.type === 'drawing') mExp += ow.amount;
+      }
+    });
+
+    let mNet = mInc - mExp;
+    totalYrInc += mInc;
+    totalYrExp += mExp;
+
+    tbodyHtml += `
+      <tr class="hover:bg-slate-50 transition">
+        <td class="p-2 font-bold text-slate-700">${monthNames[m - 1]}</td>
+        <td class="p-2 text-right font-mono text-emerald-600">৳${mInc.toLocaleString('en-IN')}</td>
+        <td class="p-2 text-right font-mono text-rose-600">৳${mExp.toLocaleString('en-IN')}</td>
+        <td class="p-2 text-right font-mono font-bold ${mNet >= 0 ? 'text-slate-900' : 'text-rose-600'}">৳${mNet.toLocaleString('en-IN')}</td>
+      </tr>
+    `;
+  }
+
+  const tbodyEl = document.getElementById('yearly-breakdown-rows');
+  const tfootEl = document.getElementById('yearly-breakdown-foot');
+
+  if (tbodyEl) tbodyEl.innerHTML = tbodyHtml;
+  
+  let netYrTotal = totalYrInc - totalYrExp;
+  if (tfootEl) {
+    tfootEl.innerHTML = `
+      <tr>
+        <td class="p-2 font-bold">মোট (${yearVal})</td>
+        <td class="p-2 text-right font-mono text-emerald-600">৳${totalYrInc.toLocaleString('en-IN')}</td>
+        <td class="p-2 text-right font-mono text-rose-600">৳${totalYrExp.toLocaleString('en-IN')}</td>
+        <td class="p-2 text-right font-mono font-bold ${netYrTotal >= 0 ? 'text-slate-900' : 'text-rose-600'}">৳${netYrTotal.toLocaleString('en-IN')}</td>
+      </tr>
+    `;
+  }
+}
 
     // ক্লায়েন্ট লিস্টে শুধুমাত্র প্রজেক্টের নাম দেখানোর রিকোয়ারমেন্ট অনুযায়ী আপডেট করা রেন্ডার ফাংশন
     function renderClientCards() {
