@@ -985,51 +985,44 @@
       }
     }
 
+	 // মাসিক ও বার্ষিক ফিল্টার বার
     window.setAnalyticsViewMode = function(mode) {
-      analyticsViewMode = mode;
-      const btnMonthly = document.getElementById('mode-btn-monthly');
-      const btnYearly = document.getElementById('mode-btn-yearly');
-      const dashBtnMonthly = document.getElementById('dash-mode-btn-monthly');
-      const dashBtnYearly = document.getElementById('dash-mode-btn-yearly');
-      const monthWrapper = document.getElementById('month-picker-wrapper');
-      const yearWrapper = document.getElementById('year-picker-wrapper');
-      const dashMonthWrapper = document.getElementById('dash-month-picker-wrapper');
-      const dashYearWrapper = document.getElementById('dash-year-picker-wrapper');
-      const yearlySection = document.getElementById('yearly-analytics-section');
-      const dashTitle = document.getElementById('dashboard-heading-title');
-      const profitBadge = document.getElementById('profit-badge');
-
-      if (mode === 'monthly') {
-        if(btnMonthly) btnMonthly.className = "px-3 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
-        if(btnYearly) btnYearly.className = "px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
-        if(dashBtnMonthly) dashBtnMonthly.className = "px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm flex items-center gap-1.5";
-        if(dashBtnYearly) dashBtnYearly.className = "px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 flex items-center gap-1.5";
-        
-        if(monthWrapper) monthWrapper.classList.remove('hidden');
-        if(yearWrapper) yearWrapper.classList.add('hidden');
-        if(dashMonthWrapper) dashMonthWrapper.classList.remove('hidden');
-        if(dashYearWrapper) dashYearWrapper.classList.add('hidden');
-        
-        yearlySection.classList.add('hidden');
-        if (dashTitle) dashTitle.innerText = "মাসিক রিপোর্ট ও ড্যাশবোর্ড";
-        if (profitBadge) profitBadge.innerText = "মাসিক হিসাব";
-      } else {
-        if(btnYearly) btnYearly.className = "px-3 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm";
-        if(btnMonthly) btnMonthly.className = "px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600";
-        if(dashBtnYearly) dashBtnYearly.className = "px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm flex items-center gap-1.5";
-        if(dashBtnMonthly) dashBtnMonthly.className = "px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 flex items-center gap-1.5";
-        
-        if(monthWrapper) monthWrapper.classList.add('hidden');
-        if(yearWrapper) yearWrapper.classList.remove('hidden');
-        if(dashMonthWrapper) dashMonthWrapper.classList.add('hidden');
-        if(dashYearWrapper) dashYearWrapper.classList.remove('hidden');
-        
-        yearlySection.classList.remove('hidden');
-        if (dashTitle) dashTitle.innerText = "বার্ষিক রিপোর্ট ও ড্যাশবোর্ড";
-        if (profitBadge) profitBadge.innerText = "বার্ষিক হিসাব";
-      }
-      uiUpdatePipeline();
-    };
+	  analyticsViewMode = mode;
+	  
+	  const btnMonthly = document.getElementById('mode-btn-monthly');
+	  const btnYearly = document.getElementById('mode-btn-yearly');
+	  const monthWrapper = document.getElementById('month-picker-wrapper');
+	  const yearWrapper = document.getElementById('year-picker-wrapper');
+	  const yearlySection = document.getElementById('yearly-analytics-section');
+	  const dashTitle = document.getElementById('dashboard-heading-title');
+	  const profitBadge = document.getElementById('profit-badge');
+	
+	  if (mode === 'monthly') {
+	    if(btnMonthly) btnMonthly.className = "px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm flex items-center gap-1.5";
+	    if(btnYearly) btnYearly.className = "px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 flex items-center gap-1.5";
+	    
+	    if(monthWrapper) monthWrapper.classList.remove('hidden');
+	    if(yearWrapper) yearWrapper.classList.add('hidden');
+	    
+	    if(yearlySection) yearlySection.classList.add('hidden');
+	    if(dashTitle) dashTitle.innerText = "মাসিক রিপোর্ট ও ড্যাশবোর্ড";
+	    if(profitBadge) profitBadge.innerText = "মাসিক হিসাব";
+	  } else {
+	    if(btnYearly) btnYearly.className = "px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm flex items-center gap-1.5";
+	    if(btnMonthly) btnMonthly.className = "px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600 flex items-center gap-1.5";
+	    
+	    if(monthWrapper) monthWrapper.classList.add('hidden');
+	    if(yearWrapper) yearWrapper.classList.remove('hidden');
+	    
+	    if(yearlySection) yearlySection.classList.remove('hidden');
+	    if(dashTitle) dashTitle.innerText = "বার্ষিক রিপোর্ট ও ড্যাশবোর্ড";
+	    if(profitBadge) profitBadge.innerText = "বার্ষিক হিসাব";
+	  }
+	  
+	  if (typeof uiUpdatePipeline === 'function') {
+	    uiUpdatePipeline();
+	  }
+	};
 
     window.pressKey = function(key) {
       if (enteredPin.length < 4) {
