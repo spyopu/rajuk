@@ -1342,7 +1342,7 @@
               </div>
 
               <div style="clear: both; margin-top: 40px; text-align: center; font-size: 10px; color: #94a3b8;">
-                ধন্যবাদ আবার আসবেন। ডিজিটাল খাতা অ্যাপ দ্বারা অটো জেনারেটেড।
+                ধন্যবাদ আবার আসবেন।
               </div>
             </div>
           </body>
@@ -2460,38 +2460,37 @@
       }
     });
 
-	  // বায়োমেট্রিক লক সিস্টেম
+	  // বায়োমেট্রিক আনলক সিস্টেম (সংশোধিত ও ফাস্ট)
 		async function unlockWithFingerprint() {
-	    try {
-	        if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
-	            const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-	            if (!available) {
-	                alert("আপনার ডিভাইসে ফিঙ্গারপ্রিন্ট সেট করা নেই।");
-	                return;
-	            }
-	        }
-	
-	        const publicKey = {
-	            challenge: new Uint8Array([21, 31, 105, 78, 18, 45, 67, 89]),
-	            rp: { name: "DigitalKhata" },
-	            user: { id: new Uint8Array([1, 2, 3, 4]), name: "user@digitalkhata", displayName: "User" },
-	            pubKeyCredParams: [{ alg: -7, type: "public-key" }],
-	            timeout: 60000,
-	            authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
-	            attestation: "none"
-	        };
-	
-	        const credential = await navigator.credentials.create({ publicKey });
-	        if (credential) {
-	            const lockScreen = document.getElementById('pinLockScreen');
-	            if (lockScreen) {
-	                lockScreen.style.display = 'none'; // পিন লক স্ক্রিন সরিয়ে ফেলবে
-	            }
-	        }
-	    } catch (error) {
-	        console.log("Fingerprint cancelled", error);
-	    }
-	}
+		    try {
+		        // ১. প্ল্যাটফর্ম অথেন্টিকেটর চেক (দ্রুত রাখার জন্য চাইলে সরাসরি .get() ও কল করতে পারেন)
+		        if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
+		            const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+		            if (!available) {
+		                alert("আপনার ডিভাইসে ফিঙ্গারপ্রিন্ট সেট করা নেই।");
+		                return;
+		            }
+		        }
+		
+		        // ২. লগইন বা আনলক করার জন্য 'get' অপশন (এটিই ইনস্ট্যান্ট উইন্ডো আনবে)
+		        const publicKey = {
+		            challenge: new Uint8Array([21, 31, 105, 78, 18, 45, 67, 89]),
+		            timeout: 60000,
+		            userVerification: "required"
+		        };
+		
+		        const credential = await navigator.credentials.get({ publicKey });
+		        
+		        if (credential) {
+		            const lockScreen = document.getElementById('pinLockScreen');
+		            if (lockScreen) {
+		                lockScreen.style.display = 'none'; // পিন লক স্ক্রিন সরিয়ে ফেলবে
+		            }
+		        }
+		    } catch (error) {
+		        console.log("Fingerprint cancelled or failed", error);
+		    }
+		}
 	  
     // এডিট বা ডিলিট করার সময় এখন সিকিউরিটি পিন চাওয়া হবে (রিকোয়েস্ট অনুযায়ী)
     window.openEditClientModal = function(clientId) {
