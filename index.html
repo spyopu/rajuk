@@ -429,19 +429,21 @@
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
-                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[9px]">
-                  <tr>
-                    <th class="p-2">মাস</th>
-                    <th class="p-2 text-right">জমা (৳)</th>
-                    <th class="p-2 text-right">খরচ (৳)</th>
-                    <th class="p-2 text-right">ব্যালেন্স (৳)</th>
-                  </tr>
-                </thead>
-                <tbody id="yearly-breakdown-rows" class="divide-y divide-slate-100 font-semibold text-slate-800 text-[11px]">
-                </tbody>
-                <tfoot id="yearly-breakdown-foot" class="bg-slate-100 font-bold text-slate-900 border-t border-slate-200 text-[11px]">
-                </tfoot>
-              </table>
+				  <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[9px]">
+				    <tr>
+				      <th class="p-2">মাস</th>
+				      <th class="p-2 text-right">জমা (৳)</th>
+				      <th class="p-2 text-right">খরচ (৳)</th>
+				      <th class="p-2 text-right text-cyan-600">ক্যাশ জমা (৳)</th>
+				      <th class="p-2 text-right text-amber-600">ক্যাশ উত্তোলন (৳)</th>
+				      <th class="p-2 text-right">ব্যালেন্স (৳)</th>
+				    </tr>
+				  </thead>
+				  <tbody id="yearly-breakdown-rows" class="divide-y divide-slate-100 font-semibold text-slate-800 text-[11px]">
+				  </tbody>
+				  <tfoot id="yearly-breakdown-foot" class="bg-slate-100 font-bold text-slate-900 border-t border-slate-200 text-[11px]">
+				  </tfoot>
+				</table>
             </div>
           </div>
 
@@ -2057,11 +2059,13 @@ function calculateGlobalMetrics() {
 
 function renderYearlyBreakdownTable() {
   const yearVal = yearFilter && yearFilter.value ? yearFilter.value : String(new Date().getFullYear());
-  const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+  const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "जुলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
   
   let tbodyHtml = '';
   let totalYrInc = 0;
   let totalYrExp = 0;
+  let totalYrOwnerIn = 0;
+  let totalYrOwnerOut = 0;
 
   for (let m = 1; m <= 12; m++) {
     const mStr = String(m).padStart(2, '0');
@@ -2069,8 +2073,10 @@ function renderYearlyBreakdownTable() {
 
     let mInc = 0;
     let mExp = 0;
+    let mOwnerIn = 0;
+    let mOwnerOut = 0;
 
-    // শুধুমাত্র প্রজেক্টের কাস্টমার আয় এবং প্রজেক্ট খরচ হিসাব করা হচ্ছে
+    // প্রজেক্টের কাস্টমার আয় এবং খরচ
     farmData.forEach(c => {
       if (c.history) {
         c.history.forEach(t => {
@@ -2082,24 +2088,34 @@ function renderYearlyBreakdownTable() {
       }
     });
 
-    // অফিস খরচ যোগ করা হচ্ছে
+    // অফিস খরচ
     officeExpenses.forEach(oe => {
       if (getDateMonthPrefix(oe.date) === monthPrefix) {
         mExp += oe.amount;
       }
     });
 
-    // ❌ মূলধন ইনজেকশন বা উত্তোলন এখানে যোগ করা হয়নি, ফলে এটি কাস্টমার আয়ের সাথে মিশবে না।
+    // মূলধন ইন ও আউট আলাদাভাবে হিসাব করা হচ্ছে (লাভ-ক্ষতিতে প্রভাব ফেলবে না)
+    ownerTransactions.forEach(ow => {
+      if (getDateMonthPrefix(ow.date) === monthPrefix) {
+        if (ow.type === 'injection') mOwnerIn += ow.amount;
+        if (ow.type === 'drawing') mOwnerOut += ow.amount;
+      }
+    });
 
-    let mNet = mInc - mExp;
+    let mNet = mInc - mExp; // লাভ/ক্ষতির সঠিক হিসাব অপরিবর্তিত থাকছে
     totalYrInc += mInc;
     totalYrExp += mExp;
+    totalYrOwnerIn += mOwnerIn;
+    totalYrOwnerOut += mOwnerOut;
 
     tbodyHtml += `
       <tr class="hover:bg-slate-50 transition">
         <td class="p-2 font-bold text-slate-700">${monthNames[m - 1]}</td>
         <td class="p-2 text-right font-mono text-emerald-600">৳${mInc.toLocaleString('en-IN')}</td>
         <td class="p-2 text-right font-mono text-rose-600">৳${mExp.toLocaleString('en-IN')}</td>
+        <td class="p-2 text-right font-mono text-cyan-600">৳${mOwnerIn.toLocaleString('en-IN')}</td>
+        <td class="p-2 text-right font-mono text-amber-600">৳${mOwnerOut.toLocaleString('en-IN')}</td>
         <td class="p-2 text-right font-mono font-bold ${mNet >= 0 ? 'text-slate-900' : 'text-rose-600'}">৳${mNet.toLocaleString('en-IN')}</td>
       </tr>
     `;
@@ -2117,12 +2133,13 @@ function renderYearlyBreakdownTable() {
         <td class="p-2 font-bold">মোট (${yearVal})</td>
         <td class="p-2 text-right font-mono text-emerald-600">৳${totalYrInc.toLocaleString('en-IN')}</td>
         <td class="p-2 text-right font-mono text-rose-600">৳${totalYrExp.toLocaleString('en-IN')}</td>
+        <td class="p-2 text-right font-mono text-cyan-600">৳${totalYrOwnerIn.toLocaleString('en-IN')}</td>
+        <td class="p-2 text-right font-mono text-amber-600">৳${totalYrOwnerOut.toLocaleString('en-IN')}</td>
         <td class="p-2 text-right font-mono font-bold ${netYrTotal >= 0 ? 'text-slate-900' : 'text-rose-600'}">৳${netYrTotal.toLocaleString('en-IN')}</td>
       </tr>
     `;
   }
 }
-
     // ক্লায়েন্ট লিস্টে শুধুমাত্র প্রজেক্টের নাম দেখানোর রিকোয়ারমেন্ট অনুযায়ী আপডেট করা রেন্ডার ফাংশন
     function renderClientCards() {
       const container = document.getElementById('client-cards-container');
