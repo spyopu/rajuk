@@ -1794,21 +1794,19 @@
       return dateStr.substring(0, 7);
     }
 
-    // নিখুঁতভাবে মাস ও সাল ভিত্তিক অফিস খরচ, মূলধন এবং আয়-ব্যয় ফিল্টার করার ফাংশন
+    // নিখুঁতভাবে মাস ও সাল ভিত্তিক মেট্রিক্স এবং মূলধন আলাদা রেখে ফিল্টার করার ফাংশন
 function calculateGlobalMetrics() {
   let budget = 0, collection = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
   let ownerInjection = 0, ownerDrawing = 0;
   
   let targetMonthStr = '';
   let targetYearStr = '';
-  let previousCumulativeNet = 0;
 
   let filteredProjectCostList = [];
   let filteredOfficeCostList = [];
   let filteredOwnerInList = [];
   let filteredOwnerOutList = [];
 
-  // ১. মান্থলি বা ইয়ার্লি ভিউ অনুযায়ী টার্গেট স্ট্রিং নির্ধারণ
   if (analyticsViewMode === 'monthly') {
     if (monthFilter && monthFilter.value) {
       targetMonthStr = monthFilter.value; 
@@ -1816,36 +1814,7 @@ function calculateGlobalMetrics() {
       targetMonthStr = getLocalDateString().substring(0, 7);
     }
 
-    let pastCollection = 0, pastPrjExpense = 0, pastOfficeExpense = 0, pastOwnerInjection = 0, pastOwnerDrawing = 0;
-
-    // পূর্বের হিসাব নিকাশ (Cumulative) বের করা
-    farmData.forEach(c => {
-      if (c.history) {
-        c.history.forEach(t => {
-          if (t.date && getDateMonthPrefix(t.date) < targetMonthStr) {
-            if (t.type === 'income') pastCollection += t.amount;
-            if (t.type === 'expense') pastPrjExpense += t.amount;
-          }
-        });
-      }
-    });
-
-    officeExpenses.forEach(oe => {
-      if (oe.date && getDateMonthPrefix(oe.date) < targetMonthStr) {
-        pastOfficeExpense += oe.amount;
-      }
-    });
-
-    ownerTransactions.forEach(ow => {
-      if (ow.date && getDateMonthPrefix(ow.date) < targetMonthStr) {
-        if (ow.type === 'injection') pastOwnerInjection += ow.amount;
-        if (ow.type === 'drawing') pastOwnerDrawing += ow.amount;
-      }
-    });
-
-    previousCumulativeNet = (pastCollection + pastOwnerInjection) - (pastPrjExpense + pastOfficeExpense + pastOwnerDrawing);
-
-    // বর্তমান মাসের মূল হিসাব ফিল্টার করা
+    // ১. প্রজেক্টের বাজেট, কালেকশন, প্রজেক্ট খরচ এবং বকেয়া হিসাব
     farmData.forEach(c => {
       budget += (c.budget || 0);
       let clientIncomeSum = 0;
@@ -1860,17 +1829,16 @@ function calculateGlobalMetrics() {
               filteredProjectCostList.push({ ...t, clientName: c.name, projectName: c.project });
             }
           }
-          if (t.date && getDateMonthPrefix(t.date) <= targetMonthStr) {
-            if (t.type === 'income') {
-              clientIncomeSum += t.amount;
-              clientDiscountSum += (t.discount || 0);
-            }
+          if (t.type === 'income') {
+            clientIncomeSum += t.amount;
+            clientDiscountSum += (t.discount || 0);
           }
         });
       }
       due += Math.max(0, (c.budget || 0) - (clientIncomeSum + clientDiscountSum));
     });
 
+    // ২. অফিস খরচ ফিল্টার
     officeExpenses.forEach(oe => {
       if (oe.date && getDateMonthPrefix(oe.date) === targetMonthStr) {
         totalOfficeExpense += oe.amount;
@@ -1878,6 +1846,7 @@ function calculateGlobalMetrics() {
       }
     });
 
+    // ৩. মূলধন (Owner In/Out) সম্পূর্ণ আলাদাভাবে ফিল্টার করা (আয়/ব্যয়ের সাথে মেলানো হয়নি)
     ownerTransactions.forEach(ow => {
       if (ow.date && getDateMonthPrefix(ow.date) === targetMonthStr) {
         if (ow.type === 'injection') {
@@ -1892,40 +1861,12 @@ function calculateGlobalMetrics() {
     });
 
   } else {
-    // ইয়ার্লি ভিউ এর জন্য
+    // ইয়ার্লি ভিউ
     if (yearFilter && yearFilter.value) {
       targetYearStr = yearFilter.value;
     } else {
       targetYearStr = String(new Date().getFullYear());
     }
-
-    let pastCollection = 0, pastPrjExpense = 0, pastOfficeExpense = 0, pastOwnerInjection = 0, pastOwnerDrawing = 0;
-
-    farmData.forEach(c => {
-      if (c.history) {
-        c.history.forEach(t => {
-          if (t.date && t.date.substring(0, 4) < targetYearStr) {
-            if (t.type === 'income') pastCollection += t.amount;
-            if (t.type === 'expense') pastPrjExpense += t.amount;
-          }
-        });
-      }
-    });
-
-    officeExpenses.forEach(oe => {
-      if (oe.date && oe.date.substring(0, 4) < targetYearStr) {
-        pastOfficeExpense += oe.amount;
-      }
-    });
-
-    ownerTransactions.forEach(ow => {
-      if (ow.date && ow.date.substring(0, 4) < targetYearStr) {
-        if (ow.type === 'injection') pastOwnerInjection += ow.amount;
-        if (ow.type === 'drawing') pastOwnerDrawing += ow.amount;
-      }
-    });
-
-    previousCumulativeNet = (pastCollection + pastOwnerInjection) - (pastPrjExpense + pastOfficeExpense + pastOwnerDrawing);
 
     farmData.forEach(c => {
       budget += (c.budget || 0);
@@ -1941,11 +1882,9 @@ function calculateGlobalMetrics() {
               filteredProjectCostList.push({ ...t, clientName: c.name, projectName: c.project });
             }
           }
-          if (t.date && t.date.substring(0, 4) <= targetYearStr) {
-            if (t.type === 'income') {
-              clientIncomeSum += t.amount;
-              clientDiscountSum += (t.discount || 0);
-            }
+          if (t.type === 'income') {
+            clientIncomeSum += t.amount;
+            clientDiscountSum += (t.discount || 0);
           }
         });
       }
@@ -1973,11 +1912,13 @@ function calculateGlobalMetrics() {
     });
   }
 
-  // সার্বিক লাভ ও ক্যাশ ব্যালেন্স ক্যালকুলেশন
+  // লাভ, খরচ এবং ক্যাশ ব্যালেন্স ক্যালকুলেশন
   let totalExpense = prjExpense + totalOfficeExpense;
   let grossProfit = collection - prjExpense;
   let netProfit = grossProfit - totalOfficeExpense;
   let ownerNetCapital = ownerInjection - ownerDrawing;
+  
+  // ক্যাশ ব্যালেন্সে শুধুমাত্র মূলধন যোগ/বিয়োগ হবে, অপারেশনাল আয়-ব্যয়ে এর প্রভাব পড়বে না
   let netBalance = (collection + ownerInjection) - (prjExpense + totalOfficeExpense + ownerDrawing);
 
   globalCalculatedNetBalance = netBalance;
@@ -1997,7 +1938,7 @@ function calculateGlobalMetrics() {
     }
   };
 
-  // UI আপডেট করা
+  // UI আপডেট
   setVal('global-budget', budget);
   setVal('global-income', collection);
   setVal('global-expense', totalExpense);
@@ -2014,7 +1955,6 @@ function calculateGlobalMetrics() {
   setVal('report-owner-out', ownerDrawing);
   setVal('report-owner-net', ownerNetCapital);
 
-  // লিস্ট রেন্ডারিং ফাংশন
   const populateListHtml = (listId, items, formatter) => {
     const container = document.getElementById(listId);
     if (!container) return;
@@ -2056,7 +1996,7 @@ function calculateGlobalMetrics() {
   `);
 }
 
-// বার্ষিক ব্রেকডাউন টেবিল রেন্ডার ফাংশন
+// বার্ষিক ব্রেকডাউন টেবিল (এখানেও মূলধন আয়/ব্যয়ের সাথে ক্যাটাগরি অনুযায়ী আলাদা রাখা হয়েছে)
 function renderYearlyBreakdownTable() {
   const yearVal = yearFilter && yearFilter.value ? yearFilter.value : String(new Date().getFullYear());
   const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
@@ -2075,7 +2015,7 @@ function renderYearlyBreakdownTable() {
     farmData.forEach(c => {
       if (c.history) {
         c.history.forEach(t => {
-          if (t.date && getDateMonthPrefix(t.date) === monthPrefix) {
+          if (getDateMonthPrefix(t.date) === monthPrefix) {
             if (t.type === 'income') mInc += t.amount;
             if (t.type === 'expense') mExp += t.amount;
           }
@@ -2084,13 +2024,14 @@ function renderYearlyBreakdownTable() {
     });
 
     officeExpenses.forEach(oe => {
-      if (oe.date && getDateMonthPrefix(oe.date) === monthPrefix) {
+      if (getDateMonthPrefix(oe.date) === monthPrefix) {
         mExp += oe.amount;
       }
     });
 
+    // বার্ষিক টেবিলে ক্যাশফ্লো ঠিক রাখতে মালিকের ইনজেকশন ইনকাম ও ড্রয়িং খরচের সাথে হিসাব করা হলেও মূল প্রজেক্ট আয় প্রভাবিত হয় না
     ownerTransactions.forEach(ow => {
-      if (ow.date && getDateMonthPrefix(ow.date) === monthPrefix) {
+      if (getDateMonthPrefix(ow.date) === monthPrefix) {
         if (ow.type === 'injection') mInc += ow.amount;
         if (ow.type === 'drawing') mExp += ow.amount;
       }
