@@ -349,7 +349,9 @@
         <!-- Minimal Summary Cards -->
         <div id="report-content-body" class="space-y-4 filter blur-md select-none pointer-events-none transition-all duration-300">
           
-          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-row items-center justify-between gap-4">
+          <!-- Redesigned Modern Filter Bar Inside Dashboard -->
+			<div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-row items-center justify-between gap-4">
+			  
 			  <!-- View Mode Switcher Pills -->
 			  <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
 			    <button onclick="setAnalyticsViewMode('monthly')" id="mode-btn-monthly" class="px-4 py-2 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm flex items-center gap-1.5">
@@ -369,7 +371,8 @@
 			
 			    <div id="year-picker-wrapper" class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs hidden">
 			      <span class="text-xs font-bold text-slate-500">সাল:</span>
-			      <select id="year-filter" class="bg-transparent text-rose-600 font-bold font-mono text-xs outline-none cursor-pointer">
+			      <!-- এখানে onchange="syncYearFilter(this.value)" যুক্ত করা হয়েছে -->
+			      <select id="year-filter" onchange="syncYearFilter(this.value)" class="bg-transparent text-rose-600 font-bold font-mono text-xs outline-none cursor-pointer">
 			      </select>
 			    </div>
 			  </div>
