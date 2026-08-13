@@ -267,7 +267,25 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6 flex-1">
 
-    
+    <!-- NAVIGATION TABS & DATE FILTERS (Mobile te hidden, Home-a hidden) -->
+    <div id="top-navigation-bar" class="bg-white p-3 md:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex-col md:flex-row md:items-center justify-between gap-3 hidden">
+      <div class="flex flex-wrap items-center justify-between md:justify-end gap-2 w-full">
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <button onclick="setAnalyticsViewMode('monthly')" id="mode-btn-monthly" class="px-3 py-1.5 text-xs font-bold rounded-lg transition bg-rose-600 text-white shadow-sm">মাসিক</button>
+          <button onclick="setAnalyticsViewMode('yearly')" id="mode-btn-yearly" class="px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-rose-600">বার্ষিক</button>
+        </div>
+
+        <div id="month-picker-wrapper" class="flex items-center gap-2">
+          <input type="month" id="month-filter" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs rounded-xl px-3 py-1.5 outline-none focus:border-rose-600 transition">
+        </div>
+
+        <div id="year-picker-wrapper" class="flex items-center gap-2 hidden">
+          <select id="year-filter" onchange="uiUpdatePipeline()" class="bg-slate-50 border border-slate-200 text-rose-600 font-bold font-mono text-xs rounded-xl px-3 py-1.5 outline-none focus:border-rose-600 transition">
+          </select>
+        </div>
+      </div>
+    </div>
+	  
     <!-- TAB 0: HOME VIEW -->
     <div id="tab-home-view" class="tab-content space-y-6">
       <!-- DAILY INCOME & EXPENSE CARD -->
