@@ -184,15 +184,14 @@
       <button onpointerdown="pressKey('9')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm flex justify-center items-center cursor-pointer">9</button>
       
       <!-- ফিঙ্গারপ্রিন্ট বাটন (খালি জায়গায় যুক্ত করা হলো) -->
-      <button onclick="unlockWithFingerprint()" class="w-full h-full bg-slate-50 hover:bg-slate-100 active:scale-95 transition rounded-2xl flex items-center justify-center text-rose-600 shadow-sm border border-slate-100">
-	    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fingerprint">
-	        <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.81 3.7"/>
-	        <path d="M15 13.5v-1.5a3 3 0 0 0-3-3 3 3 0 0 0-3 3v3"/>
-	        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-	        <path d="M4.93 19.07a10 10 0 0 1 0-14.14"/>
-	        <path d="M10 19.5v-1.5a2 2 0 0 1 2-2 2 2 0 0 1 2 2v2"/>
-	        <path d="M16.24 7.76a6 6 0 0 1 0 8.48"/>
-	        <path d="M7.76 16.24a6 6 0 0 1 0-8.48"/>
+      <button onclick="unlockWithFingerprint()" class="w-full h-full bg-slate-50/80 hover:bg-slate-100 active:scale-95 transition rounded-2xl flex items-center justify-center text-rose-600 shadow-sm border border-slate-100">
+	    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+	        <path d="M12 12v.01"></path>
+	        <path d="M17 10.5V10a5 5 0 0 0-10 0v.5"></path>
+	        <path d="M19.4 15a16.5 16.5 0 0 0 .6-5V10a8 8 0 1 0-16 0v.5c0 1.7.2 3.4.6 5"></path>
+	        <path d="M15 15.5V17a3 3 0 0 1-6 0v-1.5"></path>
+	        <path d="M14.5 20.5V22"></path>
+	        <path d="M9.5 20.5V22"></path>
 	    </svg>
 	  </button>
 	  <button onpointerdown="pressKey('0')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm flex justify-center items-center cursor-pointer">0</button>
