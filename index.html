@@ -184,11 +184,17 @@
       <button onpointerdown="pressKey('9')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm flex justify-center items-center cursor-pointer">9</button>
       
       <!-- ফিঙ্গারপ্রিন্ট বাটন (খালি জায়গায় যুক্ত করা হলো) -->
-      <button onpointerdown="unlockWithFingerprint()" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-[#E21829] rounded-2xl shadow-sm flex justify-center items-center cursor-pointer" title="ফিঙ্গারপ্রিন্ট">
-		  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-		    <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.645-2.266.99-4.659.99-7.138A8 8 0 100 8c0 .79.11 1.554.314 2.274" />
-		  </svg>
-		</button>
+      <button onclick="unlockWithFingerprint()" class="w-full h-full bg-slate-50 hover:bg-slate-100 active:scale-95 transition rounded-2xl flex items-center justify-center text-rose-600 shadow-sm border border-slate-100">
+	    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fingerprint">
+	        <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.81 3.7"/>
+	        <path d="M15 13.5v-1.5a3 3 0 0 0-3-3 3 3 0 0 0-3 3v3"/>
+	        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+	        <path d="M4.93 19.07a10 10 0 0 1 0-14.14"/>
+	        <path d="M10 19.5v-1.5a2 2 0 0 1 2-2 2 2 0 0 1 2 2v2"/>
+	        <path d="M16.24 7.76a6 6 0 0 1 0 8.48"/>
+	        <path d="M7.76 16.24a6 6 0 0 1 0-8.48"/>
+	    </svg>
+	  </button>
 	  <button onpointerdown="pressKey('0')" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-800 text-lg font-semibold rounded-2xl shadow-sm flex justify-center items-center cursor-pointer">0</button>
       <button onpointerdown="deleteKey()" class="py-3 bg-gray-50 hover:bg-gray-100 active:bg-gray-200 active:scale-95 text-gray-700 rounded-2xl shadow-sm flex justify-center items-center cursor-pointer">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
