@@ -1155,33 +1155,38 @@
       });
     }
 
+	// ড্যাশবোর্ড পাসওয়ার্ড চেক পুরোপুরি বাইপাস করে সবসময় আনলকড রাখা হলো
     window.handleReportUnlock = function() {
-      if (isReportUnlocked) {
-        isReportUnlocked = false;
-        document.getElementById('report-content-body').classList.add('filter', 'blur-md', 'select-none', 'pointer-events-none');
-        document.getElementById('report-btn-text').innerText = "আনলক করুন";
-        document.getElementById('print-report-btn').classList.add('hidden');
-        
-        // সামারি বাটন লক অবস্থায় লুকিয়ে ফেলার জন্য এটি যোগ করা হলো:
-        let summaryBtn = document.getElementById('summary-report-btn');
-        if (summaryBtn) summaryBtn.classList.add('hidden');
+    isReportUnlocked = true;
+    
+    const contentBody = document.getElementById('report-content-body');
+    if (contentBody) {
+        contentBody.classList.remove('filter', 'blur-md', 'select-none', 'pointer-events-none');
+    }
+    
+    const btnText = document.getElementById('report-btn-text');
+    if (btnText) {
+        btnText.innerText = "লক করুন";
+    }
+    
+    const printBtn = document.getElementById('print-report-btn');
+    if (printBtn) {
+        printBtn.classList.remove('hidden');
+    }
+    
+    let summaryBtn = document.getElementById('summary-report-btn');
+    if (summaryBtn) {
+        summaryBtn.classList.remove('hidden');
+        summaryBtn.classList.add('flex');
+    }
+};
 
-      } else {
-        requestPasscodeAuth(() => {
-          isReportUnlocked = true;
-          document.getElementById('report-content-body').classList.remove('filter', 'blur-md', 'select-none', 'pointer-events-none');
-          document.getElementById('report-btn-text').innerText = "লক করুন";
-          document.getElementById('print-report-btn').classList.remove('hidden');
-          
-          // আনলক করার পর সামারি বাটন দেখানোর জন্য এটি যোগ করা হলো:
-          let summaryBtn = document.getElementById('summary-report-btn');
-          if (summaryBtn) {
-              summaryBtn.classList.remove('hidden');
-              summaryBtn.classList.add('flex');
-          }
-        });
-      }
-    };
+// অ্যাপ বা পেজ লোড হওয়ার সাথেই যেন ড্যাশবোর্ড অটো-আনলকড অবস্থায় থাকে
+document.addEventListener("DOMContentLoaded", function() {
+    if (typeof window.handleReportUnlock === 'function') {
+        window.handleReportUnlock();
+    }
+});
 
     // ওপেন চোখের SVG কোড
 	const openEyeSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
