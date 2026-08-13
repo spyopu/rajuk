@@ -1283,7 +1283,14 @@ document.addEventListener("DOMContentLoaded", function() {
 	    periodText = `সাল: ${yVal}`;
 	  }
 	
-	  const reportBody = document.getElementById('report-content-body').innerHTML;
+	  // বডি নেওয়ার পর যদি ভেতরের ডুপ্লিকেট ফিল্টার এলিমেন্ট রিমুভ করতে চান:
+	  const tempDiv = document.createElement('div');
+	  tempDiv.innerHTML = document.getElementById('report-content-body').innerHTML;
+	  
+	  // ড্যাশবোর্ডের ভেতরের পুরোনো ফিল্টার বার বা সুইচটি সরিয়ে দেওয়া (যদি তার কোনো নির্দিষ্ট ক্লাস বা আইডি থাকে)
+	  const oldFilters = tempDiv.querySelectorAll('.no-print, .filter-section-inside'); // আপনার ভেতরের ফিল্টারের ক্লাস বা ট্যাগ অনুযায়ী
+	  oldFilters.forEach(el => el.remove());
+	
 	  const htmlContent = `
 	    <!DOCTYPE html>
 	    <html>
@@ -1306,7 +1313,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	            ${periodText}
 	          </div>
 	        </div>
-	        <div>${reportBody}</div>
+	        <div>${tempDiv.innerHTML}</div>
 	      </body>
 	    </html>
 	  `;
