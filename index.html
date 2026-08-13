@@ -2070,6 +2070,7 @@ function renderYearlyBreakdownTable() {
     let mInc = 0;
     let mExp = 0;
 
+    // শুধুমাত্র প্রজেক্টের কাস্টমার আয় এবং প্রজেক্ট খরচ হিসাব করা হচ্ছে
     farmData.forEach(c => {
       if (c.history) {
         c.history.forEach(t => {
@@ -2081,18 +2082,14 @@ function renderYearlyBreakdownTable() {
       }
     });
 
+    // অফিস খরচ যোগ করা হচ্ছে
     officeExpenses.forEach(oe => {
       if (getDateMonthPrefix(oe.date) === monthPrefix) {
         mExp += oe.amount;
       }
     });
 
-    ownerTransactions.forEach(ow => {
-      if (getDateMonthPrefix(ow.date) === monthPrefix) {
-        if (ow.type === 'injection') mInc += ow.amount;
-        if (ow.type === 'drawing') mExp += ow.amount;
-      }
-    });
+    // ❌ মূলধন ইনজেকশন বা উত্তোলন এখানে যোগ করা হয়নি, ফলে এটি কাস্টমার আয়ের সাথে মিশবে না।
 
     let mNet = mInc - mExp;
     totalYrInc += mInc;
