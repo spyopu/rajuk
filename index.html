@@ -934,34 +934,44 @@
     }
 
     function populateYearDropdowns() {
-      const populateSelect = (sel) => {
-        if (!sel) return;
-        sel.innerHTML = '';
-        for (let y = 2021; y <= 2030; y++) {
-          const opt = document.createElement('option');
-          opt.value = y;
-          opt.innerText = y;
-          if (y === currentYearNum) opt.selected = true;
-          sel.appendChild(opt);
-        }
-      };
-      populateSelect(yearFilter);
-      populateSelect(dashYearFilter);
+  const populateSelect = (sel) => {
+    if (!sel) return;
+    sel.innerHTML = '';
+    for (let y = 2021; y <= 2030; y++) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.innerText = y;
+      if (typeof currentYearNum !== 'undefined' && y === currentYearNum) opt.selected = true;
+      sel.appendChild(opt);
     }
-    populateYearDropdowns();
+  };
+  
+  // যেহেতু এখন একটিই ফিল্টার, তাই শুধু 'year-filter' কল করলেই হবে
+  const yearFilterEl = document.getElementById('year-filter');
+  populateSelect(yearFilterEl);
+}
 
-    window.syncYearFilter = function(val) {
-      if(yearFilter) yearFilter.value = val;
-      if(dashYearFilter) dashYearFilter.value = val;
+// পেজ লোড হওয়ার পর বা ফাংশনটি কল করার সময়:
+populateYearDropdowns();
+
+// যদি syncYearFilter ফাংশন লাগে:
+window.syncYearFilter = function(val) {
+  const yearFilterEl = document.getElementById('year-filter');
+  if(yearFilterEl) yearFilterEl.value = val;
+  if (typeof uiUpdatePipeline === 'function') {
+    uiUpdatePipeline();
+  }
+};
+
+if (typeof searchInput !== 'undefined' && searchInput) {
+  searchInput.addEventListener('input', () => {
+    if (typeof uiUpdatePipeline === 'function') {
       uiUpdatePipeline();
-    };
-
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        uiUpdatePipeline();
-      });
     }
+  });
+}
 
+	  // কন্টাক্ট পিকার
     async function pickContact() {
       if ('contacts' in navigator && 'ContactsManager' in window) {
         try {
