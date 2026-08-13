@@ -1260,32 +1260,55 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
 
+	// বর্তমান ফিল্টার করা মাস বা সাল ইনপুট থেকে প্রিন্ট বাটনের সঠিক মানটি নিয়ে নেওয়া
     window.printReport = function() {
-      const reportBody = document.getElementById('report-content-body').innerHTML;
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="UTF-8">
-            <title>ড্যাশবোর্ড ও অ্যানালিটিক্স রিপোর্ট</title>
-            <script src="https://cdn.tailwindcss.com"><\/script>
-            <style>
-              body { font-family: sans-serif; padding: 20px; }
-              .hide-sensitive { visibility: visible !important; }
-            </style>
-          </head>
-          <body>
-            <div class="mb-4 pb-2 border-b">
-              <h2 class="text-xl font-bold">DigitalKhata - ড্যাশবোর্ড ও রিপোর্ট</h2>
-              <p class="text-sm text-gray-600">তারিখ: ${new Date().toLocaleDateString('bn-BD')}</p>
-            </div>
-            <div>${reportBody}</div>
-          </body>
-        </html>
-      `;
-      triggerUniversalPrint(htmlContent);
-    };
+  let currentMode = typeof analyticsViewMode !== 'undefined' ? analyticsViewMode : 'monthly';
+  let periodText = '';
 
+  if (currentMode === 'monthly') {
+    let monthInput = document.getElementById('month-picker') || document.getElementById('dash-month-picker');
+    let mVal = monthInput && monthInput.value ? monthInput.value : '2026-08';
+    const [year, month] = mVal.split('-');
+    const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+    let mName = monthNames[parseInt(month, 10) - 1] || '';
+    periodText = `মাস: ${mName} ${year}`;
+  } else {
+    let yearInput = document.getElementById('year-filter');
+    let yVal = yearInput && yearInput.value ? yearInput.value : String(new Date().getFullYear());
+    periodText = `সাল: ${yVal}`;
+  }
+
+  const reportBody = document.getElementById('report-content-body').innerHTML;
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>ড্যাশবোর্ড ও অ্যানালিটিক্স রিপোর্ট</title>
+        <script src="https://cdn.tailwindcss.com"><\/script>
+        <style>
+          body { font-family: sans-serif; padding: 20px; }
+          .hide-sensitive { visibility: visible !important; }
+        </style>
+      </head>
+      <body>
+        <div class="mb-4 pb-2 border-b flex justify-between items-center">
+          <div>
+            <h2 class="text-xl font-bold">DigitalKhata - ড্যাশবোর্ড ও রিপোর্ট</h2>
+            <p class="text-sm text-gray-600">তারিখ: ${new Date().toLocaleDateString('bn-BD')}</p>
+          </div>
+          <div class="text-sm font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-lg border border-rose-100">
+            ${periodText}
+          </div>
+        </div>
+        <div>${reportBody}</div>
+      </body>
+    </html>
+  `;
+  triggerUniversalPrint(htmlContent);
+};
+
+	// ক্লায়েন্ট ইনভয়েস
     window.printClientInvoice = function(clientId, txId = null) {
       const client = farmData.find(c => c.id === clientId);
       if (!client) return;
