@@ -838,7 +838,7 @@
             <input type="number" id="action-discount" class="w-full bg-amber-50/50 border border-amber-200 text-amber-900 rounded-xl p-2 text-xs outline-none font-mono font-bold">
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">বিবরণ (নোট)</label>
+            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">বিবরণ</label>
             <input type="text" id="action-details" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium text-slate-800">
           </div>
           <div>
@@ -2087,7 +2087,7 @@ function calculateGlobalMetrics() {
 
 function renderYearlyBreakdownTable() {
   const yearVal = yearFilter && yearFilter.value ? yearFilter.value : String(new Date().getFullYear());
-  const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "जुলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+  const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
   
   let tbodyHtml = '';
   let totalYrInc = 0;
