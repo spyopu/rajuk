@@ -414,8 +414,8 @@
 				  <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[9px]">
 				    <tr>
 				      <th class="p-2">মাস</th>
-				      <th class="p-2 text-right">জমা (৳)</th>
-				      <th class="p-2 text-right">খরচ (৳)</th>
+				      <th class="p-2 text-right">আয় (৳)</th>
+				      <th class="p-2 text-right">ব্যয় (৳)</th>
 				      <th class="p-2 text-right text-cyan-600">মূলধন (৳)</th>
 				      <th class="p-2 text-right text-amber-600">উত্তোলন (৳)</th>
 				      <th class="p-2 text-right">ব্যালেন্স (৳)</th>
@@ -575,10 +575,16 @@
       
       <!-- UNIFIED SEARCH BAR WITH INTEGRATED CLIENT FILTER CARD -->
       <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div class="relative flex-1 w-full">
-          <input type="text" id="search-input" placeholder="গ্রাহক, মোবাইল বা প্রজেক্ট নাম খুঁজুন..." class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl pl-9 pr-4 py-2 outline-none focus:border-rose-600 transition">
-          <span class="absolute left-3 top-2 text-slate-400 text-xs">🔍</span>
-        </div>
+        <div class="relative flex-1 w-full flex items-center gap-2">
+		  <!-- আপনার মূল সার্চ ইনপুট -->
+		  <div class="relative flex-1">
+		    <input type="text" id="search-input" placeholder="গ্রাহক, মোবাইল বা প্রজেক্ট নাম খুঁজুন..." class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl pl-9 pr-4 py-2 outline-none focus:border-rose-600 transition">
+		    <span class="absolute left-3 top-2 text-slate-400 text-xs">🔍</span>
+		  </div>
+		
+		  <!-- ডানপাশে ছোট কাউন্টিং ব্যাজ -->
+		  <span id="searchCountBadge" class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold text-rose-600 bg-rose-50 rounded-full border border-rose-100 min-w-[28px] h-7 shadow-sm">0</span>
+		</div>
 
         <!-- CLIENT FILTER CARD BUTTONS & PRINT BUTTON -->
         <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
@@ -1837,6 +1843,31 @@ document.addEventListener("DOMContentLoaded", function() {
       return dateStr.substring(0, 7);
     }
 
+	  // ফিল্টার করা রেজাল্ট অনুযায়ী ব্যাজের সংখ্যা অটো আপডেট
+	  	const searchInput = document.getElementById('search-input');
+		const countBadge = document.getElementById('searchCountBadge');
+		
+		// ১. পেজ লোড বা ডিফল্ট অবস্থায় সব প্রজেক্টের মোট সংখ্যা দেখাবে
+		countBadge.innerText = farmData.length;
+		
+		// ২. টাইপ করার সাথে সাথে অটো কাউন্টিং আপডেট হওয়ার ইভেন্ট
+		searchInput.addEventListener('input', function() {
+		  const query = this.value.trim().toLowerCase();
+		  
+		  // ফিল্টার লজিক (গ্রাহকের নাম বা প্রজেক্ট ফিল্টার করা)
+		  const filteredList = farmData.filter(c => {
+		    const clientName = (c.name || '').toLowerCase();
+		    const projectName = (c.project || '').toLowerCase();
+		    return clientName.includes(query) || projectName.includes(query);
+		  });
+		
+		  // ফিল্টার করা রেজাল্ট অনুযায়ী ব্যাজের সংখ্যা অটো আপডেট হয়ে যাবে
+		  countBadge.innerText = filteredList.length;
+		
+		  // ৩. ফিল্টার করা লিস্ট স্ক্রিনে রেন্ডার করার ফাংশন
+		  renderClientList(filteredList); 
+		});
+	  
     // নিখুঁতভাবে মাস ও সাল ভিত্তিক অফিস খরচ, মূলধন এবং কাস্টমার আয়ের বিস্তারিত সহ ফিল্টার করার ফাংশন
 function calculateGlobalMetrics() {
   let budget = 0, collection = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
