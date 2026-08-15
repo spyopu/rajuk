@@ -1841,28 +1841,9 @@ document.addEventListener("DOMContentLoaded", function() {
     function getDateMonthPrefix(dateStr) {
       if (!dateStr) return '';
       return dateStr.substring(0, 7);
-    }
-
-	 // পেজ লোড বা ডিফল্ট অবস্থায় কাউন্ট সেট করার জন্য
-	document.addEventListener("DOMContentLoaded", function() {
-	  const countBadge = document.getElementById('searchCountBadge');
-	  if (countBadge && typeof farmData !== 'undefined') {
-	    countBadge.innerText = farmData.length;
-	  }
-	});
+    }  
 	
-	// সার্চ ইনপুটে টাইপ করার ইভেন্ট এবং অটো কাউন্টিং লজিক
-	const searchInput = document.getElementById('search-input');
-	if (searchInput) {
-	  searchInput.addEventListener('input', function() {
-	    if (typeof renderClientCards === 'function') {
-	      renderClientCards();
-	    }
-	  });
-	}
-	  
-	
-	  
+ 
     // নিখুঁতভাবে মাস ও সাল ভিত্তিক অফিস খরচ, মূলধন এবং কাস্টমার আয়ের বিস্তারিত সহ ফিল্টার করার ফাংশন
 function calculateGlobalMetrics() {
   let budget = 0, collection = 0, prjExpense = 0, due = 0, totalOfficeExpense = 0;
