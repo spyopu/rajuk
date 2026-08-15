@@ -2202,10 +2202,19 @@ function renderYearlyBreakdownTable() {
 	  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
 	
 	  let filtered = farmData.filter(c => {
+	    // ১. নাম, মোবাইল বা প্রজেক্টের নামে ম্যাচ করে কিনা
 	    const matchQuery = (c.name && c.name.toLowerCase().includes(query)) ||
 	                       (c.phone && c.phone.toLowerCase().includes(query)) ||
 	                       (c.project && c.project.toLowerCase().includes(query));
-	    return matchQuery;
+	
+	    // ২. হিস্ট্রি বা নোটে মাসের নাম বা তারিখ ম্যাচ করে কিনা
+	    const matchHistory = c.history && c.history.some(t => {
+	      const desc = (t.note || '').toLowerCase();
+	      const dateStr = (t.date || '').toLowerCase();
+	      return desc.includes(query) || dateStr.includes(query);
+	    });
+	
+	    return matchQuery || matchHistory;
 	  });
 	
 	  filtered = filtered.filter(c => {
@@ -2218,12 +2227,13 @@ function renderYearlyBreakdownTable() {
 	    return true;
 	  });
 	
-	  // **এখানে কাউন্ট ব্যাজটি অটো আপডেট করে দেওয়া হলো**
+	  // ৩. কাউন্ট ব্যাজটি অটো আপডেট করা (একবার মাত্র)
 	  const countBadge = document.getElementById('searchCountBadge');
 	  if (countBadge) {
 	    countBadge.innerText = filtered.length;
 	  }
 	
+	  // ৪. কোনো ডেটা না থাকলে নোটিশ দেখানো
 	  if (filtered.length === 0) {
 	    container.innerHTML = `
 	      <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2">
