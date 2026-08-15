@@ -1843,30 +1843,25 @@ document.addEventListener("DOMContentLoaded", function() {
       return dateStr.substring(0, 7);
     }
 
-	  // ফিল্টার করা রেজাল্ট অনুযায়ী ব্যাজের সংখ্যা অটো আপডেট
-	  	const searchInput = document.getElementById('search-input');
-		const countBadge = document.getElementById('searchCountBadge');
-		
-		// ১. পেজ লোড বা ডিফল্ট অবস্থায় সব প্রজেক্টের মোট সংখ্যা দেখাবে
-		countBadge.innerText = farmData.length;
-		
-		// ২. টাইপ করার সাথে সাথে অটো কাউন্টিং আপডেট হওয়ার ইভেন্ট
-		searchInput.addEventListener('input', function() {
-		  const query = this.value.trim().toLowerCase();
-		  
-		  // ফিল্টার লজিক (গ্রাহকের নাম বা প্রজেক্ট ফিল্টার করা)
-		  const filteredList = farmData.filter(c => {
-		    const clientName = (c.name || '').toLowerCase();
-		    const projectName = (c.project || '').toLowerCase();
-		    return clientName.includes(query) || projectName.includes(query);
-		  });
-		
-		  // ফিল্টার করা রেজাল্ট অনুযায়ী ব্যাজের সংখ্যা অটো আপডেট হয়ে যাবে
-		  countBadge.innerText = filteredList.length;
-		
-		  // ৩. ফিল্টার করা লিস্ট স্ক্রিনে রেন্ডার করার ফাংশন
-		  renderClientList(filteredList); 
-		});
+	 // পেজ লোড বা ডিফল্ট অবস্থায় কাউন্ট সেট করার জন্য
+	document.addEventListener("DOMContentLoaded", function() {
+	  const countBadge = document.getElementById('searchCountBadge');
+	  if (countBadge && typeof farmData !== 'undefined') {
+	    countBadge.innerText = farmData.length;
+	  }
+	});
+	
+	// সার্চ ইনপুটে টাইপ করার ইভেন্ট এবং অটো কাউন্টিং লজিক
+	const searchInput = document.getElementById('search-input');
+	if (searchInput) {
+	  searchInput.addEventListener('input', function() {
+	    if (typeof renderClientCards === 'function') {
+	      renderClientCards();
+	    }
+	  });
+	}
+	  
+	
 	  
     // নিখুঁতভাবে মাস ও সাল ভিত্তিক অফিস খরচ, মূলধন এবং কাস্টমার আয়ের বিস্তারিত সহ ফিল্টার করার ফাংশন
 function calculateGlobalMetrics() {
@@ -2220,36 +2215,42 @@ function renderYearlyBreakdownTable() {
 }
     // ক্লায়েন্ট লিস্টে শুধুমাত্র প্রজেক্টের নাম দেখানোর রিকোয়ারমেন্ট অনুযায়ী আপডেট করা রেন্ডার ফাংশন
     function renderClientCards() {
-      const container = document.getElementById('client-cards-container');
-      if (!container) return;
-
-      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-
-      let filtered = farmData.filter(c => {
-        const matchQuery = (c.name && c.name.toLowerCase().includes(query)) ||
-                           (c.phone && c.phone.toLowerCase().includes(query)) ||
-                           (c.project && c.project.toLowerCase().includes(query));
-        return matchQuery;
-      });
-
-      filtered = filtered.filter(c => {
-        let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
-        let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
-        let due = Math.max(0, c.budget - (totalPaid + totalDisc));
-
-        if (activeClientFilter === 'due') return due > 0;
-        if (activeClientFilter === 'paid') return due === 0;
-        return true;
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2">
-            <p class="text-slate-400 text-sm">কোনো গ্রাহক বা প্রজেক্টের তথ্য পাওয়া যায়নি</p>
-          </div>
-        `;
-        return;
-      }
+	  const container = document.getElementById('client-cards-container');
+	  if (!container) return;
+	
+	  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+	
+	  let filtered = farmData.filter(c => {
+	    const matchQuery = (c.name && c.name.toLowerCase().includes(query)) ||
+	                       (c.phone && c.phone.toLowerCase().includes(query)) ||
+	                       (c.project && c.project.toLowerCase().includes(query));
+	    return matchQuery;
+	  });
+	
+	  filtered = filtered.filter(c => {
+	    let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
+	    let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
+	    let due = Math.max(0, c.budget - (totalPaid + totalDisc));
+	
+	    if (activeClientFilter === 'due') return due > 0;
+	    if (activeClientFilter === 'paid') return due === 0;
+	    return true;
+	  });
+	
+	  // **এখানে কাউন্ট ব্যাজটি অটো আপডেট করে দেওয়া হলো**
+	  const countBadge = document.getElementById('searchCountBadge');
+	  if (countBadge) {
+	    countBadge.innerText = filtered.length;
+	  }
+	
+	  if (filtered.length === 0) {
+	    container.innerHTML = `
+	      <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2">
+	        <p class="text-slate-400 text-sm">কোনো গ্রাহক বা প্রজেক্টের তথ্য পাওয়া যায়নি</p>
+	      </div>
+	    `;
+	    return;
+	  }
 
       container.innerHTML = filtered.map(c => {
         let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
