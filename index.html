@@ -1672,6 +1672,7 @@ document.addEventListener("DOMContentLoaded", function() {
       renderClientCards();
     };
 
+	  // ফায়ারবেস অথেন্টিকেশন (Firebase Auth): ইউজার লগইন করা আছে কি না চেক করা, গুগল দিয়ে সাইন-ইন বা সাইন-আউট করা এবং ইউজারের প্রোফাইল পিকচার ও নাম ড্যাশবোর্ডে সেট করা।
     if (profileTrigger) {
       profileTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1722,6 +1723,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
 
+	  // ক্লাউড ডাটাবেজ সিঙ্ক (subscribeToCloudStreams): ফায়ারবেস রিয়েলটাইম ডাটাবেজ থেকে ক্লায়েন্ট , অফিস খরচ  এবং ওনার ট্রানজেকশনের লাইভ ডেটা আনা এবং রেন্ডার করা।
     function subscribeToCloudStreams() {
       if(!databasePathRef) return;
       databasePathRef.child('clients').on('value', snapshot => {
@@ -1756,6 +1758,7 @@ document.addEventListener("DOMContentLoaded", function() {
       });
     }
 
+	  // ইউআই আপডেট পাইপলাইন (uiUpdatePipeline): ড্যাশবোর্ডের সামগ্রিক হিসাব, টেবিল এবং কার্ডগুলো একসাথে রিফ্রেশ করার মূল ইঞ্জিন।
     function uiUpdatePipeline() {
       calculateGlobalMetrics();
       calculateDailyMetrics();
@@ -1769,6 +1772,7 @@ document.addEventListener("DOMContentLoaded", function() {
       applyPrivacyToElements();
     }
 
+	 // ডেইলি মেট্রিক্স ক্যালকুলেশন : প্রতিদিনের আয়, খরচ এবং নিট হিসাব বের করে কার্ডে শো করানো।
     function calculateDailyMetrics() {
       const todayStr = getLocalDateString();
       const dateElem = document.getElementById('daily-card-date');
