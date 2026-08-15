@@ -2355,26 +2355,49 @@ function renderYearlyBreakdownTable() {
 			            </div>
 			        </div>
 			
-			        <!-- ৫. স্ট্যাটাস ও অ্যারো ইন্ডিকেটর (Status & Arrow Indicator) -->
+			        <!-- ৫. ডানপাশের লেআউট: ইন্ডিকেটর এবং তার নিচে স্ট্যাটাস ব্যাজ -->
 			        <div class="flex items-center gap-3">
-			            ${statusBadge}
+			            <!-- স্ট্যাটাস ব্যাজ (প্রজেক্ট টাইপ ব্যাজের মতো ডিজাইন, স্ট্যাটাস অনুযায়ী ভিন্ন বর্ডার) -->
+			            <div class="flex flex-col items-end gap-1">
+			                <span class="inline-flex items-center px-1.5 py-0.5 text-[10px] font-normal rounded w-fit ${
+			                    c.status === 'completed' 
+			                        ? 'text-emerald-600 border border-emerald-300 bg-transparent' 
+			                        : c.status === 'pending' 
+			                        ? 'text-amber-600 border border-amber-300 bg-transparent' 
+			                        : 'text-rose-600 border border-rose-200 bg-transparent'
+			                }">
+			                    ${c.status === 'completed' ? 'সম্পন্ন' : c.status === 'pending' ? 'পেন্ডিং' : 'রানিং'}
+			                </span>
+			            </div>
+			            
+			            <!-- অ্যারো ইন্ডিকেটর -->
 			            <span id="acc-client-${c.id}-arrow" class="text-slate-400 text-xs transition-transform duration-200"></span>
 			        </div>
 			    </div>
 			</div>
 
             <!-- Accordion Content: বাকি সব তথ্য ও লেজার অ্যাকর্ডিয়নের ভেতরে থাকবে -->
-            <div id="acc-client-${c.id}" class="hidden border-t border-slate-100 bg-slate-50/50 p-4 space-y-4">
-              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-white p-3 rounded-xl border border-slate-200">
-                <div class="space-y-0.5 text-xs">
-                  <p class="font-bold text-slate-900">গ্রাহক: <span class="font-normal text-slate-700">${c.name}</span></p>
-                  <p class="font-bold text-slate-900">মোবাইল: <span class="font-mono font-normal text-slate-700">${c.phone}</span></p>
-                </div>
-                <div class="flex items-center gap-2">
-                  <button onclick="openEditClientModal('${c.id}')" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-lg text-xs font-bold transition">এডিট গ্রাহক</button>
-                  <button onclick="printClientInvoice('${c.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg text-xs font-bold transition">রিসিট প্রিন্ট</button>
-                </div>
-              </div>
+				<div id="acc-client-${c.id}" class="hidden border-t border-slate-100 bg-slate-50/50 p-4 space-y-4">
+				    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-3 rounded-xl border border-slate-200">
+				        <div class="space-y-0.5 text-xs">
+				            <p class="font-bold text-slate-900">গ্রাহক: <span class="font-normal text-slate-700">${c.name}</span></p>
+				            <p class="font-bold text-slate-900">মোবাইল: <span class="font-mono font-normal text-slate-700">${c.phone}</span></p>
+				        </div>
+				        
+				        <!-- ডানপাশের বাটনগুলো এবং স্ট্যাটাস পরিবর্তনের ড্রপডাউন -->
+				        <div class="flex flex-wrap items-center gap-2">
+				            <!-- স্ট্যাটাস পরিবর্তন করার ড্রপডাউন (প্রজেক্ট টাইপ ব্যাজের স্টাইলের সাথে সামঞ্জস্যপূর্ণ) -->
+				            <select onchange="changeProjectStatus('${c.id}', this.value)" class="text-[11px] font-medium px-2.5 py-1.5 bg-transparent border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:border-rose-400 cursor-pointer">
+				                <option value="running" ${c.status === 'running' ? 'selected' : ''}>রানিং</option>
+				                <option value="pending" ${c.status === 'pending' ? 'selected' : ''}>পেন্ডিং</option>
+				                <option value="completed" ${c.status === 'completed' ? 'selected' : ''}>সম্পন্ন</option>
+				            </select>
+				
+				            <button onclick="openEditClientModal('${c.id}')" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-2.5 py-1.5 rounded-lg text-xs font-bold transition">এডিট গ্রাহক</button>
+				            <button onclick="printClientInvoice('${c.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg text-xs font-bold transition">রিসিট প্রিন্ট</button>
+				        </div>
+				    </div>
+				</div>
 
               <div class="grid grid-cols-3 gap-2 text-center text-xs">
                 <div class="bg-white p-2.5 rounded-xl border border-slate-200">
@@ -2628,6 +2651,57 @@ function renderYearlyBreakdownTable() {
         });
       }
     });
+
+	  // ১. প্রজেক্টের স্ট্যাটাস পরিবর্তন করার ফাংশন
+		function changeProjectStatus(projectId, newStatus) {
+		    const project = farmData.find(item => item.id === projectId);
+		    
+		    if (project) {
+		        // প্রজেক্টের স্ট্যাটাস আপডেট করা
+		        project.status = newStatus;
+		        
+		        // যদি লোকাল স্টোরেজে সেভ করার ফাংশন থাকে (যেমন: saveData()) তবে তা এখানে কল করুন
+		        if (typeof saveData === 'function') {
+		            saveData();
+		        }
+		        
+		        // কার্ড ও লিস্ট পুনরায় রেন্ডার করা
+		        if (typeof renderClientCards === 'function') {
+		            renderClientCards();
+		        }
+		        
+		        // হোম পেজের কাউন্টার আপডেট করা
+		        updateHomeProjectCounters();
+		    }
+		}
+		
+		// ২. হোম পেজের রানিং প্রজেক্ট কাউন্টার আপডেট করার ফাংশন
+		function updateHomeProjectCounters() {
+		    const totalProjects = (typeof farmData !== 'undefined' && farmData) ? farmData.length : 0;
+		    
+		    const runningCounterEl = document.getElementById('home-running-projects');
+		    if (runningCounterEl) {
+		        runningCounterEl.innerText = totalProjects + ' টি';
+		    }
+		}
+		
+		// ৩. কার্ড ওপেন বা বন্ধ করার টগল ফাংশন
+		function toggleClientCard(clientId) {
+		    const content = document.getElementById(`acc-client-${clientId}`);
+		    const arrow = document.getElementById(`acc-client-${clientId}-arrow`);
+		    
+		    if (content) {
+		        content.classList.toggle('hidden');
+		        if (arrow) {
+		            arrow.classList.toggle('rotate-180');
+		        }
+		    }
+		}
+		
+		// পেজ লোড হওয়ার পর কাউন্টার আপডেট করার জন্য
+		document.addEventListener('DOMContentLoaded', () => {
+		    updateHomeProjectCounters();
+		});
 
 	  // বায়োমেট্রিক লক সিস্টেম
 		async function unlockWithFingerprint() {
