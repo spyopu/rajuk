@@ -1828,13 +1828,19 @@ function calculateDailyMetrics() {
   }
 }
 
-// Helper: মাস বা সাল অনুযায়ী লেনদেন ফিল্টার করার ফাংশন
+// Helper: মাস বা সাল অনুযায়ী লেনদেন ফিল্টার করার নিরাপদ ফাংশন
 function isClientMatchTimeFilter(client) {
   const monthInput = document.getElementById('month-filter');
   const yearSelect = document.getElementById('year-filter');
   
   const selectedMonth = monthInput ? monthInput.value : ''; 
   const selectedYear = yearSelect ? yearSelect.value : '';   
+
+  // যদি কোনো মাস বা সাল সিলেক্ট করা না থাকে, তবে সব দেখাবে (জিরো হবে না)
+  if ((analyticsViewMode === 'monthly' && !selectedMonth) || 
+      (analyticsViewMode === 'yearly' && !selectedYear)) {
+    return true;
+  }
 
   if (!client.history || client.history.length === 0) {
     return false;
