@@ -2196,26 +2196,23 @@ function renderYearlyBreakdownTable() {
 }
     // ক্লায়েন্ট লিস্টে শুধুমাত্র প্রজেক্টের নাম দেখানোর রিকোয়ারমেন্ট অনুযায়ী আপডেট করা রেন্ডার ফাংশন
     function renderClientCards() {
-	  const container = document.getElementById('client-cards-container');
-	  if (!container) return;
-	
-	  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-	
-	  let filtered = farmData.filter(c => {
-	    // ১. নাম, মোবাইল বা প্রজেক্টের নামে ম্যাচ করে কিনা
-	    const matchQuery = (c.name && c.name.toLowerCase().includes(query)) ||
-	                       (c.phone && c.phone.toLowerCase().includes(query)) ||
-	                       (c.project && c.project.toLowerCase().includes(query));
-	
-	    // ২. হিস্ট্রি বা নোটে মাসের নাম বা তারিখ ম্যাচ করে কিনা
-	    const matchHistory = c.history && c.history.some(t => {
+  const container = document.getElementById('client-cards-container');
+  if (!container) return;
+
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+  // ১. সার্চ কুয়েরি (নাম, মোবাইল, প্রজেক্ট, নোট, মাস বা তারিখ) দিয়ে ফিল্টার
+  let filtered = farmData.filter(c => {
+    const matchQuery = (c.name && c.name.toLowerCase().includes(query)) ||
+                       (c.phone && c.phone.toLowerCase().includes(query)) ||
+                       (c.project && c.project.toLowerCase().includes(query));
+
+    const matchHistory = c.history && c.history.some(t => {
       const desc = (t.note || '').toLowerCase();
       const dateStr = (t.date || '').toLowerCase();
       
-      // সাধারণ নোট বা ডেট স্ট্রিং মিলে গেলে
       if (desc.includes(query) || dateStr.includes(query)) return true;
 
-      // সরাসরি জাভাস্ক্রিপ্ট ডেট দিয়ে মাসের নাম (যেমন january, jan) চেক করা
       if (t.date) {
         const d = new Date(t.date);
         if (!isNaN(d.getTime())) {
@@ -2223,32 +2220,44 @@ function renderYearlyBreakdownTable() {
           const mShort = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
           const yearStr = d.getFullYear().toString();
           
-          // আপনি ছোট বা বড় যাই লিখুন না কেন (.toLowerCase() এর কারণে মিলে যাবে)
           if (mName.includes(query) || mShort.includes(query) || yearStr.includes(query)) {
             return true;
           }
         }
       }
-
       return false;
     });
-	
-	  // ৩. কাউন্ট ব্যাজটি অটো আপডেট করা (একবার মাত্র)
-	  const countBadge = document.getElementById('searchCountBadge');
-	  if (countBadge) {
-	    countBadge.innerText = filtered.length;
-	  }
-	
-	  // ৪. কোনো ডেটা না থাকলে নোটিশ দেখানো
-	  if (filtered.length === 0) {
-	    container.innerHTML = `
-	      <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2">
-	        <p class="text-slate-400 text-sm">কোনো গ্রাহক বা প্রজেক্টের তথ্য পাওয়া যায়নি</p>
-	      </div>
-	    `;
-	    return;
-	  }
 
+    return matchQuery || matchHistory;
+  });
+
+  // ২. স্ট্যাটাস ফিল্টার (Due / Paid) অনুযায়ী ফিল্টার করার অংশটুকু যুক্ত করা হলো
+  filtered = filtered.filter(c => {
+    let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
+    let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
+    let due = Math.max(0, c.budget - (totalPaid + totalDisc));
+
+    if (activeClientFilter === 'due') return due > 0;
+    if (activeClientFilter === 'paid') return due === 0;
+    return true;
+  });
+
+  // ৩. কাউন্ট ব্যাজ আপডেট করা
+  const countBadge = document.getElementById('searchCountBadge');
+  if (countBadge) {
+    countBadge.innerText = filtered.length;
+  }
+
+  // ৪. কোনো ডেটা না থাকলে নোটিশ দেখানো
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2">
+        <p class="text-slate-400 text-sm">কোনো গ্রাহক বা প্রজেক্টের তথ্য পাওয়া যায়নি</p>
+      </div>
+    `;
+    return;
+  }
+		
       container.innerHTML = filtered.map(c => {
         let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
         let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
