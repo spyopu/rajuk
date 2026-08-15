@@ -268,7 +268,7 @@
   <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-4 space-y-3 flex-1">
 	  
     <!-- TAB 0: HOME VIEW -->
-    <div id="tab-home-view" class="tab-content space-y-6">
+    <div id="tab-home-view" class="tab-content space-y-4">
       <!-- DAILY INCOME & EXPENSE CARD -->
       <section class="bg-white rounded-2xl p-4 md:p-5 border border-slate-200/80 shadow-sm space-y-3">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -294,11 +294,33 @@
         </div>
       </section>
 
+      <!-- MINI PROJECT COUNTER WIDGET (ফাঁকা ভাব দূর করার জন্য নতুন যুক্ত করা হলো) -->
+      <section class="grid grid-cols-2 gap-3">
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center text-lg">
+                📁
+            </div>
+            <div>
+                <p class="text-[11px] text-slate-400 font-medium">রানিং প্রজেক্ট</p>
+                <h3 class="text-sm md:text-base font-bold text-slate-800">১৬ টি</h3>
+            </div>
+        </div>
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center text-lg">
+                ✅
+            </div>
+            <div>
+                <p class="text-[11px] text-slate-400 font-medium">সম্পন্ন কাজ</p>
+                <h3 class="text-sm md:text-base font-bold text-slate-800">০ টি</h3>
+            </div>
+        </div>
+      </section>
+
       <!-- HUMAN ILLUSTRATION ICON & BEAUTIFUL QUOTES WITH WHITE BACKGROUND -->
-      <section class="w-full py-8 px-4 text-center flex flex-col items-center justify-center space-y-5">
+      <section class="bg-white border border-slate-200/80 rounded-2xl py-6 px-4 text-center flex flex-col items-center justify-center space-y-4 shadow-sm">
 		  <!-- Vector Human Illustration SVG -->
-		  <div class="w-32 h-32 md:w-44 md:h-44 bg-rose-50/50 rounded-full flex items-center justify-center p-4 border border-rose-100/60 shadow-inner">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20 md:w-28 md:h-28">
+		  <div class="w-24 h-24 md:w-32 md:h-32 bg-rose-50/50 rounded-full flex items-center justify-center p-3 border border-rose-100/60 shadow-inner">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-14 h-14 md:w-20 md:h-20">
 			  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
 			  <circle cx="9" cy="7" r="4"></circle>
 			  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -307,9 +329,9 @@
 		  </div>
 
 		  <!-- Motivational Bangla Quote Banner -->
-		  <div class="max-w-md space-y-2">
-			<span class="text-[11px] font-extrabold uppercase tracking-widest text-rose-600 bg-rose-50 border border-rose-200/60 px-3 py-1 rounded-full">স্মার্ট হিসাব খাতা</span>
-			<p class="text-xs md:text-sm text-slate-500 font-medium leading-relaxed">
+		  <div class="max-w-md space-y-1.5">
+			<span class="text-[10px] font-extrabold uppercase tracking-widest text-rose-600 bg-rose-50 border border-rose-200/60 px-3 py-1 rounded-full">স্মার্ট হিসাব খাতা</span>
+			<p class="text-xs md:text-sm text-slate-500 font-medium leading-relaxed pt-1">
 			  দৈনন্দিন হিসাব রাখুন সহজে ও নিরাপদে। নিচের <span class="text-rose-600 font-bold">+</span> বাটনে ক্লিক করে মুহূর্তেই নতুন এন্ট্রি যোগ করুন।
 			</p>
 		  </div>
