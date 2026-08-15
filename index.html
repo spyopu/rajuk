@@ -2311,31 +2311,35 @@ function renderYearlyBreakdownTable() {
         `).join('');
         return `
 		
-          <div class="bg-white border border-slate-200 rounded-2xl shadow-2xs overflow-hidden transition">
-            <!-- Header: শুধুমাত্র প্রজেক্টের নাম ও স্ট্যাটাস ব্যাজ দৃশ্যमान থাকবে (গোপনীয়তা নিশ্চিত করতে) -->
-            <div onclick="toggleClientCard('${c.id}')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition select-none">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center font-bold text-base">
-                  📁
-                </div>
-                <div>
-                  <h4 class="text-sm font-bold text-slate-900">${c.project}</h4>
-                  
-                  <!-- প্রজেক্ট ক্যাটাগরি হালকা ব্যাজ (যদি ক্যাটাগরি সেভ করা থাকে) -->
-                  ${c.projectType ? `
-					  <span class="inline-flex items-center px-1.5 py-0.5 mt-1 text-[10px] font-normal text-rose-600 bg-transparent border border-rose-200 rounded w-fit">
-					    ${c.projectType}
-					  </span>
-					` : ''}
-                </div>
-              </div>
-
-              <div class="flex items-center gap-3">
-                ${statusBadge}
-                <span id="acc-client-${c.id}-arrow" class="text-slate-400 text-xs transition-transform duration-200"></span>
-              </div>
-            </div>
-		</div>
+          <div class="bg-white border border-slate-200 rounded-2xl shadow-2xs overflow-hidden transition-all duration-200 hover:border-rose-300 hover:bg-rose-50/30">
+			    <!-- ১. হেডার এবং ক্লিক ফাংশনালিটি (Header & Click Trigger) -->
+			    <div onclick="toggleClientCard('${c.id}')" class="p-4 flex items-center justify-between cursor-pointer transition select-none">
+			        <div class="flex items-center gap-3">
+			            <!-- ২. ফোল্ডার আইকন কন্টেইনার (Folder Icon Box) -->
+			            <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center font-bold text-base">
+			                📁
+			            </div>
+			            
+			            <div>
+			                <!-- ৩. প্রজেক্টের নাম (Project Name) -->
+			                <h4 class="text-sm font-bold text-slate-900">${c.project}</h4>
+			                
+			                <!-- ৪. প্রজেক্ট ক্যাটাগরি ব্যাজ (Project Type Badge) -->
+			                ${c.projectType ? `
+			                <span class="inline-flex items-center px-1.5 py-0.5 mt-1 text-[10px] font-normal text-rose-600 bg-transparent border border-rose-200 rounded w-fit">
+			                    ${c.projectType}
+			                </span>
+			                ` : ''}
+			            </div>
+			        </div>
+			
+			        <!-- ৫. স্ট্যাটাস ও অ্যারো ইন্ডিকেটর (Status & Arrow Indicator) -->
+			        <div class="flex items-center gap-3">
+			            ${statusBadge}
+			            <span id="acc-client-${c.id}-arrow" class="text-slate-400 text-xs transition-transform duration-200"></span>
+			        </div>
+			    </div>
+			</div>
 
             <!-- Accordion Content: বাকি সব তথ্য ও লেজার অ্যাকর্ডিয়নের ভেতরে থাকবে -->
             <div id="acc-client-${c.id}" class="hidden border-t border-slate-100 bg-slate-50/50 p-4 space-y-4">
