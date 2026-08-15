@@ -440,10 +440,18 @@
               </div>
               
               <div class="space-y-1.5 text-xs font-semibold text-slate-700">
-                <div class="flex justify-between items-center py-1.5 px-2.5 bg-slate-50 rounded-lg">
-                  <span>মোট কাস্টমার আয়:</span>
-                  <span id="report-collection" class="font-mono text-emerald-600 font-bold hide-sensitive">৳0</span>
-                </div>
+                <div class="border border-slate-200 rounded-lg overflow-hidden">
+				  <div onclick="toggleAccordion('acc-project-income')" class="flex justify-between items-center py-2 px-2.5 bg-slate-50 hover:bg-slate-100 cursor-pointer transition select-none">
+					<span class="flex items-center gap-1">
+					  <span id="acc-project-income-arrow" class="text-[9px] text-slate-400 transition-transform">▶</span>
+					  <span>মোট কাস্টমার আয়:</span>
+					</span>
+					<span id="report-collection" class="font-mono text-emerald-600 font-bold hide-sensitive">৳0</span>
+				  </div>
+				  <div id="acc-project-income" class="accordion-content hidden bg-white p-2 border-t border-slate-100 text-xs space-y-1 max-h-36 overflow-y-auto">
+					<div id="acc-project-income-list" class="space-y-1 text-slate-600"></div>
+				  </div>
+				</div>
 
                 <div class="border border-slate-200 rounded-lg overflow-hidden">
                   <div onclick="toggleAccordion('acc-project-cost')" class="flex justify-between items-center py-2 px-2.5 bg-slate-50 hover:bg-slate-100 cursor-pointer transition select-none">
