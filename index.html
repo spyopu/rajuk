@@ -2208,41 +2208,14 @@ function renderYearlyBreakdownTable() {
 	                       (c.project && c.project.toLowerCase().includes(query));
 	
 	    // ২. হিস্ট্রি বা নোটে মাসের নাম বা তারিখ ম্যাচ করে কিনা
-	    // ২. ছোট বা বড় হাতের যেকোনো অক্ষরে মাসের নাম, তারিখ বা সাল লেখার শক্তিশালী ফিল্টার লজিক
-    const matchHistory = c.history && c.history.some(t => {
+	    const matchHistory = c.history && c.history.some(t => {
       const desc = (t.note || '').toLowerCase();
       const dateStr = (t.date || '').toLowerCase();
       
-      // সাধারণ নোট বা ডেট স্ট্রিং মিলে গেলে true
+      // সাধারণ নোট বা ডেট স্ট্রিং মিলে গেলে
       if (desc.includes(query) || dateStr.includes(query)) return true;
 
-      // মাসের নামগুলোর তালিকা (ছোট হাতের অক্ষরে)
-      const monthsMap = {
-        'january': '01', 'jan': '01',
-        'february': '02', 'feb': '02',
-        'march': '03', 'mar': '03',
-        'april': '04', 'apr': '04',
-        'may': '05',
-        'june': '06', 'jun': '06',
-        'july': '07', 'jul': '07',
-        'august': '08', 'aug': '08',
-        'september': '09', 'sep': '09',
-        'october': '10', 'oct': '10',
-        'november': '11', 'nov': '11',
-        'december': '12', 'dec': '12'
-      };
-
-      // যদি ইউজার সার্চ বক্সে কোনো মাসের নাম (যেমন january বা jan) লেখে
-      for (let [monthName, monthNum] of Object.entries(monthsMap)) {
-        if (query.includes(monthName)) {
-          // ডেট বা নোটে যদি ওই মাসের সংখ্যা (যেমন '-01-' বা '/01/') বা মাসের নামটি থাকে
-          if (dateStr.includes(`-${monthNum}-`) || dateStr.includes(`/${monthNum}/`) || desc.includes(monthName)) {
-            return true;
-          }
-        }
-      }
-
-      // যদি সরাসরি ডেট অবজেক্ট থেকে চেক করতে হয়
+      // সরাসরি জাভাস্ক্রিপ্ট ডেট দিয়ে মাসের নাম (যেমন january, jan) চেক করা
       if (t.date) {
         const d = new Date(t.date);
         if (!isNaN(d.getTime())) {
@@ -2250,6 +2223,7 @@ function renderYearlyBreakdownTable() {
           const mShort = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
           const yearStr = d.getFullYear().toString();
           
+          // আপনি ছোট বা বড় যাই লিখুন না কেন (.toLowerCase() এর কারণে মিলে যাবে)
           if (mName.includes(query) || mShort.includes(query) || yearStr.includes(query)) {
             return true;
           }
