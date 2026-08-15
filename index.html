@@ -2215,40 +2215,41 @@ function renderYearlyBreakdownTable() {
 }
     // ক্লায়েন্ট লিস্টে শুধুমাত্র প্রজেক্টের নাম দেখানোর রিকোয়ারমেন্ট অনুযায়ী আপডেট করা রেন্ডার ফাংশন
     function renderClientCards() {
-  const container = document.getElementById('client-cards-container');
-  if (!container) return;
-
-  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-
-  // ১. সার্চ কুয়েরি (নাম, মোবাইল, প্রজেক্ট, নোট, মাস বা তারিখ) দিয়ে ফিল্টার
-  let filtered = farmData.filter(c => {
-    const matchQuery = (c.name && c.name.toLowerCase().includes(query)) ||
-                       (c.phone && c.phone.toLowerCase().includes(query)) ||
-                       (c.project && c.project.toLowerCase().includes(query));
-
-    const matchHistory = c.history && c.history.some(t => {
-      const desc = (t.note || '').toLowerCase();
-      const dateStr = (t.date || '').toLowerCase();
-      
-      if (desc.includes(query) || dateStr.includes(query)) return true;
-
-      if (t.date) {
-        const d = new Date(t.date);
-        if (!isNaN(d.getTime())) {
-          const mName = d.toLocaleString('en-US', { month: 'long' }).toLowerCase();
-          const mShort = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
-          const yearStr = d.getFullYear().toString();
-          
-          if (mName.includes(query) || mShort.includes(query) || yearStr.includes(query)) {
-            return true;
-          }
-        }
-      }
-      return false;
-    });
-
-    return matchQuery || matchHistory;
-  });
+	  const container = document.getElementById('client-cards-container');
+	  if (!container) return;
+	
+	  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+	
+	  // ১. সার্চ কুয়েরি (নাম, মোবাইল, প্রজেক্ট, ক্যাটাগরি, নোট, মাস বা তারিখ) দিয়ে ফিল্টার
+	  let filtered = farmData.filter(c => {
+	    const matchQuery = (c.name && c.name.toLowerCase().includes(query)) ||
+	                       (c.phone && c.phone.toLowerCase().includes(query)) ||
+	                       (c.project && c.project.toLowerCase().includes(query)) ||
+	                       (c.projectType && c.projectType.toLowerCase().includes(query)); // 👈 ক্যাটাগরি সার্চ এখানে যুক্ত হলো
+	
+	    const matchHistory = c.history && c.history.some(t => {
+	      const desc = (t.note || '').toLowerCase();
+	      const dateStr = (t.date || '').toLowerCase();
+	      
+	      if (desc.includes(query) || dateStr.includes(query)) return true;
+	
+	      if (t.date) {
+	        const d = new Date(t.date);
+	        if (!isNaN(d.getTime())) {
+	          const mName = d.toLocaleString('en-US', { month: 'long' }).toLowerCase();
+	          const mShort = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
+	          const yearStr = d.getFullYear().toString();
+	          
+	          if (mName.includes(query) || mShort.includes(query) || yearStr.includes(query)) {
+	            return true;
+	          }
+	        }
+	      }
+	      return false;
+	    });
+	
+	    return matchQuery || matchHistory;
+	  });
 
   // ২. স্ট্যাটাস ফিল্টার (Due / Paid) অনুযায়ী ফিল্টার করার অংশটুকু যুক্ত করা হলো
   filtered = filtered.filter(c => {
