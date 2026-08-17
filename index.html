@@ -267,11 +267,18 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-4 space-y-3 flex-1">
 	  
-    <!-- TAB 0: HOME VIEW (CLEAN & MODERN) -->
-<div id="tab-home-view" class="tab-content space-y-5 max-w-4xl mx-auto px-4 py-4 text-center md:text-left" style="font-family: 'Hind Siliguri', sans-serif;">
+    <!-- TAB 0: HOME VIEW (100% HIND SILIGURI FONT ENFORCED) -->
+<div id="tab-home-view" class="tab-content space-y-5 max-w-4xl mx-auto px-4 py-4 text-center md:text-left" style="font-family: 'Hind Siliguri', sans-serif !important;">
 
     <!-- Google Font Import Link -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Global Font Fix Style Tag -->
+    <style>
+        #tab-home-view, #tab-home-view * {
+            font-family: 'Hind Siliguri', sans-serif !important;
+        }
+    </style>
 
     <!-- ১. মূল গ্রিটিংস ও ডেট কার্ড (১০ সেকেন্ড পর অটো হাইড হবে) -->
     <div id="greeting-card" class="bg-gradient-to-br from-rose-50 via-white to-pink-50/60 border border-rose-200 rounded-3xl p-6 md:p-7 shadow-sm relative overflow-hidden transition-all duration-700 ease-in-out opacity-100 max-h-[500px]">
@@ -280,23 +287,22 @@
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <!-- গ্রিটিংস টেক্সট (সালাম সহ) -->
             <div class="space-y-1.5 flex flex-col items-center md:items-start">
-                <span class="inline-block text-[11px] font-bold uppercase tracking-wider text-rose-600 bg-rose-100 px-3 py-0.5 rounded-full" style="font-family: 'Hind Siliguri', sans-serif;">
-                    ✨ স্বাগতম
+                <span class="inline-block text-[11px] font-bold uppercase tracking-wider text-rose-600 bg-rose-100 px-3 py-0.5 rounded-full">
+                    আসসালামু আলাইকুম
                 </span>
-                <h1 id="greeting-title" class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight" style="font-family: 'Hind Siliguri', sans-serif;">আসসালামু আলাইকুম!</h1>
-                <p id="greeting-subtitle" class="text-xs md:text-sm text-slate-500 font-medium" style="font-family: 'Hind Siliguri', sans-serif;">আপনার আজকের দিনটি বরকতময় ও সফল হোক।</p>
+                <p id="greeting-subtitle" class="text-xs md:text-sm text-slate-500 font-medium">আপনার আজকের দিনটি বরকতময় ও সফল হোক।</p>
             </div>
 
             <!-- ডান পাশে সাজানো তারিখ -->
             <div class="flex flex-col items-center md:items-end gap-1.5 md:border-l md:border-rose-100 md:pl-6 pt-3 md:pt-0 border-t md:border-t-0 border-rose-100/60">
                 <div class="text-xs">
-                    <span id="english-date" class="font-bold text-slate-700" style="font-family: 'Hind Siliguri', sans-serif;">সোমবার, ১৭ আগস্ট, ২০২৬</span>
+                    <span id="english-date" class="font-bold text-slate-700">সোমবার, ১৭ আগস্ট, ২০২৬</span>
                 </div>
                 <div class="text-xs">
-                    <span id="bengali-date" class="font-bold text-rose-700" style="font-family: 'Hind Siliguri', sans-serif;">সোমবার, ২ ভাদ্র, ১৪৩৩</span>
+                    <span id="bengali-date" class="font-bold text-rose-700">সোমবার, ২ ভাদ্র, ১৪৩৩</span>
                 </div>
                 <div class="text-xs">
-                    <span id="arabic-date" class="font-semibold text-slate-600" style="font-family: 'Hind Siliguri', sans-serif;">৪ রবিউল আউয়াল, ১৪৪৮ হিজরি</span>
+                    <span id="arabic-date" class="font-semibold text-slate-600">৪ রবিউল আউয়াল, ১৪৪৮</span>
                 </div>
             </div>
         </div>
@@ -307,19 +313,19 @@
         <div class="absolute top-0 left-0 md:left-0 right-0 md:right-auto w-full md:w-2 h-2 md:h-full bg-gradient-to-r md:bg-gradient-to-b from-rose-500 to-pink-500"></div>
         
         <div class="flex justify-center md:justify-start mb-4">
-            <span class="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-100/80 px-3 py-1 rounded-xl border border-rose-200" style="font-family: 'Hind Siliguri', sans-serif;">
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-100/80 px-3 py-1 rounded-xl border border-rose-200">
                 💡 প্রতিদিনের বাণী ও অনুপ্রেরণা
             </span>
         </div>
         
         <div class="min-h-[85px] flex items-center justify-center md:justify-start">
-            <p id="islamic-quote" class="text-slate-800 font-semibold text-base md:text-lg leading-relaxed tracking-wide text-center md:text-left break-words w-full" style="font-family: 'Hind Siliguri', sans-serif;"></p>
+            <p id="islamic-quote" class="text-slate-800 font-semibold text-base md:text-lg leading-relaxed tracking-wide text-center md:text-left break-words w-full"></p>
         </div>
     </div>
 
     <!-- ৩. স্মার্ট হিসাব খাতা হেল্পার সেকশন (কার্ড ছাড়া, স্ট্যান্ডার্ড ফন্ট ও সাইজ) -->
-    <div class="text-center py-2 px-2" style="font-family: 'Hind Siliguri', sans-serif;">
-        <p class="text-xs md:text-sm text-slate-600 font-medium leading-relaxed max-w-xl mx-auto" style="font-family: 'Hind Siliguri', sans-serif;">
+    <div class="text-center py-2 px-2">
+        <p class="text-xs md:text-sm text-slate-600 font-medium leading-relaxed max-w-xl mx-auto">
             ব্যবসার দৈনন্দিন হিসাব রাখুন সহজে ও নিরাপদে। নিচের <span class="text-rose-600 font-bold text-sm">+</span> বাটনে ক্লিক করে মুহূর্তেই নতুন এন্ট্রি যোগ করুন।
         </p>
     </div>
@@ -337,16 +343,16 @@
         if (!titleEl || !subEl) return;
 
         if (hour >= 4 && hour < 12) {
-            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ সকাল! 🌅";
+            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ সকাল!";
             subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
         } else if (hour >= 12 && hour < 15) {
-            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ দুপুর! ☀️";
+            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ দুপুর!";
             subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
         } else if (hour >= 15 && hour < 18) {
-            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ বিকেল! ☕";
+            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ বিকেল!";
             subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
         } else {
-            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ রাত্রি! 🌙";
+            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ রাত্রি!";
             subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
         }
     }
@@ -358,7 +364,7 @@
             if (today.getDate() === 17 && today.getMonth() === 7 && today.getFullYear() === 2026) {
                 document.getElementById('english-date').innerText = "সোমবার, ১৭ আগস্ট, ২০২৬";
                 document.getElementById('bengali-date').innerText = "সোমবার, ২ ভাদ্র, ১৪৩৩";
-                document.getElementById('arabic-date').innerText = "৪ রবিউল আউয়াল, ১৪৪৮ হিজরি";
+                document.getElementById('arabic-date').innerText = "৪ রবিউল আউয়াল, ১৪৪৮";
             }
         } catch (e) {
             // Fallback
