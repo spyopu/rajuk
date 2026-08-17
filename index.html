@@ -267,44 +267,141 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-4 space-y-3 flex-1">
 	  
-    <!-- TAB 0: HOME VIEW -->
-    <div id="tab-home-view" class="tab-content space-y-6">
-      <!-- DAILY INCOME & EXPENSE CARD -->
-      <section class="bg-white rounded-2xl p-4 md:p-5 border border-slate-200/80 shadow-sm space-y-3">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div class="flex items-center gap-2">
-            <span class="text-base">📅</span>
-            <h2 class="text-xs md:text-sm font-bold text-slate-800 uppercase tracking-wide">আজকের হিসাব</h2>
-          </div>
-          <span id="daily-card-date" class="text-[10px] md:text-xs bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-lg font-mono"></span>
-        </div>
-        <div class="grid grid-cols-3 gap-3 text-center pt-1">
-          <div class="bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-100/80">
-            <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-emerald-600">জমা</p>
-            <h3 id="daily-income" class="text-sm md:text-base font-black text-emerald-600 mt-1 font-mono hide-sensitive">৳0</h3>
-          </div>
-          <div class="bg-rose-50/60 p-3.5 rounded-xl border border-rose-100/80">
-            <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-rose-600">খরচ</p>
-            <h3 id="daily-expense" class="text-sm md:text-base font-black text-rose-600 mt-1 font-mono hide-sensitive">৳0</h3>
-          </div>
-          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-            <p class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-700">ক্যাশ</p>
-            <h3 id="daily-net" class="text-sm md:text-base font-black text-slate-800 mt-1 font-mono hide-sensitive">৳0</h3>
-          </div>
-        </div>
-      </section>
+    <!-- TAB 0: HOME VIEW (ONLY BODY CONTENT) -->
+<div id="tab-home-view" class="tab-content space-y-4 md:space-y-6 max-w-4xl mx-auto p-2 md:p-4">
 
-      <!-- HUMAN ILLUSTRATION ICON & BEAUTIFUL QUOTES WITH WHITE BACKGROUND -->
-      <section class="w-full py-8 px-4 text-center flex flex-col items-center justify-center space-y-5">
-		  <!-- Vector Human Illustration SVG -->
-		  <div class="w-32 h-32 md:w-44 md:h-44 bg-rose-50/50 rounded-full flex items-center justify-center p-4 border border-rose-100/60 shadow-inner">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20 md:w-28 md:h-28">
-			  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-			  <circle cx="9" cy="7" r="4"></circle>
-			  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-			  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-			</svg>
-		  </div>
+    <!-- TIME-BASED GREETING & DATE HEADER -->
+    <section class="bg-gradient-to-r from-rose-500 to-pink-600 rounded-2xl md:rounded-3xl p-5 md:p-6 text-white shadow-lg relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+        
+        <!-- বাংলা ও আরবি (হিজরি) তারিখ উইজেট -->
+        <div class="flex justify-between items-center bg-white/15 backdrop-blur-md px-4 py-2 rounded-xl md:rounded-2xl mb-4 border border-white/20 text-[11px] md:text-xs">
+            <span id="arabic-date" class="font-medium tracking-wide">হিজরি ক্যালেন্ডার</span>
+            <span class="w-1.5 h-1.5 bg-white/60 rounded-full"></span>
+            <span id="bengali-date" class="font-medium tracking-wide">লোড হচ্ছে...</span>
+        </div>
+
+        <!-- টাইম বেসড গ্রিটিংস -->
+        <h1 id="greeting-title" class="text-xl md:text-2xl font-bold tracking-tight">আসসালামু আলাইকুম!</h1>
+        <p id="greeting-subtitle" class="text-xs text-rose-100 mt-1">আপনার আজকের দিনটি বরকতময় ও সফল হোক।</p>
+    </section>
+
+    <!-- PREMIUM AUTO-TYPING QUOTE CARD -->
+    <section class="w-full bg-white border border-rose-100 rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-sm relative group hover:shadow-md transition-all">
+        <div class="absolute top-4 right-5 text-rose-200 text-3xl font-serif">“</div>
+        <span class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest text-rose-600 bg-rose-50 border border-rose-200/60 px-3 py-1 rounded-full">প্রতিদিনের বাণী</span>
+        
+        <div class="min-h-[60px] md:min-h-[70px] flex items-center mt-3">
+            <p id="islamic-quote" class="text-slate-700 font-medium italic text-xs md:text-sm leading-relaxed"></p>
+        </div>
+        
+        <div class="mt-4 flex items-center justify-end gap-1.5 border-t border-slate-50 pt-3">
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+            <span class="text-[10px] text-slate-400 font-medium">লাইভ আপডেট</span>
+        </div>
+    </section>
+
+</div>
+
+<!-- HOME VIEW JAVASCRIPT LOGIC (আপনার মেইন স্ক্রিপ্টের সাথে যুক্ত করতে পারেন) -->
+<script>
+    // ১. সময়ভিত্তিক অভিবাদন (Time-based Greeting)
+    function setTimeBasedGreeting() {
+        const hour = new Date().getHours();
+        const titleEl = document.getElementById('greeting-title');
+        const subEl = document.getElementById('greeting-subtitle');
+
+        if (!titleEl || !subEl) return;
+
+        if (hour >= 4 && hour < 12) {
+            titleEl.innerHTML = "শুভ সকাল! 🌅";
+            subEl.innerHTML = "নতুন উদ্যমে আজকের দিনটি শুরু করুন।";
+        } else if (hour >= 12 && hour < 15) {
+            titleEl.innerHTML = "শুভ দুপুর! ☀️";
+            subEl.innerHTML = "আপনার কাজের সময়টি ফলপ্রসূ হোক।";
+        } else if (hour >= 15 && hour < 18) {
+            titleEl.innerHTML = "শুভ বিকেল! ☕";
+            subEl.innerHTML = "ক্লান্তি কাটিয়ে সামনের কাজগুলো গুছিয়ে নিন।";
+        } else {
+            titleEl.innerHTML = "শুভ রাত্রি! 🌙";
+            subEl.innerHTML = "আজকের দিনটি কেমন কাটল? শান্তি থাকুক।";
+        }
+    }
+
+    // ২. বাংলা ও আরবি (হিজরি) তারিখ জেনারেটর
+    function setFormattedDates() {
+        const today = new Date();
+        
+        // বাংলা তারিখ ফরম্যাট
+        const optionsBn = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const bnDateStr = today.toLocaleDateString('bn-BD', optionsBn);
+        const bnDateEl = document.getElementById('bengali-date');
+        if (bnDateEl) bnDateEl.innerText = bnDateStr;
+
+        // আরবি / হিজরি তারিখ
+        try {
+            const arDateStr = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }).format(today);
+            const arDateEl = document.getElementById('arabic-date');
+            if (arDateEl) arDateEl.innerText = arDateStr;
+        } catch (e) {
+            const arDateEl = document.getElementById('arabic-date');
+            if (arDateEl) arDateEl.innerText = "হিজরি ক্যালেন্ডার";
+        }
+    }
+
+    // ৩. অটো-টাইপিং কোট লজিক
+    const quotes = [
+        "“বিসমিল্লাহি আলা বারাকাতিল্লাহ— আল্লাহর নামে এবং তাঁর বরকতের সাথে শুরু করুন।”",
+        "“সততা হলো সবচেয়ে বড় পুঁজি, যা কখনো ফুরিয়ে যায় না।”",
+        "“আলহামদুলিল্লাহি আলা কুল্লি হাল— প্রতিটি পরিস্থিতিতে আল্লাহর শুকরিয়া আদায় করুন।”",
+        "“যে ব্যক্তি আমানত রক্ষা করে, আল্লাহ তার জীবনে বরকত বাড়িয়ে দেন।”",
+        "“আজকের ছোট গোছগাছ বা পরিকল্পনা আগামীকালের বড় স্বস্তি এনে দেয়।”"
+    ];
+
+    let quoteIndex = 0;
+    let charIndex = 0;
+    const quoteElement = document.getElementById('islamic-quote');
+
+    function typeQuote() {
+        if (!quoteElement) return;
+        if (charIndex < quotes[quoteIndex].length) {
+            quoteElement.textContent += quotes[quoteIndex].charAt(charIndex);
+            charIndex++;
+            setTimeout(typeQuote, 60); 
+        } else {
+            setTimeout(deleteQuote, 3000); 
+        }
+    }
+
+    function deleteQuote() {
+        if (!quoteElement) return;
+        if (charIndex > 0) {
+            quoteElement.textContent = quotes[quoteIndex].substring(0, charIndex - 1);
+            charIndex--;
+            setTimeout(deleteQuote, 25); 
+        } else {
+            quoteIndex = (quoteIndex + 1) % quotes.length;
+            setTimeout(typeQuote, 400);
+        }
+    }
+
+    // পেজ লোড বা ট্যাব পরিবর্তন হলে রান করার জন্য
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeBasedGreeting();
+            setFormattedDates();
+            typeQuote();
+        });
+    } else {
+        setTimeBasedGreeting();
+        setFormattedDates();
+        typeQuote();
+    }
+</script>
 
 		  <!-- Motivational Bangla Quote Banner -->
 		  <div class="max-w-md space-y-2">
