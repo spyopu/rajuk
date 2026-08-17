@@ -268,193 +268,193 @@
   <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-4 space-y-3 flex-1">
 	  
    <!-- TAB 0: HOME VIEW (SEPARATE GREETINGS & CENTERED EYE-CATCHY CARD) -->
-<div id="tab-home-view" class="tab-content space-y-5 max-w-4xl mx-auto px-4 py-4 text-center md:text-left" style="font-family: 'Noto Sans Bengali', sans-serif !important;">
-
-    <!-- Google Font Import -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Global Font & Layout Fix Style -->
-    <style>
-        #tab-home-view, #tab-home-view * {
-            font-family: 'Noto Sans Bengali', sans-serif !important;
-            box-sizing: border-box;
-        }
-    </style>
-
-    <!-- ১. মূল গ্রিটিংস ও ডেট কার্ড (সালাম ও সময় আলাদা লাইনে, ১০ সেকেন্ড পর অটো হাইড হবে) -->
-    <div id="greeting-card" class="bg-gradient-to-br from-rose-50 via-white to-pink-50/60 border border-rose-200/80 rounded-3xl p-5 md:p-6 shadow-xs relative overflow-hidden transition-all duration-700 ease-in-out opacity-100">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-rose-100/40 rounded-full blur-3xl pointer-events-none"></div>
-        
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <!-- গ্রিটিংস টেক্সট (সালাম ও টাইম আলাদা লাইন) -->
-            <div class="space-y-1.5 flex flex-col items-center md:items-start">
-                <h1 id="greeting-salam" class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম</h1>
-                <p id="greeting-time" class="text-xs md:text-sm font-semibold text-rose-600">শুভ সকাল</p>
-                <p id="greeting-subtitle" class="text-xs text-slate-500 font-medium">নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।</p>
-            </div>
-
-            <!-- সাজানো তারিখ -->
-            <div class="flex flex-col items-center md:items-end gap-1 md:border-l md:border-rose-100 md:pl-5 pt-3 md:pt-0 border-t md:border-t-0 border-rose-100/60 shrink-0">
-                <div class="text-[11px] md:text-xs leading-tight">
-                    <span id="english-date" class="font-bold text-slate-700">সোমবার, ১৭ আগস্ট, ২০২৬</span>
-                </div>
-				<div class="text-[11px] md:text-xs leading-tight">
-                    <span id="arabic-date" class="font-semibold text-rose-700">৪ রবিউল আউয়াল, ১৪৪৮</span>
-                </div>
-                <div class="text-[11px] md:text-xs leading-tight">
-                    <span id="bengali-date" class="font-bold text-slate-700">সোমবার, ২ ভাদ্র, ১৪৩৩</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ২. আল্ট্রা-আই-ক্যাচিং এবং সেন্টার্ড কোট কার্ড -->
-    <div class="bg-gradient-to-br from-white via-rose-50/40 to-pink-50/50 border-2 border-rose-200/90 rounded-3xl p-6 md:p-8 shadow-sm relative overflow-hidden group text-center">
-        <!-- ব্যাকগ্রাউন্ড গ্লো ডিজাইন -->
-        <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-rose-200/30 rounded-full blur-3xl pointer-events-none"></div>
-        
-        <div class="relative z-10 flex flex-col items-center justify-center space-y-4">
-            <!-- সেন্টার্ড ব্যাজ -->
-            <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-rose-600 bg-rose-100/90 px-3.5 py-1 rounded-full border border-rose-200/80 shadow-2xs">
-                কিছু কথা
-            </span>
-            
-            <!-- সেন্টার্ড টাইপিং টেক্সট -->
-            <div class="min-h-[75px] flex items-center justify-center w-full max-w-2xl mx-auto">
-                <p id="islamic-quote" class="text-slate-800 font-semibold text-base md:text-lg leading-relaxed tracking-wide text-center break-words"></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ৩. স্মার্ট হিসাব খাতা হেল্পার সেকশন -->
-    <div class="text-center py-3 px-2 space-y-2">
-        <div class="inline-block">
-            <span class="text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest text-rose-600 bg-rose-100/80 border border-rose-200 px-3 py-0.5 rounded-full">
-                স্মার্ট হিসাব খাতা
-            </span>
-        </div>
-        <p class="text-xs md:text-sm text-slate-600 font-normal leading-relaxed max-w-xl mx-auto">
-            ব্যবসার দৈনন্দিন হিসাব রাখুন সহজে ও নিরাপদে। নিচের <span class="text-rose-600 font-bold text-sm">+</span> বাটনে ক্লিক করে মুহূর্তেই নতুন এন্ট্রি যোগ করুন।
-        </p>
-    </div>
-
-</div>
-
-<!-- JAVASCRIPT LOGIC -->
-<script>
-    function setTimeBasedGreeting() {
-        const hour = new Date().getHours();
-        const salamEl = document.getElementById('greeting-salam');
-        const timeEl = document.getElementById('greeting-time');
-        const subEl = document.getElementById('greeting-subtitle');
-
-        if (!salamEl || !timeEl || !subEl) return;
-
-        salamEl.innerHTML = "আসসালামু আলাইকুম!";
-
-        if (hour >= 4 && hour < 12) {
-            timeEl.innerHTML = "শুভ সকাল 🌅";
-            subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
-        } else if (hour >= 12 && hour < 15) {
-            timeEl.innerHTML = "শুভ দুপুর ☀️";
-            subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
-        } else if (hour >= 15 && hour < 18) {
-            timeEl.innerHTML = "শুভ বিকেল ☕";
-            subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
-        } else {
-            timeEl.innerHTML = "শুভ রাত্রি 🌙";
-            subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
-        }
-    }
-
-    function setFormattedDates() {
-        const today = new Date();
-        try {
-            if (today.getDate() === 17 && today.getMonth() === 7 && today.getFullYear() === 2026) {
-                document.getElementById('english-date').innerText = "সোমবার, ১৭ আগস্ট, ২০২৬";
-                document.getElementById('bengali-date').innerText = "সোমবার, ২ ভাদ্র, ১৪৩৩";
-                document.getElementById('arabic-date').innerText = "৪ রবিউল আউয়াল, ১৪৪৮";
-            }
-        } catch (e) {}
-    }
-
-    function initAutoDismissGreeting() {
-        setTimeout(() => {
-            const greetingCard = document.getElementById('greeting-card');
-            if (greetingCard) {
-                greetingCard.style.opacity = '0';
-                greetingCard.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    greetingCard.style.display = 'none';
-                }, 700); 
-            }
-        }, 10000); 
-    }
-
-    const quotes = [
-        "“মহান আল্লাহর পবিত্র নাম এবং তাঁর অন্তহীন বরকত নিয়ে আপনার আজকের নতুন ব্যবসায়িক দিনটি শুরু করুন, নিশ্চয়ই তিনি উত্তম রিজিকদাতা।”",
-        "“সততা, বিশ্বস্ততা ও আমানতদারি হলো ব্যবসার সবচেয়ে বড় ও স্থায়ী পুঁজি, যা দুনিয়া ও আখেরাতে কখনো ফুরিয়ে যায় না।”",
-        "“প্রতিটি ব্যবসায়িক পরিস্থিতি, লাভ কিংবা লোকসানে মহান আল্লাহর শুকরিয়া আদায় করুন, কারণ কৃতজ্ঞ বান্দার নিয়ামত তিনি বাড়িয়ে দেন।”",
-        "“যে ব্যক্তি পূর্ণ সততা, নিষ্ঠা ও পরিশ্রমের সাথে তার ব্যবসা পরিচালনা করে, আল্লাহপাক তার উপার্জনে এবং সম্পত্তিতে বরকত দান করেন।”",
-        "“আজকের এই ছোট্ট হিসাবের নিখুঁত ও সুশৃঙ্খল পরিকল্পনা আগামীকালের বড় ব্যবসায়িক সাফল্য এবং মানসিক স্বস্তি নিশ্চিত করে।”",
-        "“ধৈর্য হলো মানুষের জীবনের এমন একটি গুণ, যা যেকোনো কঠিন বিপদের মুহূর্ত পেরিয়ে সাফল্যের সোনালী দরজা খুলে দেয়।”",
-        "“সৎ পথে এবং হালাল উপায়ে করা সামান্য পরিশ্রমও ভবিষ্যতে মানুষের জীবনে শান্তি ও সমৃদ্ধির এক বিশাল পাহাড় গড়ে তোলে।”",
-        "“অহংকার মানুষের সমস্ত অর্জিত সম্মান ও ব্যক্তিত্বকে নিমেষেই ধূলিসাৎ করে দেয়, পক্ষান্তরে বিনম্রতা মানুষকে সবার হৃদয়ে অমর করে রাখে।”",
-        "“মানুষের করা ভালো কাজ কিংবা সুন্দর ব্যবহার কভু হারিয়ে যায় না, আজ হোক বা কাল ঘুরেফিরে ঠিকই তার সুফল নিজের জীবনে ফিরে আসে।”",
-        "“মূল্যবান সময় এবং সঠিক সুযোগ কারো জন্য দীর্ঘক্ষণ অপেক্ষা করে না; তাই কালক্ষেপণ না করে বর্তমান মুহূর্তটিকে সর্বোচ্চভাবে কাজে লাগান।”",
-        "“কঠোর পরিশ্রম কখনো একেবারে বৃথা যায় না, একটু বিলম্বে হলেও এর অত্যন্ত সুমধুর ও সুন্দর প্রতিদান জীবন ফিরিয়ে দেয়।”",
-        "“একটি সঠিক সিদ্ধান্ত এবং মানুষের সাথে করা ভালো ব্যবহার ব্যবসার পরিধি বাড়ানোর চেয়েও মানুষের মন জয় করতে বেশি সাহায্য করে।”",
-        "“সাফল্য একদিনে আসে না; প্রতিদিনের ছোট ছোট সৎ প্রচেষ্টা, নিয়মানুবর্তিতা এবং সঠিক হিসাব-নিকাশই সফলতার আসল ভিত্তি।”",
-        "“যে মানুষ নিজের কাজের প্রতি দায়িত্বশীল এবং আন্তরিক নয়, সে কখনোই বড় কোনো লক্ষ্য অর্জন করতে সফল হতে পারে না।”",
-        "“সবচেয়ে বড় বিনিয়োগ হলো নিজের ওপর বিশ্বাস রাখা এবং সঠিক জ্ঞান অর্জন করা, যা আপনাকে কখনো নিরাশ করবে না।”",
-        "“অনিশ্চয়তা ও ভয়ের মুখোমুখি হয়ে যিনি সাহসিকতার সাথে এগিয়ে যান, তিনিই মূলত জীবনের আসল চ্যালেঞ্জগুলো জয় করতে পারেন।”",
-        "“রিজিকের মালিক একমাত্র আল্লাহ; তাই হালাল উপার্জনের জন্য সাধ্যমতো চেষ্টা করে বাকি ফলাফল তাঁর ওপর সঁপে দিন।”",
-        "“লোভ মানুষকে অন্ধ করে দেয় এবং মুহূর্তের মধ্যে সমস্ত অর্জন ধ্বংস করে, কিন্তু সন্তুষ্টি মানুষকে প্রকৃত ধনী করে তোলে।”",
-        "“ভুল মানুষেরই হয়, তবে বুদ্ধিমান মানুষ সেই ভুল থেকে শিক্ষা নিয়ে নিজেকে আরও বেশি পরিপক্ব ও দক্ষ করে গড়ে তোলে।”",
-        "“আজকের একটি ছোট সততা ও বিশ্বস্ততা আগামী দিনে আপনার ব্যবসার জন্য মানুষের ভালোবাসার এক স্থায়ী দুর্গ তৈরি করবে।”"
-    ];
-
-    let quoteIndex = 0;
-    let charIndex = 0;
-    const quoteElement = document.getElementById('islamic-quote');
-
-    function typeQuote() {
-        if (!quoteElement) return;
-        if (charIndex < quotes[quoteIndex].length) {
-            quoteElement.textContent += quotes[quoteIndex].charAt(charIndex);
-            charIndex++;
-            setTimeout(typeQuote, 45); 
-        } else {
-            setTimeout(deleteQuote, 3500); 
-        }
-    }
-
-    function deleteQuote() {
-        if (!quoteElement) return;
-        if (charIndex > 0) {
-            quoteElement.textContent = quotes[quoteIndex].substring(0, charIndex - 1);
-            charIndex--;
-            setTimeout(deleteQuote, 20); 
-        } else {
-            quoteIndex = (quoteIndex + 1) % quotes.length;
-            setTimeout(typeQuote, 400);
-        }
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeBasedGreeting();
-            setFormattedDates();
-            initAutoDismissGreeting();
-            typeQuote();
-        });
-    } else {
-        setTimeBasedGreeting();
-        setFormattedDates();
-        initAutoDismissGreeting();
-        typeQuote();
-    }
-</script>
+	<div id="tab-home-view" class="tab-content space-y-5 max-w-4xl mx-auto px-4 py-4 text-center md:text-left" style="font-family: 'Noto Sans Bengali', sans-serif !important;">
+	
+	    <!-- Google Font Import -->
+	    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+	
+	    <!-- Global Font & Layout Fix Style -->
+	    <style>
+	        #tab-home-view, #tab-home-view * {
+	            font-family: 'Noto Sans Bengali', sans-serif !important;
+	            box-sizing: border-box;
+	        }
+	    </style>
+	
+	    <!-- ১. মূল গ্রিটিংস ও ডেট কার্ড (সালাম ও সময় আলাদা লাইনে, ১০ সেকেন্ড পর অটো হাইড হবে) -->
+	    <div id="greeting-card" class="bg-gradient-to-br from-rose-50 via-white to-pink-50/60 border border-rose-200/80 rounded-3xl p-5 md:p-6 shadow-xs relative overflow-hidden transition-all duration-700 ease-in-out opacity-100">
+	        <div class="absolute top-0 right-0 w-32 h-32 bg-rose-100/40 rounded-full blur-3xl pointer-events-none"></div>
+	        
+	        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+	            <!-- গ্রিটিংস টেক্সট (সালাম ও টাইম আলাদা লাইন) -->
+	            <div class="space-y-1.5 flex flex-col items-center md:items-start">
+	                <h1 id="greeting-salam" class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম</h1>
+	                <p id="greeting-time" class="text-xs md:text-sm font-semibold text-rose-600">শুভ সকাল</p>
+	                <p id="greeting-subtitle" class="text-xs text-slate-500 font-medium">নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।</p>
+	            </div>
+	
+	            <!-- সাজানো তারিখ -->
+	            <div class="flex flex-col items-center md:items-end gap-1 md:border-l md:border-rose-100 md:pl-5 pt-3 md:pt-0 border-t md:border-t-0 border-rose-100/60 shrink-0">
+	                <div class="text-[11px] md:text-xs leading-tight">
+	                    <span id="bengali-date" class="font-bold text-slate-700">সোমবার, ২ ভাদ্র, ১৪৩৩</span>
+	                </div>
+					<div class="text-[11px] md:text-xs leading-tight">
+	                    <span id="arabic-date" class="font-semibold text-rose-700">৪ রবিউল আউয়াল, ১৪৪৮</span>
+	                </div> 
+					<div class="text-[11px] md:text-xs leading-tight">
+	                    <span id="english-date" class="font-bold text-slate-700">সোমবার, ১৭ আগস্ট, ২০২৬</span>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	
+	    <!-- ২. আল্ট্রা-আই-ক্যাচিং এবং সেন্টার্ড কোট কার্ড -->
+	    <div class="bg-gradient-to-br from-white via-rose-50/40 to-pink-50/50 border-2 border-rose-200/90 rounded-3xl p-6 md:p-8 shadow-sm relative overflow-hidden group text-center">
+	        <!-- ব্যাকগ্রাউন্ড গ্লো ডিজাইন -->
+	        <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-rose-200/30 rounded-full blur-3xl pointer-events-none"></div>
+	        
+	        <div class="relative z-10 flex flex-col items-center justify-center space-y-4">
+	            <!-- সেন্টার্ড ব্যাজ -->
+	            <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-rose-600 bg-rose-100/90 px-3.5 py-1 rounded-full border border-rose-200/80 shadow-2xs">
+	                কিছু কথা
+	            </span>
+	            
+	            <!-- সেন্টার্ড টাইপিং টেক্সট -->
+	            <div class="min-h-[75px] flex items-center justify-center w-full max-w-2xl mx-auto">
+	                <p id="islamic-quote" class="text-slate-800 font-semibold text-base md:text-lg leading-relaxed tracking-wide text-center break-words"></p>
+	            </div>
+	        </div>
+	    </div>
+	
+	    <!-- ৩. স্মার্ট হিসাব খাতা হেল্পার সেকশন -->
+	    <div class="text-center py-3 px-2 space-y-2">
+	        <div class="inline-block">
+	            <span class="text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest text-rose-600 bg-rose-100/80 border border-rose-200 px-3 py-0.5 rounded-full">
+	                স্মার্ট হিসাব খাতা
+	            </span>
+	        </div>
+	        <p class="text-xs md:text-sm text-slate-600 font-normal leading-relaxed max-w-xl mx-auto">
+	            ব্যবসার দৈনন্দিন হিসাব রাখুন সহজে ও নিরাপদে। নিচের <span class="text-rose-600 font-bold text-sm">+</span> বাটনে ক্লিক করে মুহূর্তেই নতুন এন্ট্রি যোগ করুন।
+	        </p>
+	    </div>
+	
+	</div>
+	
+	<!-- JAVASCRIPT LOGIC -->
+	<script>
+	    function setTimeBasedGreeting() {
+	        const hour = new Date().getHours();
+	        const salamEl = document.getElementById('greeting-salam');
+	        const timeEl = document.getElementById('greeting-time');
+	        const subEl = document.getElementById('greeting-subtitle');
+	
+	        if (!salamEl || !timeEl || !subEl) return;
+	
+	        salamEl.innerHTML = "আসসালামু আলাইকুম!";
+	
+	        if (hour >= 4 && hour < 12) {
+	            timeEl.innerHTML = "শুভ সকাল 🌅";
+	            subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
+	        } else if (hour >= 12 && hour < 15) {
+	            timeEl.innerHTML = "শুভ দুপুর ☀️";
+	            subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
+	        } else if (hour >= 15 && hour < 18) {
+	            timeEl.innerHTML = "শুভ বিকেল ☕";
+	            subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
+	        } else {
+	            timeEl.innerHTML = "শুভ রাত্রি 🌙";
+	            subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
+	        }
+	    }
+	
+	    function setFormattedDates() {
+	        const today = new Date();
+	        try {
+	            if (today.getDate() === 17 && today.getMonth() === 7 && today.getFullYear() === 2026) {
+	                document.getElementById('english-date').innerText = "সোমবার, ১৭ আগস্ট, ২০২৬";
+	                document.getElementById('bengali-date').innerText = "সোমবার, ২ ভাদ্র, ১৪৩৩";
+	                document.getElementById('arabic-date').innerText = "৪ রবিউল আউয়াল, ১৪৪৮";
+	            }
+	        } catch (e) {}
+	    }
+	
+	    function initAutoDismissGreeting() {
+	        setTimeout(() => {
+	            const greetingCard = document.getElementById('greeting-card');
+	            if (greetingCard) {
+	                greetingCard.style.opacity = '0';
+	                greetingCard.style.transform = 'scale(0.95)';
+	                setTimeout(() => {
+	                    greetingCard.style.display = 'none';
+	                }, 700); 
+	            }
+	        }, 10000); 
+	    }
+	
+	    const quotes = [
+	        "“মহান আল্লাহর পবিত্র নাম এবং তাঁর অন্তহীন বরকত নিয়ে আপনার আজকের নতুন ব্যবসায়িক দিনটি শুরু করুন, নিশ্চয়ই তিনি উত্তম রিজিকদাতা।”",
+	        "“সততা, বিশ্বস্ততা ও আমানতদারি হলো ব্যবসার সবচেয়ে বড় ও স্থায়ী পুঁজি, যা দুনিয়া ও আখেরাতে কখনো ফুরিয়ে যায় না।”",
+	        "“প্রতিটি ব্যবসায়িক পরিস্থিতি, লাভ কিংবা লোকসানে মহান আল্লাহর শুকরিয়া আদায় করুন, কারণ কৃতজ্ঞ বান্দার নিয়ামত তিনি বাড়িয়ে দেন।”",
+	        "“যে ব্যক্তি পূর্ণ সততা, নিষ্ঠা ও পরিশ্রমের সাথে তার ব্যবসা পরিচালনা করে, আল্লাহপাক তার উপার্জনে এবং সম্পত্তিতে বরকত দান করেন।”",
+	        "“আজকের এই ছোট্ট হিসাবের নিখুঁত ও সুশৃঙ্খল পরিকল্পনা আগামীকালের বড় ব্যবসায়িক সাফল্য এবং মানসিক স্বস্তি নিশ্চিত করে।”",
+	        "“ধৈর্য হলো মানুষের জীবনের এমন একটি গুণ, যা যেকোনো কঠিন বিপদের মুহূর্ত পেরিয়ে সাফল্যের সোনালী দরজা খুলে দেয়।”",
+	        "“সৎ পথে এবং হালাল উপায়ে করা সামান্য পরিশ্রমও ভবিষ্যতে মানুষের জীবনে শান্তি ও সমৃদ্ধির এক বিশাল পাহাড় গড়ে তোলে।”",
+	        "“অহংকার মানুষের সমস্ত অর্জিত সম্মান ও ব্যক্তিত্বকে নিমেষেই ধূলিসাৎ করে দেয়, পক্ষান্তরে বিনম্রতা মানুষকে সবার হৃদয়ে অমর করে রাখে।”",
+	        "“মানুষের করা ভালো কাজ কিংবা সুন্দর ব্যবহার কভু হারিয়ে যায় না, আজ হোক বা কাল ঘুরেফিরে ঠিকই তার সুফল নিজের জীবনে ফিরে আসে।”",
+	        "“মূল্যবান সময় এবং সঠিক সুযোগ কারো জন্য দীর্ঘক্ষণ অপেক্ষা করে না; তাই কালক্ষেপণ না করে বর্তমান মুহূর্তটিকে সর্বোচ্চভাবে কাজে লাগান।”",
+	        "“কঠোর পরিশ্রম কখনো একেবারে বৃথা যায় না, একটু বিলম্বে হলেও এর অত্যন্ত সুমধুর ও সুন্দর প্রতিদান জীবন ফিরিয়ে দেয়।”",
+	        "“একটি সঠিক সিদ্ধান্ত এবং মানুষের সাথে করা ভালো ব্যবহার ব্যবসার পরিধি বাড়ানোর চেয়েও মানুষের মন জয় করতে বেশি সাহায্য করে।”",
+	        "“সাফল্য একদিনে আসে না; প্রতিদিনের ছোট ছোট সৎ প্রচেষ্টা, নিয়মানুবর্তিতা এবং সঠিক হিসাব-নিকাশই সফলতার আসল ভিত্তি।”",
+	        "“যে মানুষ নিজের কাজের প্রতি দায়িত্বশীল এবং আন্তরিক নয়, সে কখনোই বড় কোনো লক্ষ্য অর্জন করতে সফল হতে পারে না।”",
+	        "“সবচেয়ে বড় বিনিয়োগ হলো নিজের ওপর বিশ্বাস রাখা এবং সঠিক জ্ঞান অর্জন করা, যা আপনাকে কখনো নিরাশ করবে না।”",
+	        "“অনিশ্চয়তা ও ভয়ের মুখোমুখি হয়ে যিনি সাহসিকতার সাথে এগিয়ে যান, তিনিই মূলত জীবনের আসল চ্যালেঞ্জগুলো জয় করতে পারেন।”",
+	        "“রিজিকের মালিক একমাত্র আল্লাহ; তাই হালাল উপার্জনের জন্য সাধ্যমতো চেষ্টা করে বাকি ফলাফল তাঁর ওপর সঁপে দিন।”",
+	        "“লোভ মানুষকে অন্ধ করে দেয় এবং মুহূর্তের মধ্যে সমস্ত অর্জন ধ্বংস করে, কিন্তু সন্তুষ্টি মানুষকে প্রকৃত ধনী করে তোলে।”",
+	        "“ভুল মানুষেরই হয়, তবে বুদ্ধিমান মানুষ সেই ভুল থেকে শিক্ষা নিয়ে নিজেকে আরও বেশি পরিপক্ব ও দক্ষ করে গড়ে তোলে।”",
+	        "“আজকের একটি ছোট সততা ও বিশ্বস্ততা আগামী দিনে আপনার ব্যবসার জন্য মানুষের ভালোবাসার এক স্থায়ী দুর্গ তৈরি করবে।”"
+	    ];
+	
+	    let quoteIndex = 0;
+	    let charIndex = 0;
+	    const quoteElement = document.getElementById('islamic-quote');
+	
+	    function typeQuote() {
+	        if (!quoteElement) return;
+	        if (charIndex < quotes[quoteIndex].length) {
+	            quoteElement.textContent += quotes[quoteIndex].charAt(charIndex);
+	            charIndex++;
+	            setTimeout(typeQuote, 45); 
+	        } else {
+	            setTimeout(deleteQuote, 3500); 
+	        }
+	    }
+	
+	    function deleteQuote() {
+	        if (!quoteElement) return;
+	        if (charIndex > 0) {
+	            quoteElement.textContent = quotes[quoteIndex].substring(0, charIndex - 1);
+	            charIndex--;
+	            setTimeout(deleteQuote, 20); 
+	        } else {
+	            quoteIndex = (quoteIndex + 1) % quotes.length;
+	            setTimeout(typeQuote, 400);
+	        }
+	    }
+	
+	    if (document.readyState === 'loading') {
+	        document.addEventListener('DOMContentLoaded', () => {
+	            setTimeBasedGreeting();
+	            setFormattedDates();
+	            initAutoDismissGreeting();
+	            typeQuote();
+	        });
+	    } else {
+	        setTimeBasedGreeting();
+	        setFormattedDates();
+	        initAutoDismissGreeting();
+	        typeQuote();
+	    }
+	</script>
 
     <!-- TAB 1: DEFAULT HOMEPAGE DASHBOARD & REPORTS -->
     <div id="tab-dashboard-view" class="tab-content space-y-4 hidden">
