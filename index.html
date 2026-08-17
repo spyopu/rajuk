@@ -267,35 +267,44 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-4 space-y-3 flex-1">
 	  
-    <!-- TAB 0: HOME VIEW (ULTRA PREMIUM & CLEAN DESIGN) -->
-<div id="tab-home-view" class="tab-content space-y-6 max-w-4xl mx-auto px-4 py-6 font-sans">
+    <!-- TAB 0: HOME VIEW (INTEGRATED CLEAN DATE LAYOUT) -->
+<div id="tab-home-view" class="tab-content space-y-6 max-w-4xl mx-auto px-4 py-6" style="font-family: 'Hind Siliguri', sans-serif;">
 
-    <!-- ১. প্রিমিয়াম গ্রিটিংস ও ডেট কার্ড -->
-    <div class="bg-gradient-to-br from-rose-50/80 via-white to-pink-50/40 border border-rose-200/70 rounded-3xl p-6 md:p-8 shadow-sm relative overflow-hidden">
+    <!-- Google Font Import Link (Hind Siliguri) -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- ১. মূল গ্রিটিংস ও ডেট কার্ড (একই কার্ডের ভেতরে বাঁয়ে গ্রিটিংস এবং ডানে তারিখ) -->
+    <div class="bg-gradient-to-br from-rose-50/90 via-white to-pink-50/50 border border-rose-200/80 rounded-3xl p-6 md:p-8 shadow-sm relative overflow-hidden">
         <div class="absolute top-0 right-0 w-32 h-32 bg-rose-100/40 rounded-full blur-2xl pointer-events-none"></div>
         
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <!-- গ্রিটিংস টেক্সট -->
+            <!-- গ্রিটিংস টেক্সট (বাম পাশে) -->
             <div class="space-y-1.5">
-                <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-rose-600 bg-rose-100/70 px-3 py-1 rounded-full">
+                <span class="inline-block text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-100/70 px-3 py-1 rounded-full">
                     ✨ স্বাগতম
                 </span>
-                <h1 id="greeting-title" class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">আসসালামু আলাইকুম!</h1>
+                <h1 id="greeting-title" class="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম!</h1>
                 <p id="greeting-subtitle" class="text-xs md:text-sm text-slate-500 font-medium">আপনার আজকের দিনটি বরকতময় ও সফল হোক।</p>
             </div>
 
-            <!-- বাংলা, হিজরি ও ইংরেজি তারিখের প্রিমিয়াম কম্বিনেশন ব্যাজ -->
-            <div class="bg-white/90 backdrop-blur-md border border-rose-100 p-4 rounded-2xl shadow-xs flex flex-col gap-2 min-w-[240px]">
-                <!-- বাংলা ও হিজরি (সম্পূর্ণ বাংলায়) -->
-                <div class="flex items-center justify-between border-b border-slate-100 pb-2 text-xs">
-                    <span id="bengali-date" class="font-bold text-rose-700">লোড হচ্ছে...</span>
-                    <span class="text-slate-300">•</span>
-                    <span id="arabic-date" class="font-semibold text-slate-600">হিজরি তারিখ</span>
-                </div>
+            <!-- ডান পাশে সাজানো তারিখ (উপরে ইংরেজি, মাঝে বাংলা, নিচে হিজরি) -->
+            <div class="flex flex-col gap-2 text-right md:border-l md:border-rose-100 md:pl-6">
                 <!-- ইংরেজি তারিখ (ইংরেজিতে) -->
-                <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono">
-                    <span>English Date:</span>
-                    <span id="english-date" class="font-bold text-slate-600">Loading...</span>
+                <div class="flex items-center justify-between md:justify-end gap-3 text-xs">
+                    <span class="text-slate-400 font-medium md:hidden">English:</span>
+                    <span id="english-date" class="font-bold text-slate-700 font-mono">Loading...</span>
+                </div>
+
+                <!-- বাংলা সালের তারিখ (সম্পূর্ণ বাংলায়) -->
+                <div class="flex items-center justify-between md:justify-end gap-3 text-xs">
+                    <span class="text-slate-400 font-medium md:hidden">বাংলা:</span>
+                    <span id="bengali-date" class="font-bold text-rose-700">লোড হচ্ছে...</span>
+                </div>
+
+                <!-- হিজরি সালের তারিখ (সম্পূর্ণ বাংলায়) -->
+                <div class="flex items-center justify-between md:justify-end gap-3 text-xs">
+                    <span class="text-slate-400 font-medium md:hidden">হিজরি:</span>
+                    <span id="arabic-date" class="font-semibold text-slate-600">হিজরি তারিখ</span>
                 </div>
             </div>
         </div>
@@ -306,19 +315,24 @@
         <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-rose-500 to-pink-500"></div>
         
         <div class="flex items-center justify-between mb-4 pl-3">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-lg border border-rose-100">
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-lg border border-rose-100">
                 💡 প্রতিদিনের বাণী ও অনুপ্রেরণা
             </span>
         </div>
         
         <div class="min-h-[75px] flex items-center pl-3">
-            <p id="islamic-quote" class="text-slate-700 font-medium text-sm md:text-base leading-relaxed tracking-wide italic font-serif"></p>
+            <p id="islamic-quote" class="text-slate-700 font-medium text-sm md:text-base leading-relaxed tracking-wide"></p>
         </div>
     </div>
 
-    <!-- ৩. হেল্পার টেক্সট (কার্ড ছাড়া একদম সিম্পল ও সুন্দর) -->
-    <div class="text-center pt-2 pb-4">
-        <p class="text-xs md:text-sm text-slate-500 font-medium leading-relaxed">
+    <!-- ৩. স্মার্ট হিসাব খাতা হেল্পার সেকশন -->
+    <div class="text-center space-y-2 py-3">
+        <div class="inline-block">
+            <span class="text-[11px] font-extrabold uppercase tracking-widest text-rose-600 bg-rose-50 border border-rose-200/70 px-3.5 py-1 rounded-full shadow-2xs">
+                স্মার্ট হিসাব খাতা
+            </span>
+        </div>
+        <p class="text-xs md:text-sm text-slate-500 font-medium leading-relaxed max-w-md mx-auto pt-1">
             দৈনন্দিন হিসাব রাখুন সহজে ও নিরাপদে। নিচের <span class="text-rose-600 font-bold">+</span> বাটনে ক্লিক করে মুহূর্তেই নতুন এন্ট্রি যোগ করুন।
         </p>
     </div>
@@ -350,23 +364,23 @@
         }
     }
 
-    // ২. বাংলা, হিজরি (সম্পূর্ণ বাংলায়) ও ইংরেজি তারিখ জেনারেটর
+    // ২. ইংরেজি উপরে, মাঝে বাংলা এবং নিচে হিজরি তারিখ সেট করার ফাংশন
     function setFormattedDates() {
         const today = new Date();
         
-        // বাংলা তারিখ (বাংলায়)
-        const optionsBn = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        const bnDateStr = today.toLocaleDateString('bn-BD', optionsBn);
-        const bnEl = document.getElementById('bengali-date');
-        if (bnEl) bnEl.innerText = bnDateStr;
-
         // ইংরেজি তারিখ (ইংরেজিতে)
         const optionsEn = { month: 'short', day: 'numeric', year: 'numeric' };
         const enDateStr = today.toLocaleDateString('en-US', optionsEn);
         const enEl = document.getElementById('english-date');
         if (enEl) enEl.innerText = enDateStr;
 
-        // হিজরি তারিখ (বাংলা ভাষায়)
+        // বাংলা তারিখ (সম্পূর্ণ বাংলায়)
+        const optionsBn = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        const bnDateStr = today.toLocaleDateString('bn-BD', optionsBn);
+        const bnEl = document.getElementById('bengali-date');
+        if (bnEl) bnEl.innerText = bnDateStr;
+
+        // হিজরি তারিখ (সম্পূর্ণ বাংলায়)
         try {
             const islamicMonthsBn = [
                 "মহাররম", "সফর", "রবিউল আউয়াল", "রবিউস সানি", 
