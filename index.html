@@ -267,20 +267,20 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-4 space-y-3 flex-1">
 	  
-    <!-- TAB 0: HOME VIEW (AUTO-HIDE GREETING & LARGE WRAPPED QUOTE) -->
-<div id="tab-home-view" class="tab-content space-y-4 max-w-4xl mx-auto px-4 py-3 text-center md:text-left" style="font-family: 'Hind Siliguri', sans-serif;">
+    <!-- TAB 0: HOME VIEW (FINAL PREMIUM REDESIGN) -->
+<div id="tab-home-view" class="tab-content space-y-5 max-w-4xl mx-auto px-4 py-4 text-center md:text-left" style="font-family: 'Hind Siliguri', sans-serif;">
 
     <!-- Google Font Import Link -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- ১. মূল গ্রিটিংস ও ডেট কার্ড (১০ সেকেন্ড পর অটো হাইড হওয়ার জন্য ID যুক্ত) -->
-    <div id="greeting-card" class="bg-gradient-to-br from-rose-50/90 via-white to-pink-50/50 border border-rose-200/80 rounded-2xl p-5 md:p-6 shadow-xs relative overflow-hidden transition-all duration-700 ease-in-out opacity-100 max-h-[500px]">
-        <div class="absolute top-0 right-0 w-28 h-28 bg-rose-100/40 rounded-full blur-2xl pointer-events-none"></div>
+    <!-- ১. মূল গ্রিটিংস ও ডেট কার্ড (১০ সেকেন্ড পর অটো হাইড হবে) -->
+    <div id="greeting-card" class="bg-gradient-to-br from-rose-50 via-white to-pink-50/60 border border-rose-200 rounded-3xl p-6 md:p-7 shadow-sm relative overflow-hidden transition-all duration-700 ease-in-out opacity-100 max-h-[500px]">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-rose-100/50 rounded-full blur-3xl pointer-events-none"></div>
         
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <!-- গ্রিটিংস টেক্সট -->
+            <!-- গ্রিটিংস টেক্সট (সালাম সহ) -->
             <div class="space-y-1.5 flex flex-col items-center md:items-start">
-                <span class="inline-block text-[11px] font-bold uppercase tracking-wider text-rose-600 bg-rose-100/70 px-2.5 py-0.5 rounded-full" style="font-family: 'Hind Siliguri', sans-serif;">
+                <span class="inline-block text-[11px] font-bold uppercase tracking-wider text-rose-600 bg-rose-100 px-3 py-0.5 rounded-full" style="font-family: 'Hind Siliguri', sans-serif;">
                     ✨ স্বাগতম
                 </span>
                 <h1 id="greeting-title" class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight" style="font-family: 'Hind Siliguri', sans-serif;">আসসালামু আলাইকুম!</h1>
@@ -288,7 +288,7 @@
             </div>
 
             <!-- ডান পাশে সাজানো তারিখ -->
-            <div class="flex flex-col items-center md:items-end gap-1.5 md:border-l md:border-rose-100 md:pl-5 pt-3 md:pt-0 border-t md:border-t-0 border-rose-100/60">
+            <div class="flex flex-col items-center md:items-end gap-1.5 md:border-l md:border-rose-100 md:pl-6 pt-3 md:pt-0 border-t md:border-t-0 border-rose-100/60">
                 <div class="text-xs">
                     <span id="english-date" class="font-bold text-slate-700" style="font-family: 'Hind Siliguri', sans-serif;">সোমবার, ১৭ আগস্ট, ২০২৬</span>
                 </div>
@@ -302,31 +302,30 @@
         </div>
     </div>
 
-    <!-- ২. প্রিমিয়াম অটো-টাইপিং কোট কার্ড (বড় ফন্ট ও র‍্যাপিং সহ) -->
-    <div class="bg-white border border-rose-200/80 rounded-2xl p-6 md:p-8 shadow-xs relative overflow-hidden group hover:border-rose-400 transition-all">
-        <div class="absolute top-0 left-0 md:left-0 right-0 md:right-auto w-full md:w-1.5 h-1.5 md:h-full bg-gradient-to-r md:bg-gradient-to-b from-rose-500 to-pink-500"></div>
+    <!-- ২. প্রিমিয়াম অটো-টাইপিং কোট কার্ড (আরও আকর্ষণীয় ডিজাইন ও Hind Siliguri ফন্ট) -->
+    <div class="bg-gradient-to-r from-white via-rose-50/20 to-white border border-rose-200/90 rounded-3xl p-6 md:p-8 shadow-xs relative overflow-hidden group hover:border-rose-400 transition-all">
+        <div class="absolute top-0 left-0 md:left-0 right-0 md:right-auto w-full md:w-2 h-2 md:h-full bg-gradient-to-r md:bg-gradient-to-b from-rose-500 to-pink-500"></div>
         
         <div class="flex justify-center md:justify-start mb-4">
-            <span class="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-lg border border-rose-100" style="font-family: 'Hind Siliguri', sans-serif;">
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-100/80 px-3 py-1 rounded-xl border border-rose-200" style="font-family: 'Hind Siliguri', sans-serif;">
                 💡 প্রতিদিনের বাণী ও অনুপ্রেরণা
             </span>
         </div>
         
-        <div class="min-h-[80px] flex items-center justify-center md:justify-start">
-            <!-- ফন্ট সাইজ বড় এবং টেক্সট র‍্যাপ করার জন্য break-words ও leading-relaxed যুক্ত করা হয়েছে -->
+        <div class="min-h-[85px] flex items-center justify-center md:justify-start">
             <p id="islamic-quote" class="text-slate-800 font-semibold text-base md:text-lg leading-relaxed tracking-wide text-center md:text-left break-words w-full" style="font-family: 'Hind Siliguri', sans-serif;"></p>
         </div>
     </div>
 
-    <!-- ৩. স্মার্ট হিসাব খাতা হেল্পার সেকশন -->
-    <div class="text-center space-y-1.5 py-1">
+    <!-- ৩. স্মার্ট হিসাব খাতা হেল্পার সেকশন (বড় ও প্রিমিয়াম ফন্ট) -->
+    <div class="text-center space-y-2 py-3 bg-white/60 border border-rose-100 rounded-2xl p-4 shadow-2xs">
         <div class="inline-block">
-            <span class="text-[10px] font-extrabold uppercase tracking-widest text-rose-600 bg-rose-50 border border-rose-200/70 px-3 py-0.5 rounded-full shadow-2xs" style="font-family: 'Hind Siliguri', sans-serif;">
+            <span class="text-[11px] font-extrabold uppercase tracking-widest text-rose-600 bg-rose-100/80 border border-rose-200 px-3.5 py-1 rounded-full" style="font-family: 'Hind Siliguri', sans-serif;">
                 স্মার্ট হিসাব খাতা
             </span>
         </div>
-        <p class="text-xs text-slate-500 font-medium leading-relaxed max-w-md mx-auto" style="font-family: 'Hind Siliguri', sans-serif;">
-            দৈনন্দিন হিসাব রাখুন সহজে ও নিরাপদে। নিচের <span class="text-rose-600 font-bold">+</span> বাটনে ক্লিক করে মুহূর্তেই নতুন এন্ট্রি যোগ করুন।
+        <p class="text-sm md:text-base text-slate-700 font-semibold leading-relaxed max-w-xl mx-auto" style="font-family: 'Hind Siliguri', sans-serif;">
+            ব্যবসার দৈনন্দিন হিসাব রাখুন সহজে ও নিরাপদে। নিচের <span class="text-rose-600 font-bold text-lg">+</span> বাটনে ক্লিক করে মুহূর্তেই নতুন এন্ট্রি যোগ করুন।
         </p>
     </div>
 
@@ -343,17 +342,17 @@
         if (!titleEl || !subEl) return;
 
         if (hour >= 4 && hour < 12) {
-            titleEl.innerHTML = "শুভ সকাল! 🌅";
-            subEl.innerHTML = "নতুন সম্ভাবনা ও উদ্যমে আজকের দিনটি শুরু করুন।";
+            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ সকাল! 🌅";
+            subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
         } else if (hour >= 12 && hour < 15) {
-            titleEl.innerHTML = "শুভ দুপুর! ☀️";
-            subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও ফলপ্রসূ হোক।";
+            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ দুপুর! ☀️";
+            subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
         } else if (hour >= 15 && hour < 18) {
-            titleEl.innerHTML = "শুভ বিকেল! ☕";
-            subEl.innerHTML = "ক্লান্তি কাটিয়ে সামনের কাজগুলো সুন্দরভাবে গুছিয়ে নিন।";
+            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ বিকেল! ☕";
+            subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
         } else {
-            titleEl.innerHTML = "শুভ রাত্রি! 🌙";
-            subEl.innerHTML = "সারদিনের ক্লান্তি শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
+            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ রাত্রি! 🌙";
+            subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
         }
     }
 
@@ -380,18 +379,18 @@
                 greetingCard.style.transform = 'scale(0.95)';
                 setTimeout(() => {
                     greetingCard.style.display = 'none';
-                }, 700); // অ্যানিমেশন শেষ হওয়ার পর ডিসপ্লে নান হবে
+                }, 700); 
             }
-        }, 10000); // ১০ সেকেন্ড (১০ হাজার মিলিিসেকেন্ড)
+        }, 10000); // ১০ সেকেন্ড পর হাইড হবে
     }
 
     // ৪. কোট লিস্ট
     const quotes = [
-        "“বিসমিল্লাহি আলা বারাকাতিল্লাহ— আল্লাহর নামে এবং তাঁর অশেষ বরকতের সাথে আজকের কাজ শুরু করুন।”",
-        "“সততা হলো সফলতার সবচেয়ে বড় পুঁজি, যা কখনো ফুরিয়ে যায় না।”",
-        "“আলহামদুলিল্লাহি আলা কুল্লি হাল— প্রতিটি পরিস্থিতিতে মহান আল্লাহর শুকরিয়া আদায় করুন।”",
-        "“যে ব্যক্তি আমানত রক্ষা করে, আল্লাহপাক তার রিজিক ও জীবনে বরকত বাড়িয়ে দেন।”",
-        "“আজকের ছোট গোছগাছ বা পরিকল্পনা আগামীকালের বড় স্বস্তি ও শান্তি এনে দেয়।”"
+        "“বিসমিল্লাহি আলা বারাকাতিল্লাহ— আল্লাহর নামে এবং তাঁর অশেষ বরকতের সাথে আপনার আজকের ব্যবসায়িক কার্যক্রম শুরু করুন।”",
+        "“সততা ও আমানতদারি হলো ব্যবসার সবচেয়ে বড় পুঁজি, যা কখনো ফুরিয়ে যায় না।”",
+        "“আলহামদুলিল্লাহি আলা কুল্লি হাল— প্রতিটি ব্যবসায়িক পরিস্থিতিতে মহান আল্লাহর শুকরিয়া আদায় করুন।”",
+        "“যে ব্যক্তি সততার সাথে ব্যবসা পরিচালনা করে, আল্লাহপাক তার রিজিক ও সম্পত্তিতে বরকত বাড়িয়ে দেন।”",
+        "“আজকের ছোট হিসাবের নিখুঁত পরিকল্পনা আগামীকালের বড় ব্যবসায়িক স্বস্তি এনে দেয়।”"
     ];
 
     let quoteIndex = 0;
