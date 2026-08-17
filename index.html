@@ -267,7 +267,7 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-4 space-y-3 flex-1">
 	  
-   <!-- TAB 0: HOME VIEW (BALANCED & CLEAN REDESIGN) -->
+   <!-- TAB 0: HOME VIEW (EYE-CATCHY & ENHANCED DESIGN) -->
 <div id="tab-home-view" class="tab-content space-y-5 max-w-4xl mx-auto px-4 py-4 text-center md:text-left" style="font-family: 'Noto Sans Bengali', sans-serif !important;">
 
     <!-- Google Font Import -->
@@ -292,7 +292,7 @@
                     ✨ স্বাগতম
                 </span>
                 <h1 id="greeting-title" class="text-lg md:text-xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম!</h1>
-                <p id="greeting-subtitle" class="text-xs text-slate-500 font-medium">আপনার আজকের দিনটি বরকতময় ও সফল হোক।</p>
+                <p id="greeting-subtitle" class="text-xs text-slate-500 font-medium">আপনার আজকের দিনটি বরকতময় ও সফল হোক।</p>
             </div>
 
             <!-- সাজানো তারিখ -->
@@ -301,31 +301,38 @@
                     <span id="english-date" class="font-bold text-slate-700">সোমবার, ১৭ আগস্ট, ২০২৬</span>
                 </div>
                 <div class="text-[11px] md:text-xs leading-tight">
-                    <span id="bengali-date" class="font-bold text-slate-600">সোমবার, ২ ভাদ্র, ১৪৩৩</span>
+                    <span id="bengali-date" class="font-bold text-rose-700">সোমবার, ২ ভাদ্র, ১৪৩৩</span>
                 </div>
                 <div class="text-[11px] md:text-xs leading-tight">
-                    <span id="arabic-date" class="font-semibold text-slate-600">৪ রবিউল আউয়াল, ১৪৪৮</span>
+                    <span id="arabic-date" class="font-semibold text-slate-600">৪ রবিউল আউয়াল, ১৪৪৮ হিজরি</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ২. প্রিমিয়াম অটো-টাইপিং কোট কার্ড -->
-    <div class="bg-gradient-to-r from-white via-rose-50/20 to-white border border-rose-200/80 rounded-3xl p-5 md:p-6 shadow-xs relative overflow-hidden group">
-        <div class="absolute top-0 left-0 w-full md:w-1.5 h-1.5 md:h-full bg-gradient-to-r md:bg-gradient-to-b from-rose-500 to-pink-500"></div>
+    <!-- ২. আল্ট্রা-আই-ক্যাচিং অটো-টাইপিং কোট কার্ড -->
+    <div class="bg-gradient-to-br from-rose-900 via-rose-800 to-pink-900 text-white border border-rose-700/50 rounded-3xl p-6 md:p-8 shadow-lg relative overflow-hidden group">
+        <!-- গ্লোয়িং ব্যাকগ্রাউন্ড ডিজাইন এলিমেন্ট -->
+        <div class="absolute -top-10 -right-10 w-40 h-40 bg-pink-500/20 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-rose-500/20 rounded-full blur-2xl pointer-events-none"></div>
         
-        <div class="flex justify-center md:justify-start mb-3">
-            <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-rose-600 bg-rose-100/80 px-2.5 py-0.5 rounded-lg border border-rose-200/60">
-                📜 কিছু কথা 📜
-            </span>
-        </div>
-        
-        <div class="min-h-[70px] flex items-center justify-center md:justify-start">
-            <p id="islamic-quote" class="text-slate-800 font-medium text-sm md:text-base leading-relaxed tracking-wide text-center md:text-left break-words w-full"></p>
+        <div class="relative z-10">
+            <!-- টপ ব্যাজ ও কোটেশন আইকন -->
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-rose-200 bg-white/10 backdrop-blur-md px-3 py-1 rounded-xl border border-white/10">
+                    💡 প্রতিদিনের বাণী ও অনুপ্রেরণা
+                </span>
+                <span class="text-rose-300/40 text-3xl font-serif select-none leading-none">“</span>
+            </div>
+            
+            <!-- টাইপিং টেক্সট কন্টেইনার -->
+            <div class="min-h-[75px] flex items-center justify-center md:justify-start">
+                <p id="islamic-quote" class="text-rose-50 font-normal text-sm md:text-base leading-relaxed tracking-wide text-center md:text-left break-words w-full drop-shadow-xs"></p>
+            </div>
         </div>
     </div>
 
-    <!-- ৩. স্মার্ট হিসাব খাতা হেল্পার সেকশন (ব্যাজ ও স্ট্যান্ডার্ড টেক্সটসহ) -->
+    <!-- ৩. স্মার্ট হিসাব খাতা হেল্পার সেকশন -->
     <div class="text-center py-3 px-2 space-y-2">
         <div class="inline-block">
             <span class="text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest text-rose-600 bg-rose-100/80 border border-rose-200 px-3 py-0.5 rounded-full">
@@ -350,16 +357,16 @@
 
         if (hour >= 4 && hour < 12) {
             titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ সকাল! 🌅";
-            subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
+            subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
         } else if (hour >= 12 && hour < 15) {
             titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ দুপুর! ☀️";
-            subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
+            subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
         } else if (hour >= 15 && hour < 18) {
             titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ বিকেল! ☕";
-            subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
+            subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
         } else {
             titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ রাত্রি! 🌙";
-            subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
+            subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
         }
     }
 
@@ -388,11 +395,11 @@
     }
 
     const quotes = [
-        "“বিসমিল্লাহি আলা বারাকাতিল্লাহ— আল্লাহর নামে এবং তাঁর অশেষ বরকতের সাথে আপনার আজকের ব্যবসায়িক কার্যক্রম শুরু করুন।”",
-        "“সততা ও আমানতদারি হলো ব্যবসার সবচেয়ে বড় পুঁজি, যা কখনো ফুরিয়ে যায় না।”",
-        "“আলহামদুলিল্লাহি আলা কুল্লি হাল— প্রতিটি ব্যবসায়িক পরিস্থিতিতে মহান আল্লাহর শুকরিয়া আদায় করুন।”",
-        "“যে ব্যক্তি সততার সাথে ব্যবসা পরিচালনা করে, আল্লাহপাক তার রিজিক ও সম্পত্তিতে বরকত বাড়িয়ে দেন।”",
-        "“আজকের ছোট হিসাবের নিখুঁত পরিকল্পনা আগামীকালের বড় ব্যবসায়িক স্বস্তি এনে দেয়।”"
+        "“বিসমিল্লাহি আলা বারাকাতিল্লাহ— আল্লাহর নামে এবং তাঁর অশেষ বরকতের সাথে আপনার আজকের ব্যবসায়িক কার্যক্রম শুরু করুন।”",
+        "“সততা ও আমানতদারি হলো ব্যবসার সবচেয়ে বড় পুঁজি, যা কখনো ফুরিয়ে যায় না।”",
+        "“আলহামদুলিল্লাহি আলা কুল্লি হাল— প্রতিটি ব্যবসায়িক পরিস্থিতিতে মহান আল্লাহর শুকরিয়া আদায় করুন।”",
+        "“যে ব্যক্তি সততার সাথে ব্যবসা পরিচালনা করে, আল্লাহপাক তার রিজিক ও সম্পত্তিতে বরকত বাড়িয়ে দেন।”",
+        "“আজকের ছোট হিসাবের নিখুঁত পরিকল্পনা আগামীকালের বড় ব্যবসায়িক স্বস্তি এনে দেয়।”"
     ];
 
     let quoteIndex = 0;
