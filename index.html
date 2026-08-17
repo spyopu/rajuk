@@ -267,7 +267,7 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-4 space-y-3 flex-1">
 	  
-   <!-- TAB 0: HOME VIEW (EYE-CATCHY & ENHANCED DESIGN) -->
+   <!-- TAB 0: HOME VIEW (SEPARATE GREETINGS & CENTERED EYE-CATCHY CARD) -->
 <div id="tab-home-view" class="tab-content space-y-5 max-w-4xl mx-auto px-4 py-4 text-center md:text-left" style="font-family: 'Noto Sans Bengali', sans-serif !important;">
 
     <!-- Google Font Import -->
@@ -281,18 +281,19 @@
         }
     </style>
 
-    <!-- ১. মূল গ্রিটিংস ও ডেট কার্ড (১০ সেকেন্ড পর অটো হাইড হবে) -->
+    <!-- ১. মূল গ্রিটিংস ও ডেট কার্ড (সালাম ও সময় আলাদা লাইনে, ১০ সেকেন্ড পর অটো হাইড হবে) -->
     <div id="greeting-card" class="bg-gradient-to-br from-rose-50 via-white to-pink-50/60 border border-rose-200/80 rounded-3xl p-5 md:p-6 shadow-xs relative overflow-hidden transition-all duration-700 ease-in-out opacity-100">
         <div class="absolute top-0 right-0 w-32 h-32 bg-rose-100/40 rounded-full blur-3xl pointer-events-none"></div>
         
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <!-- গ্রিটিংস টেক্সট -->
-            <div class="space-y-1 flex flex-col items-center md:items-start">
+            <!-- গ্রিটিংস টেক্সট (সালাম ও টাইম আলাদা লাইন) -->
+            <div class="space-y-1.5 flex flex-col items-center md:items-start">
                 <span class="inline-block text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-rose-600 bg-rose-100/80 px-2.5 py-0.5 rounded-full">
                     ✨ স্বাগতম
                 </span>
-                <h1 id="greeting-title" class="text-lg md:text-xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম!</h1>
-                <p id="greeting-subtitle" class="text-xs text-slate-500 font-medium">আপনার আজকের দিনটি বরকতময় ও সফল হোক।</p>
+                <h1 id="greeting-salam" class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম!</h1>
+                <p id="greeting-time" class="text-xs md:text-sm font-semibold text-rose-600">শুভ সকাল</p>
+                <p id="greeting-subtitle" class="text-xs text-slate-500 font-medium">নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।</p>
             </div>
 
             <!-- সাজানো তারিখ -->
@@ -310,24 +311,20 @@
         </div>
     </div>
 
-    <!-- ২. আল্ট্রা-আই-ক্যাচিং অটো-টাইপিং কোট কার্ড -->
-    <div class="bg-gradient-to-br from-rose-900 via-rose-800 to-pink-900 text-white border border-rose-700/50 rounded-3xl p-6 md:p-8 shadow-lg relative overflow-hidden group">
-        <!-- গ্লোয়িং ব্যাকগ্রাউন্ড ডিজাইন এলিমেন্ট -->
-        <div class="absolute -top-10 -right-10 w-40 h-40 bg-pink-500/20 rounded-full blur-2xl pointer-events-none"></div>
-        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-rose-500/20 rounded-full blur-2xl pointer-events-none"></div>
+    <!-- ২. আল্ট্রা-আই-ক্যাচিং এবং সেন্টার্ড কোট কার্ড -->
+    <div class="bg-gradient-to-br from-white via-rose-50/40 to-pink-50/50 border-2 border-rose-200/90 rounded-3xl p-6 md:p-8 shadow-sm relative overflow-hidden group text-center">
+        <!-- ব্যাকগ্রাউন্ড গ্লো ডিজাইন -->
+        <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-rose-200/30 rounded-full blur-3xl pointer-events-none"></div>
         
-        <div class="relative z-10">
-            <!-- টপ ব্যাজ ও কোটেশন আইকন -->
-            <div class="flex items-center justify-between mb-4">
-                <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-rose-200 bg-white/10 backdrop-blur-md px-3 py-1 rounded-xl border border-white/10">
-                    💡 প্রতিদিনের বাণী ও অনুপ্রেরণা
-                </span>
-                <span class="text-rose-300/40 text-3xl font-serif select-none leading-none">“</span>
-            </div>
+        <div class="relative z-10 flex flex-col items-center justify-center space-y-4">
+            <!-- সেন্টার্ড ব্যাজ -->
+            <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-rose-600 bg-rose-100/90 px-3.5 py-1 rounded-full border border-rose-200/80 shadow-2xs">
+                💡 কিছু কথা 💡
+            </span>
             
-            <!-- টাইপিং টেক্সট কন্টেইনার -->
-            <div class="min-h-[75px] flex items-center justify-center md:justify-start">
-                <p id="islamic-quote" class="text-rose-50 font-normal text-sm md:text-base leading-relaxed tracking-wide text-center md:text-left break-words w-full drop-shadow-xs"></p>
+            <!-- সেন্টার্ড টাইপিং টেক্সট -->
+            <div class="min-h-[75px] flex items-center justify-center w-full max-w-2xl mx-auto">
+                <p id="islamic-quote" class="text-slate-800 font-semibold text-base md:text-lg leading-relaxed tracking-wide text-center break-words"></p>
             </div>
         </div>
     </div>
@@ -350,23 +347,26 @@
 <script>
     function setTimeBasedGreeting() {
         const hour = new Date().getHours();
-        const titleEl = document.getElementById('greeting-title');
+        const salamEl = document.getElementById('greeting-salam');
+        const timeEl = document.getElementById('greeting-time');
         const subEl = document.getElementById('greeting-subtitle');
 
-        if (!titleEl || !subEl) return;
+        if (!salamEl || !timeEl || !subEl) return;
+
+        salamEl.innerHTML = "আসসালামু আলাইকুম!";
 
         if (hour >= 4 && hour < 12) {
-            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ সকাল! 🌅";
-            subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
+            timeEl.innerHTML = "শুভ সকাল 🌅";
+            subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
         } else if (hour >= 12 && hour < 15) {
-            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ দুপুর! ☀️";
-            subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
+            timeEl.innerHTML = "শুভ দুপুর ☀️";
+            subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
         } else if (hour >= 15 && hour < 18) {
-            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ বিকেল! ☕";
-            subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
+            timeEl.innerHTML = "শুভ বিকেল ☕";
+            subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
         } else {
-            titleEl.innerHTML = "আসসালামু আলাইকুম, শুভ রাত্রি! 🌙";
-            subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
+            timeEl.innerHTML = "শুভ রাত্রি 🌙";
+            subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
         }
     }
 
@@ -395,11 +395,11 @@
     }
 
     const quotes = [
-        "“বিসমিল্লাহি আলা বারাকাতিল্লাহ— আল্লাহর নামে এবং তাঁর অশেষ বরকতের সাথে আপনার আজকের ব্যবসায়িক কার্যক্রম শুরু করুন।”",
-        "“সততা ও আমানতদারি হলো ব্যবসার সবচেয়ে বড় পুঁজি, যা কখনো ফুরিয়ে যায় না।”",
-        "“আলহামদুলিল্লাহি আলা কুল্লি হাল— প্রতিটি ব্যবসায়িক পরিস্থিতিতে মহান আল্লাহর শুকরিয়া আদায় করুন।”",
-        "“যে ব্যক্তি সততার সাথে ব্যবসা পরিচালনা করে, আল্লাহপাক তার রিজিক ও সম্পত্তিতে বরকত বাড়িয়ে দেন।”",
-        "“আজকের ছোট হিসাবের নিখুঁত পরিকল্পনা আগামীকালের বড় ব্যবসায়িক স্বস্তি এনে দেয়।”"
+        "“বিসমিল্লাহি আলা বারাকাতিল্লাহ— আল্লাহর নামে এবং তাঁর অশেষ বরকতের সাথে আপনার আজকের ব্যবসায়িক কার্যক্রম শুরু করুন।”",
+        "“সততা ও আমানতদারি হলো ব্যবসার সবচেয়ে বড় পুঁজি, যা কখনো ফুরিয়ে যায় না।”",
+        "“আলহামদুলিল্লাহি আলা কুল্লি হাল— প্রতিটি ব্যবসায়িক পরিস্থিতিতে মহান আল্লাহর শুকরিয়া আদায় করুন।”",
+        "“যে ব্যক্তি সততার সাথে ব্যবসা পরিচালনা করে, আল্লাহপাক তার রিজিক ও সম্পত্তিতে বরকত বাড়িয়ে দেন।”",
+        "“আজকের ছোট হিসাবের নিখুঁত পরিকল্পনা আগামীকালের বড় ব্যবসায়িক স্বস্তি এনে দেয়।”"
     ];
 
     let quoteIndex = 0;
