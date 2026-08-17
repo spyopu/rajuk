@@ -288,9 +288,6 @@
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <!-- গ্রিটিংস টেক্সট (সালাম ও টাইম আলাদা লাইন) -->
             <div class="space-y-1.5 flex flex-col items-center md:items-start">
-                <span class="inline-block text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-rose-600 bg-rose-100/80 px-2.5 py-0.5 rounded-full">
-                    ✨ স্বাগতম
-                </span>
                 <h1 id="greeting-salam" class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম!</h1>
                 <p id="greeting-time" class="text-xs md:text-sm font-semibold text-rose-600">শুভ সকাল</p>
                 <p id="greeting-subtitle" class="text-xs text-slate-500 font-medium">নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।</p>
@@ -305,7 +302,7 @@
                     <span id="bengali-date" class="font-bold text-rose-700">সোমবার, ২ ভাদ্র, ১৪৩৩</span>
                 </div>
                 <div class="text-[11px] md:text-xs leading-tight">
-                    <span id="arabic-date" class="font-semibold text-slate-600">৪ রবিউল আউয়াল, ১৪৪৮ হিজরি</span>
+                    <span id="arabic-date" class="font-semibold text-rose-700">৪ রবিউল আউয়াল, ১৪৪৮</span>
                 </div>
             </div>
         </div>
@@ -319,7 +316,7 @@
         <div class="relative z-10 flex flex-col items-center justify-center space-y-4">
             <!-- সেন্টার্ড ব্যাজ -->
             <span class="text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-rose-600 bg-rose-100/90 px-3.5 py-1 rounded-full border border-rose-200/80 shadow-2xs">
-                💡 কিছু কথা 💡
+                কিছু কথা
             </span>
             
             <!-- সেন্টার্ড টাইপিং টেক্সট -->
@@ -356,16 +353,16 @@
         salamEl.innerHTML = "আসসালামু আলাইকুম!";
 
         if (hour >= 4 && hour < 12) {
-            timeEl.innerHTML = "শুভ সকাল 🌅";
+            timeEl.innerHTML = "শুভ সকাল";
             subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
         } else if (hour >= 12 && hour < 15) {
-            timeEl.innerHTML = "শুভ দুপুর ☀️";
+            timeEl.innerHTML = "শুভ দুপুর";
             subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
         } else if (hour >= 15 && hour < 18) {
-            timeEl.innerHTML = "শুভ বিকেল ☕";
+            timeEl.innerHTML = "শুভ বিকেল";
             subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
         } else {
-            timeEl.innerHTML = "শুভ রাত্রি 🌙";
+            timeEl.innerHTML = "শুভ রাত্রি";
             subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
         }
     }
@@ -376,7 +373,7 @@
             if (today.getDate() === 17 && today.getMonth() === 7 && today.getFullYear() === 2026) {
                 document.getElementById('english-date').innerText = "সোমবার, ১৭ আগস্ট, ২০২৬";
                 document.getElementById('bengali-date').innerText = "সোমবার, ২ ভাদ্র, ১৪৩৩";
-                document.getElementById('arabic-date').innerText = "৪ রবিউল আউয়াল, ১৪৪৮ হিজরি";
+                document.getElementById('arabic-date').innerText = "৪ রবিউল আউয়াল, ১৪৪৮";
             }
         } catch (e) {}
     }
