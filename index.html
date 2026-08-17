@@ -288,7 +288,7 @@
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <!-- গ্রিটিংস টেক্সট (সালাম ও টাইম আলাদা লাইন) -->
             <div class="space-y-1.5 flex flex-col items-center md:items-start">
-                <h1 id="greeting-salam" class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম!</h1>
+                <h1 id="greeting-salam" class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম</h1>
                 <p id="greeting-time" class="text-xs md:text-sm font-semibold text-rose-600">শুভ সকাল</p>
                 <p id="greeting-subtitle" class="text-xs text-slate-500 font-medium">নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।</p>
             </div>
@@ -298,11 +298,11 @@
                 <div class="text-[11px] md:text-xs leading-tight">
                     <span id="english-date" class="font-bold text-slate-700">সোমবার, ১৭ আগস্ট, ২০২৬</span>
                 </div>
-                <div class="text-[11px] md:text-xs leading-tight">
-                    <span id="bengali-date" class="font-bold text-rose-700">সোমবার, ২ ভাদ্র, ১৪৩৩</span>
+				<div class="text-[11px] md:text-xs leading-tight">
+                    <span id="arabic-date" class="font-semibold text-rose-700">৪ রবিউল আউয়াল, ১৪৪৮</span>
                 </div>
                 <div class="text-[11px] md:text-xs leading-tight">
-                    <span id="arabic-date" class="font-semibold text-rose-700">৪ রবিউল আউয়াল, ১৪৪৮</span>
+                    <span id="bengali-date" class="font-bold text-slate-700">সোমবার, ২ ভাদ্র, ১৪৩৩</span>
                 </div>
             </div>
         </div>
@@ -353,16 +353,16 @@
         salamEl.innerHTML = "আসসালামু আলাইকুম!";
 
         if (hour >= 4 && hour < 12) {
-            timeEl.innerHTML = "শুভ সকাল";
+            timeEl.innerHTML = "শুভ সকাল 🌅";
             subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
         } else if (hour >= 12 && hour < 15) {
-            timeEl.innerHTML = "শুভ দুপুর";
+            timeEl.innerHTML = "শুভ দুপুর ☀️";
             subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
         } else if (hour >= 15 && hour < 18) {
-            timeEl.innerHTML = "শুভ বিকেল";
+            timeEl.innerHTML = "শুভ বিকেল ☕";
             subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
         } else {
-            timeEl.innerHTML = "শুভ রাত্রি";
+            timeEl.innerHTML = "শুভ রাত্রি 🌙";
             subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
         }
     }
