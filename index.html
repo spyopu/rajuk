@@ -267,14 +267,14 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-4 space-y-3 flex-1">
 	  
-    <!-- TAB 0: HOME VIEW (MOBILE CENTERED & DESKTOP RESPONSIVE) -->
+    <!-- TAB 0: HOME VIEW (AUTO-HIDE GREETING & LARGE WRAPPED QUOTE) -->
 <div id="tab-home-view" class="tab-content space-y-4 max-w-4xl mx-auto px-4 py-3 text-center md:text-left" style="font-family: 'Hind Siliguri', sans-serif;">
 
     <!-- Google Font Import Link -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- ১. মূল গ্রিটিংস ও ডেট কার্ড -->
-    <div class="bg-gradient-to-br from-rose-50/90 via-white to-pink-50/50 border border-rose-200/80 rounded-2xl p-5 md:p-6 shadow-xs relative overflow-hidden">
+    <!-- ১. মূল গ্রিটিংস ও ডেট কার্ড (১০ সেকেন্ড পর অটো হাইড হওয়ার জন্য ID যুক্ত) -->
+    <div id="greeting-card" class="bg-gradient-to-br from-rose-50/90 via-white to-pink-50/50 border border-rose-200/80 rounded-2xl p-5 md:p-6 shadow-xs relative overflow-hidden transition-all duration-700 ease-in-out opacity-100 max-h-[500px]">
         <div class="absolute top-0 right-0 w-28 h-28 bg-rose-100/40 rounded-full blur-2xl pointer-events-none"></div>
         
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -287,38 +287,34 @@
                 <p id="greeting-subtitle" class="text-xs md:text-sm text-slate-500 font-medium" style="font-family: 'Hind Siliguri', sans-serif;">আপনার আজকের দিনটি বরকতময় ও সফল হোক।</p>
             </div>
 
-            <!-- ডান পাশে সাজানো তারিখ (মোবাইলে সেন্টারে এবং ডেস্কটপে ডানে) -->
+            <!-- ডান পাশে সাজানো তারিখ -->
             <div class="flex flex-col items-center md:items-end gap-1.5 md:border-l md:border-rose-100 md:pl-5 pt-3 md:pt-0 border-t md:border-t-0 border-rose-100/60">
-                <!-- ১. ইংরেজি তারিখ -->
                 <div class="text-xs">
                     <span id="english-date" class="font-bold text-slate-700" style="font-family: 'Hind Siliguri', sans-serif;">সোমবার, ১৭ আগস্ট, ২০২৬</span>
                 </div>
-
-                <!-- ২. বাংলা তারিখ -->
                 <div class="text-xs">
                     <span id="bengali-date" class="font-bold text-rose-700" style="font-family: 'Hind Siliguri', sans-serif;">সোমবার, ২ ভাদ্র, ১৪৩৩</span>
                 </div>
-
-                <!-- ৩. হিজরি তারিখ -->
                 <div class="text-xs">
-                    <span id="arabic-date" class="font-semibold text-slate-600" style="font-family: 'Hind Siliguri', sans-serif;">৪ রবিউল আউয়াল, ১৪৪৮</span>
+                    <span id="arabic-date" class="font-semibold text-slate-600" style="font-family: 'Hind Siliguri', sans-serif;">৪ রবিউল আউয়াল, ১৪৪৮ হিজরি</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ২. প্রিমিয়াম অটো-টাইপিং কোট কার্ড -->
-    <div class="bg-white border border-rose-200/80 rounded-2xl p-5 md:p-6 shadow-xs relative overflow-hidden group hover:border-rose-400 transition-all">
+    <!-- ২. প্রিমিয়াম অটো-টাইপিং কোট কার্ড (বড় ফন্ট ও র‍্যাপিং সহ) -->
+    <div class="bg-white border border-rose-200/80 rounded-2xl p-6 md:p-8 shadow-xs relative overflow-hidden group hover:border-rose-400 transition-all">
         <div class="absolute top-0 left-0 md:left-0 right-0 md:right-auto w-full md:w-1.5 h-1.5 md:h-full bg-gradient-to-r md:bg-gradient-to-b from-rose-500 to-pink-500"></div>
         
-        <div class="flex justify-center md:justify-start mb-3">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-lg border border-rose-100" style="font-family: 'Hind Siliguri', sans-serif;">
+        <div class="flex justify-center md:justify-start mb-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-lg border border-rose-100" style="font-family: 'Hind Siliguri', sans-serif;">
                 💡 প্রতিদিনের বাণী ও অনুপ্রেরণা
             </span>
         </div>
         
-        <div class="min-h-[60px] flex items-center justify-center md:justify-start">
-            <p id="islamic-quote" class="text-slate-700 font-medium text-xs md:text-sm leading-relaxed tracking-wide text-center md:text-left" style="font-family: 'Hind Siliguri', sans-serif;"></p>
+        <div class="min-h-[80px] flex items-center justify-center md:justify-start">
+            <!-- ফন্ট সাইজ বড় এবং টেক্সট র‍্যাপ করার জন্য break-words ও leading-relaxed যুক্ত করা হয়েছে -->
+            <p id="islamic-quote" class="text-slate-800 font-semibold text-base md:text-lg leading-relaxed tracking-wide text-center md:text-left break-words w-full" style="font-family: 'Hind Siliguri', sans-serif;"></p>
         </div>
     </div>
 
@@ -347,16 +343,16 @@
         if (!titleEl || !subEl) return;
 
         if (hour >= 4 && hour < 12) {
-            titleEl.innerHTML = "শুভ সকাল!";
+            titleEl.innerHTML = "শুভ সকাল! 🌅";
             subEl.innerHTML = "নতুন সম্ভাবনা ও উদ্যমে আজকের দিনটি শুরু করুন।";
         } else if (hour >= 12 && hour < 15) {
-            titleEl.innerHTML = "শুভ দুপুর!";
+            titleEl.innerHTML = "শুভ দুপুর! ☀️";
             subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও ফলপ্রসূ হোক।";
         } else if (hour >= 15 && hour < 18) {
-            titleEl.innerHTML = "শুভ বিকেল!";
+            titleEl.innerHTML = "শুভ বিকেল! ☕";
             subEl.innerHTML = "ক্লান্তি কাটিয়ে সামনের কাজগুলো সুন্দরভাবে গুছিয়ে নিন।";
         } else {
-            titleEl.innerHTML = "শুভ রাত্রি!";
+            titleEl.innerHTML = "শুভ রাত্রি! 🌙";
             subEl.innerHTML = "সারদিনের ক্লান্তি শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
         }
     }
@@ -366,16 +362,30 @@
         const today = new Date();
         try {
             if (today.getDate() === 17 && today.getMonth() === 7 && today.getFullYear() === 2026) {
+                document.getElementById('english-date').innerText = "সোমবার, ১৭ আগস্ট, ২০২৬";
                 document.getElementById('bengali-date').innerText = "সোমবার, ২ ভাদ্র, ১৪৩৩";
-                document.getElementById('arabic-date').innerText = "৪ রবিউল আউয়াল, ১৪৪৮";
-				document.getElementById('english-date').innerText = "সোমবার, ১৭ আগস্ট, ২০২৬";
+                document.getElementById('arabic-date').innerText = "৪ রবিউল আউয়াল, ১৪৪৮ হিজরি";
             }
         } catch (e) {
             // Fallback
         }
     }
 
-    // ৩. কোট লিস্ট
+    // ৩. ১০ সেকেন্ড পর গ্রিটিংস কার্ড অটো-হাইড করার ফাংশন
+    function initAutoDismissGreeting() {
+        setTimeout(() => {
+            const greetingCard = document.getElementById('greeting-card');
+            if (greetingCard) {
+                greetingCard.style.opacity = '0';
+                greetingCard.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    greetingCard.style.display = 'none';
+                }, 700); // অ্যানিমেশন শেষ হওয়ার পর ডিসপ্লে নান হবে
+            }
+        }, 10000); // ১০ সেকেন্ড (১০ হাজার মিলিিসেকেন্ড)
+    }
+
+    // ৪. কোট লিস্ট
     const quotes = [
         "“বিসমিল্লাহি আলা বারাকাতিল্লাহ— আল্লাহর নামে এবং তাঁর অশেষ বরকতের সাথে আজকের কাজ শুরু করুন।”",
         "“সততা হলো সফলতার সবচেয়ে বড় পুঁজি, যা কখনো ফুরিয়ে যায় না।”",
@@ -393,7 +403,7 @@
         if (charIndex < quotes[quoteIndex].length) {
             quoteElement.textContent += quotes[quoteIndex].charAt(charIndex);
             charIndex++;
-            setTimeout(typeQuote, 50); 
+            setTimeout(typeQuote, 45); 
         } else {
             setTimeout(deleteQuote, 3500); 
         }
@@ -416,11 +426,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             setTimeBasedGreeting();
             setFormattedDates();
+            initAutoDismissGreeting();
             typeQuote();
         });
     } else {
         setTimeBasedGreeting();
         setFormattedDates();
+        initAutoDismissGreeting();
         typeQuote();
     }
 </script>
