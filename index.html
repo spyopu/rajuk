@@ -267,15 +267,15 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-4 space-y-3 flex-1">
 	  
-    <!-- TAB 0: HOME VIEW (ULTRA PREMIUM & CLEAN DESIGN) -->
+    <!-- TAB 0: HOME VIEW (BUG-FREE & ULTRA PREMIUM) -->
 <div id="tab-home-view" class="tab-content space-y-6 max-w-4xl mx-auto px-4 py-6 font-sans">
 
-    <!-- ১. প্রিমিয়াম গ্রিটিংস ও ডেট কার্ড (সফট লাইট ব্যাকগ্রাউন্ড উইথ বর্ডার) -->
+    <!-- ১. প্রিমিয়াম গ্রিটিংস ও ডেট কার্ড -->
     <div class="bg-gradient-to-br from-rose-50/80 via-white to-pink-50/40 border border-rose-200/70 rounded-3xl p-6 md:p-8 shadow-sm relative overflow-hidden">
         <div class="absolute top-0 right-0 w-32 h-32 bg-rose-100/40 rounded-full blur-2xl pointer-events-none"></div>
         
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <!-- গ্রিটিংস টেক্সট (স্পেশাল ফিল) -->
+            <!-- গ্রিটিংস টেক্সট -->
             <div class="space-y-1.5">
                 <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-rose-600 bg-rose-100/70 px-3 py-1 rounded-full">
                     ✨ স্বাগতম
@@ -285,7 +285,7 @@
             </div>
 
             <!-- বাংলা, হিজরি ও ইংরেজি তারিখের প্রিমিয়াম কম্বিনেশন ব্যাজ -->
-            <div class="bg-white/90 backdrop-blur-md border border-rose-100 p-4 rounded-2xl shadow-xs flex flex-col gap-2 min-w-[230px]">
+            <div class="bg-white/90 backdrop-blur-md border border-rose-100 p-4 rounded-2xl shadow-xs flex flex-col gap-2 min-w-[240px]">
                 <!-- বাংলা ও হিজরি (সম্পূর্ণ বাংলায়) -->
                 <div class="flex items-center justify-between border-b border-slate-100 pb-2 text-xs">
                     <span id="bengali-date" class="font-bold text-rose-700">লোড হচ্ছে...</span>
@@ -301,9 +301,8 @@
         </div>
     </div>
 
-    <!-- ২. প্রিমিয়াম অটো-টাইপিং কোট কার্ড (সফট বর্ডার ও এলিগ্যান্ট লুক) -->
+    <!-- ২. প্রিমিয়াম অটো-টাইপিং কোট কার্ড -->
     <div class="bg-white border border-rose-200/80 rounded-3xl p-6 md:p-8 shadow-xs relative overflow-hidden group hover:border-rose-400 transition-all">
-        <!-- সাইড ডেকোরেশন বার -->
         <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-rose-500 to-pink-500"></div>
         
         <div class="flex items-center justify-between mb-4 pl-3">
@@ -351,23 +350,23 @@
         // বাংলা তারিখ (বাংলায়)
         const optionsBn = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
         const bnDateStr = today.toLocaleDateString('bn-BD', optionsBn);
-        document.getElementById('bengali-date').innerText = bnDateStr;
+        const bnEl = document.getElementById('bengali-date');
+        if (bnEl) bnEl.innerText = bnDateStr;
 
         // ইংরেজি তারিখ (ইংরেজিতে)
         const optionsEn = { month: 'short', day: 'numeric', year: 'numeric' };
         const enDateStr = today.toLocaleDateString('en-US', optionsEn);
-        document.getElementById('english-date').innerText = enDateStr;
+        const enEl = document.getElementById('english-date');
+        if (enEl) enEl.innerText = enDateStr;
 
-        // হিজরি তারিখ (বাংলা ভাষায় রূপান্তরসহ বা আরবি উম্মুল কুরা মাস বাংলায়)
+        // হিজরি তারিখ (বাংলা ভাষায়)
         try {
-            // হিজরি মাসের নামগুলো বাংলায় ম্যাপিং করার জন্য
             const islamicMonthsBn = [
-                মহাররম, সফর, রবিউল আউয়াল, রবিউস সানি, 
-                জমাদিউল আউয়াল, জমাদিউস সানি, রজব, শাবান, 
-                রমজান, শাওয়াল, জিলকদ, জিলহজ
+                "মহাররম", "সফর", "রবিউল আউয়াল", "রবিউস সানি", 
+                "জমাদিউল আউয়াল", "জমাদিউস সানি", "রজব", "শাবান", 
+                "রমজান", "শাওয়াল", "জিলকদ", "জিলহজ"
             ];
             
-            // স্ট্যান্ডার্ড হিজরি ফরম্যাট থেকে সংখ্যা ও মাস বের করা
             const formatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
                 day: 'numeric',
                 month: 'numeric',
@@ -382,7 +381,6 @@
                 if (p.type === 'year') hYear = p.value;
             });
 
-            // সংখ্যাগুলোকে বাংলায় রূপান্তর করার ফাংশন
             const toBanglaNum = (num) => {
                 const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
                 return num.toString().split('').map(d => bnDigits[d] !== undefined ? bnDigits[d] : d).join('');
@@ -391,9 +389,11 @@
             const monthNameBn = islamicMonthsBn[parseInt(hMonth) - 1] || 'হিজরি';
             const arabicDateFull = `${toBanglaNum(hDay)} ${monthNameBn}, ${toBanglaNum(hYear)} হিজরি`;
             
-            document.getElementById('arabic-date').innerText = arabicDateFull;
+            const arEl = document.getElementById('arabic-date');
+            if (arEl) arEl.innerText = arabicDateFull;
         } catch (e) {
-            document.getElementById('arabic-date').innerText = "হিজরি ক্যালেন্ডার";
+            const arEl = document.getElementById('arabic-date');
+            if (arEl) arEl.innerText = "হিজরি ক্যালেন্ডার";
         }
     }
 
