@@ -267,67 +267,45 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto w-full px-4 md:px-8 py-2 md:py-4 space-y-3 flex-1">
 	  
-    <!-- TAB 0: HOME VIEW (ULTRA PREMIUM REDESIGN) -->
-<div id="tab-home-view" class="tab-content space-y-6 max-w-4xl mx-auto px-4 py-6">
+    <!-- TAB 0: HOME VIEW (CLEAN & MINIMALIST WITH FOOTER HINT) -->
+<div id="tab-home-view" class="tab-content space-y-5 max-w-4xl mx-auto px-4 py-6">
 
-    <!-- ১. প্রিমিয়াম গ্রিডিয়েন্ট হেডার ও ডেট উইজেট -->
-    <section class="relative bg-gradient-to-br from-rose-600 via-pink-600 to-rose-700 rounded-3xl p-6 md:p-8 text-white shadow-xl overflow-hidden border border-rose-400/30">
-        <!-- ব্যাকগ্রাউন্ড গ্লো ইফেক্ট -->
-        <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
-        <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-black/10 rounded-full blur-2xl pointer-events-none"></div>
-
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <!-- ১. ক্লিন টাইম-বেসড গ্রিটিংস ও ডেট উইজেট -->
+    <div class="bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
             <!-- গ্রিটিংস টেক্সট -->
-            <div>
-                <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 text-xs font-medium mb-3 shadow-sm">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span id="arabic-date" class="tracking-wide">হিজরি ক্যালেন্ডার</span>
-                    <span class="opacity-60">•</span>
-                    <span id="bengali-date" class="tracking-wide">লোড হচ্ছে...</span>
-                </div>
-                <h1 id="greeting-title" class="text-2xl md:text-3xl font-black tracking-tight drop-shadow-sm">আসসালামু আলাইকুম!</h1>
-                <p id="greeting-subtitle" class="text-xs md:text-sm text-rose-100 mt-1 font-medium">আপনার আজকের দিনটি বরকতময় ও সফল হোক।</p>
-            </div>
-
-            <!-- ছোট্ট ডেেকোরেটিভ ব্যাজ বা স্ট্যাটাস -->
-            <div class="hidden md:flex flex-col items-end justify-center bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/15">
-                <span class="text-[10px] uppercase tracking-wider text-rose-200 font-semibold">স্ট্যাটাস</span>
-                <span class="text-sm font-bold text-white">সক্রিয় ও সুরক্ষিত</span>
-            </div>
+            <h1 id="greeting-title" class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম!</h1>
+            <p id="greeting-subtitle" class="text-xs md:text-sm text-slate-500 mt-1 font-medium">আপনার আজকের দিনটি বরকতময় হোক।</p>
         </div>
-    </section>
 
-    <!-- ২. প্রিমিয়াম অটো-টাইপিং কোট কার্ড (মডার্ন কার্ড ডিজাইন) -->
-    <section class="relative bg-white border border-rose-100/80 rounded-3xl p-6 md:p-8 shadow-lg shadow-rose-500/5 overflow-hidden group hover:border-rose-300 transition-all duration-300">
-        <!-- ওয়াটারমার্ক কোট সিম্বল -->
-        <div class="absolute -top-3 right-6 text-rose-100 text-7xl font-serif select-none pointer-events-none opacity-50">“</div>
+        <!-- মডার্ন ডেট ব্যাজ (বাংলা ও হিজরি) -->
+        <div class="flex items-center gap-2 bg-slate-50 border border-slate-200/60 px-3.5 py-2 rounded-xl text-xs text-slate-600 font-medium self-start md:self-auto">
+            <span class="text-rose-600">📅</span>
+            <span id="bengali-date">লোড হচ্ছে...</span>
+            <span class="text-slate-300">|</span>
+            <span id="arabic-date" class="text-slate-500">হিজরি</span>
+        </div>
+    </div>
+
+    <!-- ২. ক্লিন অটো-টাইপিং কোট কার্ড -->
+    <div class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm relative">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="w-1.5 h-4 bg-rose-500 rounded-full"></span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">প্রতিদিনের বাণী</span>
+        </div>
         
-        <div class="relative z-10">
-            <div class="flex items-center justify-between mb-4">
-                <span class="text-[11px] font-bold uppercase tracking-widest text-rose-600 bg-rose-50 border border-rose-200/60 px-3.5 py-1 rounded-full shadow-2xs">
-                    ✨ প্রতিদিনের বাণী ও প্রেরণা
-                </span>
-                <div class="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-                    <span class="text-[10px] text-slate-500 font-semibold">লাইভ</span>
-                </div>
-            </div>
-            
-            <!-- কোট টেক্সট বক্স (উইথ প্রপার হাইট ও রেসপন্সিভ ফন্ট) -->
-            <div class="min-h-[80px] md:min-h-[90px] flex items-center py-2">
-                <p id="islamic-quote" class="text-slate-700 font-semibold italic text-sm md:text-base leading-relaxed tracking-wide"></p>
-            </div>
+        <div class="min-h-[60px] flex items-center">
+            <p id="islamic-quote" class="text-slate-700 font-medium text-sm md:text-base leading-relaxed"></p>
         </div>
-    </section>
+    </div>
 
-    <!-- ৩. মিনিমালিস্টিক হেল্পার ফুটার -->
-    <section class="text-center pt-2 pb-4">
-        <div class="inline-block bg-white/80 backdrop-blur-sm border border-slate-200/60 px-5 py-2.5 rounded-2xl shadow-2xs">
-            <p class="text-xs text-slate-500 font-medium">
-              💡 হিসাব যোগ করতে নিচের <span class="text-rose-600 font-extrabold text-sm">+</span> বাটনে ক্লিক করুন।
-            </p>
-        </div>
-    </section>
+    <!-- ৩. ফুটার ইনফো (যা আপনি চাচ্ছিলেন) -->
+    <div class="max-w-md mx-auto text-center space-y-2 py-2">
+        <span class="inline-block text-[11px] font-extrabold uppercase tracking-widest text-rose-600 bg-rose-50 border border-rose-200/60 px-3 py-1 rounded-full">স্মার্ট হিসাব খাতা</span>
+        <p class="text-xs md:text-sm text-slate-500 font-medium leading-relaxed">
+            দৈনন্দিন হিসাব রাখুন সহজে ও নিরাপদে। নিচের <span class="text-rose-600 font-bold">+</span> বাটনে ক্লিক করে মুহূর্তেই নতুন এন্ট্রি যোগ করুন।
+        </p>
+    </div>
 
 </div>
 
@@ -359,7 +337,7 @@
     // ২. বাংলা ও হিজরি তারিখ
     function setFormattedDates() {
         const today = new Date();
-        const optionsBn = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const optionsBn = { month: 'short', day: 'numeric' };
         const bnDateStr = today.toLocaleDateString('bn-BD', optionsBn);
         const bnDateEl = document.getElementById('bengali-date');
         if (bnDateEl) bnDateEl.innerText = bnDateStr;
@@ -367,14 +345,13 @@
         try {
             const arDateStr = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
                 day: 'numeric',
-                month: 'long',
-                year: 'numeric'
+                month: 'short'
             }).format(today);
             const arDateEl = document.getElementById('arabic-date');
             if (arDateEl) arDateEl.innerText = arDateStr;
         } catch (e) {
             const arDateEl = document.getElementById('arabic-date');
-            if (arDateEl) arDateEl.innerText = "হিজরি ক্যালেন্ডার";
+            if (arDateEl) arDateEl.innerText = "";
         }
     }
 
@@ -396,7 +373,7 @@
         if (charIndex < quotes[quoteIndex].length) {
             quoteElement.textContent += quotes[quoteIndex].charAt(charIndex);
             charIndex++;
-            setTimeout(typeQuote, 55); 
+            setTimeout(typeQuote, 50); 
         } else {
             setTimeout(deleteQuote, 3500); 
         }
