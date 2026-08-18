@@ -2939,11 +2939,12 @@ function renderYearlyBreakdownTable() {
       const itemId = document.getElementById('action-item-id').value;
       const subId = document.getElementById('action-sub-id').value;
 
-      if (itemType === 'client_edit') {
+     if (itemType === 'client_edit') {
         databasePathRef.child('clients').child(itemId).update({
           name: document.getElementById('action-client-name').value.trim(),
           phone: document.getElementById('action-client-phone').value.trim(),
           project: document.getElementById('action-client-project').value.trim(),
+          projectType: document.getElementById('action-client-category').value.trim(),
           budget: parseFloat(document.getElementById('action-client-budget').value) || 0
         }).then(() => { closeActionModal(); });
       } else if (itemType === 'tx_edit') {
