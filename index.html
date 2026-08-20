@@ -322,134 +322,128 @@
 	
 	</div>
 	
-	<!-- JAVASCRIPT LOGIC -->
+	<!-- Greeting Card & Quote -->
 	<script>
-	    function setTimeBasedGreeting() {
-	        const hour = new Date().getHours();
-	        const salamEl = document.getElementById('greeting-salam');
-	        const timeEl = document.getElementById('greeting-time');
-	        const subEl = document.getElementById('greeting-subtitle');
-	
-	        if (!salamEl || !timeEl || !subEl) return;
-	
-	        salamEl.innerHTML = "আসসালামু আলাইকুম";
-	
-	        if (hour >= 4 && hour < 12) {
-	            timeEl.innerHTML = "শুভ সকাল 🌅";
-	            subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
-	        } else if (hour >= 12 && hour < 15) {
-	            timeEl.innerHTML = "শুভ দুপুর ☀️";
-	            subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
-	        } else if (hour >= 15 && hour < 18) {
-	            timeEl.innerHTML = "শুভ বিকেল ☕";
-	            subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
-	        } else {
-	            timeEl.innerHTML = "শুভ রাত্রি 🌙";
-	            subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
-	        }
-	    }
-	
-	    // ২০টি কোটের তালিকা
-	    const quotes = [
-	        "“মহান আল্লাহর পবিত্র নাম এবং তাঁর অন্তহীন বরকত নিয়ে আপনার আজকের নতুন ব্যবসায়িক দিনটি শুরু করুন, নিশ্চয়ই তিনি উত্তম রিজিকদাতা।”",
-	        "“সততা, বিশ্বস্ততা ও আমানতদারি হলো ব্যবসার সবচেয়ে বড় ও স্থায়ী পুঁজি, যা দুনিয়া ও আখেরাতে কখনো ফুরিয়ে যায় না।”",
-	        "“প্রতিটি ব্যবসায়িক পরিস্থিতি, লাভ কিংবা লোকসানে মহান আল্লাহর শুকরিয়া আদায় করুন, কারণ কৃতজ্ঞ বান্দার নিয়ামত তিনি বাড়িয়ে দেন।”",
-	        "“যে ব্যক্তি পূর্ণ সততা, নিষ্ঠা ও পরিশ্রমের সাথে তার ব্যবসা পরিচালনা করে, আল্লাহপাক তার উপার্জনে এবং সম্পত্তিতে বরকত দান করেন।”",
-	        "“আজকের এই ছোট্ট হিসাবের নিখুঁত ও সুশৃঙ্খল পরিকল্পনা আগামীকালের বড় ব্যবসায়িক সাফল্য এবং মানসিক স্বস্তি নিশ্চিত করে।”",
-	        "“ধৈর্য হলো মানুষের জীবনের এমন একটি গুণ, যা যেকোনো কঠিন বিপদের মুহূর্ত পেরিয়ে সাফল্যের সোনালী দরজা খুলে দেয়।”",
-	        "“সৎ পথে এবং হালাল উপায়ে করা সামান্য পরিশ্রমও ভবিষ্যতে মানুষের জীবনে শান্তি ও সমৃদ্ধির এক বিশাল পাহাড় গড়ে তোলে।”",
-	        "“অহংকার মানুষের সমস্ত অর্জিত সম্মান ও ব্যক্তিত্বকে নিমেষেই ধূলিসাৎ করে দেয়, পক্ষান্তরে বিনম্রতা মানুষকে সবার হৃদয়ে অমর করে রাখে।”",
-	        "“মানুষের করা ভালো কাজ কিংবা সুন্দর ব্যবহার কভু হারিয়ে যায় না, আজ হোক বা কাল ঘুরেফিরে ঠিকই তার সুফল নিজের জীবনে ফিরে আসে।”",
-	        "“মূল্যবান সময় এবং সঠিক সুযোগ কারো জন্য দীর্ঘক্ষণ অপেক্ষা করে না; তাই কালক্ষেপণ না করে বর্তমান মুহূর্তটিকে সর্বোচ্চভাবে কাজে লাগান।”",
-	        "“কঠোর পরিশ্রম কখনো একেবারে বৃথা যায় না, একটু বিলম্বে হলেও এর অত্যন্ত সুমধুর ও সুন্দর প্রতিদান জীবন ফিরিয়ে দেয়।”",
-	        "“একটি সঠিক সিদ্ধান্ত এবং মানুষের সাথে করা ভালো ব্যবহার ব্যবসার পরিধি বাড়ানোর চেয়েও মানুষের মন জয় করতে বেশি সাহায্য করে।”",
-	        "“সাফল্য একদিনে আসে না; প্রতিদিনের ছোট ছোট সৎ প্রচেষ্টা, নিয়মানুবর্তিতা এবং সঠিক হিসাব-নিকাশই সফলতার আসল ভিত্তি।”",
-	        "“যে মানুষ নিজের কাজের প্রতি দায়িত্বশীল এবং আন্তরিক নয়, সে কখনোই বড় কোনো লক্ষ্য অর্জন করতে সফল হতে পারে না।”",
-	        "“সবচেয়ে বড় বিনিয়োগ হলো নিজের ওপর বিশ্বাস রাখা এবং সঠিক জ্ঞান অর্জন করা, যা আপনাকে কখনো নিরাশ করবে না।”",
-	        "“অনিশ্চয়তা ও ভয়ের মুখোমুখি হয়ে যিনি সাহসিকতার সাথে এগিয়ে যান, তিনিই মূলত জীবনের আসল চ্যালেঞ্জগুলো জয় করতে পারেন।”",
-	        "“রিজিকের মালিক একমাত্র আল্লাহ; তাই হালাল উপার্জনের জন্য সাধ্যমতো চেষ্টা করে বাকি ফলাফল তাঁর ওপর সঁপে দিন।”",
-	        "“লোভ মানুষকে অন্ধ করে দেয় এবং মুহূর্তের মধ্যে সমস্ত অর্জন ধ্বংস করে, কিন্তু সন্তুষ্টি মানুষকে প্রকৃত ধনী করে তোলে।”",
-	        "“ভুল মানুষেরই হয়, তবে বুদ্ধিমান মানুষ সেই ভুল থেকে শিক্ষা নিয়ে নিজেকে আরও বেশি পরিপক্ব ও দক্ষ করে গড়ে তোলে।”",
-	        "“আজকের একটি ছোট সততা ও বিশ্বস্ততা আগামী দিনে আপনার ব্যবসার জন্য মানুষের ভালোবাসার এক স্থায়ী দুর্গ তৈরি করবে।”"
-	    ];
-	
-	    let quoteIndex = 0;
-	    let charIndex = 0;
-	    const quoteElement = document.getElementById('islamic-quote');
-	
-	    // কোট অ্যারে এলোমেলো (Shuffle) করার ফাংশন
-	    function shuffleQuotes() {
-	        for (let i = quotes.length - 1; i > 0; i--) {
-	            const j = Math.floor(Math.random() * (i + 1));
-	            [quotes[i], quotes[j]] = [quotes[j], quotes[i]];
-	        }
-	    }
-	
-	    function typeQuote() {
-	        if (!quoteElement) return;
-	        if (charIndex < quotes[quoteIndex].length) {
-	            quoteElement.textContent += quotes[quoteIndex].charAt(charIndex);
-	            charIndex++;
-	            setTimeout(typeQuote, 35); 
-	        } else {
-	            setTimeout(deleteQuote, 4000); 
-	        }
-	    }
-	
-	    function deleteQuote() {
-	        if (!quoteElement) return;
-	        if (charIndex > 0) {
-	            quoteElement.textContent = quotes[quoteIndex].substring(0, charIndex - 1);
-	            charIndex--;
-	            setTimeout(deleteQuote, 15); 
-	        } else {
-	            quoteIndex = (quoteIndex + 1) % quotes.length;
-	            // সব কোট একবার দেখানো শেষ হলে আবার নতুন করে শাফেল করে নেবে
-	            if (quoteIndex === 0) {
-	                shuffleQuotes();
-	            }
-	            setTimeout(typeQuote, 300);
-	        }
-	    }
-	
-	    // অ্যাপ চালুর শুরুতেই কোটগুলো রেন্ডমাইজ করে নেওয়া
-	    shuffleQuotes();
-	
-	    // অত্যন্ত স্মুথ এবং ফাস্ট কন্টেন্ট সুইচিং (বোঝাই যাবে না)
-	    function initCardTransition() {
-	        setTimeout(() => {
-	            const greetingContent = document.getElementById('greeting-content');
-	            const quoteContent = document.getElementById('quote-content');
-	
-	            if (greetingContent && quoteContent) {
-	                // গ্রিটিংস ফেইড আউট
-	                greetingContent.style.opacity = '0';
-	                setTimeout(() => {
-	                    greetingContent.style.display = 'none';
-	                    
-	                    // কোট সেকশন ইনস্ট্যান্ট শো করে ফেইড ইন করা
-	                    quoteContent.style.display = 'block';
-	                    setTimeout(() => {
-	                        quoteContent.style.opacity = '1';
-	                        typeQuote();
-	                    }, 20);
-	                }, 250);
-	            }
-	        }, 10000); // ১০ সেকেন্ড পর
-	    }
-	
-	    if (document.readyState === 'loading') {
-	        document.addEventListener('DOMContentLoaded', () => {
-	            setTimeBasedGreeting();
-	            setFormattedDates();
-	            initCardTransition();
-	        });
-	    } else {
-	        setTimeBasedGreeting();
-	        setFormattedDates();
-	        initCardTransition();
-	    }
-	</script>
+    function setTimeBasedGreeting() {
+        const hour = new Date().getHours();
+        const salamEl = document.getElementById('greeting-salam');
+        const timeEl = document.getElementById('greeting-time');
+        const subEl = document.getElementById('greeting-subtitle');
+
+        if (!salamEl || !timeEl || !subEl) return;
+
+        salamEl.innerHTML = "আসসালামু আলাইকুম";
+
+        if (hour >= 4 && hour < 12) {
+            timeEl.innerHTML = "শুভ সকাল 🌅";
+            subEl.innerHTML = "নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।";
+        } else if (hour >= 12 && hour < 15) {
+            timeEl.innerHTML = "শুভ দুপুর ☀️";
+            subEl.innerHTML = "আপনার দুপুরের সময়টি বরকতময় ও লাভজনক হোক।";
+        } else if (hour >= 15 && hour < 18) {
+            timeEl.innerHTML = "শুভ বিকেল ☕";
+            subEl.innerHTML = "ক্লান্তি কাটিয়ে ব্যবসার হিসাবগুলো সুন্দরভাবে গুছিয়ে নিন।";
+        } else {
+            timeEl.innerHTML = "শুভ রাত্রি 🌙";
+            subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
+        }
+    }
+
+    // ২০টি কোটের তালিকা
+    const quotes = [
+        "“মহান আল্লাহর পবিত্র নাম এবং তাঁর অন্তহীন বরকত নিয়ে আপনার আজকের নতুন ব্যবসায়িক দিনটি শুরু করুন, নিশ্চয়ই তিনি উত্তম রিজিকদাতা।”",
+        "“সততা, বিশ্বস্ততা ও আমানতদারি হলো ব্যবসার সবচেয়ে বড় ও স্থায়ী পুঁজি, যা দুনিয়া ও আখেরাতে কখনো ফুরিয়ে যায় না।”",
+        "“প্রতিটি ব্যবসায়িক পরিস্থিতি, লাভ কিংবা লোকসানে মহান আল্লাহর শুকরিয়া আদায় করুন, কারণ কৃতজ্ঞ বান্দার নিয়ামত তিনি বাড়িয়ে দেন।”",
+        "“যে ব্যক্তি পূর্ণ সততা, নিষ্ঠা ও পরিশ্রমের সাথে তার ব্যবসা পরিচালনা করে, আল্লাহপাক তার উপার্জনে এবং সম্পত্তিতে বরকত দান করেন।”",
+        "“আজকের এই ছোট্ট হিসাবের নিখুঁত ও সুশৃঙ্খল পরিকল্পনা আগামীকালের বড় ব্যবসায়িক সাফল্য এবং মানসিক স্বস্তি নিশ্চিত করে।”",
+        "“ধৈর্য হলো মানুষের জীবনের এমন একটি গুণ, যা যেকোনো কঠিন বিপদের মুহূর্ত পেরিয়ে সাফল্যের সোনালী দরজা খুলে দেয়।”",
+        "“সৎ পথে এবং হালাল উপায়ে করা সামান্য পরিশ্রমও ভবিষ্যতে মানুষের জীবনে শান্তি ও সমৃদ্ধির এক বিশাল পাহাড় গড়ে তোলে।”",
+        "“অহংকার মানুষের সমস্ত অর্জিত সম্মান ও ব্যক্তিত্বকে নিমেষেই ধূলিসাৎ করে দেয়, পক্ষান্তরে বিনম্রতা মানুষকে সবার হৃদয়ে অমর করে রাখে।”",
+        "“মানুষের করা ভালো কাজ কিংবা সুন্দর ব্যবহার কভু হারিয়ে যায় না, আজ হোক বা কাল ঘুরেফিরে ঠিকই তার সুফল নিজের জীবনে ফিরে আসে।”",
+        "“মূল্যবান সময় এবং সঠিক সুযোগ কারো জন্য দীর্ঘক্ষণ অপেক্ষা করে না; তাই কালক্ষেপণ না করে বর্তমান মুহূর্তটিকে সর্বোচ্চভাবে কাজে লাগান।”",
+        "“কঠোর পরিশ্রম কখনো একেবারে বৃথা যায় না, একটু বিলম্বে হলেও এর অত্যন্ত মধুর ও সুন্দর প্রতিদান জীবন ফিরিয়ে দেয়।”",
+        "“একটি সঠিক সিদ্ধান্ত এবং মানুষের সাথে করা ভালো ব্যবহার ব্যবসার পরিধি বাড়ানোর চেয়েও মানুষের মন জয় করতে বেশি সাহায্য করে।”",
+        "“সাফল্য একদিনে আসে না; প্রতিদিনের ছোট ছোট সৎ প্রচেষ্টা, নিয়মানুবর্তিতা এবং সঠিক হিসাব-নিকাশই সফলতার আসল ভিত্তি।”",
+        "“যে মানুষ নিজের কাজের প্রতি দায়িত্বশীল এবং আন্তরিক নয়, সে কখনোই বড় কোনো লক্ষ্য অর্জন করতে সফল হতে পারে না।”",
+        "“সবচেয়ে বড় বিনিয়োগ হলো নিজের ওপর বিশ্বাস রাখা এবং সঠিক জ্ঞান অর্জন করা, যা আপনাকে কখনো নিরাশ করবে না।”",
+        "“অনিশ্চয়তা ও ভয়ের মুখোমুখি হয়ে যিনি সাহসিকতার সাথে এগিয়ে যান, তিনিই মূলত জীবনের আসল চ্যালেঞ্জগুলো জয় করতে পারেন।”",
+        "“রিজিকের মালিক একমাত্র আল্লাহ; তাই হালাল উপার্জনের জন্য সাধ্যমতো চেষ্টা করে বাকি ফলাফল তাঁর ওপর সঁপে দিন।”",
+        "“লোভ মানুষকে অন্ধ করে দেয় এবং মুহূর্তের মধ্যে সমস্ত অর্জন ধ্বংস করে, কিন্তু সন্তুষ্টি মানুষকে প্রকৃত ধনী করে তোলে।”",
+        "“ভুল মানুষেরই হয়, তবে বুদ্ধিমান মানুষ সেই ভুল থেকে শিক্ষা নিয়ে নিজেকে আরও বেশি পরিপক্ব ও দক্ষ করে গড়ে তোলে।”",
+        "“আজকের একটি ছোট সততা ও বিশ্বস্ততা আগামী দিনে আপনার ব্যবসার জন্য মানুষের ভালোবাসার এক স্থায়ী দুর্গ তৈরি করবে।”"
+    ];
+
+    let quoteIndex = 0;
+    let charIndex = 0;
+    const quoteElement = document.getElementById('islamic-quote');
+
+    // কোট অ্যারে এলোমেলো (Shuffle) করার ফাংশন
+    function shuffleQuotes() {
+        for (let i = quotes.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [quotes[i], quotes[j]] = [quotes[j], quotes[i]];
+        }
+    }
+
+    function typeQuote() {
+        if (!quoteElement) return;
+        if (charIndex < quotes[quoteIndex].length) {
+            quoteElement.textContent += quotes[quoteIndex].charAt(charIndex);
+            charIndex++;
+            setTimeout(typeQuote, 35); 
+        } else {
+            setTimeout(deleteQuote, 4000); 
+        }
+    }
+
+    function deleteQuote() {
+        if (!quoteElement) return;
+        if (charIndex > 0) {
+            quoteElement.textContent = quotes[quoteIndex].substring(0, charIndex - 1);
+            charIndex--;
+            setTimeout(deleteQuote, 15); 
+        } else {
+            quoteIndex = (quoteIndex + 1) % quotes.length;
+            if (quoteIndex === 0) {
+                shuffleQuotes();
+            }
+            setTimeout(typeQuote, 300);
+        }
+    }
+
+    shuffleQuotes();
+
+    // ১০ সেকেন্ড পর গ্রিটিংস হাইড হয়ে কোট শুরু হবে
+    function initCardTransition() {
+        setTimeout(() => {
+            const greetingContent = document.getElementById('greeting-content');
+            const quoteContent = document.getElementById('quote-content');
+
+            if (greetingContent && quoteContent) {
+                greetingContent.style.opacity = '0';
+                setTimeout(() => {
+                    greetingContent.style.display = 'none';
+                    
+                    quoteContent.style.display = 'block';
+                    setTimeout(() => {
+                        quoteContent.style.opacity = '1';
+                        typeQuote();
+                    }, 20);
+                }, 250);
+            }
+        }, 10000); // ১০ সেকেন্ড (10000 ms)
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeBasedGreeting();
+            initCardTransition();
+        });
+    } else {
+        setTimeBasedGreeting();
+        initCardTransition();
+    }
+</script>
 
     <!-- TAB 1: DEFAULT HOMEPAGE DASHBOARD & REPORTS -->
     <div id="tab-dashboard-view" class="tab-content space-y-4 hidden">
