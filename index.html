@@ -287,23 +287,13 @@
 	        <div class="absolute top-0 right-0 w-32 h-32 bg-rose-100/40 rounded-full blur-3xl pointer-events-none"></div>
 	        
 	        <!-- ১. গ্রিটিংস কন্টেন্ট (প্রথম ১০ সেকেন্ড থাকবে) -->
-	        <div id="greeting-content" class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-opacity duration-300 ease-in-out">
-	            <div class="space-y-1.5 flex flex-col items-center md:items-start">
-	                <h1 id="greeting-salam" class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম</h1>
-	                <p id="greeting-time" class="text-xs md:text-sm font-semibold text-rose-600">শুভ সকাল</p>
-	                <p id="greeting-subtitle" class="text-xs text-slate-500 font-medium">নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।</p>
-	            </div>
-	
-	            <!-- সাজানো তারিখ -->
-				<div class="flex flex-col items-center md:items-end gap-1 md:border-l md:border-rose-100 md:pl-5 pt-3 md:pt-0 border-t md:border-t-0 border-rose-100/60 shrink-0">
-				    <div class="text-[11px] md:text-xs leading-tight">
-				        <span id="bengali-date" class="font-bold text-slate-700">লোড হচ্ছে...</span>
-				    </div>
-				    <div class="text-[11px] md:text-xs leading-tight">
-				        <span id="arabic-date" class="font-bold text-rose-700">লোড হচ্ছে...</span>
-				    </div>
-				</div>
-	        </div>
+			<div id="greeting-content" class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-opacity duration-300 ease-in-out">
+			    <div class="space-y-1.5 flex flex-col items-center md:items-start">
+			        <h1 id="greeting-salam" class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">আসসালামু আলাইকুম</h1>
+			        <p id="greeting-time" class="text-xs md:text-sm font-semibold text-rose-600">শুভ সকাল</p>
+			        <p id="greeting-subtitle" class="text-xs text-slate-500 font-medium">নতুন সম্ভাবনা ও ব্যবসায়িক সাফল্যে আজকের দিনটি শুরু করুন।</p>
+			    </div>
+			</div>
 	
 	        <!-- ২. কোট কন্টেন্ট (১০ সেকেন্ড পর একদম নিখুঁতভাবে স্থান নেবে) -->
 	        <div id="quote-content" class="relative z-10 hidden opacity-0 transition-opacity duration-500 ease-in-out text-center py-2">
@@ -358,36 +348,6 @@
 	            subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
 	        }
 	    }
-
-		<!-- সাজানো তারিখ --------------------------------------------------------->
-	    function setFormattedDates() {
-		    const today = new Date();
-		    
-		    // বারের নাম বাংলায় পাওয়ার জন্য অ্যারে
-		    const days = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
-		    const dayName = days[today.getDay()];
-		    
-		    // আজকের তারিখ অনুযায়ী বাংলা ও হিজরি ডেট স্ট্রিং
-		    const bengaliDateStr = `${dayName}, ৫ ভাদ্র, ১৪৩৩`;
-		    const arabicDateStr = `৭ রবিউল আউয়াল, ১৪৪৮`;
-		
-		    try {
-		        const bengaliEl = document.getElementById('bengali-date');
-		        const arabicEl = document.getElementById('arabic-date');
-		        
-		        if (bengaliEl) {
-		            bengaliEl.innerText = bengaliDateStr;
-		        }
-		        if (arabicEl) {
-		            arabicEl.innerText = arabicDateStr;
-		        }
-		    } catch (e) {
-		        console.error("Date update error: ", e);
-		    }
-		}
-		
-		// পেজ লোড হওয়ার সাথে সাথে ফাংশনটি রান হবে
-		document.addEventListener("DOMContentLoaded", setFormattedDates);
 	
 	    // ২০টি কোটের তালিকা
 	    const quotes = [
