@@ -295,14 +295,14 @@
 	            </div>
 	
 	            <!-- সাজানো তারিখ -->
-	            <div class="flex flex-col items-center md:items-end gap-1 md:border-l md:border-rose-100 md:pl-5 pt-3 md:pt-0 border-t md:border-t-0 border-rose-100/60 shrink-0">
-	                <div class="text-[11px] md:text-xs leading-tight">
-	                    <span id="bengali-date" class="font-bold text-slate-700">সোমবার, ২ ভাদ্র, ১৪৩৩</span>
-	                </div>
-	                <div class="text-[11px] md:text-xs leading-tight">
-	                    <span id="arabic-date" class="font-bold text-rose-700">৪ রবিউল আউয়াল, ১৪৪৮</span>
-	                </div>
-	            </div>
+				<div class="flex flex-col items-center md:items-end gap-1 md:border-l md:border-rose-100 md:pl-5 pt-3 md:pt-0 border-t md:border-t-0 border-rose-100/60 shrink-0">
+				    <div class="text-[11px] md:text-xs leading-tight">
+				        <span id="bengali-date" class="font-bold text-slate-700">লোড হচ্ছে...</span>
+				    </div>
+				    <div class="text-[11px] md:text-xs leading-tight">
+				        <span id="arabic-date" class="font-bold text-rose-700">লোড হচ্ছে...</span>
+				    </div>
+				</div>
 	        </div>
 	
 	        <!-- ২. কোট কন্টেন্ট (১০ সেকেন্ড পর একদম নিখুঁতভাবে স্থান নেবে) -->
@@ -358,16 +358,36 @@
 	            subEl.innerHTML = "সারদিনের ব্যবসায়িক ব্যস্ততা শেষে একটি শান্ত ও আরামদায়ক রাত কাটুক।";
 	        }
 	    }
-	
+
+		<!-- সাজানো তারিখ --------------------------------------------------------->
 	    function setFormattedDates() {
-	        const today = new Date();
-	        try {
-	            if (today.getDate() === 17 && today.getMonth() === 7 && today.getFullYear() === 2026) {
-	                document.getElementById('bengali-date').innerText = "সোমবার, ২ ভাদ্র, ১৪৩৩";
-	                document.getElementById('arabic-date').innerText = "৪ রবিউল আউয়াল, ১৪৪৮";
-	            }
-	        } catch (e) {}
-	    }
+		    const today = new Date();
+		    
+		    // বারের নাম বাংলায় পাওয়ার জন্য অ্যারে
+		    const days = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
+		    const dayName = days[today.getDay()];
+		    
+		    // আজকের তারিখ অনুযায়ী বাংলা ও হিজরি ডেট স্ট্রিং
+		    const bengaliDateStr = `${dayName}, ৫ ভাদ্র, ১৪৩৩`;
+		    const arabicDateStr = `৭ রবিউল আউয়াল, ১৪৪৮`;
+		
+		    try {
+		        const bengaliEl = document.getElementById('bengali-date');
+		        const arabicEl = document.getElementById('arabic-date');
+		        
+		        if (bengaliEl) {
+		            bengaliEl.innerText = bengaliDateStr;
+		        }
+		        if (arabicEl) {
+		            arabicEl.innerText = arabicDateStr;
+		        }
+		    } catch (e) {
+		        console.error("Date update error: ", e);
+		    }
+		}
+		
+		// পেজ লোড হওয়ার সাথে সাথে ফাংশনটি রান হবে
+		document.addEventListener("DOMContentLoaded", setFormattedDates);
 	
 	    // ২০টি কোটের তালিকা
 	    const quotes = [
@@ -846,6 +866,7 @@
 			  <option value="">প্রজেক্ট ক্যাটেগরি</option>
 			  <option value="Luc Submission">Luc Submission</option>
 			  <option value="Plan Submission">Plan Submission</option>
+			  <option value="Mouza Map">Mouza Map</option>
 			  <option value="Rajuk Sheet">Rajuk Sheet</option>
 			  <option value="Digital Survey">Digital Survey</option>
 			  <option value="Soil Test">Soil Test</option>
