@@ -707,7 +707,7 @@
         <div class="relative flex-1 w-full flex items-center gap-2">
 		  <!-- আপনার মূল সার্চ ইনপুট -->
 		  <div class="relative flex-1">
-		    <input type="text" id="search-input" placeholder="গ্রাহক, মোবাইল বা প্রজেক্ট নাম খুঁজুন..." class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl pl-9 pr-4 py-2 outline-none focus:border-rose-600 transition">
+		    <input type="text" id="search-input" placeholder="Search Client, Project or Mobile No..." class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl pl-9 pr-4 py-2 outline-none focus:border-rose-600 transition">
 		    <span class="absolute left-3 top-2 text-slate-400 text-xs">🔍</span>
 		  </div>
 		
@@ -718,13 +718,13 @@
         <!-- CLIENT FILTER CARD BUTTONS & PRINT BUTTON -->
         <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
           <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-            <button onclick="setClientFilter('all')" id="client-filter-all" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition bg-rose-600 text-white shadow-xs">সব</button>
-            <button onclick="setClientFilter('due')" id="client-filter-due" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600 hover:text-amber-600">বকেয়া</button>
-            <button onclick="setClientFilter('paid')" id="client-filter-paid" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600 hover:text-emerald-600">পরিশোধিত</button>
+            <button onclick="setClientFilter('all')" id="client-filter-all" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition bg-rose-600 text-white shadow-xs">All</button>
+            <button onclick="setClientFilter('due')" id="client-filter-due" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600 hover:text-amber-600">Due</button>
+            <button onclick="setClientFilter('paid')" id="client-filter-paid" class="client-filter-btn px-3 py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600 hover:text-emerald-600">Paid</button>
           </div>
 
           <button onclick="printSearchResults()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 cursor-pointer">
-            <span>🖨️</span> <span>প্রিন্ট</span>
+            <span>🖨️</span> <span>Print</span>
           </button>
         </div>
       </div>
