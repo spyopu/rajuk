@@ -794,56 +794,65 @@
       </div>
 
       <!-- 1. Quick Client Form -->
-      <form id="quick-client-form" class="space-y-2.5">
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">গ্রাহকের নাম</label>
-          <input type="text" id="qc-name" placeholder="যেমন: আব্দুল্লাহ" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
-        </div>
-        <div>
-          <div class="flex items-center justify-between mb-0.5">
-            <label class="block text-[11px] font-bold text-slate-700">মোবাইল নাম্বার</label>
-            <button type="button" onclick="pickContact()" class="text-[10px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2 py-0.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
-              ফোনবুক
-            </button>
-          </div>
-          <input type="text" id="qc-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-semibold outline-none">
-        </div>
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্টের নাম</label>
-          <input type="text" id="qc-project" placeholder="যেমন: বিল্ডিং ডিজাইন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
-        </div>
-
-        <!-- নতুন প্রজেক্ট ক্যাটাগরি ড্রপডাউন ফিল্ড -->
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্টের ধরন</label>
-          <select id="qc-project-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
-			  <option value="">প্রজেক্ট ক্যাটেগরি</option>
-			  <option value="Luc Submission">Luc Submission</option>
-			  <option value="Plan Submission">Plan Submission</option>
-			  <option value="Mouza Map">Mouza Map</option>
-			  <option value="Rajuk Sheet">Rajuk Sheet</option>
-			  <option value="Digital Survey">Digital Survey</option>
-			  <option value="Soil Test">Soil Test</option>
-			  <option value="Planning Permit Approval">Planning Permit Approval</option>
-			  <option value="Construction Permit Approval">Construction Permit Approval</option>
-			  <option value="Complete Package">Complete Package</option>
-			  <option value="Working Design">Working Design</option>
-			  <option value="3D Design">3D Design</option>
-			</select>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">মোট চুক্তি (৳)</label>
-            <input type="number" id="qc-budget" placeholder="50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">তারিখ</label>
-            <input type="date" id="qc-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
-          </div>
-        </div>
-        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1">গ্রাহক সেভ করুন</button>
-      </form>
+		<form id="quick-client-form" class="space-y-2.5">
+		    <div>
+		        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">গ্রাহকের নাম</label>
+		        <input type="text" id="qc-name" placeholder="যেমন: আব্দুল্লাহ" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
+		    </div>
+		    <div>
+		        <div class="flex items-center justify-between mb-0.5">
+		            <label class="block text-[11px] font-bold text-slate-700">মোবাইল নাম্বার</label>
+		            <button type="button" onclick="pickContact()" class="text-[10px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2 py-0.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
+		                ফোনবুক
+		            </button>
+		        </div>
+		        <input type="text" id="qc-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-semibold outline-none">
+		    </div>
+		    <div>
+		        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্টের নাম</label>
+		        <input type="text" id="qc-project" placeholder="যেমন: বিল্ডিং ডিজাইন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
+		    </div>
+		
+		    <!-- নতুন যোগ হলো: প্রজেক্ট ক্যাটাগরি (Client নাকি Vendor) -->
+		    <div>
+		        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্ট ক্যাটাগরি</label>
+		        <select id="qc-project-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
+		            <option value="client">Client</option>
+		            <option value="vendor">Vendor</option>
+		        </select>
+		    </div>
+		
+		    <!-- আগের সার্ভিস লিস্ট ড্রপডাউন ফিল্ড -->
+		    <div>
+		        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্টের ধরন</label>
+		        <select id="qc-project-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
+		            <option value="">প্রজেক্ট ক্যাটেগরি</option>
+		            <option value="Luc Submission">Luc Submission</option>
+		            <option value="Plan Submission">Plan Submission</option>
+		            <option value="Mouza Map">Mouza Map</option>
+		            <option value="Rajuk Sheet">Rajuk Sheet</option>
+		            <option value="Digital Survey">Digital Survey</option>
+		            <option value="Soil Test">Soil Test</option>
+		            <option value="Planning Permit Approval">Planning Permit Approval</option>
+		            <option value="Construction Permit Approval">Construction Permit Approval</option>
+		            <option value="Complete Package">Complete Package</option>
+		            <option value="Working Design">Working Design</option>
+		            <option value="3D Design">3D Design</option>
+		        </select>
+		    </div>
+		
+		    <div class="grid grid-cols-2 gap-2">
+		        <div>
+		            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">মোট চুক্তি (৳)</label>
+		            <input type="number" id="qc-budget" placeholder="50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
+		        </div>
+		        <div>
+		            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">তারিখ</label>
+		            <input type="date" id="qc-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
+		        </div>
+		    </div>
+		    <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1">গ্রাহক সেভ করুন</button>
+		</form>
 		
       <!-- 2. Quick Transaction Form -->
       <form id="quick-tx-form" class="space-y-2.5 hidden">
@@ -2188,8 +2197,24 @@ function calculateGlobalMetrics() {
     });
   }
 
-  let totalExpense = prjExpense + totalOfficeExpense;
-  let grossProfit = collection - prjExpense;
+  // ১. ভেন্ডর প্রজেক্টগুলোর পেমেন্ট বা খরচ আলাদা করে হিসাব করে প্রজেক্ট খরচের সাথে যোগ করা
+  let totalVendorExpense = 0;
+  if (typeof projectsList !== 'undefined' && Array.isArray(projectsList)) {
+    projectsList.forEach(proj => {
+      // যদি প্রজেক্টটি ভেন্ডর হয় এবং তার হিস্ট্রি বা পেমেন্ট লিস্ট থাকে
+      if (proj.projectCategory === 'vendor' && proj.history && Array.isArray(proj.history)) {
+        proj.history.forEach(item => {
+          totalVendorExpense += (item.amount || 0);
+        });
+      }
+    });
+  }
+
+  // মূল প্রজেক্ট খরচের সাথে ভেন্ডরের পেমেন্টগুলো যুক্ত করা হলো
+  let adjustedPrjExpense = prjExpense + totalVendorExpense;
+
+  let totalExpense = adjustedPrjExpense + totalOfficeExpense;
+  let grossProfit = collection - adjustedPrjExpense;
   let netProfit = grossProfit - totalOfficeExpense;
   let ownerNetCapital = ownerInjection - ownerDrawing;
   
@@ -2218,8 +2243,9 @@ function calculateGlobalMetrics() {
   setVal('global-due', due);
   setVal('global-net', netBalance, true, netBalance >= 0 ? 'text-emerald-600' : 'text-rose-600');
 
+  // রিপোর্ট কার্ডগুলোতে আপডেট করা প্রজেক্ট কস্ট বসানো হলো
   setVal('report-collection', collection);
-  setVal('report-project-cost', prjExpense);
+  setVal('report-project-cost', adjustedPrjExpense);
   setVal('report-gross-profit', grossProfit);
   setVal('report-office-expense', totalOfficeExpense);
   setVal('report-net-profit', netProfit, true, netProfit >= 0 ? 'text-emerald-600' : 'text-rose-600');
@@ -2683,10 +2709,20 @@ function renderYearlyBreakdownTable() {
 		  name: document.getElementById('qc-name').value.trim(),
 		  phone: document.getElementById('qc-phone').value.trim(),
 		  project: document.getElementById('qc-project').value.trim(),
-		  projectType: document.getElementById('qc-project-type').value.trim(), // 👈 ক্যাটাগরি এখানে যুক্ত করে দিন
+		  projectType: document.getElementById('qc-project-type').value.trim(), // আগের সার্ভিস লিস্টের জন্য যেমন আছে তেমনই থাকবে
+		  projectCategory: document.getElementById('qc-project-category').value.trim(), // 👈 নতুন যোগ হলো: এটি দিয়ে ক্লায়েন্ট নাকি ভেন্ডর তা আলাদা করবে ('client' বা 'vendor')
 		  budget: budgetValue,
 		  history: [] // কোনো পেমেন্ট ছাড়াই শুধু প্রজেক্ট ও বাজেট দিয়ে শুরু হবে
 		};
+
+		// প্রজেক্ট কালার
+		let dotColor;
+			if (client.projectCategory === 'vendor') {
+			    dotColor = '#800080'; // ভেন্ডর প্রজেক্ট হলে পার্পল কালার
+			} else {
+			    // ক্লায়েন্ট প্রজেক্ট হলে পুরোনো লজিক (Due থাকলে orange, না থাকলে green)
+			    dotColor = (client.due > 0) ? 'orange' : 'green'; 
+			}
 
 		databasePathRef.child('clients').push(newClient).then(() => {
 		  closeQuickModal();
