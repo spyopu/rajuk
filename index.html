@@ -2506,10 +2506,20 @@ function renderYearlyBreakdownTable() {
 			            </div>
 			        </div>
 			
-			        <!-- ৫. স্ট্যাটাস ও অ্যারো ইন্ডিকেটর (Status & Arrow Indicator) -->
+			        <!-- ৫. স্ট্যাটাস ডট ও ইন্ডিকেটর -->
 			        <div class="flex items-center gap-3">
-			            ${statusBadge}
-			            <span id="acc-client-${c.id}-arrow" class="text-slate-400 text-xs transition-transform duration-200"></span>
+			            <!-- ভেন্ডর হলে শুধুমাত্র পার্পল ডট, ক্লায়েন্ট হলে ডিউ অনুযায়ী ডট -->
+			            <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${c.projectCategory === 'vendor' ? '#800080' : ((c.due || 0) > 0 ? 'orange' : 'green')};"></span>
+			            
+			            <!-- ক্লায়েন্ট প্রজেক্ট হলে বাইরে বকেয়া দেখাবে, ভেন্ডর হলে বাইরে কিছু দেখাবে না (সব ডিটেলস ভেতরে থাকবে) -->
+			            ${c.projectCategory !== 'vendor' ? `
+			            <div class="text-right">
+			                <span class="text-[10px] text-slate-400 block">বকেয়া</span>
+			                <span class="font-mono font-bold text-xs text-slate-800">৳${(c.due || 0).toLocaleString('en-IN')}</span>
+			            </div>
+			            ` : ''}
+			
+			            <span id="acc-client-${c.id}-arrow" class="text-slate-400 text-xs transition-transform duration-200">▼</span>
 			        </div>
 			    </div>
 			</div>
