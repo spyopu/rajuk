@@ -2703,7 +2703,7 @@ function renderYearlyBreakdownTable() {
 		e.preventDefault();
 		if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
 
-		const budgetValue = parseFloat(document.getElementById('qc-budget'))?.value || parseFloat(document.getElementById('qc-budget').value) || 0;
+		const budgetValue = parseFloat(document.getElementById('qc-budget')?.value) || 0;
 		
 		const newClient = {
 		  name: document.getElementById('qc-name').value.trim(),
