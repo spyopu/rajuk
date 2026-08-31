@@ -2682,9 +2682,11 @@ window.toggleOfficeOwnerFields = function() {
 };
 
 // ১. ক্লায়েন্ট ফর্ম সাবমিট
-const quickClientForm = document.getElementById('quick-client-form');
-if (quickClientForm && !quickClientForm.dataset.listenerAttached) {
-    quickClientForm.dataset.listenerAttached = "true"; // যেন ডাবল বাইন্ড না হয়
+const oldClientForm = document.getElementById('quick-client-form');
+if (oldClientForm) {
+    const quickClientForm = oldClientForm.cloneNode(true);
+    oldClientForm.parentNode.replaceChild(quickClientForm, oldClientForm);
+
     quickClientForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
@@ -2710,9 +2712,11 @@ if (quickClientForm && !quickClientForm.dataset.listenerAttached) {
 }
 
 // ২. লেনদেন (Transaction) ফর্ম সাবমিট
-const quickTxForm = document.getElementById('quick-tx-form');
-if (quickTxForm && !quickTxForm.dataset.listenerAttached) {
-    quickTxForm.dataset.listenerAttached = "true";
+const oldTxForm = document.getElementById('quick-tx-form');
+if (oldTxForm) {
+    const quickTxForm = oldTxForm.cloneNode(true);
+    oldTxForm.parentNode.replaceChild(quickTxForm, oldTxForm);
+
     quickTxForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if(!databasePathRef) { alert("লগইন করুন!"); return; }
@@ -2743,9 +2747,11 @@ if (quickTxForm && !quickTxForm.dataset.listenerAttached) {
 }
 
 // ৩. অফিস ও ওনার এক্সপেন্স ফর্ম সাবমিট
-const quickOfficeForm = document.getElementById('quick-office-form');
-if (quickOfficeForm && !quickOfficeForm.dataset.listenerAttached) {
-    quickOfficeForm.dataset.listenerAttached = "true";
+const oldOfficeForm = document.getElementById('quick-office-form');
+if (oldOfficeForm) {
+    const quickOfficeForm = oldOfficeForm.cloneNode(true);
+    oldOfficeForm.parentNode.replaceChild(quickOfficeForm, oldOfficeForm);
+
     quickOfficeForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if(!databasePathRef) { alert("লগইন করুন!"); return; }
