@@ -2375,7 +2375,7 @@ function renderClientCards() {
                            (c.phone && c.phone.toLowerCase().includes(query)) ||
                            (c.project && c.project.toLowerCase().includes(query)) ||
                            (c.projectType && c.projectType.toLowerCase().includes(query)) ||
-                           (c.projectCategory && c.projectCategory.toLowerCase().includes(query)); // ক্যাটাগরি সার্চ যুক্ত হলো
+                           (c.projectCategory && c.projectCategory.toLowerCase().includes(query));
 
         const matchHistory = c.history && c.history.some(t => {
             const desc = (t.note || t.details || '').toLowerCase();
@@ -2401,16 +2401,45 @@ function renderClientCards() {
         return matchQuery || matchHistory;
     });
 
-    // ২. ফিল্টার করা ডেটা দিয়ে কার্ড রেন্ডার করা
+    // ২. স্ট্যাটাস ফিল্টার (Due / Paid) অনুযায়ী ফিল্টার করা (রেন্ডার করার আগে করতে হবে)
+    filtered = filtered.filter(c => {
+        let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.amount || 0) : sum, 0) : 0;
+        let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
+        let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDisc));
+
+        if (activeClientFilter === 'due') return due > 0;
+        if (activeClientFilter === 'paid') return due === 0;
+        return true;
+    });
+
+    // ৩. কাউন্ট ব্যাজ আপডেট করা
+    const countBadge = document.getElementById('searchCountBadge');
+    if (countBadge) {
+        countBadge.innerText = filtered.length;
+    }
+
+    // ৪. কোনো ডেটা না থাকলে নোটিশ দেখানো
+    if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2">
+            <p class="text-slate-400 text-sm">কোনো গ্রাহক বা প্রজেক্টের তথ্য পাওয়া যায়নি</p>
+          </div>
+        `;
+        return;
+    }
+
+    // ৫. ফিল্টার করা ডেটা দিয়ে কার্ড রেন্ডার করা
     container.innerHTML = filtered.map(c => {
         let totalPaid = 0;
         if (c.history && Array.isArray(c.history)) {
-            c.history.forEach(h => totalPaid += (h.amount || 0));
+            c.history.forEach(h => {
+                if (h.type === 'income') totalPaid += (h.amount || 0);
+            });
         }
 
         let due = (c.budget || 0) - totalPaid;
 
-        // ভেন্ডর হলে পার্পল ডট (#800080), ক্লায়েন্ট হলে বকেয়া অনুযায়ী কালার
+        // ভেন্ডর হলে পার্পল ডট (#800080), ক্লায়েন্ট হলে বকেয়া অনুযায়ী কালার
         let dotColor = (c.projectCategory === 'vendor') ? '#800080' : ((due > 0) ? 'orange' : 'green');
 
         let historyRows = '';
@@ -2431,7 +2460,6 @@ function renderClientCards() {
 
         return `
         <div class="bg-white border border-slate-200 rounded-2xl shadow-2xs overflow-hidden transition-all duration-200 hover:border-rose-500 hover:bg-rose-50/60 mb-3">
-            <!-- হেডার এবং ক্লিক ফাংশনালিটি -->
             <div onclick="toggleClientCard('${c.id}')" class="p-4 flex items-center justify-between cursor-pointer transition select-none">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center font-bold text-base">
@@ -2448,12 +2476,11 @@ function renderClientCards() {
                 </div>
                 
                 <div class="flex items-center gap-3">
-                    <!-- ভেন্ডর হলে শুধুমাত্র পার্পল ডট, ক্লায়েন্ট হলে বকেয়া অনুযায়ী ডট -->
                     <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${dotColor};"></span>
                     
                     ${c.projectCategory !== 'vendor' ? `
                     <div class="text-right">
-                        <span class="text-[10px] text-slate-400 block">বকেয়া</span>
+                        <span class="text-[10px] text-slate-400 block">বকেয়া</span>
                         <span class="font-mono font-bold text-xs text-slate-800">৳${due.toLocaleString('en-IN')}</span>
                     </div>
                     ` : ''}
@@ -2462,7 +2489,6 @@ function renderClientCards() {
                 </div>
             </div>
 
-            <!-- Accordion Content: ভেতরের তথ্য ও লেজার -->
             <div id="acc-client-${c.id}" class="hidden border-t border-slate-100 bg-slate-50/50 p-4 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-white p-3 rounded-xl border border-slate-200">
                     <div class="space-y-0.5 text-xs">
@@ -2517,33 +2543,6 @@ function renderClientCards() {
         </div>`;
     }).join('');
 }
-
-  // ২. স্ট্যাটাস ফিল্টার (Due / Paid) অনুযায়ী ফিল্টার করার অংশটুকু যুক্ত করা হলো
-  filtered = filtered.filter(c => {
-    let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
-    let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
-    let due = Math.max(0, c.budget - (totalPaid + totalDisc));
-
-    if (activeClientFilter === 'due') return due > 0;
-    if (activeClientFilter === 'paid') return due === 0;
-    return true;
-  });
-
-  // ৩. কাউন্ট ব্যাজ আপডেট করা
-  const countBadge = document.getElementById('searchCountBadge');
-  if (countBadge) {
-    countBadge.innerText = filtered.length;
-  }
-
-  // ৪. কোনো ডেটা না থাকলে নোটিশ দেখানো
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2">
-        <p class="text-slate-400 text-sm">কোনো গ্রাহক বা প্রজেক্টের তথ্য পাওয়া যায়নি</p>
-      </div>
-    `;
-    return;
-  }
 		
       container.innerHTML = filtered.map(c => {
         let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
