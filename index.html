@@ -2681,6 +2681,9 @@ window.toggleOfficeOwnerFields = function() {
     }
 };
 
+// গ্লোবাল সাবমিট লক ভেরিয়েবল
+let isSubmitting = false;
+
 // ১. ক্লায়েন্ট ফর্ম সাবমিট
 const oldClientForm = document.getElementById('quick-client-form');
 if (oldClientForm) {
@@ -2689,8 +2692,10 @@ if (oldClientForm) {
 
     quickClientForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
+        if (isSubmitting) return; // ইতিমধ্যে প্রসেসিং চললে আটকে দেবে
+        if (!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
 
+        isSubmitting = true;
         const budgetValue = parseFloat(document.getElementById('qc-budget')?.value) || 0;
         const newClient = {
             name: document.getElementById('qc-name').value.trim(),
@@ -2707,7 +2712,11 @@ if (oldClientForm) {
             quickClientForm.reset();
             const qcDate = document.getElementById('qc-date');
             if(qcDate) qcDate.value = getLocalDateString();
-        }).catch(err => alert("Error: " + err.message));
+            isSubmitting = false; // আনলক করা হলো
+        }).catch(err => {
+            alert("Error: " + err.message);
+            isSubmitting = false;
+        });
     });
 }
 
@@ -2719,12 +2728,14 @@ if (oldTxForm) {
 
     quickTxForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        if(!databasePathRef) { alert("লগইন করুন!"); return; }
+        if (isSubmitting) return;
+        if (!databasePathRef) { alert("লগইন করুন!"); return; }
 
         const clientId = document.getElementById('qt-client-select').value;
         const client = farmData.find(c => c.id === clientId);
         if(!client) return;
 
+        isSubmitting = true;
         const newTx = {
             id: 't_' + Date.now(),
             type: document.getElementById('qt-type').value,
@@ -2742,7 +2753,11 @@ if (oldTxForm) {
             quickTxForm.reset();
             const qtDate = document.getElementById('qt-date');
             if(qtDate) qtDate.value = getLocalDateString();
-        }).catch(err => alert("Error: " + err.message));
+            isSubmitting = false;
+        }).catch(err => {
+            alert("Error: " + err.message);
+            isSubmitting = false;
+        });
     });
 }
 
@@ -2754,13 +2769,15 @@ if (oldOfficeForm) {
 
     quickOfficeForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        if(!databasePathRef) { alert("লগইন করুন!"); return; }
+        if (isSubmitting) return;
+        if (!databasePathRef) { alert("লগইন করুন!"); return; }
 
         const entryType = document.getElementById('qo-entry-type').value;
         const amount = parseFloat(document.getElementById('qo-amount').value) || 0;
         const date = document.getElementById('qo-date').value || getLocalDateString();
         const details = document.getElementById('qo-details').value.trim();
 
+        isSubmitting = true;
         if (entryType === 'office') {
             const newOfficeExp = {
                 category: document.getElementById('qo-category').value,
@@ -2771,7 +2788,8 @@ if (oldOfficeForm) {
                 quickOfficeForm.reset();
                 const qoDate = document.getElementById('qo-date');
                 if(qoDate) qoDate.value = getLocalDateString();
-            });
+                isSubmitting = false;
+            }).catch(() => { isSubmitting = false; });
         } else {
             const newOwnerTx = {
                 type: entryType === 'owner_in' ? 'injection' : 'drawing',
@@ -2782,7 +2800,8 @@ if (oldOfficeForm) {
                 quickOfficeForm.reset();
                 const qoDate = document.getElementById('qo-date');
                 if(qoDate) qoDate.value = getLocalDateString();
-            });
+                isSubmitting = false;
+            }).catch(() => { isSubmitting = false; });
         }
     });
 }
