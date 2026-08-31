@@ -2436,8 +2436,8 @@ function renderClientCards() {
 
     // ২. স্ট্যাটাস ফিল্টার (Due / Paid) অনুযায়ী ফিল্টার করা
     filtered = filtered.filter(c => {
-        let totalPaid = c.history ? c.history.reduce((sum, t) => sum + (t.amount || 0), 0) : 0;
-        let totalDisc = c.history ? c.history.reduce((sum, t) => sum + (t.discount || 0), 0) : 0;
+        let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.amount || 0) : sum, 0) : 0;
+        let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
         let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDisc));
 
         if (activeClientFilter === 'due') return due > 0;
@@ -2463,10 +2463,10 @@ function renderClientCards() {
 
     // ৫. ফিল্টার করা ডেটা দিয়ে কার্ড রেন্ডার করা
     container.innerHTML = filtered.map(c => {
-        let totalPaid = c.history ? c.history.reduce((sum, t) => sum + (t.amount || 0), 0) : 0;
-        let totalDisc = c.history ? c.history.reduce((sum, t) => sum + (t.discount || 0), 0) : 0;
+        // সঠিক হিসাব: শুধুমাত্র 'income' টাইপ হলে জমা/পরিশোধ হিসেবে যোগ হবে
+        let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.amount || 0) : sum, 0) : 0;
+        let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
         
-        // ভেন্ডর বা ক্লায়েন্ট উভয়ের জন্যই বাজেট থেকে পরিশোধ ও ডিসকাউন্ট বাদ দিয়ে বাকি/পাওনা হিসাব করা হবে (শুধু কার্ড সামারির জন্য)
         let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDisc));
         
         let statusBadge = (due && due > 0) ? `
