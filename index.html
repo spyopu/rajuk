@@ -2394,7 +2394,8 @@ function renderYearlyBreakdownTable() {
     `;
   }
 }
-   // ক্লায়েন্ট ও ভেন্ডর লিস্ট রেন্ডার করার সম্পূর্ণ ফাংশন
+
+// ক্লায়েন্ট ও ভেন্ডর লিস্ট রেন্ডার করার সম্পূর্ণ ফাংশন
 function renderClientCards() {
     const container = document.getElementById('client-cards-container');
     if (!container) return;
@@ -2433,10 +2434,10 @@ function renderClientCards() {
         return matchQuery || matchHistory;
     });
 
-    // ২. স্ট্যাটাস ফিল্টার (Due / Paid) অনুযায়ী ফিল্টার করা (রেন্ডার করার আগে করতে হবে)
+    // ২. স্ট্যাটাস ফিল্টার (Due / Paid) অনুযায়ী ফিল্টার করা
     filtered = filtered.filter(c => {
-        let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.amount || 0) : sum, 0) : 0;
-        let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
+        let totalPaid = c.history ? c.history.reduce((sum, t) => sum + (t.amount || 0), 0) : 0;
+        let totalDisc = c.history ? c.history.reduce((sum, t) => sum + (t.discount || 0), 0) : 0;
         let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDisc));
 
         if (activeClientFilter === 'due') return due > 0;
@@ -2460,10 +2461,12 @@ function renderClientCards() {
         return;
     }
 
-    // ৫. ফিল্টার করা ডেটা দিয়ে আপনার আসল ডিজাইনে কার্ড রেন্ডার করা
+    // ৫. ফিল্টার করা ডেটা দিয়ে কার্ড রেন্ডার করা
     container.innerHTML = filtered.map(c => {
-        let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
-        let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
+        let totalPaid = c.history ? c.history.reduce((sum, t) => sum + (t.amount || 0), 0) : 0;
+        let totalDisc = c.history ? c.history.reduce((sum, t) => sum + (t.discount || 0), 0) : 0;
+        
+        // ভেন্ডর বা ক্লায়েন্ট উভয়ের জন্যই বাজেট থেকে পরিশোধ ও ডিসকাউন্ট বাদ দিয়ে বাকি/পাওনা হিসাব করা হবে (শুধু কার্ড সামারির জন্য)
         let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDisc));
         
         let statusBadge = (due && due > 0) ? `
@@ -2481,7 +2484,7 @@ function renderClientCards() {
             <td class="p-2 text-slate-500">${t.date || ''}</td>
             <td class="p-2 text-center">
               <span class="px-2 py-0.5 rounded-md text-[9px] font-bold ${t.type === 'income' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-rose-50 text-rose-600 border border-rose-200'}">
-                ${t.type === 'income' ? 'জমা' : 'খরচ'}
+                ${t.type === 'income' ? (c.projectCategory === 'vendor' ? 'পেমেন্ট' : 'জমা') : 'খরচ'}
               </span>
             </td>
             <td class="p-2 text-right font-mono font-bold ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">৳${(t.amount || 0).toLocaleString('en-IN')}</td>
@@ -2514,7 +2517,7 @@ function renderClientCards() {
                   </div>
                   
                   <div class="flex items-center gap-3">
-                      ${c.projectCategory === 'vendor' ? '<span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: #800080;"></span>' : statusBadge}
+                      ${c.projectCategory === 'vendor' ? '<span class="w-2.5 h-2.5 rounded-full inline-block" title="ভেন্ডর" style="background-color: #800080;"></span>' : statusBadge}
                       <span id="acc-client-${c.id}-arrow" class="text-slate-400 text-xs transition-transform duration-200">▼</span>
                   </div>
               </div>
@@ -2542,7 +2545,7 @@ function renderClientCards() {
                           <p class="font-black text-emerald-600 font-mono hide-sensitive">৳${totalPaid.toLocaleString('en-IN')}</p>
                       </div>
                       <div class="bg-amber-50/50 p-2.5 rounded-xl border border-amber-100">
-                          <span class="text-[10px] text-amber-600 font-bold uppercase">${c.projectCategory === 'vendor' ? 'বাকি / পাওনা' : 'বকেয়া'}</span>
+                          <span class="text-[10px] text-amber-600 font-bold uppercase">${c.projectCategory === 'vendor' ? 'বাকি / পাওনা' : 'বকেয়া'}</span>
                           <p class="font-black text-amber-600 font-mono hide-sensitive">৳${due.toLocaleString('en-IN')}</p>
                       </div>
                   </div>
@@ -2574,37 +2577,6 @@ function renderClientCards() {
           </div>
         `;
     }).join('');
-}
-
-// অফিস খরচ রেন্ডার ফাংশন
-function renderOfficeExpenses() {
-    if (!officeExpenseRows) return;
-    let targetMonthStr = monthFilter ? monthFilter.value : getLocalDateString().substring(0, 7);
-    let targetYearStr = yearFilter ? yearFilter.value : String(new Date().getFullYear());
-
-    let filtered = officeExpenses.filter(oe => {
-        if (analyticsViewMode === 'monthly') {
-            return getDateMonthPrefix(oe.date) === targetMonthStr;
-        } else {
-            return oe.date && oe.date.substring(0, 4) === targetYearStr;
-        }
-    });
-
-    if (filtered.length === 0) {
-        officeExpenseRows.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400 italic">কোনো অফিস খরচ নেই</td></tr>`;
-        return;
-    }
-
-    officeExpenseRows.innerHTML = filtered.map(oe => `
-        <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="openEditOfficeExpenseModal('${oe.id}')" title="এডিট করতে ক্লিক করুন">
-          <td class="p-2 pl-3">
-            <p class="font-bold text-slate-900">${oe.category}</p>
-            <p class="text-[10px] text-slate-400">${oe.details || ''}</p>
-          </td>
-          <td class="p-2 text-slate-600 font-mono">${oe.date}</td>
-          <td class="p-2 text-right font-mono font-bold text-rose-600">৳${oe.amount.toLocaleString('en-IN')}</td>
-        </tr>
-    `).join('');
 }
 
 // মূলধন লেনদেন রেন্ডার ফাংশন
