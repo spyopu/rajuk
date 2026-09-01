@@ -3011,26 +3011,57 @@ document.getElementById('quick-office-form').addEventListener('submit', (e) => {
     });
 
     window.executeDeleteAction = function() {
-      if(!confirm("সত্যিই এই তথ্যটি মুছে ফেলতে চান?")) return;
-      if(!databasePathRef) return;
+    if(!confirm("সত্যিই এই তথ্যটি মুছে ফেলতে চান?")) return;
+    if(!databasePathRef) return;
 
-      const itemType = document.getElementById('action-item-type').value;
-      const itemId = document.getElementById('action-item-id').value;
-      const subId = document.getElementById('action-sub-id').value;
+    const itemType = document.getElementById('action-item-type').value;
+    const itemId = document.getElementById('action-item-id').value;
+    const subId = document.getElementById('action-sub-id').value;
 
-      if (itemType === 'client_edit') {
-        databasePathRef.child('clients').child(itemId).remove().then(() => { closeActionModal(); });
-      } else if (itemType === 'tx_edit') {
+    if (itemType === 'client_edit') {
+        databasePathRef.child('clients').child(itemId).remove().then(() => { 
+            // ১. লোকাল অ্যারে থেকে প্রজেক্ট/ক্লায়েন্ট বাদ দেওয়া
+            if (typeof farmData !== 'undefined') {
+                farmData = farmData.filter(c => c.id !== itemId);
+            }
+            // ২. স্ক্রিন ও ড্রপডাউন রিফ্রেশ করা
+            if (typeof renderClientCards === 'function') renderClientCards();
+            if (typeof updateClientSelectDropdown === 'function') updateClientSelectDropdown();
+            if (typeof updateDashboard === 'function') updateDashboard();
+            
+            closeActionModal(); 
+        });
+
+    } else if (itemType === 'tx_edit') {
         const client = farmData.find(c => c.id === itemId);
         if(!client || !client.history) return;
+        
+        // লোকাল হিস্ট্রি থেকে ফিল্টার করে বাদ দেওয়া
         client.history = client.history.filter(t => t.id !== subId);
-        databasePathRef.child('clients').child(itemId).update({ history: client.history }).then(() => { closeActionModal(); });
-      } else if (itemType === 'office_exp_edit') {
-        databasePathRef.child('office_expenses').child(itemId).remove().then(() => { closeActionModal(); });
-      } else if (itemType === 'owner_tx_edit') {
-        databasePathRef.child('owner_transactions').child(itemId).remove().then(() => { closeActionModal(); });
-      }
-    };
+        
+        databasePathRef.child('clients').child(itemId).update({ history: client.history }).then(() => { 
+            // স্ক্রিন রিফ্রেশ করা
+            if (typeof renderClientCards === 'function') renderClientCards();
+            if (typeof updateDashboard === 'function') updateDashboard();
+            
+            closeActionModal(); 
+        });
+
+    } else if (itemType === 'office_exp_edit') {
+        databasePathRef.child('office_expenses').child(itemId).remove().then(() => { 
+            if (typeof fetchOfficeExpenses === 'function') fetchOfficeExpenses(); // অথবা আপনার রেন্ডার ফাংশন
+            if (typeof updateDashboard === 'function') updateDashboard();
+            closeActionModal(); 
+        });
+
+    } else if (itemType === 'owner_tx_edit') {
+        databasePathRef.child('owner_transactions').child(itemId).remove().then(() => { 
+            if (typeof fetchOwnerTransactions === 'function') fetchOwnerTransactions(); // অথবা আপনার রেন্ডার ফাংশন
+            if (typeof updateDashboard === 'function') updateDashboard();
+            closeActionModal(); 
+        });
+    }
+};
   </script>
 </body>
 </html>
