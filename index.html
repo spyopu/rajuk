@@ -3018,26 +3018,40 @@ function renderClientCards() {
     });
 
     window.executeDeleteAction = function() {
-      if(!confirm("সত্যিই এই তথ্যটি মুছে ফেলতে চান?")) return;
-      if(!databasePathRef) return;
-
-      const itemType = document.getElementById('action-item-type').value;
-      const itemId = document.getElementById('action-item-id').value;
-      const subId = document.getElementById('action-sub-id').value;
-
-      if (itemType === 'client_edit') {
-        databasePathRef.child('clients').child(itemId).remove().then(() => { closeActionModal(); });
-      } else if (itemType === 'tx_edit') {
-        const client = farmData.find(c => c.id === itemId);
-        if(!client || !client.history) return;
-        client.history = client.history.filter(t => t.id !== subId);
-        databasePathRef.child('clients').child(itemId).update({ history: client.history }).then(() => { closeActionModal(); });
-      } else if (itemType === 'office_exp_edit') {
-        databasePathRef.child('office_expenses').child(itemId).remove().then(() => { closeActionModal(); });
-      } else if (itemType === 'owner_tx_edit') {
-        databasePathRef.child('owner_transactions').child(itemId).remove().then(() => { closeActionModal(); });
-      }
-    };
+	    if(!confirm("সত্যিই এই তথ্যটি মুছে ফেলতে চান?")) return;
+	    if(!databasePathRef) return;
+	
+	    const itemType = document.getElementById('action-item-type').value;
+	    const itemId = document.getElementById('action-item-id').value;
+	    const subId = document.getElementById('action-sub-id').value;
+	
+	    if (itemType === 'client_edit') {
+	      // 👈 ডাইনামিক নোড নির্ধারণ: এন্ট্রিটি ক্লায়েন্ট নাকি ভেন্ডর তা খুঁজে বের করা
+	      const item = farmData.find(c => c.id === itemId);
+	      const targetNode = (item && item.entityType === 'vendor') ? 'vendors' : 'clients';
+	
+	      databasePathRef.child(targetNode).child(itemId).remove().then(() => { 
+	          closeActionModal(); 
+	      });
+	
+	    } else if (itemType === 'tx_edit') {
+	      const client = farmData.find(c => c.id === itemId);
+	      if(!client || !client.history) return;
+	      client.history = client.history.filter(t => t.id !== subId);
+	
+	      // 👈 ট্রানজেকশনের ক্ষেত্রেও ভেন্ডর বা ক্লায়েন্ট বুঝে সঠিক নোড আপডেট করা
+	      const targetNode = (client.entityType === 'vendor') ? 'vendors' : 'clients';
+	
+	      databasePathRef.child(targetNode).child(itemId).update({ history: client.history }).then(() => { 
+	          closeActionModal(); 
+	      });
+	
+	    } else if (itemType === 'office_exp_edit') {
+	      databasePathRef.child('office_expenses').child(itemId).remove().then(() => { closeActionModal(); });
+	    } else if (itemType === 'owner_tx_edit') {
+	      databasePathRef.child('owner_transactions').child(itemId).remove().then(() => { closeActionModal(); });
+	    }
+	};
   </script>
 </body>
 </html>
