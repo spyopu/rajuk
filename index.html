@@ -793,165 +793,199 @@
       <button type="button" id="tab-opt-office" onclick="switchQuickForm('office')" class="py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600 cursor-pointer">🏢 অফিস খরচ</button>
     </div>
 
-    <!-- 1. Quick Client / Vendor Form -->
-    <form id="quick-client-form" class="space-y-2.5">
-      <div>
-        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">এন্ট্রির ধরন (ক্যাটেগরি)</label>
-        <select id="qc-project-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none" onchange="updateFormLabels(this.value)">
-          <option value="client">গ্রাহক (Client)</option>
-          <option value="vendor">ভেন্ডর (Vendor)</option>
-        </select>
-      </div>
+    <!-- Form Container Start -->
+<div>
+  <!-- 1. Quick Client / Vendor Form -->
+  <form id="quick-client-form" class="space-y-2.5">
+    <div>
+      <label class="block text-[11px] font-bold text-slate-700 mb-0.5">এন্ট্রির ধরন (ক্যাটেগরি)</label>
+      <select id="qc-project-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none" onchange="updateFormLabels(this.value)">
+        <option value="client">গ্রাহক (Client)</option>
+        <option value="vendor">ভেন্ডর (Vendor)</option>
+      </select>
+    </div>
 
-      <div>
-        <label class="block text-[11px] font-bold text-slate-700 mb-0.5" id="label-name">গ্রাহকের নাম</label>
-        <input type="text" id="qc-name" placeholder="যেমন: আব্দুল্লাহ" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
+    <div>
+      <label class="block text-[11px] font-bold text-slate-700 mb-0.5" id="label-name">গ্রাহকের নাম</label>
+      <input type="text" id="qc-name" placeholder="যেমন: আব্দুল্লাহ" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
+    </div>
+    
+    <div>
+      <div class="flex items-center justify-between mb-0.5">
+        <label class="block text-[11px] font-bold text-slate-700">মোবাইল নাম্বার</label>
+        <button type="button" onclick="pickContact()" class="text-[10px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2 py-0.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
+          ফোনবুক
+        </button>
       </div>
-      
-      <div>
-        <div class="flex items-center justify-between mb-0.5">
-          <label class="block text-[11px] font-bold text-slate-700">মোবাইল নাম্বার</label>
-          <button type="button" onclick="pickContact()" class="text-[10px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2 py-0.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
-            ফোনবুক
-          </button>
-        </div>
-        <input type="text" id="qc-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-semibold outline-none">
-      </div>
-      
-      <div>
-        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্টের নাম</label>
-        <input type="text" id="qc-project" placeholder="যেমন: বিল্ডিং ডিজাইন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
-      </div>
+      <input type="text" id="qc-phone" placeholder="01700000000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-semibold outline-none">
+    </div>
+    
+    <div>
+      <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্টের নাম</label>
+      <input type="text" id="qc-project" placeholder="যেমন: বিল্ডিং ডিজাইন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
+    </div>
 
-      <div>
-        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্টের ধরন</label>
-        <select id="qc-project-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
-          <option value="">প্রজেক্ট ক্যাটেগরি</option>
-          <option value="Luc Submission">Luc Submission</option>
-          <option value="Plan Submission">Plan Submission</option>
-          <option value="Mouza Map">Mouza Map</option>
-          <option value="Rajuk Sheet">Rajuk Sheet</option>
-          <option value="Digital Survey">Digital Survey</option>
-          <option value="Soil Test">Soil Test</option>
-          <option value="Planning Permit Approval">Planning Permit Approval</option>
-          <option value="Construction Permit Approval">Construction Permit Approval</option>
-          <option value="Complete Package">Complete Package</option>
-          <option value="Working Design">Working Design</option>
-          <option value="3D Design">3D Design</option>
-        </select>
-      </div>
+    <div>
+      <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্টের ধরন</label>
+      <select id="qc-project-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
+        <option value="">প্রজেক্ট ক্যাটেগরি</option>
+        <option value="Luc Submission">Luc Submission</option>
+        <option value="Plan Submission">Plan Submission</option>
+        <option value="Mouza Map">Mouza Map</option>
+        <option value="Rajuk Sheet">Rajuk Sheet</option>
+        <option value="Digital Survey">Digital Survey</option>
+        <option value="Soil Test">Soil Test</option>
+        <option value="Planning Permit Approval">Planning Permit Approval</option>
+        <option value="Construction Permit Approval">Construction Permit Approval</option>
+        <option value="Complete Package">Complete Package</option>
+        <option value="Working Design">Working Design</option>
+        <option value="3D Design">3D Design</option>
+      </select>
+    </div>
 
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5" id="label-budget">মোট চুক্তি (৳)</label>
-          <input type="number" id="qc-budget" placeholder="50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
-        </div>
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">তারিখ</label>
-          <input type="date" id="qc-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
-        </div>
-      </div>
-      
-      <button type="submit" id="submit-btn-text" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1 cursor-pointer">গ্রাহক সেভ করুন</button>
-    </form>
-
-    <!-- 2. Quick Transaction Form -->
-    <form id="quick-tx-form" class="space-y-2.5 hidden">
+    <div class="grid grid-cols-2 gap-2">
       <div>
-        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্ট সিলেক্ট করুন</label>
-        <select id="qt-client-select" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
-        </select>
+        <label class="block text-[11px] font-bold text-slate-700 mb-0.5" id="label-budget">মোট চুক্তি (৳)</label>
+        <input type="number" id="qc-budget" placeholder="50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
       </div>
       <div>
-        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">লেনদেনের ধরন</label>
-        <select id="qt-type" onchange="toggleDiscountField()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
-          <option value="income">🟢 টাকা জমা</option>
-          <option value="expense">🔴 প্রজেক্ট খরচ</option>
-        </select>
+        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">তারিখ</label>
+        <input type="date" id="qc-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
       </div>
-      
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">টাকার পরিমাণ (৳)</label>
-          <input type="number" id="qt-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
-        </div>
-        <div id="discount-field-wrapper">
-          <label class="block text-[11px] font-bold text-amber-700 mb-0.5">ছাড় (৳)</label>
-          <input type="number" id="qt-discount" placeholder="0" value="0" class="w-full bg-amber-50/50 border border-amber-200 text-amber-900 rounded-xl p-2 text-xs font-mono font-bold outline-none">
-        </div>
-      </div>
+    </div>
+    
+    <button type="submit" id="submit-btn-text" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1 cursor-pointer">গ্রাহক সেভ করুন</button>
+  </form>
 
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">তারিখ</label>
-          <input type="date" id="qt-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
-        </div>
-        <div class="block">
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">বিবরণ (নোট)</label>
-          <input type="text" id="qt-details" placeholder="নোট" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none">
-        </div>
-      </div>
-      <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1 cursor-pointer">লেনদেন সেভ করুন</button>
-    </form>
-
-    <!-- 3. Quick Office & Owner Cost Form -->
-    <form id="quick-office-form" class="space-y-2.5 hidden">
-      <div>
-        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">এন্ট্রির ধরন</label>
-        <select id="qo-entry-type" onchange="toggleOfficeOwnerFields()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
-          <option value="office">অফিস খরচ</option>
-          <option value="owner_in">মূলধন জমা</option>
-          <option value="owner_out">মূলধন উত্তোলন</option>
-        </select>
-      </div>
-
-      <div id="qo-cat-wrapper">
-        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">ক্যাটাগরি</label>
-        <select id="qo-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-semibold text-slate-800">
-          <option value="Staff Salary">স্টাফ স্যালারি</option>
-          <option value="Office Rent">অফিস ভাড়া</option>
-          <option value="Project Cost">প্রকল্প ব্যয়</option>
-          <option value="Conveyance">আপ্যায়ন</option>
-          <option value="Others">অন্যান্য</option>
-        </select>
-      </div>
-
+  <!-- 2. Quick Transaction Form -->
+  <form id="quick-tx-form" class="space-y-2.5 hidden">
+    <div>
+      <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্ট সিলেক্ট করুন</label>
+      <select id="qt-client-select" onchange="handleTransactionTypeChange()" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
+      </select>
+    </div>
+    <div>
+      <label class="block text-[11px] font-bold text-slate-700 mb-0.5">লেনদেনের ধরন</label>
+      <select id="qt-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
+        <option value="income">🟢 টাকা জমা</option>
+        <option value="expense">🔴 প্রজেক্ট খরচ</option>
+      </select>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-2">
       <div>
         <label class="block text-[11px] font-bold text-slate-700 mb-0.5">টাকার পরিমাণ (৳)</label>
-        <input type="number" id="qo-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
+        <input type="number" id="qt-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
       </div>
-
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">তারিখ</label>
-          <input type="date" id="qo-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
-        </div>
-        <div class="block">
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">বিবরণ (নোট)</label>
-          <input type="text" id="qo-details" placeholder="বিবরণ" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none">
-        </div>
+      <div id="discount-field-wrapper">
+        <label class="block text-[11px] font-bold text-amber-700 mb-0.5">ছাড় (৳)</label>
+        <input type="number" id="qt-discount" placeholder="0" value="0" class="w-full bg-amber-50/50 border border-amber-200 text-amber-900 rounded-xl p-2 text-xs font-mono font-bold outline-none">
       </div>
+    </div>
 
-      <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1 cursor-pointer">এন্ট্রি সেভ করুন</button>
-    </form>
-  </div>
+    <div class="grid grid-cols-2 gap-2">
+      <div>
+        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">তারিখ</label>
+        <input type="date" id="qt-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
+      </div>
+      <div class="block">
+        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">বিবরণ (নোট)</label>
+        <input type="text" id="qt-details" placeholder="নোট" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none">
+      </div>
+    </div>
+    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1 cursor-pointer">লেনদেন সেভ করুন</button>
+  </form>
+
+  <!-- 3. Quick Office & Owner Cost Form -->
+  <form id="quick-office-form" class="space-y-2.5 hidden">
+    <div>
+      <label class="block text-[11px] font-bold text-slate-700 mb-0.5">এন্ট্রির ধরন</label>
+      <select id="qo-entry-type" onchange="toggleOfficeOwnerFields()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
+        <option value="office">অফিস খরচ</option>
+        <option value="owner_in">মূলধন জমা</option>
+        <option value="owner_out">মূলধন উত্তোলন</option>
+      </select>
+    </div>
+
+    <div id="qo-cat-wrapper">
+      <label class="block text-[11px] font-bold text-slate-700 mb-0.5">ক্যাটাগরি</label>
+      <select id="qo-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-semibold text-slate-800">
+        <option value="Staff Salary">স্টাফ স্যালারি</option>
+        <option value="Office Rent">অফিস ভাড়া</option>
+        <option value="Project Cost">প্রকল্প ব্যয়</option>
+        <option value="Conveyance">আপ্যায়ন</option>
+        <option value="Others">অন্যান্য</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-[11px] font-bold text-slate-700 mb-0.5">টাকার পরিমাণ (৳)</label>
+      <input type="number" id="qo-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
+    </div>
+
+    <div class="grid grid-cols-2 gap-2">
+      <div>
+        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">তারিখ</label>
+        <input type="date" id="qo-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
+      </div>
+      <div class="block">
+        <label class="block text-[11px] font-bold text-slate-700 mb-0.5">বিবরণ (নোট)</label>
+        <input type="text" id="qo-details" placeholder="বিবরণ" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none">
+      </div>
+    </div>
+
+    <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1 cursor-pointer">এন্ট্রি সেভ করুন</button>
+  </form>
 </div>
 
 <script>
-// ক্যাটেগরি পরিবর্তন করলে লেবেল ও বাটন টেক্সট অটো পরিবর্তন করার ফাংশন
+// ১. ক্যাটেগরি পরিবর্তন করলে লেবেল ও বাটন টেক্সট অটো পরিবর্তন করার ফাংশন
 function updateFormLabels(val) {
     const nameLabel = document.getElementById('label-name');
     const budgetLabel = document.getElementById('label-budget');
     const submitBtn = document.getElementById('submit-btn-text');
 
     if(val === 'vendor') {
-        nameLabel.innerText = "ভেন্ডরের নাম";
-        budgetLabel.innerText = "বাজেট / কস্টিং (৳)";
-        submitBtn.innerText = "ভেন্ডর সেভ করুন";
+        if(nameLabel) nameLabel.innerText = "ভেন্ডরের নাম";
+        if(budgetLabel) budgetLabel.innerText = "বাজেট / কস্টিং (৳)";
+        if(submitBtn) {
+            submitBtn.innerText = "ভেন্ডর সেভ করুন";
+            submitBtn.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1 cursor-pointer";
+        }
     } else {
-        nameLabel.innerText = "গ্রাহকের নাম";
-        budgetLabel.innerText = "মোট চুক্তি (৳)";
-        submitBtn.innerText = "গ্রাহক সেভ করুন";
+        if(nameLabel) nameLabel.innerText = "গ্রাহকের নাম";
+        if(budgetLabel) budgetLabel.innerText = "মোট চুক্তি (৳)";
+        if(submitBtn) {
+            submitBtn.innerText = "গ্রাহক সেভ করুন";
+            submitBtn.className = "w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1 cursor-pointer";
+        }
+    }
+}
+
+// ২. লেনদেন ফর্মে প্রজেক্ট বা ভেন্ডর সিলেক্ট করলে ধরন সেট করার ফাংশন (ডিসকাউন্ট সবসময় খোলা থাকবে)
+function handleTransactionTypeChange() {
+    const clientId = document.getElementById('qt-client-select').value;
+    const client = farmData.find(c => c.id === clientId);
+    const typeSelect = document.getElementById('qt-type');
+    const discountWrapper = document.getElementById('discount-field-wrapper');
+
+    if (!client) return;
+
+    // ডিসকাউন্টের ঘরটি ক্লা라이언트 ও ভেন্ডর উভয়ের জন্যই দৃশ্যমান রাখা হলো
+    if (discountWrapper) discountWrapper.style.display = 'block';
+
+    // যদি সিলেক্ট করা এন্ট্রিটি ভেন্ডর হয়
+    if (client.projectCategory === 'vendor') {
+        typeSelect.innerHTML = `
+            <option value="expense">🔴 ভেন্ডর পেমেন্ট (খরচ)</option>
+        `;
+    } 
+    // যদি সাধারণ গ্রাহক (Client) হয়
+    else {
+        typeSelect.innerHTML = `
+            <option value="income">🟢 টাকা জমা</option>
+            <option value="expense">🔴 প্রজেক্ট খরচ</option>
+        `;
     }
 }
 </script>
