@@ -2432,13 +2432,30 @@ function renderClientCards() {
     filtered = filtered.filter(c => {
         const isVendor = c.entityType === 'vendor';
 
-        // ভেন্ডর হলে স্ট্যাটাস ফিল্টার বাইপাস করে সরাসরি দেখাবে (অথবা আপনার ইচ্ছেমতো শর্ত দিতে পারেন)
-        if (isVendor) return true; 
+        let totalPaid = 0;
+        let totalDisc = 0;
 
-        let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
-        let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
+        if (c.history) {
+            c.history.forEach(t => {
+                if (isVendor) {
+                    // ভেন্ডরের ক্ষেত্রে: খরচ (expense) হলো আমাদের পেমেন্ট করা, যা হিসাব যোগ করবে
+                    if (t.type === 'expense') {
+                        totalPaid += (t.amount || 0);
+                        totalDisc += (t.discount || 0);
+                    }
+                } else {
+                    // ক্লায়েন্টের ক্ষেত্রে: জমা (income) হলো পেমেন্ট পাওয়া, যা হিসাব যোগ করবে
+                    if (t.type === 'income') {
+                        totalPaid += (t.amount || 0);
+                        totalDisc += (t.discount || 0);
+                    }
+                }
+            });
+        }
+
         let due = Math.max(0, c.budget - (totalPaid + totalDisc));
 
+        // ভেন্ডর যদি ফিল্টার বাইপাস করতে চায় বা স্ট্যাটাস অনুযায়ী দেখতে চায়
         if (activeClientFilter === 'due') return due > 0;
         if (activeClientFilter === 'paid') return due === 0;
         return true;
