@@ -1911,7 +1911,7 @@ document.addEventListener("DOMContentLoaded", function() {
    function subscribeToCloudStreams() {
     if(!databasePathRef) return;
 
-    // 🔥 নিখুঁত কমন ফাংশন: সাধারণ ক্লায়েন্ট/ভেন্ডর আলাদা থাকবে, শুধু Vendor = Client একই ব্যক্তি হলে মার্জ হবে
+    // 🔥 নিখুঁত কমন ফাংশন: ক্লায়েন্ট ও ভেন্ডর আলাদা থাকবে, তবে একই ব্যক্তি উভয় হলে মার্জ হয়ে সুনির্দিষ্ট প্রজেক্ট ও বাজেট আলাদা দেখাবে
     const fetchEntities = () => {
         Promise.all([
             databasePathRef.child('clients').once('value'),
@@ -1937,27 +1937,35 @@ document.addEventListener("DOMContentLoaded", function() {
             const processedMap = new Map();
             const matchedNames = new Set();
 
-            // ৩. চেক করা কে ক্লায়েন্ট এবং ভেন্ডর উভয়ই (Vendor = Client)
+            // ৩. চেক করা কে ক্লায়েন্ট এবং ভেন্ডর উভয়ই (Vendor = Client)
             clientsList.forEach(c => {
                 const nameKey = (c.name || '').trim().toLowerCase();
                 const matchingVendor = vendorsList.find(v => (v.name || '').trim().toLowerCase() === nameKey);
 
                 if (matchingVendor) {
-                    // যদি একই ব্যক্তি ক্লায়েন্ট ও ভেন্ডর উভয়ই হন, তবে তাদের এক জায়গায় মার্জ করব
                     if (!matchedNames.has(nameKey)) {
                         matchedNames.add(nameKey);
+                        
+                        const cBudget = parseFloat(c.budget) || 0;
+                        const vBudget = parseFloat(matchingVendor.budget) || 0;
+
                         processedMap.set(`dual_${nameKey}`, {
                             id: c.id,
                             name: c.name,
                             phone: c.phone || matchingVendor.phone,
-                            project: `${c.project || 'ক্লিয়েন্ট প্রজেক্ট'} & ${matchingVendor.project || 'ভেন্ডর প্রজেক্ট'}`,
-                            projectType: 'ক্লায়েন্ট ও ভেন্ডর উভয়',
-                            budget: (parseFloat(c.budget) || 0) + (parseFloat(matchingVendor.budget) || 0),
+                            // আলাদা প্রজেক্ট ও বাজেট সংরক্ষণ যাতে UI-তে স্পষ্ট বোঝা যায়
+                            clientProject: c.project || 'ক্লিয়েন্ট প্রজেক্ট',
+                            clientBudget: cBudget,
+                            vendorProject: matchingVendor.project || 'ভেন্ডর প্রজেক্ট',
+                            vendorBudget: vBudget,
+                            project: `${c.project || 'N/A'} & ${matchingVendor.project || 'N/A'}`,
+                            projectType: 'ক্লায়েন্ট ও ভেন্ডর উভয়',
+                            budget: cBudget + vBudget,
                             date: c.date || matchingVendor.date,
-                            entityType: 'dual', // বিশেষ টাইপ যা দিয়ে বুঝাবে উনি উভয় ভূমিকায় আছেন
+                            entityType: 'dual', 
                             history: [
-                                ...c.history.map(t => ({ ...t, details: `[ক্লিয়েন্ট] ${t.details || 'টাকা জমা'}` })),
-                                ...matchingVendor.history.map(t => ({ ...t, details: `[ভেন্ডর] ${t.details || 'ভেন্ডর পেমেন্ট'}` }))
+                                ...c.history.map(t => ({ ...t, details: `[ক্লিয়েন্ট প্রজেক্ট: ${c.project || 'N/A'}] ${t.details || 'টাকা জমা'}` })),
+                                ...matchingVendor.history.map(t => ({ ...t, details: `[ভেন্ডর প্রজেক্ট: ${matchingVendor.project || 'N/A'}] ${t.details || 'ভেন্ডর পেমেন্ট'}` }))
                             ]
                         });
                     }
@@ -1967,7 +1975,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
 
-            // ৪. যে ভেন্ডরগুলো শুধু ভেন্ডর (কোনো ক্লায়েন্ট নয়), তাদের আলাদা রাখা
+            // ৪. যে ভেন্ডরগুলো শুধু ভেন্ডর (কোনো ক্লায়েন্ট নয়), তাদের আলাদা রাখা
             vendorsList.forEach(v => {
                 const nameKey = (v.name || '').trim().toLowerCase();
                 const matchingClient = clientsList.find(c => (c.name || '').trim().toLowerCase() === nameKey);
@@ -2077,7 +2085,6 @@ function getDateMonthPrefix(dateStr) {
   if (!dateStr) return '';
   return dateStr.substring(0, 7);
 }
-	
  
     // নিখুঁতভাবে মাস ও সাল ভিত্তিক অফিস খরচ, মূলধন এবং কাস্টমার আয়ের বিস্তারিত সহ ফিল্টার করার ফাংশন
 function calculateGlobalMetrics() {
