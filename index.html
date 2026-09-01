@@ -2526,14 +2526,26 @@ function renderClientCards() {
 }
 
 function generateSingleCardHTML(c) {
-    // আর্থিক হিসাব-নিকাশ (ভেন্ডর ও ক্লায়েন্ট ভেদে সঠিক লজিক)
+    // আর্থিক হিসাব-নিকাশ (client, vendor এবং dual ভেদে সঠিক লজিক)
+    const isDual = (c.entityType === 'dual');
     const isVendor = (c.entityType === 'vendor');
+    
     let totalPaid = 0;
     let totalDisc = 0;
 
     if (c.history) {
         c.history.forEach(t => {
-            if (isVendor) {
+            if (isDual) {
+                // ডুয়াল কার্ডের ক্ষেত্রে details বা type অনুযায়ী চেক করা
+                // ক্লায়েন্টের ক্ষেত্রে income এবং ভেন্ডরের ক্ষেত্রে expense ধরব
+                if (t.type === 'income' || (t.details && t.details.includes('[ক্লিয়েন্ট'))) {
+                    totalPaid += (t.amount || 0);
+                    totalDisc += (t.discount || 0);
+                } else if (t.type === 'expense' || (t.details && t.details.includes('[ভেন্ডর'))) {
+                    // ভেন্ডরের খরচ বা পেমেন্ট আলাদা রাখতে চাইলে এখানে হ্যান্ডেল করতে পারেন, 
+                    // অথবা আপনার বিজনেসের লজিক অনুযায়ী সামারি সেট করতে পারেন।
+                }
+            } else if (isVendor) {
                 if (t.type === 'expense') {
                     totalPaid += (t.amount || 0);
                     totalDisc += (t.discount || 0);
