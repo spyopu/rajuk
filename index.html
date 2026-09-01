@@ -2366,14 +2366,14 @@ function renderYearlyBreakdownTable() {
     `;
   }
 }
-    // ক্লায়েন্ট ও ভেন্ডর কার্ড রেন্ডার করার মূল ফাংশন
+    // ক্লায়েন্ট ও ভেন্ডর কার্ড রেন্ডার করার সংশোধিত ফাংশন
 function renderClientCards() {
     const container = document.getElementById('client-cards-container');
     if (!container) return;
 
     const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-    // ১. সার্চ কুয়েরি (নাম, মোবাইল, প্রজেক্ট, ক্যাটাগরি, নোট বা তারিখ) দিয়ে ফিল্টার
+    // ১. সার্চ কুয়েরি দিয়ে ফিল্টার
     let filtered = farmData.filter(c => {
         const matchQuery = (c.name && c.name.toLowerCase().includes(query)) ||
                            (c.phone && c.phone.toLowerCase().includes(query)) ||
@@ -2404,8 +2404,13 @@ function renderClientCards() {
         return matchQuery || matchHistory;
     });
 
-    // ২. স্ট্যাটাস ফিল্টার (Due / Paid) অনুযায়ী ফিল্টার
+    // ২. স্ট্যাটাস ফিল্টার (Due / Paid) এবং ভেন্ডর/ক্লায়েন্ট হ্যান্ডলিং
     filtered = filtered.filter(c => {
+        const isVendor = c.entityType === 'vendor';
+
+        // ভেন্ডর হলে স্ট্যাটাস ফিল্টার বাইপাস করে সরাসরি দেখাবে (অথবা আপনার ইচ্ছেমতো শর্ত দিতে পারেন)
+        if (isVendor) return true; 
+
         let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
         let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
         let due = Math.max(0, c.budget - (totalPaid + totalDisc));
@@ -2425,7 +2430,7 @@ function renderClientCards() {
     if (filtered.length === 0) {
         container.innerHTML = `
             <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2">
-                <p class="text-slate-400 text-sm">কোনো গ্রাহক বা প্রজেক্টের তথ্য পাওয়া যায়নি</p>
+                <p class="text-slate-400 text-sm">কোনো তথ্য পাওয়া যায়নি</p>
             </div>
         `;
         return;
