@@ -1908,42 +1908,81 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
 
-    function subscribeToCloudStreams() {
+   function subscribeToCloudStreams() {
     if(!databasePathRef) return;
 
-    // 🔥 নিখুঁত কমন ফাংশন: ক্লায়েন্ট এবং ভেন্ডর উভয় নোড থেকে ডেটা এনে farmData-তে এক করবে
+    // 🔥 নিখুঁত কমন ফাংশন: সাধারণ ক্লায়েন্ট/ভেন্ডর আলাদা থাকবে, শুধু Vendor = Client একই ব্যক্তি হলে মার্জ হবে
     const fetchEntities = () => {
         Promise.all([
             databasePathRef.child('clients').once('value'),
             databasePathRef.child('vendors').once('value')
         ]).then(([clientSnap, vendorSnap]) => {
-            farmData = [];
+            let clientsList = [];
+            let vendorsList = [];
 
-            // ক. ক্লায়েন্ট প্রসেস
-            clientSnap.forEach(childSnapshot => {
-                const val = childSnapshot.val();
-                if(!val.history) val.history = [];
-                else if(!Array.isArray(val.history)) {
-                    val.history = Object.keys(val.history).map(k => ({ id: k, ...val.history[k] }));
-                }
-                farmData.push({ id: childSnapshot.key, ...val, entityType: val.entityType || 'client' });
+            // ১. সব ক্লায়েন্ট লোড করা
+            clientSnap.forEach(child => {
+                const val = child.val();
+                let historyArr = val.history ? (Array.isArray(val.history) ? val.history : Object.keys(val.history).map(k => ({ id: k, ...val.history[k] }))) : [];
+                clientsList.push({ id: child.key, ...val, history: historyArr, entityType: 'client' });
             });
 
-            // খ. ভেন্ডর প্রসেস
-            vendorSnap.forEach(childSnapshot => {
-                const val = childSnapshot.val();
-                if(!val.history) val.history = [];
-                else if(!Array.isArray(val.history)) {
-                    val.history = Object.keys(val.history).map(k => ({ id: k, ...val.history[k] }));
-                }
-                farmData.push({ id: childSnapshot.key, ...val, entityType: 'vendor' });
+            // ২. সব ভেন্ডর লোড করা
+            vendorSnap.forEach(child => {
+                const val = child.val();
+                let historyArr = val.history ? (Array.isArray(val.history) ? val.history : Object.keys(val.history).map(k => ({ id: k, ...val.history[k] }))) : [];
+                vendorsList.push({ id: child.key, ...val, history: historyArr, entityType: 'vendor' });
             });
 
+            const processedMap = new Map();
+            const matchedNames = new Set();
+
+            // ৩. চেক করা কে ক্লায়েন্ট এবং ভেন্ডর উভয়ই (Vendor = Client)
+            clientsList.forEach(c => {
+                const nameKey = (c.name || '').trim().toLowerCase();
+                const matchingVendor = vendorsList.find(v => (v.name || '').trim().toLowerCase() === nameKey);
+
+                if (matchingVendor) {
+                    // যদি একই ব্যক্তি ক্লায়েন্ট ও ভেন্ডর উভয়ই হন, তবে তাদের এক জায়গায় মার্জ করব
+                    if (!matchedNames.has(nameKey)) {
+                        matchedNames.add(nameKey);
+                        processedMap.set(`dual_${nameKey}`, {
+                            id: c.id,
+                            name: c.name,
+                            phone: c.phone || matchingVendor.phone,
+                            project: `${c.project || 'ক্লিয়েন্ট প্রজেক্ট'} & ${matchingVendor.project || 'ভেন্ডর প্রজেক্ট'}`,
+                            projectType: 'ক্লায়েন্ট ও ভেন্ডর উভয়',
+                            budget: (parseFloat(c.budget) || 0) + (parseFloat(matchingVendor.budget) || 0),
+                            date: c.date || matchingVendor.date,
+                            entityType: 'dual', // বিশেষ টাইপ যা দিয়ে বুঝাবে উনি উভয় ভূমিকায় আছেন
+                            history: [
+                                ...c.history.map(t => ({ ...t, details: `[ক্লিয়েন্ট] ${t.details || 'টাকা জমা'}` })),
+                                ...matchingVendor.history.map(t => ({ ...t, details: `[ভেন্ডর] ${t.details || 'ভেন্ডর পেমেন্ট'}` }))
+                            ]
+                        });
+                    }
+                } else {
+                    // শুধু ক্লায়েন্ট হলে আলাদা কার্ড থাকবে
+                    processedMap.set(`client_${c.id}`, c);
+                }
+            });
+
+            // ৪. যে ভেন্ডরগুলো শুধু ভেন্ডর (কোনো ক্লায়েন্ট নয়), তাদের আলাদা রাখা
+            vendorsList.forEach(v => {
+                const nameKey = (v.name || '').trim().toLowerCase();
+                const matchingClient = clientsList.find(c => (c.name || '').trim().toLowerCase() === nameKey);
+
+                if (!matchingClient) {
+                    processedMap.set(`vendor_${v.id}`, v);
+                }
+            });
+
+            farmData = Array.from(processedMap.values());
             uiUpdatePipeline();
         });
     };
 
-    // ১. রিয়েল-টাইম আপഡেটের জন্য ক্লায়েন্ট এবং ভেন্ডর উভয় নোডেই লিসেনার বসানো
+    // ১. রিয়েল-টাইম আপডেটের জন্য ক্লায়েন্ট এবং ভেন্ডর উভয় নোডেই লিসেনার বসানো
     databasePathRef.child('clients').on('value', () => fetchEntities());
     databasePathRef.child('vendors').on('value', () => fetchEntities());
 
