@@ -2429,37 +2429,28 @@ function renderClientCards() {
     });
 
     // ২. স্ট্যাটাস ফিল্টার (Due / Paid) এবং ভেন্ডর/ক্লায়েন্ট হ্যান্ডলিং
-    filtered = filtered.filter(c => {
-        const isVendor = c.entityType === 'vendor';
-
-        let totalPaid = 0;
-        let totalDisc = 0;
-
-        if (c.history) {
-            c.history.forEach(t => {
-                if (isVendor) {
-                    // ভেন্ডরের ক্ষেত্রে: খরচ (expense) হলো আমাদের পেমেন্ট করা, যা হিসাব যোগ করবে
-                    if (t.type === 'expense') {
-                        totalPaid += (t.amount || 0);
-                        totalDisc += (t.discount || 0);
-                    }
-                } else {
-                    // ক্লায়েন্টের ক্ষেত্রে: জমা (income) হলো পেমেন্ট পাওয়া, যা হিসাব যোগ করবে
-                    if (t.type === 'income') {
-                        totalPaid += (t.amount || 0);
-                        totalDisc += (t.discount || 0);
-                    }
-                }
-            });
-        }
-
-        let due = Math.max(0, c.budget - (totalPaid + totalDisc));
-
-        // ভেন্ডর যদি ফিল্টার বাইপাস করতে চায় বা স্ট্যাটাস অনুযায়ী দেখতে চায়
-        if (activeClientFilter === 'due') return due > 0;
-        if (activeClientFilter === 'paid') return due === 0;
-        return true;
-    });
+    const isVendor = (item.entityType === 'vendor');
+		let totalPaid = 0;
+		let totalDisc = 0;
+		if (item.history) {
+		    item.history.forEach(t => {
+		        if (isVendor) {
+		            // ভেন্ডরের ক্ষেত্রে: খরচ (expense) হলো পেমেন্ট করা
+		            if (t.type === 'expense') {
+		                totalPaid += (t.amount || 0);
+		                totalDisc += (t.discount || 0);
+		            }
+		        } else {
+		            // ক্লায়েন্টের ক্ষেত্রে: জমা (income) হলো পেমেন্ট পাওয়া
+		            if (t.type === 'income') {
+		                totalPaid += (t.amount || 0);
+		                totalDisc += (t.discount || 0);
+		            }
+		        }
+		    });
+		}
+		// বকেয়া হিসাব
+		let due = Math.max(0, (item.budget || 0) - (totalPaid + totalDisc));
 
     // ৩. কাউন্ট ব্যাজ আপডেট করা
     const countBadge = document.getElementById('searchCountBadge');
