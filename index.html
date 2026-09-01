@@ -2703,87 +2703,92 @@ function renderClientCards() {
     };
 
 		document.getElementById('quick-client-form').addEventListener('submit', (e) => {
-		e.preventDefault();
-		if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
+    e.preventDefault();
+    if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
 
-		const budgetValue = parseFloat(document.getElementById('qc-budget'))?.value || parseFloat(document.getElementById('qc-budget').value) || 0;
-		
-		const newClient = {
-		    id: generateId(), // যদি আইডি জেনারেট করার ফাংশন থাকে
-		    projectCategory: document.getElementById('qc-project-category').value.trim(), // 👈 এটি অবশ্যই লাগবে (client বা vendor)
-		    name: document.getElementById('qc-name').value.trim(),
-		    phone: document.getElementById('qc-phone').value.trim(),
-		    project: document.getElementById('qc-project').value.trim(),
-		    projectType: document.getElementById('qc-project-type').value.trim(),
-		    budget: budgetValue,
-		    history: []
-		};
+    // বাজেট ভ্যালু সঠিকভাবে নেওয়ার কোড (এখানে ছোট একটি ভুল ঠিক করা হয়েছে)
+    const budgetValue = parseFloat(document.getElementById('qc-budget').value) || 0;
+    
+    const newClient = {
+        id: generateId(), 
+        projectCategory: document.getElementById('qc-project-category').value.trim(), // 'client' বা 'vendor' সঠিকভাবে সেভ হবে
+        name: document.getElementById('qc-name').value.trim(),
+        phone: document.getElementById('qc-phone').value.trim(),
+        project: document.getElementById('qc-project').value.trim(),
+        projectType: document.getElementById('qc-project-type').value.trim(),
+        budget: budgetValue,
+        history: []
+    };
 
-		databasePathRef.child('clients').push(newClient).then(() => {
-		  closeQuickModal();
-		  e.target.reset();
-		  document.getElementById('qc-date').value = getLocalDateString();
-		}).catch(err => alert("Error: " + err.message));
-	});
+    databasePathRef.child('clients').push(newClient).then(() => {
+        closeQuickModal();
+        e.target.reset();
+        const qcDate = document.getElementById('qc-date');
+        if(qcDate) qcDate.value = getLocalDateString();
+    }).catch(err => alert("Error: " + err.message));
+});
 
-    document.getElementById('quick-tx-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if(!databasePathRef) { alert("লগইন করুন!"); return; }
+document.getElementById('quick-tx-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!databasePathRef) { alert("লগইন করুন!"); return; }
 
-      const clientId = document.getElementById('qt-client-select').value;
-      const client = farmData.find(c => c.id === clientId);
-      if(!client) return;
+    const clientId = document.getElementById('qt-client-select').value;
+    const client = farmData.find(c => c.id === clientId);
+    if(!client) return;
 
-      const newTx = {
+    const newTx = {
         id: 't_' + Date.now(),
         type: document.getElementById('qt-type').value,
         amount: parseFloat(document.getElementById('qt-amount').value) || 0,
         discount: parseFloat(document.getElementById('qt-discount').value) || 0,
         date: document.getElementById('qt-date').value || getLocalDateString(),
         details: document.getElementById('qt-details').value.trim()
-      };
+    };
 
-      if(!client.history) client.history = [];
-      client.history.push(newTx);
+    if(!client.history) client.history = [];
+    client.history.push(newTx);
 
-      databasePathRef.child('clients').child(clientId).update({ history: client.history }).then(() => {
+    databasePathRef.child('clients').child(clientId).update({ history: client.history }).then(() => {
         closeQuickModal();
         e.target.reset();
-        document.getElementById('qt-date').value = getLocalDateString();
-      }).catch(err => alert("Error: " + err.message));
-    });
+        const qtDate = document.getElementById('qt-date');
+        if(qtDate) qtDate.value = getLocalDateString();
+    }).catch(err => alert("Error: " + err.message));
+});
 
-    document.getElementById('quick-office-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if(!databasePathRef) { alert("লগইন করুন!"); return; }
+document.getElementById('quick-office-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!databasePathRef) { alert("লগইন করুন!"); return; }
 
-      const entryType = document.getElementById('qo-entry-type').value;
-      const amount = parseFloat(document.getElementById('qo-amount').value) || 0;
-      const date = document.getElementById('qo-date').value || getLocalDateString();
-      const details = document.getElementById('qo-details').value.trim();
+    const entryType = document.getElementById('qo-entry-type').value;
+    const amount = parseFloat(document.getElementById('qo-amount').value) || 0;
+    const date = document.getElementById('qo-date').value || getLocalDateString();
+    const details = document.getElementById('qo-details').value.trim();
 
-      if (entryType === 'office') {
+    if (entryType === 'office') {
         const newOfficeExp = {
-          category: document.getElementById('qo-category').value,
-          amount, date, details
+            category: document.getElementById('qo-category').value,
+            amount, date, details
         };
         databasePathRef.child('office_expenses').push(newOfficeExp).then(() => {
-          closeQuickModal();
-          e.target.reset();
-          document.getElementById('qo-date').value = getLocalDateString();
+            closeQuickModal();
+            e.target.reset();
+            const qoDate = document.getElementById('qo-date');
+            if(qoDate) qoDate.value = getLocalDateString();
         });
-      } else {
+    } else {
         const newOwnerTx = {
-          type: entryType === 'owner_in' ? 'injection' : 'drawing',
-          amount, date, details
+            type: entryType === 'owner_in' ? 'injection' : 'drawing',
+            amount, date, details
         };
         databasePathRef.child('owner_transactions').push(newOwnerTx).then(() => {
-          closeQuickModal();
-          e.target.reset();
-          document.getElementById('qo-date').value = getLocalDateString();
+            closeQuickModal();
+            e.target.reset();
+            const qoDate = document.getElementById('qo-date');
+            if(qoDate) qoDate.value = getLocalDateString();
         });
-      }
-    });
+    }
+});
 
 	  // বায়োমেট্রিক লক সিস্টেম
 		async function unlockWithFingerprint() {
