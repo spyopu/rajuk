@@ -2480,7 +2480,7 @@ function renderClientCards() {
 }
 
 function generateSingleCardHTML(c) {
-    // আর্থিক হিসাব-নিকাশ (ভেন্ডর ও ক্লায়েন্ট ভেদে সঠিক লজিক)
+    // ভেন্ডর নাকি ক্লায়েন্ট সেই অনুযায়ী সঠিক লজিক
     const isVendor = (c.entityType === 'vendor');
     let totalPaid = 0;
     let totalDisc = 0;
@@ -2503,7 +2503,7 @@ function generateSingleCardHTML(c) {
 
     let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDisc));
 
-    // স্ট্যাটাস ডট ইন্ডিকেটর (বকেয়া থাকলে কমলা ডট ও অ্যামাউন্ট, শোধ হলে সবুজ ডট)
+    // স্ট্যাটাস ডট ইন্ডিকেটর
     let statusBadge = (due && due > 0) ? `
         <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #d97706; font-weight: 500;">
             ৳${due.toLocaleString('en-IN')} <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #f59e0b;"></span>
@@ -2512,12 +2512,10 @@ function generateSingleCardHTML(c) {
             <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #10b981;"></span>
         </span>`;
 
-    // লেনদেন হিস্ট্রি টেবিল রো জেনারেট করা (ভেন্ডর ও ক্লায়েন্ট ভেদে সঠিক লেবেল দেখাবে)
+    // লেনদেন হিস্ট্রি টেবিল রো জেনারেট করা
     let historyRows = (c.history || []).map((t, idx) => {
-        // এন্ট্রিটি ভেন্ডর কি না তা চেক করা
         const isVendorCard = (c.entityType === 'vendor');
         
-        // লেবেল নির্ধারণ: ভেন্ডরের জন্য 'expense' হলে 'পরিশোধ', ক্লায়েন্টের জন্য 'income' হলে 'জমা'
         let typeBadgeText = '';
         let typeBadgeClass = '';
 
@@ -2550,17 +2548,14 @@ function generateSingleCardHTML(c) {
         `;
     }).join('');
 
-   // ভেন্ডর নাকি ক্লায়েন্ট সেই অনুযায়ী কার্ডের বর্ডার কালার নির্ধারণ
-    const isVendor = (c.entityType === 'vendor');
-    
-    // ক্লায়েন্ট হলে sky blue বর্ডার, ভেন্ডর হলে rose বর্ডার
+    // কার্ডের বর্ডার লাইন কালার: ভেন্ডর হলে Rose, ক্লায়েন্ট হলে Sky Blue
     const borderThemeClass = isVendor
-        ? 'border-l-4 border-l-rose-500 border-slate-200'
-        : 'border-l-4 border-l-sky-400 border-slate-200';
+        ? 'border-l-4 border-l-rose-500 border border-slate-200'
+        : 'border-l-4 border-l-sky-400 border border-slate-200';
 
     const hoverEffect = isVendor 
-        ? 'hover:bg-sky-50/40 hover:border-sky-300' 
-        : 'hover:border-rose-500 hover:bg-rose-50/60';
+        ? 'hover:bg-rose-50/20 hover:border-rose-300' 
+        : 'hover:bg-sky-50/20 hover:border-sky-300';
 
     return `
         <!-- মূল কার্ড কন্টেইনার -->
@@ -2570,7 +2565,7 @@ function generateSingleCardHTML(c) {
             <div onclick="toggleClientCard('${c.id}')" class="p-4 flex items-center justify-between cursor-pointer transition select-none">
                 <div class="flex items-center gap-3">
                     <!-- ফোল্ডার আইকন কন্টেইনার -->
-                    <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center font-bold text-base">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 flex items-center justify-center font-bold text-base">
                         📁
                     </div>
                     
@@ -2580,7 +2575,7 @@ function generateSingleCardHTML(c) {
                         
                         <!-- প্রজেক্ট ক্যাটাগরি ব্যাজ -->
                         ${c.projectType ? `
-                        <span class="inline-flex items-center px-1.5 py-0.5 mt-1 text-[10px] font-normal text-rose-600 bg-transparent border border-rose-200 rounded w-fit">
+                        <span class="inline-flex items-center px-1.5 py-0.5 mt-1 text-[10px] font-normal text-slate-600 bg-slate-100 border border-slate-200 rounded w-fit">
                             ${c.projectType}
                         </span>
                         ` : ''}
@@ -2649,6 +2644,7 @@ function generateSingleCardHTML(c) {
 
         </div>
     `;
+}
 	  
     function renderOfficeExpenses() {
       if (!officeExpenseRows) return;
