@@ -1909,38 +1909,68 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     function subscribeToCloudStreams() {
-      if(!databasePathRef) return;
-      databasePathRef.child('clients').on('value', snapshot => {
-        farmData = [];
-        snapshot.forEach(childSnapshot => {
-          const val = childSnapshot.val();
-          if(!val.history) val.history = [];
-          else if(!Array.isArray(val.history)) {
-            val.history = Object.keys(val.history).map(k => {
-              return { id: k, ...val.history[k] };
-            });
-          }
-          farmData.push({ id: childSnapshot.key, ...val });
-        });
-        uiUpdatePipeline();
-      });
+    if(!databasePathRef) return;
 
-      databasePathRef.child('office_expenses').on('value', snapshot => {
+    // ১. ক্লায়েন্ট ডেটা লোড করার লিসেনার
+    databasePathRef.child('clients').on('value', snapshot => {
+        // মনে রাখবেন: farmData তে একসাথে ক্লায়েন্ট ও ভেন্ডর রাখার জন্য আমরা এখানে ফিল্টার বা মেইনটেইন করব
+        // তাই নিচের মতো করে একটি ক্লিয়ার ফাংশন বা আলাদা হ্যান্ডেলিং করা সবচেয়ে নিরাপদ।
+    });
+
+    // 🔥 নিখুঁত ও সহজ সমাধান: একটি কমন ফাংশন যা ক্লায়েন্ট এবং ভেন্ডর উভয়কেই farmData-তে এক করবে
+    const fetchEntities = () => {
+        Promise.all([
+            databasePathRef.child('clients').once('value'),
+            databasePathRef.child('vendors').once('value')
+        ]).then(([clientSnap, vendorSnap]) => {
+            farmData = [];
+
+            // ক. ক্লায়েন্ট প্রসেস
+            clientSnap.forEach(childSnapshot => {
+                const val = childSnapshot.val();
+                if(!val.history) val.history = [];
+                else if(!Array.isArray(val.history)) {
+                    val.history = Object.keys(val.history).map(k => ({ id: k, ...val.history[k] }));
+                }
+                farmData.push({ id: childSnapshot.key, ...val, entityType: val.entityType || 'client' });
+            });
+
+            // খ. ভেন্ডর প্রসেস
+            vendorSnap.forEach(childSnapshot => {
+                const val = childSnapshot.val();
+                if(!val.history) val.history = [];
+                else if(!Array.isArray(val.history)) {
+                    val.history = Object.keys(val.history).map(k => ({ id: k, ...val.history[k] }));
+                }
+                farmData.push({ id: childSnapshot.key, ...val, entityType: 'vendor' });
+            });
+
+            uiUpdatePipeline();
+        });
+    };
+
+    // রিয়েল-টাইম আপডেটের জন্য ক্লায়েন্ট এবং ভেন্ডর উভয় নোডেই অন (on) লিসেনার বসানো
+    databasePathRef.child('clients').on('value', () => fetchEntities());
+    databasePathRef.child('vendors').on('value', () => fetchEntities());
+
+    // ২. অফিস এক্সপেন্স
+    databasePathRef.child('office_expenses').on('value', snapshot => {
         officeExpenses = [];
         snapshot.forEach(childSnapshot => {
-          officeExpenses.push({ id: childSnapshot.key, ...childSnapshot.val() });
+            officeExpenses.push({ id: childSnapshot.key, ...childSnapshot.val() });
         });
         uiUpdatePipeline();
-      });
+    });
 
-      databasePathRef.child('owner_transactions').on('value', snapshot => {
+    // ৩. ওনার ট্রানজেকশন
+    databasePathRef.child('owner_transactions').on('value', snapshot => {
         ownerTransactions = [];
         snapshot.forEach(childSnapshot => {
-          ownerTransactions.push({ id: childSnapshot.key, ...childSnapshot.val() });
+            ownerTransactions.push({ id: childSnapshot.key, ...childSnapshot.val() });
         });
         uiUpdatePipeline();
-      });
-    }
+    });
+}
 
     function uiUpdatePipeline() {
       calculateGlobalMetrics();
@@ -2699,37 +2729,35 @@ function renderClientCards() {
       }
     };
 
-		document.getElementById('quick-client-form').addEventListener('submit', (e) => {
-		    e.preventDefault();
-		    if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
-		
-		    const budgetValue = parseFloat(document.getElementById('qc-budget').value) || 0;
-		    
-		    // ১. ফর্ম থেকে সিলেক্ট করা হলো এটি ক্লায়েন্ট নাকি ভেন্ডর
-		    const entryType = document.getElementById('qc-entry-type').value; // 'client' বা 'vendor'
-		
-		    const newItem = {
-		        entityType: entryType, // 👈 নতুন ফিল্ড: ক্লায়েন্ট না ভেন্ডর তা চেনার জন্য
-		        name: document.getElementById('qc-name').value.trim(),
-		        phone: document.getElementById('qc-phone').value.trim(),
-		        project: document.getElementById('qc-project').value.trim(),
-		        projectType: document.getElementById('qc-project-type').value.trim(), 
-		        budget: budgetValue,
-		        date: document.getElementById('qc-date').value, // তারিখটাও সেভ করে রাখা ভালো
-		        history: [] 
-		    };
-		
-		    // ২. ডাইনামিক নোড নির্ধারণ: ভেন্ডর হলে 'vendors' নোডে যাবে, ক্লায়েন্ট হলে 'clients' নোডে যাবে
-		    const targetNode = (entryType === 'vendor') ? 'vendors' : 'clients';
-		
-		    databasePathRef.child(targetNode).push(newItem).then(() => {
-		        closeQuickModal();
-		        e.target.reset();
-		        document.getElementById('qc-date').value = getLocalDateString();
-		        // চাইলে এখানে একটা সাকসেস মেসেজ বা লিস্ট রিফ্রেশ ফাংশন দিতে পারেন
-		    }).catch(err => alert("Error: " + err.message));
-		});
+		// ১. ক্লায়েন্ট বা ভেন্ডর অ্যাড করার ফর্ম
+    document.getElementById('quick-client-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
+    
+        const budgetValue = parseFloat(document.getElementById('qc-budget').value) || 0;
+        const entryType = document.getElementById('qc-entry-type').value; // 'client' বা 'vendor'
+    
+        const newItem = {
+            entityType: entryType, 
+            name: document.getElementById('qc-name').value.trim(),
+            phone: document.getElementById('qc-phone').value.trim(),
+            project: document.getElementById('qc-project').value.trim(),
+            projectType: document.getElementById('qc-project-type').value.trim(), 
+            budget: budgetValue,
+            date: document.getElementById('qc-date').value,
+            history: [] 
+        };
+    
+        const targetNode = (entryType === 'vendor') ? 'vendors' : 'clients';
+    
+        databasePathRef.child(targetNode).push(newItem).then(() => {
+            closeQuickModal();
+            e.target.reset();
+            document.getElementById('qc-date').value = getLocalDateString();
+        }).catch(err => alert("Error: " + err.message));
+    });
 
+    // ২. ট্রানজেকশন ফর্ম (মডিফাই করা: এটি এখন ক্লায়েন্ট ও ভেন্ডর উভয়কেই চিনবে)
     document.getElementById('quick-tx-form').addEventListener('submit', (e) => {
       e.preventDefault();
       if(!databasePathRef) { alert("লগইন করুন!"); return; }
@@ -2750,13 +2778,17 @@ function renderClientCards() {
       if(!client.history) client.history = [];
       client.history.push(newTx);
 
-      databasePathRef.child('clients').child(clientId).update({ history: client.history }).then(() => {
+      // 👈 পরিবর্তন: এটি ক্লায়েন্ট নাকি ভেন্ডর তা দেখে ডাইনামিক নোড আপডেট করবে
+      const targetNode = (client.entityType === 'vendor') ? 'vendors' : 'clients';
+
+      databasePathRef.child(targetNode).child(clientId).update({ history: client.history }).then(() => {
         closeQuickModal();
         e.target.reset();
         document.getElementById('qt-date').value = getLocalDateString();
       }).catch(err => alert("Error: " + err.message));
     });
 
+    // ৩. অফিস ও ওনার এক্সপেন্স ফর্ম (অপরিবর্তিত)
     document.getElementById('quick-office-form').addEventListener('submit', (e) => {
       e.preventDefault();
       if(!databasePathRef) { alert("লগইন করুন!"); return; }
