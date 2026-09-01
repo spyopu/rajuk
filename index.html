@@ -1911,13 +1911,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function subscribeToCloudStreams() {
     if(!databasePathRef) return;
 
-    // ১. ক্লায়েন্ট ডেটা লোড করার লিসেনার
-    databasePathRef.child('clients').on('value', snapshot => {
-        // মনে রাখবেন: farmData তে একসাথে ক্লায়েন্ট ও ভেন্ডর রাখার জন্য আমরা এখানে ফিল্টার বা মেইনটেইন করব
-        // তাই নিচের মতো করে একটি ক্লিয়ার ফাংশন বা আলাদা হ্যান্ডেলিং করা সবচেয়ে নিরাপদ।
-    });
-
-    // 🔥 নিখুঁত ও সহজ সমাধান: একটি কমন ফাংশন যা ক্লায়েন্ট এবং ভেন্ডর উভয়কেই farmData-তে এক করবে
+    // 🔥 নিখুঁত কমন ফাংশন: ক্লায়েন্ট এবং ভেন্ডর উভয় নোড থেকে ডেটা এনে farmData-তে এক করবে
     const fetchEntities = () => {
         Promise.all([
             databasePathRef.child('clients').once('value'),
@@ -1949,7 +1943,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     };
 
-    // রিয়েল-টাইম আপডেটের জন্য ক্লায়েন্ট এবং ভেন্ডর উভয় নোডেই অন (on) লিসেনার বসানো
+    // ১. রিয়েল-টাইম আপഡেটের জন্য ক্লায়েন্ট এবং ভেন্ডর উভয় নোডেই লিসেনার বসানো
     databasePathRef.child('clients').on('value', () => fetchEntities());
     databasePathRef.child('vendors').on('value', () => fetchEntities());
 
@@ -1972,78 +1966,78 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 }
 
-    function uiUpdatePipeline() {
-      calculateGlobalMetrics();
-      calculateDailyMetrics();
-      if (analyticsViewMode === 'yearly') {
-        renderYearlyBreakdownTable();
-      }
-      renderClientCards();
-      renderOfficeExpenses();
-      renderOwnerTransactions();
-      populateQuickTxDropdown();
-      applyPrivacyToElements();
+function uiUpdatePipeline() {
+  calculateGlobalMetrics();
+  calculateDailyMetrics();
+  if (analyticsViewMode === 'yearly') {
+    renderYearlyBreakdownTable();
+  }
+  renderClientCards();
+  renderOfficeExpenses();
+  renderOwnerTransactions();
+  populateQuickTxDropdown();
+  applyPrivacyToElements();
+}
+
+function calculateDailyMetrics() {
+  const todayStr = getLocalDateString();
+  const dateElem = document.getElementById('daily-card-date');
+  if (dateElem) dateElem.innerText = todayStr;
+
+  let dailyInc = 0;
+  let dailyExp = 0;
+
+  farmData.forEach(c => {
+    if (c.history) {
+      c.history.forEach(t => {
+        if (t.date === todayStr) {
+          if (t.type === 'income') dailyInc += (t.amount || 0);
+          if (t.type === 'expense') dailyExp += (t.amount || 0);
+        }
+      });
     }
+  });
 
-    function calculateDailyMetrics() {
-      const todayStr = getLocalDateString();
-      const dateElem = document.getElementById('daily-card-date');
-      if (dateElem) dateElem.innerText = todayStr;
-
-      let dailyInc = 0;
-      let dailyExp = 0;
-
-      farmData.forEach(c => {
-        if (c.history) {
-          c.history.forEach(t => {
-            if (t.date === todayStr) {
-              if (t.type === 'income') dailyInc += (t.amount || 0);
-              if (t.type === 'expense') dailyExp += (t.amount || 0);
-            }
-          });
-        }
-      });
-
-      officeExpenses.forEach(oe => {
-        if (oe.date === todayStr) {
-          dailyExp += (oe.amount || 0);
-        }
-      });
-
-      ownerTransactions.forEach(ow => {
-        if (ow.date === todayStr) {
-          if (ow.type === 'injection') dailyInc += (ow.amount || 0);
-          if (ow.type === 'drawing') dailyExp += (ow.amount || 0);
-        }
-      });
-
-      let dailyNet = dailyInc - dailyExp;
-
-      const setDailyVal = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) {
-          const formatted = '৳' + val.toLocaleString('en-IN');
-          el.dataset.original = formatted;
-          el.innerText = formatted;
-        }
-      };
-
-      setDailyVal('daily-income', dailyInc);
-      setDailyVal('daily-expense', dailyExp);
-
-      const dailyNetElem = document.getElementById('daily-net');
-      if (dailyNetElem) {
-        const formattedNet = '৳' + dailyNet.toLocaleString('en-IN');
-        dailyNetElem.dataset.original = formattedNet;
-        dailyNetElem.innerText = formattedNet;
-        dailyNetElem.className = `text-sm md:text-base font-black font-mono hide-sensitive ${dailyNet >= 0 ? 'text-slate-800' : 'text-rose-600'}`;
-      }
+  officeExpenses.forEach(oe => {
+    if (oe.date === todayStr) {
+      dailyExp += (oe.amount || 0);
     }
+  });
 
-    function getDateMonthPrefix(dateStr) {
-      if (!dateStr) return '';
-      return dateStr.substring(0, 7);
-    }  
+  ownerTransactions.forEach(ow => {
+    if (ow.date === todayStr) {
+      if (ow.type === 'injection') dailyInc += (ow.amount || 0);
+      if (ow.type === 'drawing') dailyExp += (ow.amount || 0);
+    }
+  });
+
+  let dailyNet = dailyInc - dailyExp;
+
+  const setDailyVal = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const formatted = '৳' + val.toLocaleString('en-IN');
+      el.dataset.original = formatted;
+      el.innerText = formatted;
+    }
+  };
+
+  setDailyVal('daily-income', dailyInc);
+  setDailyVal('daily-expense', dailyExp);
+
+  const dailyNetElem = document.getElementById('daily-net');
+  if (dailyNetElem) {
+    const formattedNet = '৳' + dailyNet.toLocaleString('en-IN');
+    dailyNetElem.dataset.original = formattedNet;
+    dailyNetElem.innerText = formattedNet;
+    dailyNetElem.className = `text-sm md:text-base font-black font-mono hide-sensitive ${dailyNet >= 0 ? 'text-slate-800' : 'text-rose-600'}`;
+  }
+}
+
+function getDateMonthPrefix(dateStr) {
+  if (!dateStr) return '';
+  return dateStr.substring(0, 7);
+}
 	
  
     // নিখুঁতভাবে মাস ও সাল ভিত্তিক অফিস খরচ, মূলধন এবং কাস্টমার আয়ের বিস্তারিত সহ ফিল্টার করার ফাংশন
