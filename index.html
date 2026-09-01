@@ -2734,45 +2734,30 @@ function renderClientCards() {
     };
 
 	document.getElementById('quick-client-form').addEventListener('submit', (e) => {
-	    e.preventDefault();
-	    if(!databasePathRef) { 
-	        alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); 
-	        return; 
-	    }
-	
-	    // সেফলি বাজেট ভ্যালু নেওয়া
-	    const budgetInput = document.getElementById('qc-budget');
-	    const budgetValue = budgetInput ? parseFloat(budgetInput.value) || 0 : 0;
-	    
-	    const categorySelect = document.getElementById('qc-project-category');
-	    const nameInput = document.getElementById('qc-name');
-	    const phoneInput = document.getElementById('qc-phone');
-	    const projectInput = document.getElementById('qc-project');
-	    const typeSelect = document.getElementById('qc-project-type');
-	
-	    const newClient = {
-	        id: typeof generateId === 'function' ? generateId() : 'id_' + Date.now(),
-	        projectCategory: categorySelect ? categorySelect.value.trim() : 'client',
-	        name: nameInput ? nameInput.value.trim() : '',
-	        phone: phoneInput ? phoneInput.value.trim() : '',
-	        project: projectInput ? projectInput.value.trim() : '',
-	        projectType: typeSelect ? typeSelect.value.trim() : '',
-	        budget: budgetValue,
-	        history: []
-	    };
-	
-	    databasePathRef.child('clients').push(newClient).then(() => {
-	        if(typeof closeQuickModal === 'function') closeQuickModal();
-	        e.target.reset();
-	        const qcDate = document.getElementById('qc-date');
-	        if(qcDate && typeof getLocalDateString === 'function') {
-	            qcDate.value = getLocalDateString();
-	        }
-	    }).catch(err => {
-	        console.error(err);
-	        alert("Error: " + err.message);
-	    });
-	});
+    e.preventDefault();
+    if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
+
+    // বাজেট ভ্যালু সঠিকভাবে নেওয়ার কোড (এখানে ছোট একটি ভুল ঠিক করা হয়েছে)
+    const budgetValue = parseFloat(document.getElementById('qc-budget').value) || 0;
+    
+    const newClient = {
+        id: generateId(), 
+        projectCategory: document.getElementById('qc-project-category').value.trim(), // 'client' বা 'vendor' সঠিকভাবে সেভ হবে
+        name: document.getElementById('qc-name').value.trim(),
+        phone: document.getElementById('qc-phone').value.trim(),
+        project: document.getElementById('qc-project').value.trim(),
+        projectType: document.getElementById('qc-project-type').value.trim(),
+        budget: budgetValue,
+        history: []
+    };
+
+    databasePathRef.child('clients').push(newClient).then(() => {
+        closeQuickModal();
+        e.target.reset();
+        const qcDate = document.getElementById('qc-date');
+        if(qcDate) qcDate.value = getLocalDateString();
+    }).catch(err => alert("Error: " + err.message));
+});
 
 document.getElementById('quick-tx-form').addEventListener('submit', (e) => {
     e.preventDefault();
