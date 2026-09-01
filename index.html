@@ -2550,22 +2550,17 @@ function generateSingleCardHTML(c) {
         `;
     }).join('');
 
-   // ভেন্ডর নাকি ক্লায়েন্ট সেই অনুযায়ী বর্ডার এবং থিম কালার নির্ধারণ
+   // ভেন্ডর নাকি ক্লায়েন্ট সেই অনুযায়ী কার্ডের বর্ডার কালার নির্ধারণ
     const isVendor = (c.entityType === 'vendor');
     
+    // ক্লায়েন্ট হলে sky blue বর্ডার, ভেন্ডর হলে rose বর্ডার
+    const borderThemeClass = isVendor
+        ? 'border-l-4 border-l-rose-500 border-slate-200'
+        : 'border-l-4 border-l-sky-400 border-slate-200';
+
     const hoverEffect = isVendor 
         ? 'hover:bg-sky-50/40 hover:border-sky-300' 
         : 'hover:border-rose-500 hover:bg-rose-50/60';
-
-    // কার্ডের বাম পাশে বা বর্ডারে ভিন্ন লুক দেওয়ার জন্য কালার থিম
-    const borderThemeClass = isVendor
-        ? 'border-l-4 border-l-amber-500 border-slate-200'
-        : 'border-l-4 border-l-emerald-500 border-slate-200';
-
-    // ফোল্ডার আইকনের কালার ভেন্ডরের জন্য একরকম, ক্লায়েন্টের জন্য অন্যরকম
-    const iconContainerClass = isVendor
-        ? 'bg-amber-50 text-amber-600 border border-amber-100'
-        : 'bg-rose-50 text-rose-600 border border-rose-100';
 
     return `
         <!-- মূল কার্ড কন্টেইনার -->
@@ -2575,7 +2570,7 @@ function generateSingleCardHTML(c) {
             <div onclick="toggleClientCard('${c.id}')" class="p-4 flex items-center justify-between cursor-pointer transition select-none">
                 <div class="flex items-center gap-3">
                     <!-- ফোল্ডার আইকন কন্টেইনার -->
-                    <div class="w-10 h-10 rounded-xl ${iconContainerClass} flex items-center justify-center font-bold text-base">
+                    <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center font-bold text-base">
                         📁
                     </div>
                     
@@ -2585,7 +2580,7 @@ function generateSingleCardHTML(c) {
                         
                         <!-- প্রজেক্ট ক্যাটাগরি ব্যাজ -->
                         ${c.projectType ? `
-                        <span class="inline-flex items-center px-1.5 py-0.5 mt-1 text-[10px] font-normal ${isVendor ? 'text-amber-600 border-amber-200' : 'text-rose-600 border-rose-200'} bg-transparent border rounded w-fit">
+                        <span class="inline-flex items-center px-1.5 py-0.5 mt-1 text-[10px] font-normal text-rose-600 bg-transparent border border-rose-200 rounded w-fit">
                             ${c.projectType}
                         </span>
                         ` : ''}
