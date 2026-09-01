@@ -2429,28 +2429,35 @@ function renderClientCards() {
     });
 
     // ২. স্ট্যাটাস ফিল্টার (Due / Paid) এবং ভেন্ডর/ক্লায়েন্ট হ্যান্ডলিং
-    const isVendor = (item.entityType === 'vendor');
-		let totalPaid = 0;
-		let totalDisc = 0;
-		if (item.history) {
-		    item.history.forEach(t => {
-		        if (isVendor) {
-		            // ভেন্ডরের ক্ষেত্রে: খরচ (expense) হলো পেমেন্ট করা
-		            if (t.type === 'expense') {
-		                totalPaid += (t.amount || 0);
-		                totalDisc += (t.discount || 0);
-		            }
-		        } else {
-		            // ক্লায়েন্টের ক্ষেত্রে: জমা (income) হলো পেমেন্ট পাওয়া
-		            if (t.type === 'income') {
-		                totalPaid += (t.amount || 0);
-		                totalDisc += (t.discount || 0);
-		            }
-		        }
-		    });
-		}
-		// বকেয়া হিসাব
-		let due = Math.max(0, (item.budget || 0) - (totalPaid + totalDisc));
+    filtered = filtered.filter(c => {
+        const isVendor = (c.entityType === 'vendor');
+        let totalPaid = 0;
+        let totalDisc = 0;
+
+        if (c.history) {
+            c.history.forEach(t => {
+                if (isVendor) {
+                    // ভেন্ডরের ক্ষেত্রে: খরচ (expense) হলো পেমেন্ট করা
+                    if (t.type === 'expense') {
+                        totalPaid += (t.amount || 0);
+                        totalDisc += (t.discount || 0);
+                    }
+                } else {
+                    // ক্লায়েন্টের ক্ষেত্রে: জমা (income) হলো পেমেন্ট পাওয়া
+                    if (t.type === 'income') {
+                        totalPaid += (t.amount || 0);
+                        totalDisc += (t.discount || 0);
+                    }
+                }
+            });
+        }
+        
+        let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDisc));
+
+        if (activeClientFilter === 'due') return due > 0;
+        if (activeClientFilter === 'paid') return due === 0;
+        return true;
+    });
 
     // ৩. কাউন্ট ব্যাজ আপডেট করা
     const countBadge = document.getElementById('searchCountBadge');
@@ -2472,11 +2479,29 @@ function renderClientCards() {
     container.innerHTML = filtered.map(c => generateSingleCardHTML(c)).join('');
 }
 
-	  function generateSingleCardHTML(c) {
-    // আর্থিক হিসাব-নিকাশ
-    let totalPaid = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + t.amount : sum, 0) : 0;
-    let totalDisc = c.history ? c.history.reduce((sum, t) => t.type === 'income' ? sum + (t.discount || 0) : sum, 0) : 0;
-    let due = Math.max(0, c.budget - (totalPaid + totalDisc));
+function generateSingleCardHTML(c) {
+    // আর্থিক হিসাব-নিকাশ (ভেন্ডর ও ক্লায়েন্ট ভেদে সঠিক লজিক)
+    const isVendor = (c.entityType === 'vendor');
+    let totalPaid = 0;
+    let totalDisc = 0;
+
+    if (c.history) {
+        c.history.forEach(t => {
+            if (isVendor) {
+                if (t.type === 'expense') {
+                    totalPaid += (t.amount || 0);
+                    totalDisc += (t.discount || 0);
+                }
+            } else {
+                if (t.type === 'income') {
+                    totalPaid += (t.amount || 0);
+                    totalDisc += (t.discount || 0);
+                }
+            }
+        });
+    }
+
+    let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDisc));
 
     // স্ট্যাটাস ডট ইন্ডিকেটর (বকেয়া থাকলে কমলা ডট ও অ্যামাউন্ট, শোধ হলে সবুজ ডট)
     let statusBadge = (due && due > 0) ? `
@@ -2508,8 +2533,7 @@ function renderClientCards() {
         </tr>
     `).join('');
 
-    // ভেন্ডর নাকি ক্লায়েন্ট সেই অনুযায়ী হোভার স্টাইল নির্ধারণ (ডিফল্ট কার্ড দেখতে একই রকম থাকবে)
-    const isVendor = c.entityType === 'vendor';
+    // ভেন্ডর নাকি ক্লায়েন্ট সেই অনুযায়ী হোভার স্টাইল নির্ধারণ (ডিফল্ট কার্ড দেখতে একই রকম থাকবে)
     const hoverEffect = isVendor 
         ? 'hover:bg-sky-50/40 hover:border-sky-300' 
         : 'hover:border-rose-500 hover:bg-rose-50/60';
@@ -2562,7 +2586,7 @@ function renderClientCards() {
               <div class="grid grid-cols-3 gap-2 text-center text-xs">
                 <div class="bg-white p-2.5 rounded-xl border border-slate-200">
                   <span class="text-[10px] text-slate-400 font-bold uppercase">চুক্তি/বিল</span>
-                  <p class="font-black text-slate-800 font-mono hide-sensitive">৳${c.budget.toLocaleString('en-IN')}</p>
+                  <p class="font-black text-slate-800 font-mono hide-sensitive">৳${(c.budget || 0).toLocaleString('en-IN')}</p>
                 </div>
                 <div class="bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100">
                   <span class="text-[10px] text-emerald-600 font-bold uppercase">জমা/পরিশোধ</span>
