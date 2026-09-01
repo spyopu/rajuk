@@ -2709,12 +2709,14 @@ function renderClientCards() {
 		const budgetValue = parseFloat(document.getElementById('qc-budget'))?.value || parseFloat(document.getElementById('qc-budget').value) || 0;
 		
 		const newClient = {
-		  name: document.getElementById('qc-name').value.trim(),
-		  phone: document.getElementById('qc-phone').value.trim(),
-		  project: document.getElementById('qc-project').value.trim(),
-		  projectType: document.getElementById('qc-project-type').value.trim(), // 👈 ক্যাটাগরি এখানে যুক্ত করে দিন
-		  budget: budgetValue,
-		  history: [] // কোনো পেমেন্ট ছাড়াই শুধু প্রজেক্ট ও বাজেট দিয়ে শুরু হবে
+		    id: generateId(), // যদি আইডি জেনারেট করার ফাংশন থাকে
+		    projectCategory: document.getElementById('qc-project-category').value.trim(), // 👈 এটি অবশ্যই লাগবে (client বা vendor)
+		    name: document.getElementById('qc-name').value.trim(),
+		    phone: document.getElementById('qc-phone').value.trim(),
+		    project: document.getElementById('qc-project').value.trim(),
+		    projectType: document.getElementById('qc-project-type').value.trim(),
+		    budget: budgetValue,
+		    history: []
 		};
 
 		databasePathRef.child('clients').push(newClient).then(() => {
