@@ -2684,7 +2684,8 @@ function renderClientCards() {
       document.getElementById('quickModal').classList.add('hidden');
     };
 
-    window.switchQuickForm = function(type, preSelectedClientId = null) {
+    // ১. আপনার দেওয়া ট্যাব সুইচিং ফাংশন (এটি আগের জায়গায় হুবহু রিপ্লেস করে দিন)
+window.switchQuickForm = function(type, preSelectedClientId = null) {
       document.getElementById('quick-client-form').classList.add('hidden');
       document.getElementById('quick-tx-form').classList.add('hidden');
       document.getElementById('quick-office-form').classList.add('hidden');
@@ -2710,7 +2711,57 @@ function renderClientCards() {
         document.getElementById('tab-opt-office').className = "py-1.5 text-[11px] font-bold rounded-lg transition bg-rose-600 text-white";
         document.getElementById('quickModalTitle').innerText = "অফিস খরচ বা মূলধন এন্ট্রি";
       }
+};
+
+// ২. লেনদেন সাবমিট করার সময় অ্যাপ থেকে এক্সিট হওয়া আটকানোর সুরক্ষিত লজিক
+const txFormElement = document.getElementById('quick-tx-form');
+if (txFormElement) {
+    txFormElement.onsubmit = function(e) {
+        e.preventDefault(); // এটি পেজ রিলোড বা অ্যাপ এক্সিট হওয়া চিরতরে বন্ধ করবে!
+        
+        const clientId = document.getElementById('qt-client-select').value;
+        const amount = parseFloat(document.getElementById('qt-amount').value) || 0;
+        
+        if (!clientId) {
+            alert("দয়া করে প্রজেক্ট বা ভেন্ডর সিলেক্ট করুন!");
+            return;
+        }
+
+        const client = typeof farmData !== 'undefined' ? farmData.find(c => c.id === clientId) : null;
+        if (!client) {
+            alert("প্রজেক্ট পাওয়া যায়নি!");
+            return;
+        }
+
+        if (!Array.isArray(client.history)) {
+            client.history = [];
+        }
+
+        const newTx = {
+            id: 'tx_' + Date.now(),
+            type: document.getElementById('qt-type').value,
+            amount: amount,
+            discount: parseFloat(document.getElementById('qt-discount').value) || 0,
+            date: document.getElementById('qt-date').value,
+            details: document.getElementById('qt-details').value || ''
+        };
+
+        client.history.push(newTx);
+
+        // ফায়ারবেসে নিরাপদ আপডেট
+        if (typeof databasePathRef !== 'undefined' && databasePathRef) {
+            databasePathRef.child('clients').child(clientId).update({
+                history: client.history
+            }).then(() => {
+                alert("লেনদেন সফলভাবে সেভ হয়েছে!");
+                txFormElement.reset();
+                if (typeof closeQuickModal === 'function') closeQuickModal();
+            }).catch(err => {
+                alert("সেভ করতে সমস্যা হয়েছে: " + err.message);
+            });
+        }
     };
+}
 
     window.toggleDiscountField = function() {
       const type = document.getElementById('qt-type').value;
@@ -3019,44 +3070,48 @@ document.getElementById('quick-office-form').addEventListener('submit', (e) => {
     const subId = document.getElementById('action-sub-id').value;
 
     if (itemType === 'client_edit') {
+        // ১. লোকাল অ্যারে থেকে তৎক্ষণাৎ বাদ দেওয়া যাতে রিফ্রেশ না করলেও স্ক্রিন থেকে মুছে যায়
+        if (typeof farmData !== 'undefined') {
+            farmData = farmData.filter(c => c.id !== itemId);
+        }
+
+        // ২. ফায়ারবেস থেকে রিমুভ করা
         databasePathRef.child('clients').child(itemId).remove().then(() => { 
-            // ১. লোকাল অ্যারে থেকে প্রজেক্ট/ক্লায়েন্ট বাদ দেওয়া
-            if (typeof farmData !== 'undefined') {
-                farmData = farmData.filter(c => c.id !== itemId);
-            }
-            // ২. স্ক্রিন ও ড্রপডাউন রিফ্রেশ করা
             if (typeof renderClientCards === 'function') renderClientCards();
             if (typeof updateClientSelectDropdown === 'function') updateClientSelectDropdown();
             if (typeof updateDashboard === 'function') updateDashboard();
-            
             closeActionModal(); 
+        }).catch(err => {
+            alert("ডিলিট করতে সমস্যা হয়েছে: " + err.message);
         });
 
     } else if (itemType === 'tx_edit') {
+        if (typeof farmData === 'undefined') return;
         const client = farmData.find(c => c.id === itemId);
         if(!client || !client.history) return;
         
-        // লোকাল হিস্ট্রি থেকে ফিল্টার করে বাদ দেওয়া
+        // লোকাল হিস্ট্রি থেকে ট্রানজেকশন ফিল্টার করে বাদ দেওয়া
         client.history = client.history.filter(t => t.id !== subId);
         
         databasePathRef.child('clients').child(itemId).update({ history: client.history }).then(() => { 
-            // স্ক্রিন রিফ্রেশ করা
             if (typeof renderClientCards === 'function') renderClientCards();
             if (typeof updateDashboard === 'function') updateDashboard();
-            
             closeActionModal(); 
+        }).catch(err => {
+            alert("লেনদেন ডিলিট করতে সমস্যা হয়েছে: " + err.message);
         });
 
     } else if (itemType === 'office_exp_edit') {
+        // লোকাল অফিস এক্সপেন্স অ্যারে থাকলে সেখান থেকেও ফিল্টার করে দেওয়া ভালো (যদি থাকে)
         databasePathRef.child('office_expenses').child(itemId).remove().then(() => { 
-            if (typeof fetchOfficeExpenses === 'function') fetchOfficeExpenses(); // অথবা আপনার রেন্ডার ফাংশন
+            if (typeof fetchOfficeExpenses === 'function') fetchOfficeExpenses();
             if (typeof updateDashboard === 'function') updateDashboard();
             closeActionModal(); 
         });
 
     } else if (itemType === 'owner_tx_edit') {
         databasePathRef.child('owner_transactions').child(itemId).remove().then(() => { 
-            if (typeof fetchOwnerTransactions === 'function') fetchOwnerTransactions(); // অথবা আপনার রেন্ডার ফাংশন
+            if (typeof fetchOwnerTransactions === 'function') fetchOwnerTransactions();
             if (typeof updateDashboard === 'function') updateDashboard();
             closeActionModal(); 
         });
