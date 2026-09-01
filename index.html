@@ -2512,26 +2512,43 @@ function generateSingleCardHTML(c) {
             <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #10b981;"></span>
         </span>`;
 
-    // লেনদেন হিস্ট্রি টেবিল রো জেনারেট করা
-    let historyRows = (c.history || []).map((t, idx) => `
-        <tr class="hover:bg-slate-50 transition border-b border-slate-100 last:border-0">
-            <td class="p-2 text-slate-500">${idx + 1}</td>
-            <td class="p-2 font-medium text-slate-800">${t.details || (t.type === 'income' ? 'টাকা জমা' : 'প্রজেক্ট খরচ')}</td>
-            <td class="p-2 text-slate-500">${t.date}</td>
-            <td class="p-2 text-center">
-                <span class="px-2 py-0.5 rounded-md text-[9px] font-bold ${t.type === 'income' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-rose-50 text-rose-600 border border-rose-200'}">
-                    ${t.type === 'income' ? 'জমা' : 'খরচ'}
-                </span>
-            </td>
-            <td class="p-2 text-right font-mono font-bold ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">৳${t.amount.toLocaleString('en-IN')}</td>
-            <td class="p-2 text-right">
-                <div class="flex items-center justify-end gap-1">
-                    <button onclick="printClientInvoice('${c.id}', '${t.id}')" class="p-1 hover:bg-slate-100 text-slate-500 rounded transition" title="ইনভয়েস প্রিন্ট">🖨️</button>
-                    <button onclick="openEditTxModal('${c.id}', '${t.id}')" class="p-1 hover:bg-slate-100 text-blue-600 rounded transition" title="এডিট">✏️</button>
-                </div>
-            </td>
-        </tr>
-    `).join('');
+    // লেনদেন হিস্ট্রি টেবিল রো জেনারেট করা (ভেন্ডর ও ক্লায়েন্ট ভেদে সঠিক লেবেল দেখাবে)
+    let historyRows = (c.history || []).map((t, idx) => {
+        // এন্ট্রিটি ভেন্ডর কি না তা চেক করা
+        const isVendorCard = (c.entityType === 'vendor');
+        
+        // লেবেল নির্ধারণ: ভেন্ডরের জন্য 'expense' হলে 'পরিশোধ', ক্লায়েন্টের জন্য 'income' হলে 'জমা'
+        let typeBadgeText = '';
+        let typeBadgeClass = '';
+
+        if (isVendorCard) {
+            typeBadgeText = (t.type === 'expense') ? 'পরিশোধ' : 'আয়';
+            typeBadgeClass = (t.type === 'expense') ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-rose-50 text-rose-600 border border-rose-200';
+        } else {
+            typeBadgeText = (t.type === 'income') ? 'জমা' : 'খরচ';
+            typeBadgeClass = (t.type === 'income') ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-rose-50 text-rose-600 border border-rose-200';
+        }
+
+        return `
+            <tr class="hover:bg-slate-50 transition border-b border-slate-100 last:border-0">
+                <td class="p-2 text-slate-500">${idx + 1}</td>
+                <td class="p-2 font-medium text-slate-800">${t.details || (isVendorCard ? 'ভেন্ডর পেমেন্ট' : 'টাকা জমা')}</td>
+                <td class="p-2 text-slate-500">${t.date}</td>
+                <td class="p-2 text-center">
+                    <span class="px-2 py-0.5 rounded-md text-[9px] font-bold ${typeBadgeClass}">
+                        ${typeBadgeText}
+                    </span>
+                </td>
+                <td class="p-2 text-right font-mono font-bold text-slate-800">৳${t.amount.toLocaleString('en-IN')}</td>
+                <td class="p-2 text-right">
+                    <div class="flex items-center justify-end gap-1">
+                        <button onclick="printClientInvoice('${c.id}', '${t.id}')" class="p-1 hover:bg-slate-100 text-slate-500 rounded transition" title="ইনভয়েস প্রিন্ট">🖨️</button>
+                        <button onclick="openEditTxModal('${c.id}', '${t.id}')" class="p-1 hover:bg-slate-100 text-blue-600 rounded transition" title="এডিট">✏️</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
 
     // ভেন্ডর নাকি ক্লায়েন্ট সেই অনুযায়ী হোভার স্টাইল নির্ধারণ (ডিফল্ট কার্ড দেখতে একই রকম থাকবে)
     const hoverEffect = isVendor 
