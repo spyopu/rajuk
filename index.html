@@ -2526,40 +2526,88 @@ function renderClientCards() {
 }
 
 function generateSingleCardHTML(c) {
-    // আর্থিক হিসাব-নিকাশ (client, vendor এবং dual ভেদে সঠিক লজিক)
     const isDual = (c.entityType === 'dual');
     const isVendor = (c.entityType === 'vendor');
     
+    // হিসাব-নিকাশ
     let totalPaid = 0;
-    let totalDisc = 0;
-
     if (c.history) {
         c.history.forEach(t => {
             if (isDual) {
-                // ডুয়াল কার্ডের ক্ষেত্রে details বা type অনুযায়ী চেক করা
-                // ক্লায়েন্টের ক্ষেত্রে income এবং ভেন্ডরের ক্ষেত্রে expense ধরব
                 if (t.type === 'income' || (t.details && t.details.includes('[ক্লিয়েন্ট'))) {
                     totalPaid += (t.amount || 0);
-                    totalDisc += (t.discount || 0);
-                } else if (t.type === 'expense' || (t.details && t.details.includes('[ভেন্ডর'))) {
-                    // ভেন্ডরের খরচ বা পেমেন্ট আলাদা রাখতে চাইলে এখানে হ্যান্ডেল করতে পারেন, 
-                    // অথবা আপনার বিজনেসের লজিক অনুযায়ী সামারি সেট করতে পারেন।
                 }
             } else if (isVendor) {
-                if (t.type === 'expense') {
-                    totalPaid += (t.amount || 0);
-                    totalDisc += (t.discount || 0);
-                }
+                if (t.type === 'expense') totalPaid += (t.amount || 0);
             } else {
-                if (t.type === 'income') {
-                    totalPaid += (t.amount || 0);
-                    totalDisc += (t.discount || 0);
-                }
+                if (t.type === 'income') totalPaid += (t.amount || 0);
             }
         });
     }
 
-    let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDisc));
+    let due = Math.max(0, (c.budget || 0) - totalPaid);
+
+    // যদি ডুয়াল কার্ড হয়, তবে ক্লায়েন্ট ও ভেন্ডরের আলাদা প্রজেক্ট দেখানোর লেআউট
+    let projectDisplayHTML = '';
+    if (isDual) {
+        projectDisplayHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="border-b md:border-b-0 md:border-r border-slate-200 pb-2 md:pb-0 md:pr-3">
+                    <span class="text-xs font-bold text-sky-600 uppercase tracking-wider">🟢 ক্লায়েন্ট প্রজেক্ট</span>
+                    <p class="font-semibold text-slate-800 text-sm mt-1">${c.clientProject || 'N/A'}</p>
+                    <p class="text-xs text-slate-500 mt-0.5">চুক্তি/বাজেট: ৳${(c.clientBudget || 0).toLocaleString('en-IN')}</p>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">🔴 ভেন্ডর প্রজেক্ট</span>
+                    <p class="font-semibold text-slate-800 text-sm mt-1">${c.vendorProject || 'N/A'}</p>
+                    <p class="text-xs text-slate-500 mt-0.5">চুক্তি/বাজেট: ৳${(c.vendorBudget || 0).toLocaleString('en-IN')}</p>
+                </div>
+            </div>
+        `;
+    } else {
+        projectDisplayHTML = `
+            <div class="mb-4">
+                <span class="text-xs font-bold text-slate-500 uppercase">প্রজেক্ট:</span>
+                <p class="font-semibold text-slate-800">${c.project || 'N/A'}</p>
+            </div>
+        `;
+    }
+
+    // কার্ডের মূল HTML স্ট্রাকচার (আপনার প্রজেক্টের ডিজাইন অনুযায়ী বসাবেন)
+    return `
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-4">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">${c.name}</h3>
+                    <p class="text-xs text-slate-500">মোবাইল: ${c.phone || 'N/A'}</p>
+                </div>
+                <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${isDual ? 'bg-purple-100 text-purple-700' : isVendor ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">
+                    ${c.projectType || (isDual ? 'ক্লায়েন্ট ও ভেন্ডর উভয়' : isVendor ? 'ভেন্ডর' : 'ক্লায়েন্ট')}
+                </span>
+            </div>
+
+            ${projectDisplayHTML}
+
+            <!-- সামারি সেকশন -->
+            <div class="grid grid-cols-3 gap-2 text-center bg-slate-100 p-3 rounded-xl mb-4">
+                <div>
+                    <span class="text-xs text-slate-500 block">মোট বাজেট</span>
+                    <span class="font-bold text-slate-800">৳${(c.budget || 0).toLocaleString('en-IN')}</span>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-500 block">আদায়/পরিশোধ</span>
+                    <span class="font-bold text-emerald-600">৳${totalPaid.toLocaleString('en-IN')}</span>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-500 block">বকেয়া</span>
+                    <span class="font-bold text-rose-600">৳${due.toLocaleString('en-IN')}</span>
+                </div>
+            </div>
+
+            <!-- লেনদেন ইতিহাস টেবিল বা অন্যান্য অংশ -->
+        </div>
+    `;
+}
 
     // স্ট্যাটাস ডট ইন্ডিকেটর (বকেয়া থাকলে কমলা ডট ও অ্যামাউন্ট, শোধ হলে সবুজ ডট)
     let statusBadge = (due && due > 0) ? `
