@@ -793,11 +793,18 @@
         <button type="button" id="tab-opt-office" onclick="switchQuickForm('office')" class="py-1.5 text-[11px] font-bold rounded-lg transition text-slate-600">🏢 অফিস খরচ</button>
       </div>
 
-      <!-- 1. Quick Client Form -->
       <form id="quick-client-form" class="space-y-2.5">
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">গ্রাহকের নাম</label>
-          <input type="text" id="qc-name" placeholder="যেমন: আব্দুল্লাহ" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
+          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">এন্ট্রির ধরণ</label>
+          <select id="qc-entry-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
+            <option value="client">🟢 গ্রাহক প্রজেক্ট (Client)</option>
+            <option value="vendor">🟠 ভেন্ডর কাজ (Vendor / Sub-contract)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">গ্রাহক বা ভেন্ডরের নাম</label>
+          <input type="text" id="qc-name" placeholder="যেমন: সোলায়মান" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
         </div>
         <div>
           <div class="flex items-center justify-between mb-0.5">
@@ -813,7 +820,6 @@
           <input type="text" id="qc-project" placeholder="যেমন: বিল্ডিং ডিজাইন" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs outline-none font-medium">
         </div>
 
-        <!-- নতুন প্রজেক্ট ক্যাটাগরি ড্রপডাউন ফিল্ড -->
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্টের ধরন</label>
           <select id="qc-project-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
@@ -829,12 +835,13 @@
 			  <option value="Complete Package">Complete Package</option>
 			  <option value="Working Design">Working Design</option>
 			  <option value="3D Design">3D Design</option>
+              <option value="Vendor Sub-contract Work">Sub-contract Work</option>
 			</select>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">মোট চুক্তি (৳)</label>
+            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">মোট চুক্তি / বিল (৳)</label>
             <input type="number" id="qc-budget" placeholder="50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
           </div>
           <div>
@@ -842,31 +849,30 @@
             <input type="date" id="qc-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
           </div>
         </div>
-        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1">গ্রাহক সেভ করুন</button>
+        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl py-2.5 text-xs transition shadow-md mt-1">তথ্য সেভ করুন</button>
       </form>
 		
-      <!-- 2. Quick Transaction Form -->
       <form id="quick-tx-form" class="space-y-2.5 hidden">
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্ট সিলেক্ট করুন</label>
+          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">প্রজেক্ট / নাম সিলেক্ট করুন</label>
           <select id="qt-client-select" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
           </select>
         </div>
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-0.5">লেনদেনের ধরন</label>
           <select id="qt-type" onchange="toggleDiscountField()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold text-slate-800 outline-none">
-            <option value="income">🟢 টাকা জমা</option>
-            <option value="expense">🔴 প্রজেক্ট খরচ</option>
+            <option value="income">🟢 ক্লায়েন্ট টাকা জমা</option>
+            <option value="expense">🔴 প্রজেক্ট খরচ/ভেন্ডর পেমেন্ট</option>
           </select>
         </div>
-        
+		
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] font-bold text-slate-700 mb-0.5">টাকার পরিমাণ (৳)</label>
             <input type="number" id="qt-amount" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-mono font-bold outline-none">
           </div>
           <div id="discount-field-wrapper">
-            <label class="block text-[11px] font-bold text-amber-700 mb-0.5">ছাড় (৳)</label>
+            <label class="block text-[11px] font-bold text-amber-700 mb-0.5">ছাড় (৳)</label>
             <input type="number" id="qt-discount" placeholder="0" value="0" class="w-full bg-amber-50/50 border border-amber-200 text-amber-900 rounded-xl p-2 text-xs font-mono font-bold outline-none">
           </div>
         </div>
@@ -2676,26 +2682,35 @@ function renderYearlyBreakdownTable() {
     };
 
 		document.getElementById('quick-client-form').addEventListener('submit', (e) => {
-		e.preventDefault();
-		if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
-
-		const budgetValue = parseFloat(document.getElementById('qc-budget'))?.value || parseFloat(document.getElementById('qc-budget').value) || 0;
+		    e.preventDefault();
+		    if(!databasePathRef) { alert("অনুগ্রহ করে প্রথমে Google দিয়ে লগইন করুন!"); return; }
 		
-		const newClient = {
-		  name: document.getElementById('qc-name').value.trim(),
-		  phone: document.getElementById('qc-phone').value.trim(),
-		  project: document.getElementById('qc-project').value.trim(),
-		  projectType: document.getElementById('qc-project-type').value.trim(), // 👈 ক্যাটাগরি এখানে যুক্ত করে দিন
-		  budget: budgetValue,
-		  history: [] // কোনো পেমেন্ট ছাড়াই শুধু প্রজেক্ট ও বাজেট দিয়ে শুরু হবে
-		};
-
-		databasePathRef.child('clients').push(newClient).then(() => {
-		  closeQuickModal();
-		  e.target.reset();
-		  document.getElementById('qc-date').value = getLocalDateString();
-		}).catch(err => alert("Error: " + err.message));
-	});
+		    const budgetValue = parseFloat(document.getElementById('qc-budget').value) || 0;
+		    
+		    // ১. ফর্ম থেকে সিলেক্ট করা হলো এটি ক্লায়েন্ট নাকি ভেন্ডর
+		    const entryType = document.getElementById('qc-entry-type').value; // 'client' বা 'vendor'
+		
+		    const newItem = {
+		        entityType: entryType, // 👈 নতুন ফিল্ড: ক্লায়েন্ট না ভেন্ডর তা চেনার জন্য
+		        name: document.getElementById('qc-name').value.trim(),
+		        phone: document.getElementById('qc-phone').value.trim(),
+		        project: document.getElementById('qc-project').value.trim(),
+		        projectType: document.getElementById('qc-project-type').value.trim(), 
+		        budget: budgetValue,
+		        date: document.getElementById('qc-date').value, // তারিখটাও সেভ করে রাখা ভালো
+		        history: [] 
+		    };
+		
+		    // ২. ডাইনামিক নোড নির্ধারণ: ভেন্ডর হলে 'vendors' নোডে যাবে, ক্লায়েন্ট হলে 'clients' নোডে যাবে
+		    const targetNode = (entryType === 'vendor') ? 'vendors' : 'clients';
+		
+		    databasePathRef.child(targetNode).push(newItem).then(() => {
+		        closeQuickModal();
+		        e.target.reset();
+		        document.getElementById('qc-date').value = getLocalDateString();
+		        // চাইলে এখানে একটা সাকসেস মেসেজ বা লিস্ট রিফ্রেশ ফাংশন দিতে পারেন
+		    }).catch(err => alert("Error: " + err.message));
+		});
 
     document.getElementById('quick-tx-form').addEventListener('submit', (e) => {
       e.preventDefault();
