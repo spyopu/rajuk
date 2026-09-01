@@ -2751,36 +2751,42 @@ function renderClientCards() {
         }).catch(err => alert("Error: " + err.message));
     });
 
-    // ২. ট্রানজেকশন ফর্ম (মডিফাই করা: এটি এখন ক্লায়েন্ট ও ভেন্ডর উভয়কেই চিনবে)
-    document.getElementById('quick-tx-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if(!databasePathRef) { alert("লগইন করুন!"); return; }
-
-      const clientId = document.getElementById('qt-client-select').value;
-      const client = farmData.find(c => c.id === clientId);
-      if(!client) return;
-
-      const newTx = {
-        id: 't_' + Date.now(),
-        type: document.getElementById('qt-type').value,
-        amount: parseFloat(document.getElementById('qt-amount').value) || 0,
-        discount: parseFloat(document.getElementById('qt-discount').value) || 0,
-        date: document.getElementById('qt-date').value || getLocalDateString(),
-        details: document.getElementById('qt-details').value.trim()
-      };
-
-      if(!client.history) client.history = [];
-      client.history.push(newTx);
-
-      // 👈 পরিবর্তন: এটি ক্লায়েন্ট নাকি ভেন্ডর তা দেখে ডাইনামিক নোড আপডেট করবে
-      const targetNode = (client.entityType === 'vendor') ? 'vendors' : 'clients';
-
-      databasePathRef.child(targetNode).child(clientId).update({ history: client.history }).then(() => {
-        closeQuickModal();
-        e.target.reset();
-        document.getElementById('qt-date').value = getLocalDateString();
-      }).catch(err => alert("Error: " + err.message));
-    });
+    // ==========================================
+	// ট্রানজেকশন (পেমেন্ট/খরচ) ফর্ম সাবমিট লজিক 
+	// (এটি ক্লায়েন্ট ও ভেন্ডর উভয়কে স্বয়ংক্রিয়ভাবে শনাক্ত করে সঠিক নোডে আপডেট করবে)
+	// ==========================================
+	document.getElementById('quick-tx-form').addEventListener('submit', (e) => {
+	    e.preventDefault();
+	    if(!databasePathRef) { alert("লগইন করুন!"); return; }
+	
+	    const clientId = document.getElementById('qt-client-select').value;
+	    const client = farmData.find(c => c.id === clientId);
+	    if(!client) return;
+	
+	    // নতুন ট্রানজেকশন অবজেক্ট তৈরি
+	    const newTx = {
+	      id: 't_' + Date.now(),
+	      type: document.getElementById('qt-type').value,
+	      amount: parseFloat(document.getElementById('qt-amount').value) || 0,
+	      discount: parseFloat(document.getElementById('qt-discount').value) || 0,
+	      date: document.getElementById('qt-date').value || getLocalDateString(),
+	      details: document.getElementById('qt-details').value.trim()
+	    };
+	
+	    // লোকাল অ্যারেতে হিস্ট্রি পুশ করা
+	    if(!client.history) client.history = [];
+	    client.history.push(newTx);
+	
+	    // 👈 ডাইনামিক নোড নির্ধারণ: এন্ট্রিটি ক্লায়েন্ট নাকি ভেন্ডর তা দেখে সঠিক নোড ('clients' বা 'vendors') নির্ধারণ করবে
+	    const targetNode = (client.entityType === 'vendor') ? 'vendors' : 'clients';
+	
+	    // নির্দিষ্ট নোডের নির্দিষ্ট আইডিতে ডাটাবেজে হিস্ট্রি আপডেট করা
+	    databasePathRef.child(targetNode).child(clientId).update({ history: client.history }).then(() => {
+	      closeQuickModal();
+	      e.target.reset();
+	      document.getElementById('qt-date').value = getLocalDateString();
+	    }).catch(err => alert("Error: " + err.message));
+	});
 
     // ৩. অফিস ও ওনার এক্সপেন্স ফর্ম (অপরিবর্তিত)
     document.getElementById('quick-office-form').addEventListener('submit', (e) => {
