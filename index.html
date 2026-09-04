@@ -2503,14 +2503,23 @@ function generateSingleCardHTML(c) {
 
     let due = Math.max(0, (c.budget || 0) - (totalPaid + totalDisc));
 
-    // স্ট্যাটাস ডট ইন্ডিকেটর (বকেয়া থাকলে কমলা ডট ও অ্যামাউন্ট, শোধ হলে সবুজ ডট)
-    let statusBadge = (due && due > 0) ? `
-        <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #d97706; font-weight: 500;">
-            ৳${due.toLocaleString('en-IN')} <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #f59e0b;"></span>
-        </span>` : `
-        <span style="display: inline-flex; align-items: center;" title="পরিশোধিত">
-            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #10b981;"></span>
-        </span>`;
+    // ভেন্ডর হলে পার্পল/নেভি ব্লু, ক্লায়েন্ট বকেয়া থাকলে কমলা, শোধ হলে সবুজ
+	let dotColor = '#10b981'; // ডিফল্ট সবুজ (Paid)
+	let textColor = '#059669';
+	
+	if (isVendor) {
+	    dotColor = '#7c3aed';  // ভেন্ডরের জন্য পার্পল (নেভি ব্লু চাইলে #1e3a8a দিতে পারেন)
+	    textColor = '#7c3aed';
+	} else if (due > 0) {
+	    dotColor = '#f59e0b';  // ক্লায়েন্ট বকেয়া থাকলে কমলা
+	    textColor = '#d97706';
+	}
+	
+	let statusBadge = `
+	    <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: ${textColor}; font-weight: 500;" title="${isVendor ? 'ভেন্ডর' : (due > 0 ? 'বকেয়া' : 'পরিশোধিত')}">
+	        ${due > 0 ? `৳${due.toLocaleString('en-IN')}` : ''} 
+	        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: ${dotColor};"></span>
+	    </span>`;
 
     // লেনদেন হিস্ট্রি টেবিল রো জেনারেট করা (ভেন্ডর ও ক্লায়েন্ট ভেদে সঠিক লেবেল দেখাবে)
     let historyRows = (c.history || []).map((t, idx) => {
