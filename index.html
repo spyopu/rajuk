@@ -21,49 +21,52 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
   <style>
-    /* ১. বডি লেআউট ও ফুল স্ক্রিন সেটআপ */
-    body {
-        font-family: 'Inter', sans-serif !important;
-        font-weight: 400;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        background-color: #f8fafc !important;
+    /* ১. বডি লেআউট লক ও ফুল স্ক্রিন সেটআপ */
+    html, body {
         margin: 0;
         padding: 0;
-        min-height: 100dvh;
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        overflow: hidden;
+        background-color: #f8fafc !important;
+        font-family: 'Inter', sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
         display: flex;
         flex-direction: column;
     }
     
-    /* ২. হেডার ফিক্সড, স্টিকি এবং ওপরের নচ/স্ট্যাটাস বারের নিচে সুন্দরভাবে রাখার জন্য */
+    /* ২. হেডার ফিক্সড ও নচ/স্ট্যাটাস বারের নিচে সুন্দরভাবে অ্যাডজাস্টমেন্ট */
     header {
-        flex: 0 0 auto;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background-color: #ffffff;
+        flex: 0 0 auto !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 999 !important;
+        background-color: #ffffff !important;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        /* মোবাইলের ওপরের ক্যামেরা নচ বা স্ট্যাটাস বার যেন হেডারকে ঢেকে না ফেলে */
-        padding-top: max(env(safe-area-inset-top), 10px) !important;
+        padding-top: max(env(safe-area-inset-top), 8px) !important;
     }
 
-    /* ৩. মাঝের মেইন কন্টেন্ট যা স্ক্রল করবে */
+    /* ৩. মাঝের মেইন কন্টেন্ট যা শুধু নিজে স্ক্রল করবে */
     main, .main-content-area {
-        flex: 1;
-        overflow-y: auto;
+        flex: 1 1 auto !important;
+        overflow-y: auto !important;
         -webkit-overflow-scrolling: touch;
         position: relative;
         z-index: 1;
     }
 
-    /* ৪. ফুটার বা বটম নেভবার এবং সিস্টেম জেসচার বার ফিক্স */
+    /* ৪. ফুটার বা বটম নেভবার যেন সিস্টেম বারের নিচে ঢাকা না পড়ে */
     footer, .bottom-nav, nav[class*="bottom"] {
-        flex: 0 0 auto;
-        position: sticky;
-        bottom: 0;
-        z-index: 100;
-        background-color: #ffffff;
-        /* সিস্টেম নেভিগেশন বারের সাথে ওভারল্যাপ এড়াতে সেইফ প্যাডিং */
+        flex: 0 0 auto !important;
+        position: sticky !important;
+        bottom: 0 !important;
+        z-index: 999 !important;
+        background-color: #ffffff !important;
         padding-bottom: max(env(safe-area-inset-bottom), 12px) !important;
     }
 
@@ -94,7 +97,7 @@
         .no-print, button, input[type="month"], select, nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal, #summaryModal, .fab-btn { display: none !important; }
     }
 	
-	/* ১. প্রিন্ট বাটনের পাশের ছোট সামারি বাটনের স্টাইল */
+	/* প্রিন্ট বাটনের পাশের ছোট সামারি বাটনের স্টাইল */
 	.btn-summary-mini {
 		display: inline-flex;
 		align-items: center;
@@ -121,11 +124,11 @@
 		color: #2563eb;
 	}
 
-	/* ২. ছোট ও প্রফেশনাল ফ্লোটিং প্লাস বাটন (হোমপেজে ফিক্সড) */
+	/* ফ্লোটিং প্লাস বাটন (হোমপেজে ফিক্সড) */
 	.fab-btn {
-		position: fixed;
-		bottom: calc(75px + env(safe-area-inset-bottom, 12px));
-		right: 20px;
+		position: fixed !important;
+		bottom: calc(75px + env(safe-area-inset-bottom, 12px)) !important;
+		right: 20px !important;
 		width: 52px;
 		height: 52px;
 		border-radius: 50%;
@@ -139,7 +142,7 @@
 		font-size: 22px;
 		cursor: pointer;
 		transition: transform 0.2s ease, box-shadow 0.2s ease;
-		z-index: 110;
+		z-index: 1000 !important;
 	}
 
 	.fab-btn:hover {
@@ -149,8 +152,8 @@
     
 	@media (min-width: 768px) {
 		.fab-btn {
-			bottom: 30px;
-			right: 30px;
+			bottom: 30px !important;
+			right: 30px !important;
 		}
 	}
 </style>
