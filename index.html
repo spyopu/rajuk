@@ -31,16 +31,15 @@
         background-color: #f8fafc !important;
     }
     
-    /* OnePlus-এর নচ ও স্ট্যাটাস বারের নিচে হেডার ফিক্সড রাখার জন্য */
+    /* ১. হেডার পজিশন: স্টিকি বাদ দিয়ে স্ট্যাটিক বা রিলেটিভ রাখা হলো যাতে পিন স্ক্রিনেও না কাটে */
     header {
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 100 !important;
+        position: relative !important;
+        z-index: 50 !important;
         background-color: #ffffff !important;
-        padding-top: max(env(safe-area-inset-top), 8px) !important;
+        padding-top: max(env(safe-area-inset-top), 10px) !important;
     }
 
-    /* নিচের জেসচার বা নেভিগেশন বার যেন ফুটারকে ঢেকে না ফেলে */
+    /* ২. ফুটার পজিশন */
     footer, .bottom-nav, nav[class*="bottom"] {
         position: sticky !important;
         bottom: 0 !important;
@@ -76,7 +75,7 @@
         .no-print, button, input[type="month"], select, nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal, #summaryModal, .fab-btn { display: none !important; }
     }
 	
-	/* ১. প্রিন্ট বাটনের পাশের ছোট সামারি বাটনের স্টাইল */
+	/* প্রিন্ট বাটনের পাশের ছোট সামারি বাটনের স্টাইল */
 	.btn-summary-mini {
 		display: inline-flex;
 		align-items: center;
@@ -103,7 +102,7 @@
 		color: #2563eb;
 	}
 
-	/* ২. ছোট ও প্রফেশনাল ফ্লোটিং প্লাস বাটন (হোমপেজে ফিক্সড) */
+	/* ফ্লোটিং প্লাস বাটন (হোমপেজে ফিক্সড) */
 	.fab-btn {
 		position: fixed;
 		bottom: calc(75px + env(safe-area-inset-bottom, 12px));
