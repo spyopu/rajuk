@@ -85,24 +85,25 @@
 		color: #2563eb;
 	}
 
-	/* ফ্লোটিং প্লাস বাটনটি ফুটারের সাথে সামঞ্জস্য রেখে আরও উপরে তোলার জন্য */
+	/* ২. ছোট ও প্রফেশনাল ফ্লোটিং প্লাস বাটন (হোমপেজে ফিক্সড) */
 	.fab-btn {
-	  position: fixed;
-	  bottom: 95px !important; /* ফুটারের উপরে পর্যাপ্ত জায়গা রাখার জন্য এটি বাড়ানো হলো */
-	  right: 20px;
-	  width: 52px;
-	  height: 52px;
-	  border-radius: 50%;
-	  background-color: #e11d48;
-	  color: #ffffff;
-	  border: none;
-	  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
-	  display: flex;
-	  align-items: center;
-	  justify-content: center;
-	  font-size: 22px;
-	  cursor: pointer;
-	  z-index: 60;
+		position: fixed;
+		bottom: 95px !important;
+		right: 20px;
+		width: 52px;
+		height: 52px;
+		border-radius: 50%;
+		background-color: #e11d48;
+		color: #ffffff;
+		border: none;
+		box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 22px;
+		cursor: pointer;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+		z-index: 45;
 	}
 
 	.fab-btn:hover {
