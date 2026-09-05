@@ -117,9 +117,14 @@
 		}
 	}
 	  
-	/* ফুটার বা বটম নেভিগেশন যেন ফোনের নিচের নেভিগেশন বাটনের উপর ওভারল্যাপ না করে */
-	footer, .bottom-nav {
-	  padding-bottom: env(safe-area-inset-bottom);
+	  footer, .bottom-nav {
+	  position: fixed;
+	  bottom: 0;
+	  left: 0;
+	  width: 100%;
+	  /* মূল উচ্চতার সাথে সেফ এরিয়া যোগ করা */
+	  padding-bottom: calc(env(safe-area-inset-bottom) + 10px);
+	  z-index: 50;
 	}
   </style>
 
