@@ -22,105 +22,114 @@
     
   <style>
     body {
-      font-family: 'Inter', sans-serif !important;
-      font-weight: 400;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 400;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #f8fafc !important;
+        margin: 0;
+        padding: 0;
+        /* অতিরিক্ত স্ক্রিন চিপে যাওয়া রোধ করতে min-height ফিক্স করা হলো */
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
     }
     
     h1, h2, h3, h4, h5, h6, .font-bold, .font-semibold {
-      font-family: 'Inter', 'Plus Jakarta Sans', sans-serif !important;
-      font-weight: 500 !important;
-      letter-spacing: -0.02em; 
+        font-family: 'Inter', 'Plus Jakarta Sans', sans-serif !important;
+        font-weight: 500 !important;
+        letter-spacing: -0.02em; 
     }
 
     /* Secret Privacy Dot Masking Class */
     .privacy-dot-hidden {
-      user-select: none !important;
-      font-family: monospace !important;
-      letter-spacing: 2px !important;
+        user-select: none !important;
+        font-family: monospace !important;
+        letter-spacing: 2px !important;
     }
 
     /* Visual Hide Utility without breaking backend JS references */
     .visually-hidden-field {
-      display: none !important;
+        display: none !important;
     }
 
     /* Print Styles */
     @media print {
-      body * { visibility: hidden; }
-      #pdf-report-container, #pdf-report-container * { visibility: visible; }
-      #pdf-report-container { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; }
-      #report-content-body { filter: none !important; pointer-events: auto !important; user-select: auto !important; }
-      .no-print, button, input[type="month"], select, nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal, #summaryModal, .fab-btn { display: none !important; }
+        body * { visibility: hidden; }
+        #pdf-report-container, #pdf-report-container * { visibility: visible; }
+        #pdf-report-container { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; }
+        #report-content-body { filter: none !important; pointer-events: auto !important; user-select: auto !important; }
+        .no-print, button, input[type="month"], select, nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal, #summaryModal, .fab-btn { display: none !important; }
     }
-	
-	/* ১. প্রিন্ট বাটনের পাশের ছোট সামারি বাটনের স্টাইল */
-	.btn-summary-mini {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		padding: 6px 12px;
-		font-size: 13px;
-		font-weight: 500;
-		color: #0f172a;
-		background-color: #f1f5f9;
-		border: 1px solid #cbd5e1;
-		border-radius: 6px;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
+    
+    /* ১. প্রিন্ট বাটনের পাশের ছোট সামারি বাটনের স্টাইল */
+    .btn-summary-mini {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #0f172a;
+        background-color: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
 
-	.btn-summary-mini:hover {
-		background-color: #e2e8f0;
-		border-color: #94a3b8;
-		color: #1e293b;
-	}
+    .btn-summary-mini:hover {
+        background-color: #e2e8f0;
+        border-color: #94a3b8;
+        color: #1e293b;
+    }
 
-	.btn-summary-mini i {
-		font-size: 14px;
-		color: #2563eb;
-	}
+    .btn-summary-mini i {
+        font-size: 14px;
+        color: #2563eb;
+    }
 
-	/* ২. ছোট ও প্রফেশনাল ফ্লোটিং প্লাস বাটন (হোমপেজে ফিক্সড) */
-	.fab-btn {
-		position: fixed;
-		bottom: 80px;
-		right: 20px;
-		width: 52px;
-		height: 52px;
-		border-radius: 50%;
-		background-color: #e11d48;
-		color: #ffffff;
-		border: none;
-		box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 22px;
-		cursor: pointer;
-		transition: transform 0.2s ease, box-shadow 0.2s ease;
-		z-index: 45;
-	}
+    /* ২. ছোট ও প্রফেশনাল ফ্লোটিং প্লাস বাটন (হোমপেজে ফিক্সড) */
+    .fab-btn {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background-color: #e11d48;
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        z-index: 45;
+    }
 
-	.fab-btn:hover {
-		transform: scale(1.05);
-		box-shadow: 0 6px 18px rgba(225, 29, 72, 0.5);
-	}
-	@media (min-width: 768px) {
-		.fab-btn {
-			bottom: 30px;
-			right: 30px;
-		}
-	}
-  </style>
+    .fab-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 18px rgba(225, 29, 72, 0.5);
+    }
+    @media (min-width: 768px) {
+        .fab-btn {
+            bottom: 30px;
+            right: 30px;
+        }
+    }
+</style>
 
-  <!-- Firebase SDK v8 LIBRARIES -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<!-- Firebase SDK v8 LIBRARIES -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
-<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col justify-between pb-24 md:pb-8">
+<!-- বডির ফ্লেক্স ও প্যাডিং লজিক প্রপারভাবে অপ্টিমাইজ করা হলো -->
+<body class="bg-slate-50 text-slate-900 antialiased flex-1">
   
   <!-- Passcode Lock Screen Overlay -->
   <div id="pinLockScreen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center gap-6 py-6 px-4 select-none font-sans overflow-y-auto">
