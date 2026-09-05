@@ -21,6 +21,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
   <style>
+	  header {
+	  padding-top: env(safe-area-inset-top);
+	}
+	  
     body {
       font-family: 'Inter', sans-serif !important;
       font-weight: 400;
@@ -112,6 +116,11 @@
 			bottom: 30px;
 			right: 30px;
 		}
+	}
+	  
+	/* ফুটার বা বটম নেভিগেশন যেন ফোনের নিচের নেভিগেশন বাটনের উপর ওভারল্যাপ না করে */
+	footer, .bottom-nav {
+	  padding-bottom: env(safe-area-inset-bottom);
 	}
   </style>
 
