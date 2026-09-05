@@ -3,7 +3,7 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
   <title>Digital Khata</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg"> 
@@ -21,38 +21,75 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
   <style>
+    /* ১. বডি লেআউট লক ও ফুল স্ক্রিন সেটআপ */
     body {
-      font-family: 'Inter', sans-serif !important;
-      font-weight: 400;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 400;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #f8fafc !important;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; /* বডিতে বাড়তি স্ক্রল আটকে লেআউট ফ্রেমের মধ্যে রাখা হলো */
+    }
+    
+    /* ২. হেডার ফিক্সড ও সবার উপরে রাখা */
+    header {
+        flex: 0 0 auto;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background-color: #ffffff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ৩. মাঝের মেইন কন্টেন্ট যা শুধু নিজে স্ক্রল করবে */
+    main, .main-content-area {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ৪. ফুটার বা বটম নেভবার যেন ডিভাইসের সিস্টেম বারের নিচে ঢাকা না পড়ে */
+    footer, .bottom-nav, nav[class*="bottom"] {
+        flex: 0 0 auto;
+        position: relative;
+        z-index: 100;
+        background-color: #ffffff;
+        padding-bottom: max(env(safe-area-inset-bottom), 16px) !important;
     }
     
     h1, h2, h3, h4, h5, h6, .font-bold, .font-semibold {
-      font-family: 'Inter', 'Plus Jakarta Sans', sans-serif !important;
-      font-weight: 500 !important;
-      letter-spacing: -0.02em; 
+        font-family: 'Inter', 'Plus Jakarta Sans', sans-serif !important;
+        font-weight: 500 !important;
+        letter-spacing: -0.02em; 
     }
 
     /* Secret Privacy Dot Masking Class */
     .privacy-dot-hidden {
-      user-select: none !important;
-      font-family: monospace !important;
-      letter-spacing: 2px !important;
+        user-select: none !important;
+        font-family: monospace !important;
+        letter-spacing: 2px !important;
     }
 
     /* Visual Hide Utility without breaking backend JS references */
     .visually-hidden-field {
-      display: none !important;
+        display: none !important;
     }
 
     /* Print Styles */
     @media print {
-      body * { visibility: hidden; }
-      #pdf-report-container, #pdf-report-container * { visibility: visible; }
-      #pdf-report-container { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; }
-      #report-content-body { filter: none !important; pointer-events: auto !important; user-select: auto !important; }
-      .no-print, button, input[type="month"], select, nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal, #summaryModal, .fab-btn { display: none !important; }
+        body * { visibility: hidden; }
+        #pdf-report-container, #pdf-report-container * { visibility: visible; }
+        #pdf-report-container { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; }
+        #report-content-body { filter: none !important; pointer-events: auto !important; user-select: auto !important; }
+        .no-print, button, input[type="month"], select, nav, header, #pinLockScreen, #securityModal, #actionModal, #quickModal, #summaryModal, .fab-btn { display: none !important; }
     }
 	
 	/* ১. প্রিন্ট বাটনের পাশের ছোট সামারি বাটনের স্টাইল */
@@ -85,7 +122,7 @@
 	/* ২. ছোট ও প্রফেশনাল ফ্লোটিং প্লাস বাটন (হোমপেজে ফিক্সড) */
 	.fab-btn {
 		position: fixed;
-		bottom: 80px;
+		bottom: calc(75px + env(safe-area-inset-bottom, 16px));
 		right: 20px;
 		width: 52px;
 		height: 52px;
@@ -100,20 +137,21 @@
 		font-size: 22px;
 		cursor: pointer;
 		transition: transform 0.2s ease, box-shadow 0.2s ease;
-		z-index: 45;
+		z-index: 110;
 	}
 
 	.fab-btn:hover {
 		transform: scale(1.05);
 		box-shadow: 0 6px 18px rgba(225, 29, 72, 0.5);
 	}
+    
 	@media (min-width: 768px) {
 		.fab-btn {
 			bottom: 30px;
 			right: 30px;
 		}
 	}
-  </style>
+</style>
 
   <!-- Firebase SDK v8 LIBRARIES -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
