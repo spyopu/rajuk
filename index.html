@@ -117,13 +117,14 @@
 		}
 	}
 	  
-	  footer, .bottom-nav {
+	  /* ফুটার বা বটম নেভিগেশন একদম নিখুঁতভাবে উপরে তোলার জন্য */
+	footer, .bottom-nav {
 	  position: fixed;
 	  bottom: 0;
 	  left: 0;
 	  width: 100%;
-	  /* মূল উচ্চতার সাথে সেফ এরিয়া যোগ করা */
-	  padding-bottom: calc(env(safe-area-inset-bottom) + 10px);
+	  padding-bottom: calc(env(safe-area-inset-bottom) + 16px) !important;
+	  background-color: #ffffff;
 	  z-index: 50;
 	}
   </style>
